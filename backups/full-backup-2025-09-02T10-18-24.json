@@ -1,0 +1,473 @@
+{
+  "type": "full",
+  "database": "ecommerce",
+  "exportedAt": "2025-09-02T10:18:24.839Z",
+  "collections": [
+    {
+      "collection": "products",
+      "documents": [
+        {
+          "_id": "68b640910202f6588021459c",
+          "name": "Wireless Bluetooth Headphones",
+          "slug": "wireless-bluetooth-headphones",
+          "description": "Premium wireless headphones with noise cancellation and 30-hour battery life.",
+          "shortDescription": "Premium wireless headphones with noise cancellation",
+          "price": 199.99,
+          "originalPrice": 249.99,
+          "images": [
+            {
+              "url": "/products/headphones-1.jpg",
+              "alt": "Wireless Bluetooth Headphones - Black",
+              "width": 800,
+              "height": 800,
+              "isPrimary": true
+            }
+          ],
+          "category": "68b640910202f65880214598",
+          "tags": [
+            "electronics",
+            "audio",
+            "wireless"
+          ],
+          "inventory": {
+            "quantity": 50,
+            "lowStockThreshold": 5,
+            "sku": "WH-001",
+            "trackInventory": true
+          },
+          "seo": {
+            "title": "Wireless Bluetooth Headphones - Premium Audio",
+            "description": "Experience premium sound quality with our wireless Bluetooth headphones featuring noise cancellation.",
+            "keywords": [
+              "headphones",
+              "wireless",
+              "bluetooth",
+              "audio",
+              "noise cancellation"
+            ]
+          },
+          "variants": [],
+          "reviews": [],
+          "averageRating": 4.5,
+          "reviewCount": 128,
+          "isActive": true,
+          "isFeatured": true
+        },
+        {
+          "_id": "68b640910202f6588021459d",
+          "name": "Smart Fitness Watch",
+          "slug": "smart-fitness-watch",
+          "description": "Advanced fitness watch with heart rate monitoring, GPS, and 7-day battery life.",
+          "shortDescription": "Advanced fitness watch with GPS tracking",
+          "price": 299.99,
+          "images": [
+            {
+              "url": "/products/fitness-watch-1.jpg",
+              "alt": "Smart Fitness Watch - Black",
+              "width": 800,
+              "height": 800,
+              "isPrimary": true
+            }
+          ],
+          "category": "68b640910202f65880214598",
+          "tags": [
+            "electronics",
+            "fitness",
+            "smartwatch"
+          ],
+          "inventory": {
+            "quantity": 30,
+            "lowStockThreshold": 3,
+            "sku": "FW-001",
+            "trackInventory": true
+          },
+          "seo": {
+            "title": "Smart Fitness Watch - Advanced Health Monitoring",
+            "description": "Track your fitness with our advanced smartwatch featuring heart rate monitoring and GPS.",
+            "keywords": [
+              "fitness watch",
+              "smartwatch",
+              "health monitoring",
+              "GPS"
+            ]
+          },
+          "variants": [],
+          "reviews": [],
+          "averageRating": 4.3,
+          "reviewCount": 95,
+          "isActive": true,
+          "isFeatured": true
+        },
+        {
+          "_id": "68b640910202f6588021459e",
+          "name": "Organic Cotton T-Shirt",
+          "slug": "organic-cotton-t-shirt",
+          "description": "Comfortable organic cotton t-shirt available in multiple colors.",
+          "shortDescription": "Comfortable organic cotton t-shirt",
+          "price": 29.99,
+          "originalPrice": 39.99,
+          "images": [
+            {
+              "url": "/products/tshirt-1.jpg",
+              "alt": "Organic Cotton T-Shirt - Navy Blue",
+              "width": 800,
+              "height": 800,
+              "isPrimary": true
+            }
+          ],
+          "category": "68b640910202f65880214599",
+          "tags": [
+            "clothing",
+            "organic",
+            "cotton"
+          ],
+          "inventory": {
+            "quantity": 100,
+            "lowStockThreshold": 10,
+            "sku": "TS-001",
+            "trackInventory": true
+          },
+          "seo": {
+            "title": "Organic Cotton T-Shirt - Comfortable and Sustainable",
+            "description": "Shop our comfortable organic cotton t-shirts made from sustainable materials.",
+            "keywords": [
+              "t-shirt",
+              "organic cotton",
+              "sustainable",
+              "comfortable"
+            ]
+          },
+          "variants": [],
+          "reviews": [],
+          "averageRating": 4.7,
+          "reviewCount": 203,
+          "isActive": true,
+          "isFeatured": true
+        },
+        {
+          "_id": "68b640910202f6588021459f",
+          "name": "Modern Desk Lamp",
+          "slug": "modern-desk-lamp",
+          "description": "Sleek modern desk lamp with adjustable brightness and USB charging port.",
+          "shortDescription": "Modern desk lamp with USB charging",
+          "price": 79.99,
+          "images": [
+            {
+              "url": "/products/desk-lamp-1.jpg",
+              "alt": "Modern Desk Lamp - White",
+              "width": 800,
+              "height": 800,
+              "isPrimary": true
+            }
+          ],
+          "category": "68b640910202f6588021459a",
+          "tags": [
+            "home",
+            "lighting",
+            "desk"
+          ],
+          "inventory": {
+            "quantity": 25,
+            "lowStockThreshold": 5,
+            "sku": "DL-001",
+            "trackInventory": true
+          },
+          "seo": {
+            "title": "Modern Desk Lamp - Sleek Lighting Solution",
+            "description": "Illuminate your workspace with our modern desk lamp featuring adjustable brightness.",
+            "keywords": [
+              "desk lamp",
+              "lighting",
+              "modern",
+              "USB charging"
+            ]
+          },
+          "variants": [],
+          "reviews": [],
+          "averageRating": 4.4,
+          "reviewCount": 67,
+          "isActive": true,
+          "isFeatured": true
+        }
+      ],
+      "count": 4,
+      "exportedAt": "2025-09-02T10:18:24.865Z"
+    },
+    {
+      "collection": "users",
+      "documents": [
+        {
+          "_id": "68b640910202f658802145a0",
+          "email": "test@example.com",
+          "firstName": "John",
+          "lastName": "Doe",
+          "addresses": [],
+          "orders": [],
+          "wishlist": [],
+          "role": "customer",
+          "isActive": true,
+          "emailVerified": false,
+          "createdAt": "2025-09-02T00:55:45.324Z",
+          "updatedAt": "2025-09-02T00:55:45.324Z"
+        },
+        {
+          "_id": "68b6ad75156a3aca2fed94bb",
+          "email": "chenner@hotmail.com",
+          "firstName": "Kim",
+          "lastName": "Chen",
+          "addresses": [],
+          "orders": [],
+          "wishlist": [],
+          "role": "customer",
+          "isActive": true,
+          "emailVerified": false,
+          "createdAt": "2025-09-02T08:40:21.519Z",
+          "updatedAt": "2025-09-02T08:40:21.519Z",
+          "__v": 0
+        },
+        {
+          "_id": "68b6b256e2c2af472c50910c",
+          "email": "test@test.com",
+          "firstName": "John",
+          "lastName": "Doe",
+          "addresses": [],
+          "orders": [],
+          "wishlist": [],
+          "role": "customer",
+          "isActive": true,
+          "emailVerified": false,
+          "createdAt": "2025-09-02T09:01:10.320Z",
+          "updatedAt": "2025-09-02T09:01:10.320Z",
+          "__v": 0
+        },
+        {
+          "_id": "68b6b5c7518511d2f2b8831b",
+          "email": "test2@test.com",
+          "firstName": "test",
+          "lastName": "test",
+          "addresses": [],
+          "orders": [],
+          "wishlist": [],
+          "role": "customer",
+          "isActive": true,
+          "emailVerified": false,
+          "createdAt": "2025-09-02T09:15:51.009Z",
+          "updatedAt": "2025-09-02T09:15:51.009Z",
+          "__v": 0
+        },
+        {
+          "_id": "68b6b6da518511d2f2b88323",
+          "email": "test3@test.com",
+          "firstName": "john",
+          "lastName": "doe",
+          "addresses": [],
+          "orders": [],
+          "wishlist": [],
+          "role": "customer",
+          "isActive": true,
+          "emailVerified": false,
+          "createdAt": "2025-09-02T09:20:26.156Z",
+          "updatedAt": "2025-09-02T09:20:26.156Z",
+          "__v": 0
+        },
+        {
+          "_id": "68b6b82c518511d2f2b8832e",
+          "email": "test4@test.com",
+          "firstName": "test",
+          "lastName": "test",
+          "addresses": [],
+          "orders": [],
+          "wishlist": [],
+          "role": "customer",
+          "isActive": true,
+          "emailVerified": false,
+          "createdAt": "2025-09-02T09:26:04.395Z",
+          "updatedAt": "2025-09-02T09:26:04.395Z",
+          "__v": 0
+        },
+        {
+          "_id": "68b6b8c2518511d2f2b88331",
+          "email": "test@test5.com",
+          "firstName": "test",
+          "lastName": "test",
+          "addresses": [],
+          "orders": [],
+          "wishlist": [],
+          "role": "customer",
+          "isActive": true,
+          "emailVerified": false,
+          "createdAt": "2025-09-02T09:28:34.506Z",
+          "updatedAt": "2025-09-02T09:28:34.506Z",
+          "__v": 0
+        },
+        {
+          "_id": "68b6baab518511d2f2b88336",
+          "email": "test6@test.com",
+          "firstName": "test",
+          "lastName": "test",
+          "addresses": [],
+          "orders": [],
+          "wishlist": [],
+          "role": "customer",
+          "isActive": true,
+          "emailVerified": false,
+          "createdAt": "2025-09-02T09:36:43.429Z",
+          "updatedAt": "2025-09-02T09:36:43.429Z",
+          "__v": 0
+        },
+        {
+          "_id": "68b6bc5f518511d2f2b8833a",
+          "email": "test7@test.com",
+          "firstName": "test",
+          "lastName": "test",
+          "addresses": [],
+          "orders": [],
+          "wishlist": [],
+          "role": "customer",
+          "isActive": true,
+          "emailVerified": false,
+          "createdAt": "2025-09-02T09:43:59.583Z",
+          "updatedAt": "2025-09-02T09:43:59.583Z",
+          "__v": 0
+        },
+        {
+          "_id": "68b6bd51518511d2f2b88340",
+          "email": "test8@test.com",
+          "firstName": "test",
+          "lastName": "teste",
+          "addresses": [],
+          "orders": [],
+          "wishlist": [],
+          "role": "customer",
+          "isActive": true,
+          "emailVerified": false,
+          "createdAt": "2025-09-02T09:48:01.296Z",
+          "updatedAt": "2025-09-02T09:48:01.296Z",
+          "__v": 0
+        },
+        {
+          "_id": "68b6bf7d808c1a4435f41666",
+          "email": "test1@test.com",
+          "password": "$2a$10$D6fal9w35E3ikuV3BvRYWe5NG2stbu06aihRQYgJBV8ohB0y1/WHG",
+          "firstName": "test",
+          "lastName": "test",
+          "addresses": [],
+          "orders": [],
+          "wishlist": [],
+          "role": "customer",
+          "isActive": true,
+          "emailVerified": false,
+          "createdAt": "2025-09-02T09:57:17.573Z",
+          "updatedAt": "2025-09-02T09:57:17.573Z",
+          "__v": 0
+        },
+        {
+          "_id": "68b6c2c0f200ddf07382e066",
+          "email": "test9@test.com",
+          "password": "$2a$10$w9NoZEkjF3hPnZuDWsTwded5v7kB/2TNxVjZqSFruHalT1e3fYEr6",
+          "firstName": "test9",
+          "lastName": "test",
+          "addresses": [],
+          "orders": [],
+          "wishlist": [],
+          "role": "customer",
+          "isActive": true,
+          "emailVerified": false,
+          "createdAt": "2025-09-02T10:11:12.142Z",
+          "updatedAt": "2025-09-02T10:11:12.142Z",
+          "__v": 0
+        }
+      ],
+      "count": 12,
+      "exportedAt": "2025-09-02T10:18:24.891Z"
+    },
+    {
+      "collection": "categories",
+      "documents": [
+        {
+          "_id": "68b640910202f65880214598",
+          "name": "Electronics",
+          "slug": "electronics",
+          "description": "Latest gadgets and electronic devices",
+          "image": "/categories/electronics.jpg",
+          "seo": {
+            "title": "Electronics - Latest Gadgets and Devices",
+            "description": "Shop the latest electronics including smartphones, laptops, and gadgets with fast shipping.",
+            "keywords": [
+              "electronics",
+              "gadgets",
+              "smartphones",
+              "laptops"
+            ]
+          },
+          "isActive": true
+        },
+        {
+          "_id": "68b640910202f65880214599",
+          "name": "Clothing",
+          "slug": "clothing",
+          "description": "Fashion apparel for men and women",
+          "image": "/categories/clothing.jpg",
+          "seo": {
+            "title": "Clothing - Fashion Apparel for Everyone",
+            "description": "Discover trendy clothing for men and women with great prices and quality.",
+            "keywords": [
+              "clothing",
+              "fashion",
+              "apparel",
+              "men",
+              "women"
+            ]
+          },
+          "isActive": true
+        },
+        {
+          "_id": "68b640910202f6588021459a",
+          "name": "Home & Garden",
+          "slug": "home-garden",
+          "description": "Everything for your home and garden",
+          "image": "/categories/home-garden.jpg",
+          "seo": {
+            "title": "Home & Garden - Transform Your Space",
+            "description": "Find furniture, decor, and garden supplies to create your perfect home.",
+            "keywords": [
+              "home",
+              "garden",
+              "furniture",
+              "decor",
+              "garden supplies"
+            ]
+          },
+          "isActive": true
+        },
+        {
+          "_id": "68b640910202f6588021459b",
+          "name": "Sports",
+          "slug": "sports",
+          "description": "Sports equipment and activewear",
+          "image": "/categories/sports.jpg",
+          "seo": {
+            "title": "Sports - Equipment and Activewear",
+            "description": "Get the best sports equipment and activewear for your favorite activities.",
+            "keywords": [
+              "sports",
+              "equipment",
+              "activewear",
+              "fitness",
+              "athletics"
+            ]
+          },
+          "isActive": true
+        }
+      ],
+      "count": 4,
+      "exportedAt": "2025-09-02T10:18:24.917Z"
+    },
+    {
+      "collection": "orders",
+      "documents": [],
+      "count": 0,
+      "exportedAt": "2025-09-02T10:18:24.941Z"
+    }
+  ]
+}

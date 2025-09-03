@@ -1,0 +1,49 @@
+{
+  "id": "demo-store",
+  "name": "Demo Fashion Store",
+  "domain": "demo-fashion-store.com",
+  "database": "ecommerce_demo_store",
+  "theme": {
+    "primary": "#8B5CF6",
+    "secondary": "#64748B",
+    "accent": "#F59E0B",
+    "background": "#FFFFFF",
+    "text": "#1F2937"
+  },
+  "features": {
+    "blog": false,
+    "reviews": true,
+    "wishlist": true,
+    "multiCurrency": false,
+    "multiLanguage": false
+  },
+  "seo": {
+    "title": "Demo Fashion Store - Trendy Clothing Online",
+    "description": "Discover the latest fashion trends at Demo Fashion Store. Shop trendy clothing, accessories, and more with fast shipping.",
+    "keywords": ["fashion", "clothing", "trendy", "online store", "shopping"]
+  },
+  "payment": {
+    "stripe": {
+      "publishableKey": "pk_test_your_stripe_publishable_key",
+      "secretKey": "sk_test_your_stripe_secret_key"
+    }
+  },
+  "email": {
+    "smtp": {
+      "host": "smtp.gmail.com",
+      "port": 587,
+      "secure": false,
+      "auth": {
+        "user": "your-email@gmail.com",
+        "pass": "your-app-password"
+      }
+    },
+    "from": "noreply@demo-fashion-store.com"
+  },
+  "analytics": {
+    "googleAnalyticsId": "GA_MEASUREMENT_ID",
+    "facebookPixelId": "YOUR_PIXEL_ID"
+  }
+}
+
+

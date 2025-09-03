@@ -1,0 +1,211 @@
+import { Schema, model, models } from 'mongoose'
+
+export interface IProductImage {
+  url: string
+  alt: string
+  width: number
+  height: number
+  isPrimary: boolean
+}
+
+export interface IProductVariant {
+  name: string
+  value: string
+  price?: number
+  inventory: number
+  sku: string
+}
+
+export interface IInventory {
+  quantity: number
+  lowStockThreshold: number
+  sku: string
+  trackInventory: boolean
+}
+
+export interface ISEO {
+  title: string
+  description: string
+  keywords: string[]
+  canonical?: string
+  ogImage?: string
+  twitterImage?: string
+  noIndex?: boolean
+}
+
+export interface IProduct {
+  _id?: string
+  name: string
+  slug: string
+  description: string
+  shortDescription?: string
+  price: number
+  originalPrice?: number
+  images: IProductImage[]
+  category: Schema.Types.ObjectId
+  categories: Schema.Types.ObjectId[]
+  tags: string[]
+  inventory: IInventory
+  seo: ISEO
+  variants?: IProductVariant[]
+  reviews: Schema.Types.ObjectId[]
+  averageRating: number
+  reviewCount: number
+  isActive: boolean
+  isFeatured: boolean
+  createdAt?: Date
+  updatedAt?: Date
+}
+
+const ProductImageSchema = new Schema<IProductImage>({
+  url: { type: String, required: true },
+  alt: { type: String, required: true },
+  width: { type: Number, required: true },
+  height: { type: Number, required: true },
+  isPrimary: { type: Boolean, default: false },
+})
+
+const ProductVariantSchema = new Schema<IProductVariant>({
+  name: { type: String, required: true },
+  value: { type: String, required: true },
+  price: { type: Number },
+  inventory: { type: Number, required: true, min: 0 },
+  sku: { type: String, required: true },
+})
+
+const InventorySchema = new Schema<IInventory>({
+  quantity: { type: Number, required: true, min: 0 },
+  lowStockThreshold: { type: Number, default: 5 },
+  sku: { type: String, required: true },
+  trackInventory: { type: Boolean, default: true },
+})
+
+const SEOSchema = new Schema<ISEO>({
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  keywords: [{ type: String }],
+  canonical: { type: String },
+  ogImage: { type: String },
+  twitterImage: { type: String },
+  noIndex: { type: Boolean, default: false },
+})
+
+const ProductSchema = new Schema<IProduct>({
+  name: {
+    type: String,
+    required: [true, 'Product name is required'],
+    trim: true,
+    maxlength: [100, 'Product name cannot exceed 100 characters']
+  },
+  slug: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    lowercase: true,
+  },
+  description: {
+    type: String,
+    required: [true, 'Product description is required'],
+  },
+  shortDescription: {
+    type: String,
+    maxlength: [300, 'Short description cannot exceed 300 characters']
+  },
+  price: {
+    type: Number,
+    required: [true, 'Product price is required'],
+    min: [0, 'Price must be positive']
+  },
+  originalPrice: {
+    type: Number,
+    min: [0, 'Original price must be positive']
+  },
+  images: [ProductImageSchema],
+  category: {
+    type: Schema.Types.ObjectId,
+    ref: 'Category',
+    required: [true, 'Primary category is required']
+  },
+  categories: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Category'
+  }],
+  tags: [{ type: String, trim: true }],
+  inventory: InventorySchema,
+  seo: SEOSchema,
+  variants: [ProductVariantSchema],
+  reviews: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Review'
+  }],
+  averageRating: {
+    type: Number,
+    min: 0,
+    max: 5,
+    default: 0
+  },
+  reviewCount: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  },
+  isFeatured: {
+    type: Boolean,
+    default: false
+  }
+}, {
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
+})
+
+// Indexes for performance
+ProductSchema.index({ name: 'text', description: 'text' })
+ProductSchema.index({ slug: 1 })
+ProductSchema.index({ category: 1 })
+ProductSchema.index({ categories: 1 })
+ProductSchema.index({ isActive: 1 })
+ProductSchema.index({ isFeatured: 1 })
+ProductSchema.index({ price: 1 })
+ProductSchema.index({ averageRating: -1 })
+ProductSchema.index({ createdAt: -1 })
+
+// Virtual for discount percentage
+ProductSchema.virtual('discountPercentage').get(function() {
+  if (this.originalPrice && this.originalPrice > this.price) {
+    return Math.round(((this.originalPrice - this.price) / this.originalPrice) * 100)
+  }
+  return 0
+})
+
+// Virtual for stock status
+ProductSchema.virtual('stockStatus').get(function() {
+  if (!this.inventory.trackInventory) return 'in_stock'
+  if (this.inventory.quantity === 0) return 'out_of_stock'
+  if (this.inventory.quantity <= this.inventory.lowStockThreshold) return 'low_stock'
+  return 'in_stock'
+})
+
+// Pre-save middleware to generate slug
+ProductSchema.pre('save', function(next) {
+  if (this.isModified('name') && !this.slug) {
+    this.slug = this.name
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9 ]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim('-')
+  }
+  next()
+})
+
+const Product = models.Product || model<IProduct>('Product', ProductSchema)
+
+export default Product
+
+

@@ -1,0 +1,140 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Custom base styles */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-sans text-gray-900 bg-white;
+  }
+
+  * {
+    @apply box-border;
+  }
+
+  /* Focus styles for accessibility */
+  *:focus {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2;
+  }
+
+  /* Fix cursor issues - ensure proper cursor inheritance */
+  * {
+    cursor: inherit;
+  }
+
+  a, button, [role="button"], input[type="submit"], input[type="button"] {
+    cursor: pointer;
+  }
+
+  /* Reset cursor for non-interactive elements */
+  div, span, p, h1, h2, h3, h4, h5, h6, section, article, aside, nav, header, footer, main {
+    cursor: auto;
+  }
+
+  /* Ensure images are not clickable by default */
+  img {
+    cursor: auto;
+    pointer-events: auto;
+  }
+
+  /* Fix Link component sizing issues */
+  a {
+    display: inline;
+    width: auto;
+    height: auto;
+  }
+
+  /* Ensure proper containment of clickable areas */
+  .clickable-area {
+    cursor: pointer;
+  }
+
+  .non-clickable {
+    cursor: default !important;
+    pointer-events: none;
+  }
+
+  /* Fix any Link components that might be extending beyond their content */
+  a:not([class]) {
+    display: inline;
+    width: auto;
+    height: auto;
+    cursor: pointer;
+  }
+
+  /* Ensure card containers are not clickable by default */
+  .card, .product-card, .category-card {
+    cursor: default;
+  }
+
+  /* Only make specific elements within cards clickable */
+  .card a, .product-card a, .category-card a {
+    cursor: pointer;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
+  }
+}
+
+/* Custom component styles */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+  }
+
+  .btn-secondary {
+    @apply btn bg-secondary-100 text-secondary-900 hover:bg-secondary-200 focus:ring-secondary-500;
+  }
+
+  .btn-outline {
+    @apply btn border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-500;
+  }
+
+  .input {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+  }
+
+  .loading-spinner {
+    @apply animate-spin rounded-full h-6 w-6 border-2 border-primary-500 border-t-transparent;
+  }
+}
+
+/* Animation utilities */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+.bounce-in {
+  animation: bounceIn 0.6s ease-out;
+}
+
