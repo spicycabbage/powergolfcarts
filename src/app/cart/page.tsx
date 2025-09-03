@@ -116,7 +116,9 @@ export default function CartPage() {
                             </Link>
                             
                             {item.variant && (
-                              <p className="text-sm text-gray-600 mt-1">Variant: {item.variant}</p>
+                              <p className="text-sm text-gray-600 mt-1">
+                                {item.variant.name}: {item.variant.value}
+                              </p>
                             )}
                             
                             <p className="text-sm text-gray-600 mt-1">SKU: {item.product.sku}</p>
