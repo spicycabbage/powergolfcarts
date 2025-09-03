@@ -14,7 +14,14 @@ const featuredProducts = [
     price: 199.99,
     originalPrice: 249.99,
     images: [
-      { url: 'https://picsum.photos/400/400?random=1', alt: 'Wireless Bluetooth Headphones' }
+      { 
+        _id: '1',
+        url: 'https://picsum.photos/400/400?random=1', 
+        alt: 'Wireless Bluetooth Headphones',
+        width: 400,
+        height: 400,
+        isPrimary: true
+      }
     ],
     averageRating: 4.5,
     reviewCount: 128,
@@ -26,7 +33,14 @@ const featuredProducts = [
     price: 299.99,
     originalPrice: 349.99,
     images: [
-      { url: 'https://picsum.photos/400/400?random=2', alt: 'Smart Fitness Watch' }
+      { 
+        _id: '2',
+        url: 'https://picsum.photos/400/400?random=2', 
+        alt: 'Smart Fitness Watch',
+        width: 400,
+        height: 400,
+        isPrimary: true
+      }
     ],
     averageRating: 4.3,
     reviewCount: 95,
@@ -38,7 +52,14 @@ const featuredProducts = [
     price: 29.99,
     originalPrice: 39.99,
     images: [
-      { url: 'https://picsum.photos/400/400?random=3', alt: 'Organic Cotton T-Shirt' }
+      { 
+        _id: '3',
+        url: 'https://picsum.photos/400/400?random=3', 
+        alt: 'Organic Cotton T-Shirt',
+        width: 400,
+        height: 400,
+        isPrimary: true
+      }
     ],
     averageRating: 4.7,
     reviewCount: 203,
@@ -50,7 +71,14 @@ const featuredProducts = [
     price: 79.99,
     originalPrice: 99.99,
     images: [
-      { url: 'https://picsum.photos/400/400?random=4', alt: 'Modern Desk Lamp' }
+      { 
+        _id: '4',
+        url: 'https://picsum.photos/400/400?random=4', 
+        alt: 'Modern Desk Lamp',
+        width: 400,
+        height: 400,
+        isPrimary: true
+      }
     ],
     averageRating: 4.4,
     reviewCount: 67,
