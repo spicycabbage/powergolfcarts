@@ -7,6 +7,9 @@ interface AddressManagementProps {
   userId?: string
 }
 
+// Extended address type that includes database fields
+type AddressWithId = IAddress & { _id?: string }
+
 interface AddressFormData {
   type: 'shipping' | 'billing'
   firstName: string
@@ -23,7 +26,7 @@ interface AddressFormData {
 }
 
 export default function AddressManagement({ userId }: AddressManagementProps) {
-  const [addresses, setAddresses] = useState<IAddress[]>([])
+  const [addresses, setAddresses] = useState<AddressWithId[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -100,7 +103,7 @@ export default function AddressManagement({ userId }: AddressManagementProps) {
     setBillingSameAsShipping(false)
   }
 
-  const handleEdit = (address: IAddress) => {
+  const handleEdit = (address: AddressWithId) => {
     setFormData({
       type: address.type,
       firstName: address.firstName,
