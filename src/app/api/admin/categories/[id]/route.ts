@@ -7,7 +7,7 @@ import Category from '@/lib/models/Category'
 // GET - Fetch single category
 export async function GET(
   request: NextRequest,
-  context: { params: Record<string, string | string[]> }
+  { params }: any
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -18,8 +18,7 @@ export async function GET(
 
     await connectToDatabase()
 
-    const { id } = context.params as { id: string }
-    const category = await Category.findById(id)
+    const category = await Category.findById(params.id)
       .populate('children')
       .populate('parent')
 
@@ -37,7 +36,7 @@ export async function GET(
 // PUT - Update category
 export async function PUT(
   request: NextRequest,
-  context: { params: Record<string, string | string[]> }
+  { params }: any
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -50,9 +49,8 @@ export async function PUT(
 
     await connectToDatabase()
 
-    const { id } = context.params as { id: string }
     const category = await Category.findByIdAndUpdate(
-      id,
+      params.id,
       categoryData,
       { new: true, runValidators: true }
     )
@@ -71,7 +69,7 @@ export async function PUT(
 // DELETE - Delete category
 export async function DELETE(
   request: NextRequest,
-  context: { params: Record<string, string | string[]> }
+  { params }: any
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -83,8 +81,7 @@ export async function DELETE(
     await connectToDatabase()
 
     // Check if category has children
-    const { id } = context.params as { id: string }
-    const category = await Category.findById(id).populate('children')
+    const category = await Category.findById(params.id).populate('children')
     
     if (!category) {
       return NextResponse.json({ error: 'Category not found' }, { status: 404 })
@@ -104,7 +101,7 @@ export async function DELETE(
       })
     }
 
-    await Category.findByIdAndDelete(id)
+    await Category.findByIdAndDelete(params.id)
 
     return NextResponse.json({ message: 'Category deleted successfully' })
   } catch (error) {
