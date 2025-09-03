@@ -24,8 +24,8 @@ async function findCategoryByPath(slugs: string[]) {
     }
     const doc = await Category.findOne(query).select('_id name slug description image parent').lean()
     if (!doc) return null
-    chain.push({ _id: String(doc._id), name: doc.name, slug: doc.slug })
-    parentId = doc._id
+    chain.push({ _id: String((doc as any)._id), name: (doc as any).name, slug: (doc as any).slug })
+    parentId = (doc as any)._id
   }
 
   // Return the final category and the full chain for breadcrumbs
