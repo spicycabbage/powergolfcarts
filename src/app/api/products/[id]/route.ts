@@ -6,12 +6,12 @@ import Review from '@/lib/models/Review'
 // GET /api/products/[id] - Get a single product
 export async function GET(
   request: NextRequest,
-  context: { params: Record<string, string | string[]> }
+  { params }: any
 ) {
   try {
     await connectToDatabase()
 
-    const { id } = context.params as { id: string }
+    const { id } = params as { id: string }
     const product = await Product.findById(id)
       .populate('category', 'name slug description')
       .populate('categories', 'name slug description')
@@ -32,7 +32,7 @@ export async function GET(
     }
 
     // Get review statistics
-    const reviewStats = await Review.getProductRatingStats(params.id)
+    const reviewStats = await Review.getProductRatingStats(id)
 
     // Add virtual fields
     const productWithVirtuals = {
@@ -66,7 +66,7 @@ export async function GET(
 // PUT /api/products/[id] - Update a product (Admin only)
 export async function PUT(
   request: NextRequest,
-  context: { params: Record<string, string | string[]> }
+  { params }: any
 ) {
   try {
     await connectToDatabase()
@@ -74,7 +74,7 @@ export async function PUT(
     const body = await request.json()
     const updateData = { ...body, updatedAt: new Date() }
 
-    const { id } = context.params as { id: string }
+    const { id } = params as { id: string }
     const product = await Product.findByIdAndUpdate(
       id,
       updateData,
@@ -112,12 +112,12 @@ export async function PUT(
 // DELETE /api/products/[id] - Delete a product (Admin only)
 export async function DELETE(
   request: NextRequest,
-  context: { params: Record<string, string | string[]> }
+  { params }: any
 ) {
   try {
     await connectToDatabase()
 
-    const { id } = context.params as { id: string }
+    const { id } = params as { id: string }
     const product = await Product.findByIdAndDelete(id)
 
     if (!product) {
