@@ -30,9 +30,9 @@ export function ProductList({ category, limit = 12 }: ProductListProps) {
       queryFn={fetchProducts}
       staleTime={5 * 60 * 1000} // 5 minutes
     >
-      {(response) => (
+      {(data) => (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {response.data?.map((product: Product) => (
+          {data?.map((product: Product) => (
             <ProductCard key={product._id} product={product} />
           ))}
         </div>
