@@ -49,7 +49,7 @@ export async function PUT(
     }
 
     // Find the address to update
-    const addressIndex = user.addresses.findIndex(addr => addr._id?.toString() === addressId)
+    const addressIndex = user.addresses.findIndex((addr: any) => addr._id?.toString() === addressId)
 
     if (addressIndex === -1) {
       return NextResponse.json(
@@ -127,7 +127,7 @@ export async function DELETE(
     }
 
     // Find and remove the address
-    const addressIndex = user.addresses.findIndex(addr => addr._id?.toString() === addressId)
+    const addressIndex = user.addresses.findIndex((addr: any) => addr._id?.toString() === addressId)
 
     if (addressIndex === -1) {
       return NextResponse.json(
