@@ -97,9 +97,9 @@ export default async function NestedCategoryPage({ params }: { params: Promise<P
 
       <section className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{current.name}</h1>
-          {current.description && (
-            <p className="text-gray-600">{current.description}</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{(current as any).name}</h1>
+          {(current as any).description && (
+            <p className="text-gray-600">{(current as any).description}</p>
           )}
         </div>
       </section>
