@@ -238,7 +238,7 @@ OrderSchema.statics.getOrderStats = async function(userId?: string) {
     }
   }
 
-  const statusCounts = stats[0].ordersByStatus.reduce((acc, status) => {
+  const statusCounts = stats[0].ordersByStatus.reduce((acc: any, status: any) => {
     acc[status] = (acc[status] || 0) + 1
     return acc
   }, {})
