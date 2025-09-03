@@ -332,7 +332,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                             <Star
                               key={i}
                               className={`w-4 h-4 ${
-                                i < Math.floor(product.rating)
+                                i < Math.floor(product.averageRating)
                                   ? 'text-yellow-400 fill-current'
                                   : 'text-gray-300'
                             }`}
