@@ -4,13 +4,15 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Star, ShoppingCart } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
+import { Product, Category } from '@/types'
 
 // Sample featured products
-const featuredProducts = [
+const featuredProducts: Product[] = [
   {
     _id: '1',
     name: 'Wireless Bluetooth Headphones',
     slug: 'wireless-bluetooth-headphones',
+    description: 'High-quality wireless headphones with noise cancellation',
     price: 199.99,
     originalPrice: 249.99,
     images: [
@@ -23,13 +25,25 @@ const featuredProducts = [
         isPrimary: true
       }
     ],
+    category: { _id: 'cat1', name: 'Electronics', slug: 'electronics' } as Category,
+    categories: [],
+    tags: ['wireless', 'bluetooth', 'headphones'],
+    inventory: { quantity: 50, lowStockThreshold: 10, sku: 'WBH-001', trackInventory: true },
+    seo: { title: 'Wireless Bluetooth Headphones', description: 'Buy wireless bluetooth headphones', keywords: [] },
+    variants: [],
+    reviews: [],
     averageRating: 4.5,
     reviewCount: 128,
+    isActive: true,
+    isFeatured: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
   {
     _id: '2',
     name: 'Smart Fitness Watch',
     slug: 'smart-fitness-watch',
+    description: 'Advanced fitness tracking with heart rate monitor',
     price: 299.99,
     originalPrice: 349.99,
     images: [
@@ -42,13 +56,25 @@ const featuredProducts = [
         isPrimary: true
       }
     ],
+    category: { _id: 'cat1', name: 'Electronics', slug: 'electronics' } as Category,
+    categories: [],
+    tags: ['fitness', 'smartwatch', 'health'],
+    inventory: { quantity: 30, lowStockThreshold: 5, sku: 'SFW-001', trackInventory: true },
+    seo: { title: 'Smart Fitness Watch', description: 'Buy smart fitness watch', keywords: [] },
+    variants: [],
+    reviews: [],
     averageRating: 4.3,
     reviewCount: 95,
+    isActive: true,
+    isFeatured: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
   {
     _id: '3',
     name: 'Organic Cotton T-Shirt',
     slug: 'organic-cotton-t-shirt',
+    description: '100% organic cotton, sustainable and comfortable',
     price: 29.99,
     originalPrice: 39.99,
     images: [
@@ -61,13 +87,25 @@ const featuredProducts = [
         isPrimary: true
       }
     ],
+    category: { _id: 'cat2', name: 'Clothing', slug: 'clothing' } as Category,
+    categories: [],
+    tags: ['organic', 'cotton', 'sustainable'],
+    inventory: { quantity: 100, lowStockThreshold: 20, sku: 'OCT-001', trackInventory: true },
+    seo: { title: 'Organic Cotton T-Shirt', description: 'Buy organic cotton t-shirt', keywords: [] },
+    variants: [],
+    reviews: [],
     averageRating: 4.7,
     reviewCount: 203,
+    isActive: true,
+    isFeatured: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
   {
     _id: '4',
     name: 'Modern Desk Lamp',
     slug: 'modern-desk-lamp',
+    description: 'LED desk lamp with adjustable brightness and color temperature',
     price: 79.99,
     originalPrice: 99.99,
     images: [
@@ -80,24 +118,27 @@ const featuredProducts = [
         isPrimary: true
       }
     ],
+    category: { _id: 'cat3', name: 'Home & Garden', slug: 'home-garden' } as Category,
+    categories: [],
+    tags: ['lamp', 'led', 'modern'],
+    inventory: { quantity: 25, lowStockThreshold: 5, sku: 'MDL-001', trackInventory: true },
+    seo: { title: 'Modern Desk Lamp', description: 'Buy modern desk lamp', keywords: [] },
+    variants: [],
+    reviews: [],
     averageRating: 4.4,
     reviewCount: 67,
+    isActive: true,
+    isFeatured: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   }
 ]
 
 export function FeaturedProducts() {
   const { addItem } = useCart()
 
-  const handleAddToCart = (product: typeof featuredProducts[0]) => {
-    addItem({
-      _id: product._id,
-      name: product.name,
-      slug: product.slug,
-      price: product.price,
-      images: product.images,
-      averageRating: product.averageRating,
-      reviewCount: product.reviewCount,
-    })
+  const handleAddToCart = (product: Product) => {
+    addItem(product)
   }
 
   return (
