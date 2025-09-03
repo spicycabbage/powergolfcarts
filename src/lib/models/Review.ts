@@ -169,7 +169,7 @@ ReviewSchema.statics.getProductRatingStats = async function(productId: string) {
     }
   }
 
-  const distribution = stats[0].ratingDistribution.reduce((acc, rating) => {
+  const distribution = stats[0].ratingDistribution.reduce((acc: any, rating: any) => {
     acc[rating] = (acc[rating] || 0) + 1
     return acc
   }, { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 })
