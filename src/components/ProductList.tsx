@@ -25,14 +25,14 @@ export function ProductList({ category, limit = 12 }: ProductListProps) {
   }
 
   return (
-    <ApiDataFetcher
+    <ApiDataFetcher<Product[]>
       queryKey={['products', category || '', limit.toString()]}
       queryFn={fetchProducts}
       staleTime={5 * 60 * 1000} // 5 minutes
     >
       {(data) => (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {data?.map((product: Product) => (
+          {data?.map((product) => (
             <ProductCard key={product._id} product={product} />
           ))}
         </div>
@@ -42,7 +42,7 @@ export function ProductList({ category, limit = 12 }: ProductListProps) {
 }
 
 interface ProductCardProps {
-  product: Product & { rating?: number; isNew?: boolean; inStock?: boolean }
+  product: Product
 }
 
 function ProductCard({ product }: ProductCardProps) {
