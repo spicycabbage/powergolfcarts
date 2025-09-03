@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
 
       // Update primary nav while preserving non-category items
       navigationConfig.primaryNav = [
-        ...navigationConfig.primaryNav.filter(item => !item.categoryId),
+        ...navigationConfig.primaryNav.filter((item: any) => !item.categoryId),
         ...categoryNavItems
       ]
     }
