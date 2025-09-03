@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 
     // If this is set as default, unset other defaults of the same type
     if (isDefault) {
-      user.addresses = user.addresses.map(addr => ({
+      user.addresses = user.addresses.map((addr: any) => ({
         ...addr,
         isDefault: addr.type === type ? false : addr.isDefault
       }))
