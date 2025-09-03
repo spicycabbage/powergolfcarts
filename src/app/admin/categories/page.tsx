@@ -14,6 +14,7 @@ import {
   Folder,
   FolderOpen
 } from 'lucide-react'
+import SeoFields from '@/components/seo/SeoFields'
 
 interface Category {
   _id: string
@@ -227,7 +228,7 @@ export default function CategoriesAdmin() {
       .replace(/[^a-zA-Z0-9 ]/g, '')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
-      .trim('-')
+      .replace(/^-+|-+$/g, '')  // Remove leading and trailing hyphens
   }
 
   const handleNameChange = (name: string) => {
@@ -640,57 +641,11 @@ export default function CategoriesAdmin() {
               {/* SEO Section */}
               <div className="border-t pt-6">
                 <h3 className="text-lg font-medium text-gray-900 mb-4">SEO Settings</h3>
-                
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Keyphrase
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.seo.keywords.join(', ')}
-                      onChange={(e) => setFormData({
-                        ...formData,
-                        seo: {
-                          ...formData.seo,
-                          keywords: e.target.value.split(',').map(k => k.trim()).filter(k => k)
-                        }
-                      })}
-                      placeholder="e.g., wireless headphones"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      SEO Title
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.seo.title}
-                      onChange={(e) => setFormData({
-                        ...formData,
-                        seo: { ...formData.seo, title: e.target.value }
-                      })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Meta Description
-                    </label>
-                    <textarea
-                      value={formData.seo.description}
-                      onChange={(e) => setFormData({
-                        ...formData,
-                        seo: { ...formData.seo, description: e.target.value }
-                      })}
-                      rows={2}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    />
-                  </div>
-                </div>
+                <SeoFields
+                  seo={formData.seo as any}
+                  onChange={(seo) => setFormData({ ...formData, seo })}
+                  keyphraseLabel="Focus Keyphrase"
+                />
               </div>
 
               <div className="flex justify-end space-x-4 pt-6 border-t">
