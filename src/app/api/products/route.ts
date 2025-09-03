@@ -133,20 +133,22 @@ export async function POST(request: NextRequest) {
       categories,
       tags,
       inventory,
-      // Normalize SEO: store Focus Keyphrase as first keyword
-      seo: {
-        title: seo && seo.title ? seo.title : name,
-        description: seo && seo.description ? seo.description : (shortDescription || ''),
-        keywords: seo && Array.isArray(seo.keywords)
-          ? seo.keywords
-          : (seo && typeof seo.keywords === 'string' && seo.keywords.trim() !== ''
-              ? [seo.keywords]
-              : [])
-      },
+      seo,
       variants,
       isActive,
       isFeatured
     } = body
+
+    // Normalize SEO: store Focus Keyphrase as first keyword
+    const normalizedSeo = {
+      title: seo && seo.title ? seo.title : name,
+      description: seo && seo.description ? seo.description : (shortDescription || ''),
+      keywords: seo && Array.isArray(seo.keywords)
+        ? seo.keywords
+        : (seo && typeof seo.keywords === 'string' && seo.keywords.trim() !== ''
+            ? [seo.keywords]
+            : [])
+    }
 
     // Validate required fields using utility
     const validationError = await validateRequiredFields(body, ['name', 'description', 'price', 'category'])
@@ -154,7 +156,7 @@ export async function POST(request: NextRequest) {
       return createErrorResponse(validationError, 400)
     }
 
-    if (!seo?.title || !seo?.description) {
+    if (!normalizedSeo.title || !normalizedSeo.description) {
       return createErrorResponse('SEO title and description are required', 400)
     }
 
@@ -181,7 +183,7 @@ export async function POST(request: NextRequest) {
         sku: inventory?.sku || '',
         trackInventory: inventory?.trackInventory ?? true
       },
-      seo,
+      seo: normalizedSeo,
       variants: variants || [],
       isActive: isActive ?? true,
       isFeatured: isFeatured ?? false

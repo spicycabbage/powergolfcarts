@@ -80,6 +80,4 @@ export default function SeoFields({ seo, onChange, titleLabel = 'SEO Title', des
   )
 }
 
-export default SeoFields
-
 
