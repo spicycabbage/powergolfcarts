@@ -121,7 +121,11 @@ export default function CartPage() {
                               </p>
                             )}
                             
-                            <p className="text-sm text-gray-600 mt-1">SKU: {item.product.sku}</p>
+                            {(item.variant?.sku || item.product.inventory?.sku) && (
+                              <p className="text-sm text-gray-600 mt-1">
+                                SKU: {item.variant?.sku || item.product.inventory?.sku}
+                              </p>
+                            )}
                             
                             <div className="flex items-center mt-3 space-x-4">
                               <span className="text-lg font-semibold text-gray-900">
