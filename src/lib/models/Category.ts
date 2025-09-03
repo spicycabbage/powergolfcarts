@@ -115,7 +115,7 @@ CategorySchema.pre('save', function(next) {
 // Static method to get category tree
 CategorySchema.statics.getCategoryTree = async function() {
   const categories = await this.find({ isActive: true }).populate('children')
-  const buildTree = (categories: any[], parent?: string) => {
+  const buildTree = (categories: any[], parent?: string): any[] => {
     return categories
       .filter(cat => String(cat.parent) === String(parent || ''))
       .map(cat => ({
