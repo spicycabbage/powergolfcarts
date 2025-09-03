@@ -135,13 +135,13 @@ export async function POST(request: NextRequest) {
       inventory,
       // Normalize SEO: store Focus Keyphrase as first keyword
       seo: {
-        title: seo?.title || name,
-        description: seo?.description || shortDescription || '',
-        keywords: Array.isArray(seo?.keywords)
+        title: seo && seo.title ? seo.title : name,
+        description: seo && seo.description ? seo.description : (shortDescription || ''),
+        keywords: seo && Array.isArray(seo.keywords)
           ? seo.keywords
-          : (typeof seo?.keywords === 'string' && seo.keywords.trim() !== ''
+          : (seo && typeof seo.keywords === 'string' && seo.keywords.trim() !== ''
               ? [seo.keywords]
-              : (Array.isArray(seo?.keywords) ? seo.keywords : []))
+              : [])
       },
       variants,
       isActive,
