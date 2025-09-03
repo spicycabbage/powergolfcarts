@@ -193,7 +193,7 @@ ReviewSchema.methods.report = function() {
   return this.save()
 }
 
-const Review = models.Review as IReviewModel || model<IReview, IReviewModel>('Review', ReviewSchema)
+const Review = (models.Review as unknown as IReviewModel) || model<IReview, IReviewModel>('Review', ReviewSchema)
 
 export default Review
 
