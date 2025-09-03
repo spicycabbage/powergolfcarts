@@ -1,4 +1,4 @@
-import { Schema, model, models } from 'mongoose'
+import { Schema, model, models, Model } from 'mongoose'
 
 export interface IReview {
   _id?: string
@@ -13,6 +13,14 @@ export interface IReview {
   reported: boolean
   createdAt?: Date
   updatedAt?: Date
+}
+
+interface IReviewModel extends Model<IReview> {
+  getProductRatingStats(productId: string): Promise<{
+    averageRating: number
+    totalReviews: number
+    ratingDistribution: Record<number, number>
+  }>
 }
 
 const ReviewSchema = new Schema<IReview>({
@@ -185,7 +193,7 @@ ReviewSchema.methods.report = function() {
   return this.save()
 }
 
-const Review = models.Review || model<IReview>('Review', ReviewSchema)
+const Review = (models.Review || model<IReview, IReviewModel>('Review', ReviewSchema)) as IReviewModel
 
 export default Review
 
