@@ -1,146 +1,88 @@
-const bcrypt = require('bcryptjs')
+require('dotenv').config()
 const mongoose = require('mongoose')
-require('dotenv').config({ path: '.env.local' })
+const bcrypt = require('bcryptjs')
 
-// Import User model
-const UserSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-    lowercase: true
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  firstName: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  lastName: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  avatar: {
-    type: String
-  },
+// User schema definition (matching the TypeScript model)
+const userSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  role: { type: String, enum: ['customer', 'admin'], default: 'customer' },
+  isVerified: { type: Boolean, default: false },
+  verificationToken: String,
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
+  phoneNumber: String,
+  dateOfBirth: Date,
   addresses: [{
-    type: {
-      type: String,
-      enum: ['billing', 'shipping'],
-      required: true
-    },
+    type: { type: String, enum: ['billing', 'shipping'], required: true },
+    isDefault: { type: Boolean, default: false },
     firstName: String,
     lastName: String,
     company: String,
-    address1: String,
-    address2: String,
+    streetAddress1: String,
+    streetAddress2: String,
     city: String,
     state: String,
     postalCode: String,
     country: String,
-    phone: String,
-    isDefault: Boolean
+    phoneNumber: String
   }],
-  orders: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Order'
-  }],
-  wishlist: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product'
-  }],
-  role: {
-    type: String,
-    enum: ['customer', 'admin'],
-    default: 'customer'
-  },
-  isActive: {
-    type: Boolean,
-    default: true
-  },
-  emailVerified: {
-    type: Boolean,
-    default: false
-  },
-  lastLogin: {
-    type: Date
+  wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+  preferences: {
+    newsletter: { type: Boolean, default: false },
+    smsNotifications: { type: Boolean, default: false },
+    orderUpdates: { type: Boolean, default: true }
   }
-}, {
-  timestamps: true
-})
+}, { timestamps: true })
 
-const User = mongoose.models.User || mongoose.model('User', UserSchema)
+const User = mongoose.models.User || mongoose.model('User', userSchema)
 
-async function createAdminUser() {
+async function createAdmin() {
   try {
-    console.log('🔄 Connecting to MongoDB...')
-    await mongoose.connect(process.env.MONGODB_URI)
+    // Use the MongoDB URI directly since .env.local might not be available
+    const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://MatrixNeo88:iSPaMBmXQMyAoUAh@cluster0.fujdly4.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=Cluster0'
+    await mongoose.connect(MONGODB_URI)
     console.log('✅ Connected to MongoDB')
 
-    // Check if admin user already exists
-    const existingUser = await User.findOne({ email: 'jackman99@admin.com' })
-    if (existingUser) {
-      console.log('⚠️  Admin user already exists!')
-      console.log('📧 Email:', existingUser.email)
-      console.log('👤 Role:', existingUser.role)
-      
-      // Update password if needed
-      const hashedPassword = await bcrypt.hash('h@ppyf33t', 12)
-      await User.findByIdAndUpdate(existingUser._id, {
-        password: hashedPassword,
-        role: 'admin'
-      })
-      console.log('🔄 Updated password and ensured admin role')
-      return
-    }
-
-    // Hash the password
-    console.log('🔐 Hashing password...')
-    const hashedPassword = await bcrypt.hash('h@ppyf33t', 12)
-
-    // Create admin user
-    const adminUser = new User({
-      email: 'jackman99@admin.com',
-      password: hashedPassword,
-      firstName: 'Jack',
-      lastName: 'Admin',
-      role: 'admin',
-      isActive: true,
-      emailVerified: true
-    })
-
-    await adminUser.save()
-
-    console.log('✅ Admin user created successfully!')
-    console.log('📧 Email: jackman99@admin.com')
-    console.log('🔑 Password: h@ppyf33t')
-    console.log('👤 Role: admin')
-    console.log('')
-    console.log('🎯 You can now login and access:')
-    console.log('   • /admin - Admin dashboard')
-    console.log('   • /admin/navigation - Navigation management')
-    console.log('   • /admin/categories - Category management')
-    console.log('   • /admin/products/import - Product import')
-
-  } catch (error) {
-    console.error('❌ Error creating admin user:', error.message)
+    // Check if admin already exists
+    const existingAdmin = await User.findOne({ email: 'admin@yourstore.com' })
     
-    if (error.code === 11000) {
-      console.log('💡 User might already exist. Try logging in with:')
-      console.log('   Email: jackman99@admin.com')
-      console.log('   Password: h@ppyf33t')
+    if (existingAdmin) {
+      console.log('ℹ️  Admin user already exists')
+      console.log('Email: admin@yourstore.com')
+      
+      // Update password to ensure it's correct
+      const hashedPassword = await bcrypt.hash('admin123', 10)
+      existingAdmin.password = hashedPassword
+      await existingAdmin.save()
+      console.log('✅ Password reset to: admin123')
+    } else {
+      // Create new admin user
+      const hashedPassword = await bcrypt.hash('admin123', 10)
+      
+      const adminUser = new User({
+        email: 'admin@yourstore.com',
+        password: hashedPassword,
+        firstName: 'Admin',
+        lastName: 'User',
+        role: 'admin',
+        isVerified: true
+      })
+
+      await adminUser.save()
+      console.log('✅ Admin user created successfully!')
+      console.log('Email: admin@yourstore.com')
+      console.log('Password: admin123')
     }
-  } finally {
+
     await mongoose.disconnect()
     console.log('🔌 Disconnected from MongoDB')
+  } catch (error) {
+    console.error('❌ Error:', error)
+    process.exit(1)
   }
 }
 
-createAdminUser()
-
-
+createAdmin()
