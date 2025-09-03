@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const titleChain = result.chain.map(s => s.name).join(' / ')
   return {
     title: `${titleChain} | E-Commerce Store`,
-    description: result.current.description || `Shop ${result.current.name} products`,
+    description: (result.current as any).description || `Shop ${(result.current as any).name} products`,
   }
 }
 
