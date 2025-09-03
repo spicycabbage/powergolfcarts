@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { connectToDatabase } from '@/lib/mongodb'
 import Category from '@/lib/models/Category'
+import { getSiteConfig } from '@/lib/config'
+import BreadcrumbsJsonLd from '@/components/seo/BreadcrumbsJsonLd'
 
 type Params = { slugs: string[] }
 
@@ -60,8 +62,17 @@ export default async function NestedCategoryPage({ params }: { params: Params })
     segments.push({ name: part.name, href: path })
   }
 
+  const cfg = getSiteConfig()
+  const baseUrl = cfg.domain.startsWith('http') ? cfg.domain : `https://${cfg.domain}`
+  const crumbs = [
+    { name: 'Home', item: `${baseUrl}/` },
+    { name: 'Categories', item: `${baseUrl}/categories` },
+    ...segments.map(s => ({ name: s.name, item: `${baseUrl}${s.href}` })),
+  ]
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <BreadcrumbsJsonLd crumbs={crumbs} />
       <section className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <nav className="flex items-center space-x-2 text-sm text-gray-600">

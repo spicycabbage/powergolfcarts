@@ -5,6 +5,9 @@ import { Star, ShoppingCart, Heart, Share2, Minus, Plus, ArrowLeft } from 'lucid
 import { notFound } from 'next/navigation'
 import { ProductImageGallery } from '@/components/ProductImageGallery'
 import { ProductActions } from '@/components/ProductActions'
+import JsonLd from '@/components/seo/JsonLd'
+import BreadcrumbsJsonLd from '@/components/seo/BreadcrumbsJsonLd'
+import { getSiteConfig } from '@/lib/config'
 
 // Sample products data
 const products = [
@@ -179,8 +182,47 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound()
   }
 
+  const categoryPath = `/categories/${product.category.slug}`
+  const cfg = getSiteConfig()
+  const baseUrl = cfg.domain.startsWith('http') ? cfg.domain : `https://${cfg.domain}`
+  const crumbs = [
+    { name: 'Home', item: `${baseUrl}/` },
+    { name: 'Categories', item: `${baseUrl}/categories` },
+    { name: product.category.name, item: `${baseUrl}${categoryPath}` },
+    { name: product.name, item: `${baseUrl}/products/${product.slug}` },
+  ]
+
   return (
     <div className="min-h-screen bg-white">
+      <BreadcrumbsJsonLd crumbs={crumbs} />
+      {/* JSON-LD: Product */}
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: product.name,
+          description: product.shortDescription || product.description?.slice(0, 160),
+          sku: product.inventory?.sku,
+          category: product.category?.name,
+          image: product.images?.map((img) => img.url).slice(0, 5),
+          brand: {
+            '@type': 'Brand',
+            name: 'E-Commerce Store'
+          },
+          offers: {
+            '@type': 'Offer',
+            priceCurrency: 'USD',
+            price: product.price,
+            availability: product.inventory?.quantity > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+            url: `${baseUrl}/products/${product.slug}`
+          },
+          aggregateRating: product.reviewCount > 0 ? {
+            '@type': 'AggregateRating',
+            ratingValue: product.averageRating,
+            reviewCount: product.reviewCount
+          } : undefined
+        }}
+      />
       {/* Breadcrumb */}
       <section className="bg-gray-50 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">

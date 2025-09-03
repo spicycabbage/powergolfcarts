@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import '../styles/globals.css'
 import { Providers } from '@/components/Providers'
+import JsonLd from '@/components/seo/JsonLd'
+import { getSiteConfig } from '@/lib/config'
 import { ConditionalHeader } from '@/components/layout/ConditionalHeader'
 import { ConditionalFooter } from '@/components/layout/ConditionalFooter'
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar'
@@ -62,6 +64,29 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        {/* Global JSON-LD: Organization and Website */}
+        <JsonLd
+          data={[
+            {
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: getSiteConfig().name,
+              url: `https://${getSiteConfig().domain}`,
+              logo: '/favicon.ico'
+            },
+            {
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: getSiteConfig().name,
+              url: `https://${getSiteConfig().domain}`,
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: `https://${getSiteConfig().domain}/search?q={search_term_string}`,
+                'query-input': 'required name=search_term_string'
+              }
+            }
+          ]}
+        />
         <SessionProvider>
           <Providers>
             <div className="min-h-screen flex flex-col">

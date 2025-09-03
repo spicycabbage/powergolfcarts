@@ -2,6 +2,8 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Star, ShoppingCart, Filter, ArrowLeft, ShoppingBag } from 'lucide-react'
+import BreadcrumbsJsonLd from '@/components/seo/BreadcrumbsJsonLd'
+import { getSiteConfig } from '@/lib/config'
 import { notFound } from 'next/navigation'
 
 // Sample categories data
@@ -158,9 +160,17 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   }
 
   const { name, description, products } = category
+  const cfg = getSiteConfig()
+  const baseUrl = cfg.domain.startsWith('http') ? cfg.domain : `https://${cfg.domain}`
+  const crumbs = [
+    { name: 'Home', item: `${baseUrl}/` },
+    { name: 'Categories', item: `${baseUrl}/categories` },
+    { name: name, item: `${baseUrl}/categories/${slug}` },
+  ]
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <BreadcrumbsJsonLd crumbs={crumbs} />
       {/* Breadcrumb */}
       <section className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
