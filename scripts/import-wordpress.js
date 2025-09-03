@@ -254,9 +254,10 @@ async function processWordPressItem(db, item) {
         trackInventory: manageStock
       },
       seo: {
+        // Keep SEO fields editable and simple; Keyphrase stored as first keyword
         title: `${title} - E-Commerce Store`,
         description: excerpt || content.substring(0, 160) || `Shop ${title} at our online store`,
-        keywords: [title.toLowerCase(), 'product', 'shopping']
+        keywords: [title.toLowerCase()],
       },
       variants: [], // Could be processed from WooCommerce variations
       reviews: [],
@@ -289,6 +290,78 @@ async function processWordPressItem(db, item) {
   }
 }
 
+// Helper: read a single meta value by key
+function getMetaValue(postmeta, key) {
+  if (!Array.isArray(postmeta)) return undefined
+  const found = postmeta.find(m => m['wp:meta_key']?.[0] === key)
+  return found ? found['wp:meta_value']?.[0] : undefined
+}
+
+// Build a simple variant object from a WooCommerce product_variation item
+function buildVariantFromVariation(item) {
+  const postmeta = item['wp:postmeta'] || []
+  // Price
+  const priceStr = getMetaValue(postmeta, '_price') || getMetaValue(postmeta, '_regular_price')
+  const price = priceStr ? parseFloat(priceStr) : undefined
+  // SKU
+  const sku = getMetaValue(postmeta, '_sku') || `VAR-${item['wp:post_id']?.[0]}`
+  // Stock
+  const stockStr = getMetaValue(postmeta, '_stock')
+  const inventory = stockStr ? parseInt(stockStr) : 0
+  // Attributes (collect all attribute_* metas)
+  const attrs = []
+  for (const m of postmeta) {
+    const k = m['wp:meta_key']?.[0] || ''
+    if (k.startsWith('attribute_')) {
+      const v = m['wp:meta_value']?.[0]
+      if (v) {
+        attrs.push({ key: k.replace('attribute_', ''), value: v })
+      }
+    }
+  }
+  let name = 'variant'
+  let value = ''
+  if (attrs.length > 0) {
+    name = attrs.map(a => a.key).join('|')
+    value = attrs.map(a => a.value).join('|')
+  }
+  return { name, value, price, inventory: isNaN(inventory) ? 0 : inventory, sku }
+}
+
+async function processVariation(db, item) {
+  const postType = item['wp:post_type']?.[0]
+  if (postType !== 'product_variation') return { skipped: true }
+  const parentId = item['wp:post_parent']?.[0]
+  if (!parentId) return { skipped: true }
+
+  // Find parent product by stored wordpressId
+  const parent = await db.collection('products').findOne({ wordpressId: parentId })
+  if (!parent) return { skipped: true }
+
+  const variant = buildVariantFromVariation(item)
+
+  // Avoid duplicate variants by sku
+  const exists = (parent.variants || []).some(v => v.sku === variant.sku)
+  if (exists) return { updated: false }
+
+  // Push variant
+  await db.collection('products').updateOne(
+    { _id: parent._id },
+    {
+      $push: { variants: variant },
+      // Optionally normalize product price to min variant price
+      $set: {
+        price: typeof variant.price === 'number' && (!parent.price || variant.price < parent.price)
+          ? variant.price
+          : parent.price || variant.price || 0,
+        // For variable products, disable product-level inventory tracking
+        'inventory.trackInventory': false
+      }
+    }
+  )
+  return { updated: true }
+}
+
 // Main import function
 async function importWordPressXML(xmlFilePath) {
   const client = new MongoClient(MONGODB_URI)
@@ -319,9 +392,18 @@ async function importWordPressXML(xmlFilePath) {
     console.log(`📊 Found ${items.length} items in XML`)
     console.log('')
 
-    // Process each item
+    // First pass: products
     for (const item of items) {
       await processWordPressItem(db, item)
+    }
+
+    // Second pass: variations (attach to parents)
+    let variationsProcessed = 0
+    for (const item of items) {
+      if (item['wp:post_type']?.[0] === 'product_variation') {
+        const r = await processVariation(db, item)
+        if (r && r.updated) variationsProcessed++
+      }
     }
 
     console.log('')
@@ -330,6 +412,9 @@ async function importWordPressXML(xmlFilePath) {
     console.log(`⏭️  Skipped: ${stats.skipped}`)
     console.log(`❌ Errors: ${stats.errors}`)
     console.log(`📊 Total processed: ${stats.processed}`)
+    if (variationsProcessed) {
+      console.log(`🧩 Variations attached: ${variationsProcessed}`)
+    }
 
     // Create indexes for performance
     console.log('')
