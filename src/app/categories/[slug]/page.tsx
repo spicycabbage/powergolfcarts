@@ -364,7 +364,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
                       {/* Stock Status */}
                       <div className="mt-2">
-                        {product.inStock ? (
+                        {(!product.inventory.trackInventory || product.inventory.quantity > 0) ? (
                           <span className="text-sm text-green-600">In Stock</span>
                         ) : (
                           <span className="text-sm text-red-600">Out of Stock</span>
