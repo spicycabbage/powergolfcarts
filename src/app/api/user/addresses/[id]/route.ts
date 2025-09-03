@@ -60,7 +60,7 @@ export async function PUT(
 
     // If this is set as default, unset other defaults of the same type
     if (isDefault) {
-      user.addresses = user.addresses.map((addr, index) => ({
+      user.addresses = user.addresses.map((addr: any, index: number) => ({
         ...addr,
         isDefault: addr.type === type && index !== addressIndex ? false : addr.isDefault
       }))
