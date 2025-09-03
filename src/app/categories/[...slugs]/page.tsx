@@ -34,9 +34,10 @@ async function findCategoryByPath(slugs: string[]) {
   return { current, chain }
 }
 
-export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const slugs = Array.isArray(params.slugs) ? params.slugs : []
-  const result = await findCategoryByPath(slugs)
+export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
+  const { slugs } = await params
+  const slugsArray = Array.isArray(slugs) ? slugs : []
+  const result = await findCategoryByPath(slugsArray)
   if (!result) {
     return { title: 'Category Not Found | E-Commerce Store' }
   }
@@ -47,9 +48,10 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   }
 }
 
-export default async function NestedCategoryPage({ params }: { params: Params }) {
-  const slugs = Array.isArray(params.slugs) ? params.slugs : []
-  const result = await findCategoryByPath(slugs)
+export default async function NestedCategoryPage({ params }: { params: Promise<Params> }) {
+  const { slugs } = await params
+  const slugsArray = Array.isArray(slugs) ? slugs : []
+  const result = await findCategoryByPath(slugsArray)
   if (!result) notFound()
 
   const { current, chain } = result
