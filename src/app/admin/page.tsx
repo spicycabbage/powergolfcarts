@@ -103,7 +103,7 @@ export default function AdminDashboard() {
               <h1 className="text-xl font-semibold text-gray-900">Admin Dashboard</h1>
             </div>
             <div className="text-sm text-gray-600">
-              Welcome, {session.user?.name}
+              Welcome, {session?.user?.name || 'Admin'}
             </div>
           </div>
         </div>
