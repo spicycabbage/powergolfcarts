@@ -43,8 +43,13 @@ export async function connectToDatabase() {
     cached.promise = mongoose.connect(effectiveUri, opts).then((mongoose) => {
       // Avoid logging full URI; log only database name when possible
       try {
-        const dbName = mongoose.connection.db.databaseName
-        console.log(`Connected to MongoDB database: ${dbName}`)
+        const connectedDb = (mongoose.connection as any)?.db
+        const dbName: string | undefined = connectedDb?.databaseName
+        if (dbName) {
+          console.log(`Connected to MongoDB database: ${dbName}`)
+        } else {
+          console.log('Connected to MongoDB with Mongoose')
+        }
       } catch {
         console.log('Connected to MongoDB with Mongoose')
       }
