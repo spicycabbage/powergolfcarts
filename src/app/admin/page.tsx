@@ -276,7 +276,7 @@ export default function AdminDashboard() {
                             )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            <Link href={`/products/${p.slug}`} className="text-primary-600 hover:text-primary-700">{p.name}</Link>
+                            <Link href={`/admin/products/${p._id}`} className="text-primary-600 hover:text-primary-700">{p.name}</Link>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${Number(p.price || 0).toFixed(2)}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{p?.inventory?.quantity ?? 0}</td>
@@ -305,32 +305,32 @@ export default function AdminDashboard() {
                     Page {page} of {totalPages} • {total} total
                   </div>
                   <div className="inline-flex items-center space-x-2">
-                    <button
+              <button
                       disabled={page <= 1}
                       onClick={() => setPage(p => Math.max(1, p - 1))}
                       className={`px-3 py-2 text-sm rounded-lg border ${page <= 1 ? 'text-gray-400 border-gray-200 cursor-not-allowed' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
-                    >
+              >
                       Prev
-                    </button>
+              </button>
                     <div className="hidden sm:flex items-center space-x-1">
                       {Array.from({ length: totalPages }).slice(0, 7).map((_, i) => (
-                        <button
+              <button
                           key={i}
                           onClick={() => setPage(i + 1)}
                           className={`px-3 py-2 text-sm rounded-lg border ${page === i + 1 ? 'bg-primary-600 text-white border-primary-600' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
-                        >
+              >
                           {i + 1}
-                        </button>
+              </button>
                       ))}
                     </div>
-                    <button
+              <button
                       disabled={page >= totalPages}
                       onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                       className={`px-3 py-2 text-sm rounded-lg border ${page >= totalPages ? 'text-gray-400 border-gray-200 cursor-not-allowed' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
-                    >
+              >
                       Next
-                    </button>
-                  </div>
+              </button>
+            </div>
                 </div>
               </>
             )}
