@@ -322,10 +322,20 @@ export default function AdminDashboard() {
                             </button>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            {[
-                              p?.category?.name,
-                              ...(Array.isArray(p?.categories) ? p.categories.map((c: any) => c?.name).filter(Boolean) : [])
-                            ].filter(Boolean).join(', ')}
+                            {(() => {
+                              const names = [
+                                p?.category?.name,
+                                ...(Array.isArray(p?.categories) ? p.categories.map((c: any) => c?.name).filter(Boolean) : [])
+                              ].filter(Boolean) as string[]
+                              const seen = new Set<string>()
+                              const unique = names.filter(n => {
+                                const key = String(n).toLowerCase().trim()
+                                if (seen.has(key)) return false
+                                seen.add(key)
+                                return true
+                              })
+                              return unique.join(', ')
+                            })()}
                           </td>
                           
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
