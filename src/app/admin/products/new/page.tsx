@@ -366,10 +366,10 @@ export default function NewProductPage() {
                   {images.map((url, idx) => (
                     <div key={idx} className="border rounded-lg p-3 bg-gray-50">
                       <div className="text-xs text-gray-600 mb-2 font-medium">{idx === 0 ? 'Primary Image' : `Image ${idx + 1}`}</div>
-                      {/* Preview (square) */}
-                      <div className="w-full aspect-square overflow-hidden rounded bg-white">
+                      {/* Preview (preserve original aspect ratio) */}
+                      <div className="w-full overflow-hidden rounded bg-white">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={url} alt={`Product image ${idx + 1}`} className="w-full h-full object-cover" />
+                        <img src={url} alt={`Product image ${idx + 1}`} className="w-full h-auto" />
                       </div>
                       <div className="mt-2 flex items-center justify-between">
                         <div className="text-xs text-gray-500 truncate">{url}</div>
