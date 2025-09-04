@@ -4,20 +4,31 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Star, ShoppingCart } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
-import useSWR from 'swr'
-
-const fetcher = (url: string) => fetch(url).then(res => res.json())
+import { useEffect, useState } from 'react'
 
 export function FeaturedProducts() {
   const { addItem } = useCart()
-  const { data, error } = useSWR('/api/products?featured=true&limit=8', fetcher)
-  const products = data?.data || []
+  const [products, setProducts] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let isMounted = true
+    ;(async () => {
+      try {
+        const res = await fetch('/api/products?featured=true&limit=8', { cache: 'no-store' })
+        const json = await res.json().catch(() => ({}))
+        if (!res.ok) return
+        if (isMounted) setProducts(Array.isArray(json?.data) ? json.data : [])
+      } finally {
+        if (isMounted) setLoading(false)
+      }
+    })()
+    return () => { isMounted = false }
+  }, [])
 
   const handleAddToCart = (product: any) => {
     addItem(product)
   }
-
-  if (error) return null
 
   return (
     <section className="py-16 bg-gray-50">
