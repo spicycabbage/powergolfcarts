@@ -5,123 +5,11 @@ import { Star, ShoppingCart, Filter, ArrowLeft, ShoppingBag } from 'lucide-react
 import BreadcrumbsJsonLd from '@/components/seo/BreadcrumbsJsonLd'
 import { getSiteConfig } from '@/lib/config'
 import { notFound } from 'next/navigation'
+import { connectToDatabase } from '@/lib/mongodb'
+import Product from '@/lib/models/Product'
+import Category from '@/lib/models/Category'
 
-// Sample categories data
-const categories = [
-  {
-    slug: 'electronics',
-    name: 'Electronics',
-    description: 'Latest gadgets and electronic devices',
-    products: [
-      {
-        _id: '1',
-        name: 'Wireless Bluetooth Headphones',
-        slug: 'wireless-bluetooth-headphones',
-        description: 'High-quality wireless headphones with noise cancellation',
-        shortDescription: 'Premium wireless headphones',
-        price: 199.99,
-        originalPrice: 249.99,
-        images: [{ _id: '1', url: '/products/headphones-1.jpg', alt: 'Wireless Bluetooth Headphones', width: 800, height: 600, isPrimary: true }],
-        category: { _id: 'electronics', name: 'Electronics', slug: 'electronics', children: [], seo: { title: '', description: '', keywords: [] }, isActive: true, createdAt: new Date(), updatedAt: new Date() },
-        categories: [{ _id: 'electronics', name: 'Electronics', slug: 'electronics', children: [], seo: { title: '', description: '', keywords: [] }, isActive: true, createdAt: new Date(), updatedAt: new Date() }],
-        tags: ['wireless', 'headphones', 'audio'],
-        inventory: { quantity: 50, lowStockThreshold: 5, sku: 'WH-001', trackInventory: true },
-        seo: { title: 'Wireless Bluetooth Headphones', description: 'High-quality wireless headphones', keywords: ['headphones', 'wireless', 'bluetooth'] },
-        variants: [],
-        reviews: [],
-        averageRating: 4.5,
-        reviewCount: 128,
-        isActive: true,
-        isFeatured: true,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        _id: '2',
-        name: 'Smart Fitness Watch',
-        slug: 'smart-fitness-watch',
-        description: 'Advanced fitness tracking watch with heart rate monitor',
-        shortDescription: 'Smart fitness watch',
-        price: 299.99,
-        originalPrice: 349.99,
-        images: [{ _id: '2', url: '/products/fitness-watch-1.jpg', alt: 'Smart Fitness Watch', width: 800, height: 600, isPrimary: true }],
-        category: { _id: 'electronics', name: 'Electronics', slug: 'electronics', children: [], seo: { title: '', description: '', keywords: [] }, isActive: true, createdAt: new Date(), updatedAt: new Date() },
-        categories: [{ _id: 'electronics', name: 'Electronics', slug: 'electronics', children: [], seo: { title: '', description: '', keywords: [] }, isActive: true, createdAt: new Date(), updatedAt: new Date() }],
-        tags: ['fitness', 'smartwatch', 'health'],
-        inventory: { quantity: 30, lowStockThreshold: 5, sku: 'SFW-001', trackInventory: true },
-        seo: { title: 'Smart Fitness Watch', description: 'Advanced fitness tracking watch', keywords: ['fitness', 'smartwatch', 'health'] },
-        variants: [],
-        reviews: [],
-        averageRating: 4.3,
-        reviewCount: 95,
-        isActive: true,
-        isFeatured: false,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
-    ]
-  },
-  {
-    slug: 'clothing',
-    name: 'Clothing',
-    description: 'Fashion apparel for men and women',
-    products: [
-      {
-        _id: '3',
-        name: 'Organic Cotton T-Shirt',
-        slug: 'organic-cotton-t-shirt',
-        description: 'Comfortable organic cotton t-shirt perfect for everyday wear',
-        shortDescription: 'Organic cotton t-shirt',
-        price: 29.99,
-        originalPrice: 39.99,
-        images: [{ _id: '3', url: '/products/tshirt-1.jpg', alt: 'Organic Cotton T-Shirt', width: 800, height: 600, isPrimary: true }],
-        category: { _id: 'clothing', name: 'Clothing', slug: 'clothing', children: [], seo: { title: '', description: '', keywords: [] }, isActive: true, createdAt: new Date(), updatedAt: new Date() },
-        categories: [{ _id: 'clothing', name: 'Clothing', slug: 'clothing', children: [], seo: { title: '', description: '', keywords: [] }, isActive: true, createdAt: new Date(), updatedAt: new Date() }],
-        tags: ['organic', 'cotton', 't-shirt', 'casual'],
-        inventory: { quantity: 100, lowStockThreshold: 10, sku: 'OCT-001', trackInventory: true },
-        seo: { title: 'Organic Cotton T-Shirt', description: 'Comfortable organic cotton t-shirt', keywords: ['organic', 'cotton', 't-shirt'] },
-        variants: [],
-        reviews: [],
-        averageRating: 4.7,
-        reviewCount: 203,
-        isActive: true,
-        isFeatured: false,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
-    ]
-  },
-  {
-    slug: 'home-garden',
-    name: 'Home & Garden',
-    description: 'Everything for your home and garden',
-    products: [
-      {
-        _id: '4',
-        name: 'Modern Desk Lamp',
-        slug: 'modern-desk-lamp',
-        description: 'Sleek and modern desk lamp with adjustable brightness and USB charging',
-        shortDescription: 'Modern desk lamp',
-        price: 79.99,
-        originalPrice: 99.99,
-        images: [{ _id: '4', url: '/products/desk-lamp-1.jpg', alt: 'Modern Desk Lamp', width: 800, height: 600, isPrimary: true }],
-        category: { _id: 'home-garden', name: 'Home & Garden', slug: 'home-garden', children: [], seo: { title: '', description: '', keywords: [] }, isActive: true, createdAt: new Date(), updatedAt: new Date() },
-        categories: [{ _id: 'home-garden', name: 'Home & Garden', slug: 'home-garden', children: [], seo: { title: '', description: '', keywords: [] }, isActive: true, createdAt: new Date(), updatedAt: new Date() }],
-        tags: ['lamp', 'desk', 'lighting', 'modern'],
-        inventory: { quantity: 25, lowStockThreshold: 5, sku: 'MDL-001', trackInventory: true },
-        seo: { title: 'Modern Desk Lamp', description: 'Sleek modern desk lamp', keywords: ['lamp', 'desk', 'lighting', 'modern'] },
-        variants: [],
-        reviews: [],
-        averageRating: 4.4,
-        reviewCount: 67,
-        isActive: true,
-        isFeatured: true,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
-    ]
-  }
-]
+export const dynamic = 'force-dynamic'
 
 interface CategoryPageProps {
   params: Promise<{
@@ -131,35 +19,37 @@ interface CategoryPageProps {
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params
-  const category = categories.find(cat => cat.slug === slug)
-
+  await connectToDatabase()
+  const category = await Category.findOne({ slug }).lean()
   if (!category) {
-    return {
-      title: 'Category Not Found | E-Commerce Store'
-    }
+    return { title: 'Category Not Found | E-Commerce Store' }
   }
-
   return {
     title: `${category.name} | E-Commerce Store`,
-    description: category.description,
+    description: category.description || ''
   }
-}
-
-export async function generateStaticParams() {
-  return categories.map((category) => ({
-    slug: category.slug,
-  }))
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { slug } = await params
-  const category = categories.find(cat => cat.slug === slug)
-
+  await connectToDatabase()
+  const category = await Category.findOne({ slug }).lean()
   if (!category) {
     notFound()
   }
 
-  const { name, description, products } = category
+  const products = await Product.find({
+    isActive: true,
+    $or: [
+      { category: category._id },
+      { categories: category._id }
+    ]
+  })
+    .sort({ createdAt: -1 })
+    .lean()
+
+  const name = (category as any).name as string
+  const description = (category as any).description as string
   const cfg = getSiteConfig()
   const baseUrl = cfg.domain.startsWith('http') ? cfg.domain : `https://${cfg.domain}`
   const crumbs = [
