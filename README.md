@@ -58,7 +58,7 @@ cp .env.example .env.local
 Fill in your environment variables:
 ```env
 # Database
-MONGODB_URI=mongodb+srv://MatrixNeo88:iSPaMBmXQMyAoUAh@cluster0.fujdly4.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+MONGODB_URI=your_mongodb_uri_here
 MONGODB_DB=ecommerce
 
 # NextAuth.js (for authentication)

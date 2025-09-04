@@ -1,8 +1,13 @@
+require('dotenv').config()
 const mongoose = require('mongoose')
 
 async function setupNavigation() {
   try {
-    const MONGODB_URI = 'mongodb+srv://MatrixNeo88:iSPaMBmXQMyAoUAh@cluster0.fujdly4.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=Cluster0'
+    const MONGODB_URI = process.env.MONGODB_URI
+    if (!MONGODB_URI) {
+      console.error('❌ MONGODB_URI is not set. Define it in .env.local or your environment.')
+      process.exit(1)
+    }
     await mongoose.connect(MONGODB_URI)
     console.log('✅ Connected to MongoDB')
 

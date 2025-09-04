@@ -41,8 +41,11 @@ const User = mongoose.models.User || mongoose.model('User', userSchema)
 
 async function createAdmin() {
   try {
-    // Use the MongoDB URI directly since .env.local might not be available
-    const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://MatrixNeo88:iSPaMBmXQMyAoUAh@cluster0.fujdly4.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=Cluster0'
+    const MONGODB_URI = process.env.MONGODB_URI
+    if (!MONGODB_URI) {
+      console.error('❌ MONGODB_URI is not set. Define it in .env.local or your environment.')
+      process.exit(1)
+    }
     await mongoose.connect(MONGODB_URI)
     console.log('✅ Connected to MongoDB')
 
