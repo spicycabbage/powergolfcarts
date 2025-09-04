@@ -238,7 +238,7 @@ export default function AdminDashboard() {
                             }}
                           />
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
+                        <th className="px-1 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           <button onClick={() => { setSortBy('name'); setSortOrder(prev => sortBy==='name' && prev==='asc' ? 'desc' : 'asc') }} className="flex items-center space-x-1 hover:text-primary-600">
                             <span>Name</span>
@@ -246,6 +246,7 @@ export default function AdminDashboard() {
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Update</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           <button onClick={() => { setSortBy('isFeatured'); setSortOrder(prev => sortBy==='isFeatured' && prev==='asc' ? 'desc' : 'asc') }} className="flex items-center space-x-1 hover:text-primary-600">
@@ -273,7 +274,7 @@ export default function AdminDashboard() {
                               }}
                             />
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          <td className="px-1 py-4 whitespace-nowrap text-sm">
                             {Array.isArray(p.images) && p.images.length > 0 ? (
                               <div className="w-12 h-12 relative rounded overflow-hidden bg-gray-100">
                                 <Image
@@ -293,6 +294,33 @@ export default function AdminDashboard() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${Number(p.price || 0).toFixed(2)}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{p?.inventory?.quantity ?? 0}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <button
+                              onClick={async () => {
+                                const current = Number(p?.inventory?.quantity ?? 0)
+                                const input = prompt('Enter new stock quantity', String(current))
+                                if (input === null) return
+                                const qty = parseInt(input)
+                                if (isNaN(qty) || qty < 0) {
+                                  alert('Invalid quantity')
+                                  return
+                                }
+                                const res = await fetch(`/api/products/${p._id}`, {
+                                  method: 'PUT',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ inventory: { ...(p.inventory || {}), quantity: qty } })
+                                })
+                                if (!res.ok) {
+                                  alert('Failed to update stock')
+                                  return
+                                }
+                                setRecentProducts(prev => prev.map(x => x._id === p._id ? { ...x, inventory: { ...(x.inventory || {}), quantity: qty } } : x))
+                              }}
+                              className="px-3 py-1 text-sm rounded-lg border border-gray-300 hover:bg-gray-50"
+                            >
+                              Update
+                            </button>
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{p?.category?.name || ''}</td>
                           
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
