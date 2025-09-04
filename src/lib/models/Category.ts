@@ -17,6 +17,7 @@ export interface ICategory {
     twitterImage?: string
     noIndex?: boolean
   }
+  isSystem?: boolean
   isActive: boolean
   createdAt?: Date
   updatedAt?: Date
@@ -65,6 +66,10 @@ const CategorySchema = new Schema<ICategory>({
     type: SEOSchema,
     required: true
   },
+  isSystem: {
+    type: Boolean,
+    default: false
+  },
   isActive: {
     type: Boolean,
     default: true
@@ -111,6 +116,26 @@ CategorySchema.pre('save', function(next) {
   }
   next()
 })
+
+// Ensure an uncategorizable default category exists
+CategorySchema.statics.getOrCreateUncategorized = async function() {
+  const existing = await this.findOne({ slug: 'uncategorized', parent: null }).lean()
+  if (existing) return existing
+  const doc = await this.create({
+    name: 'Uncategorized',
+    slug: 'uncategorized',
+    description: 'Default catch-all category',
+    parent: null,
+    seo: {
+      title: 'Uncategorized',
+      description: 'Default category',
+      keywords: ['uncategorized']
+    },
+    isSystem: true,
+    isActive: true
+  })
+  return doc.toObject()
+}
 
 // Static method to get category tree
 CategorySchema.statics.getCategoryTree = async function() {

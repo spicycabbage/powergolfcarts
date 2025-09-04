@@ -39,6 +39,13 @@ async function run() {
 
   const parentIdMap = new Map()
 
+  // Ensure system Uncategorized exists first
+  await Category.findOneAndUpdate(
+    { slug: 'uncategorized', parent: null },
+    { $setOnInsert: { name: 'Uncategorized', slug: 'uncategorized', parent: null, isSystem: true, isActive: true, seo: { title: 'Uncategorized', description: 'Default category', keywords: ['uncategorized'] } } },
+    { new: true, upsert: true }
+  )
+
   // Upsert parents
   for (const p of parents) {
     const slug = toSlug(p.name)

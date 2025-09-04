@@ -82,6 +82,11 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Prevent creating another system category
+    if (categoryData.slug === 'uncategorized' || (categoryData.name && String(categoryData.name).toLowerCase() === 'uncategorized')) {
+      return NextResponse.json({ error: 'Uncategorized is reserved' }, { status: 400 })
+    }
+
     // Ensure unique slug (auto-increment suffix -2, -3, ... if needed)
     const baseSlug = categoryData.slug
     let uniqueSlug = baseSlug

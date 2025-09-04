@@ -87,6 +87,9 @@ export async function DELETE(
       return NextResponse.json({ error: 'Category not found' }, { status: 404 })
     }
 
+    if (category.isSystem) {
+      return NextResponse.json({ error: 'Cannot delete system category' }, { status: 400 })
+    }
     if (category.children && category.children.length > 0) {
       return NextResponse.json(
         { error: 'Cannot delete category with subcategories' },

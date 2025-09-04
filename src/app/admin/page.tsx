@@ -6,11 +6,11 @@ import { useRouter } from 'next/navigation'
 import { 
   Settings, 
   Folder, 
-  Upload,
   BarChart3,
   Users,
   Package
 } from 'lucide-react'
+import Link from 'next/link'
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
@@ -59,13 +59,7 @@ export default function AdminDashboard() {
       href: '/admin/categories',
       color: 'bg-green-500'
     },
-    {
-      title: 'Product Import',
-      description: 'Import products from CSV files',
-      icon: Upload,
-      href: '/admin/products/import',
-      color: 'bg-purple-500'
-    },
+    // Removed Product Import per request
     {
       title: 'Analytics',
       description: 'View sales reports and analytics (Coming Soon)',
@@ -83,12 +77,12 @@ export default function AdminDashboard() {
       disabled: true
     },
     {
-      title: 'Product Management',
-      description: 'Manage individual products (Coming Soon)',
+      title: 'Create Product',
+      description: 'Add a new product with pricing, images, categories, and SEO',
       icon: Package,
-      href: '#',
+      href: '/admin/products/new',
       color: 'bg-indigo-500',
-      disabled: true
+      disabled: false
     }
   ]
 
@@ -118,13 +112,33 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {adminTools.map((tool) => {
             const Icon = tool.icon
+            if (tool.disabled) {
+              return (
+                <div
+                  key={tool.title}
+                  className={`bg-white rounded-lg shadow-sm border border-gray-200 p-6 opacity-50 cursor-not-allowed`}
+                  aria-disabled
+                >
+                  <div className="flex items-center mb-4">
+                    <div className={`p-3 rounded-lg ${tool.color} text-white mr-4`}>
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">{tool.title}</h3>
+                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                        Coming Soon
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-gray-600 text-sm">{tool.description}</p>
+                </div>
+              )
+            }
             return (
-              <div
+              <Link
                 key={tool.title}
-                className={`bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all hover:border-primary-300 ${
-                  tool.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50'
-                }`}
-                onClick={() => !tool.disabled && router.push(tool.href)}
+                href={tool.href}
+                className={`block bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all hover:border-primary-300 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500`}
               >
                 <div className="flex items-center mb-4">
                   <div className={`p-3 rounded-lg ${tool.color} text-white mr-4`}>
@@ -132,15 +146,10 @@ export default function AdminDashboard() {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">{tool.title}</h3>
-                    {tool.disabled && (
-                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                        Coming Soon
-                      </span>
-                    )}
                   </div>
                 </div>
                 <p className="text-gray-600 text-sm">{tool.description}</p>
-              </div>
+              </Link>
             )
           })}
         </div>

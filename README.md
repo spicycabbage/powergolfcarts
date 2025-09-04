@@ -267,6 +267,12 @@ npm run restore products-2024-01-01T10-00-00.json replace products,categories
 npm run restore --clean
 ```
 
+### 🛡️ Current Restore Point
+
+- Code commit: `e45d0c2` (tag `restore-20250903-210956`)
+- Full DB backup file: `backups/full-backup-2025-09-04T04-18-59.json`
+- Note: Keep code + DB backup paired to avoid schema drift.
+
 ## 🏭 Using as a Reusable Engine
 
 ### For Different Industries:
