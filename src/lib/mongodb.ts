@@ -20,6 +20,18 @@ export async function connectToDatabase() {
   }
 
   if (!cached.promise) {
+    // Ensure a database name exists in the URI; if missing, append MONGODB_DB
+    let effectiveUri = MONGODB_URI as string
+    const uriMatch = effectiveUri.match(/^mongodb(?:\+srv)?:\/\/[^/]+(\/[^?]+)?(\?.*)?$/)
+    if (uriMatch) {
+      const hasDbPath = !!(uriMatch[1] && uriMatch[1] !== '/')
+      if (!hasDbPath) {
+        const query = uriMatch[2] || ''
+        const hostPart = effectiveUri.replace(/^(mongodb(?:\+srv)?:\/\/[^/]+).*/, '$1')
+        effectiveUri = `${hostPart}/${MONGODB_DB}${query}`
+      }
+    }
+
     const opts = {
       bufferCommands: false,
       maxPoolSize: 10,
@@ -28,8 +40,14 @@ export async function connectToDatabase() {
       family: 4
     }
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      console.log('Connected to MongoDB with Mongoose')
+    cached.promise = mongoose.connect(effectiveUri, opts).then((mongoose) => {
+      // Avoid logging full URI; log only database name when possible
+      try {
+        const dbName = mongoose.connection.db.databaseName
+        console.log(`Connected to MongoDB database: ${dbName}`)
+      } catch {
+        console.log('Connected to MongoDB with Mongoose')
+      }
       return mongoose
     })
   }
