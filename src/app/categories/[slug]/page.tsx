@@ -10,15 +10,15 @@ import Product from '@/lib/models/Product'
 import Category from '@/lib/models/Category'
 
 export const dynamic = 'force-dynamic'
+import SortSelect from '@/components/SortSelect'
 
 interface CategoryPageProps {
-  params: Promise<{
-    slug: string
-  }>
+  params: { slug: string }
+  searchParams?: { [key: string]: string | string[] | undefined }
 }
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
-  const { slug } = await params
+  const { slug } = params
   await connectToDatabase()
   const category = await Category.findOne({ slug }).lean()
   if (!category) {
@@ -30,13 +30,34 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   }
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
-  const { slug } = await params
+export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
+  const { slug } = params
   await connectToDatabase()
   const category = await Category.findOne({ slug }).lean()
   if (!category) {
     notFound()
   }
+
+  const sortParam = (typeof searchParams?.sort === 'string'
+    ? searchParams?.sort
+    : Array.isArray(searchParams?.sort)
+    ? searchParams?.sort[0]
+    : undefined) || 'popular'
+
+  const sortBy = (() => {
+    switch (sortParam) {
+      case 'priceAsc':
+        return { price: 1 }
+      case 'priceDesc':
+        return { price: -1 }
+      case 'newest':
+        return { createdAt: -1 }
+      case 'rating':
+        return { averageRating: -1 }
+      default:
+        return { createdAt: -1 }
+    }
+  })()
 
   const products = await Product.find({
     isActive: true,
@@ -45,7 +66,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       { categories: category._id }
     ]
   })
-    .sort({ createdAt: -1 })
+    .sort(sortBy)
     .lean()
 
   const name = (category as any).name as string
@@ -105,13 +126,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-600">Sort by:</span>
-                <select className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                  <option>Most Popular</option>
-                  <option>Price: Low to High</option>
-                  <option>Price: High to Low</option>
-                  <option>Newest</option>
-                  <option>Rating</option>
-                </select>
+                <SortSelect value={sortParam} />
               </div>
               <span className="text-sm text-gray-600">
                 Showing {products.length} product{products.length !== 1 ? 's' : ''}
