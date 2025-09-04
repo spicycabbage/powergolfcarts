@@ -16,6 +16,8 @@ export default function AdminDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [isChecking, setIsChecking] = useState(true)
+  const [recentProducts, setRecentProducts] = useState<any[]>([])
+  const [loadingProducts, setLoadingProducts] = useState(true)
 
   useEffect(() => {
     if (status === 'loading') return // Still loading
@@ -32,6 +34,21 @@ export default function AdminDashboard() {
 
     setIsChecking(false)
   }, [session, status, router])
+
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      try {
+        const res = await fetch('/api/products?limit=10&sortBy=createdAt&sortOrder=desc', { cache: 'no-store' })
+        if (!res.ok) return
+        const json = await res.json().catch(() => ({} as any))
+        if (mounted) setRecentProducts(Array.isArray(json?.data) ? json.data : [])
+      } finally {
+        if (mounted) setLoadingProducts(false)
+      }
+    })()
+    return () => { mounted = false }
+  }, [])
 
   if (status === 'loading' || isChecking) {
     return (
@@ -154,35 +171,50 @@ export default function AdminDashboard() {
           })}
         </div>
 
-        {/* Quick Stats */}
+        {/* Recent Products */}
         <div className="mt-12">
-          <h3 className="text-lg font-semibold text-gray-900 mb-6">Quick Actions</h3>
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <button
-                onClick={() => router.push('/admin/categories')}
-                className="text-left p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <h4 className="font-medium text-gray-900 mb-2">Set Up Categories</h4>
-                <p className="text-sm text-gray-600">Create product categories before importing products</p>
-              </button>
-              
-              <button
-                onClick={() => router.push('/admin/navigation')}
-                className="text-left p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <h4 className="font-medium text-gray-900 mb-2">Customize Navigation</h4>
-                <p className="text-sm text-gray-600">Edit your site's header and navigation menus</p>
-              </button>
-              
-              <button
-                onClick={() => router.push('/admin/products/import')}
-                className="text-left p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <h4 className="font-medium text-gray-900 mb-2">Import Products</h4>
-                <p className="text-sm text-gray-600">Upload your product catalog via CSV</p>
-              </button>
-            </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-6">Recent Products</h3>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+            {loadingProducts ? (
+              <div className="p-6 text-gray-600">Loading…</div>
+            ) : recentProducts.length === 0 ? (
+              <div className="p-6 text-gray-600">No products yet.</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                      <th className="px-6 py-3" />
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {recentProducts.map((p: any) => (
+                      <tr key={p._id}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{p.name}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${Number(p.price || 0).toFixed(2)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          {p.isActive ? (
+                            <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded bg-green-50 text-green-700">Visible</span>
+                          ) : (
+                            <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded bg-gray-100 text-gray-700">Hidden</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                          {p.createdAt ? new Date(p.createdAt).toLocaleString() : ''}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                          <Link href={`/products/${p.slug}`} className="text-primary-600 hover:text-primary-700">View</Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
       </div>
