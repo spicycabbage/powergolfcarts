@@ -25,6 +25,7 @@ export default function NewProductPage() {
 
   const [name, setName] = useState('')
   const [slug, setSlug] = useState('')
+  const [slugEdited, setSlugEdited] = useState(false)
   const [description, setDescription] = useState('')
   const [shortDescription, setShortDescription] = useState('')
   const [price, setPrice] = useState<string>('')
@@ -61,25 +62,29 @@ export default function NewProductPage() {
     }
   }
 
+  const toSlug = (s: string) =>
+    s
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9 ]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-+|-+$/g, '')
+
   useEffect(() => {
+    // Auto-sync slug from name until user edits slug manually
+    if (!slugEdited) {
+      const next = toSlug(name)
+      if (name && next && next !== slug) setSlug(next)
+    }
+
     // Initialize SEO defaults from name/description when empty
-    const toSlug = (s: string) =>
-      s
-        .toLowerCase()
-        .replace(/[^a-zA-Z0-9 ]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-+|-+$/g, '')
-
-    if (!slug && name) setSlug(toSlug(name))
-
     setSeo(prev => ({
       title: prev.title || name,
       description: prev.description || (shortDescription || description).slice(0, 160),
       keywords: prev.keywords && prev.keywords.length > 0 ? prev.keywords : (name ? [name] : [])
     }))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [name, shortDescription, description])
+  }, [name, shortDescription, description, slugEdited])
 
   const topLevelCategories = useMemo(
     () => categories.filter((c: any) => !c.parent),
@@ -119,10 +124,8 @@ export default function NewProductPage() {
     if (op !== undefined && (isNaN(op) || op < 0)) return false
     const q = parseInt(quantity)
     if (isNaN(q) || q < 0) return false
-    // Need at least 1 category selected or an Uncategorized fallback present
-    if (extraCategoryIds.length === 0 && !uncategorized) return false
     return true
-  }, [name, description, price, originalPrice, quantity, extraCategoryIds, uncategorized])
+  }, [name, description, price, originalPrice, quantity, slug])
 
   const removeImageField = (idx: number) => setImages(prev => prev.filter((_, i) => i !== idx))
 
@@ -281,7 +284,13 @@ export default function NewProductPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Slug *</label>
-                  <input value={slug} onChange={e => setSlug(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" required />
+                  <input
+                    value={slug}
+                    onChange={e => { setSlug(e.target.value); if (!slugEdited) setSlugEdited(true) }}
+                    onBlur={e => setSlug(toSlug(e.target.value))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    required
+                  />
                 </div>
               </div>
               <div className="space-y-6">
