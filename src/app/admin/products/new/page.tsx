@@ -24,6 +24,7 @@ export default function NewProductPage() {
   const [saving, setSaving] = useState(false)
 
   const [name, setName] = useState('')
+  const [slug, setSlug] = useState('')
   const [description, setDescription] = useState('')
   const [shortDescription, setShortDescription] = useState('')
   const [price, setPrice] = useState<string>('')
@@ -62,6 +63,16 @@ export default function NewProductPage() {
 
   useEffect(() => {
     // Initialize SEO defaults from name/description when empty
+    const toSlug = (s: string) =>
+      s
+        .toLowerCase()
+        .replace(/[^a-zA-Z0-9 ]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-+|-+$/g, '')
+
+    if (!slug && name) setSlug(toSlug(name))
+
     setSeo(prev => ({
       title: prev.title || name,
       description: prev.description || (shortDescription || description).slice(0, 160),
@@ -104,14 +115,14 @@ export default function NewProductPage() {
     if (!name.trim()) return false
     if (!description.trim()) return false
     if (isNaN(p) || p <= 0) return false
+    if (!slug.trim()) return false
     if (op !== undefined && (isNaN(op) || op < 0)) return false
-    if (!sku.trim()) return false
     const q = parseInt(quantity)
     if (isNaN(q) || q < 0) return false
     // Need at least 1 category selected or an Uncategorized fallback present
     if (extraCategoryIds.length === 0 && !uncategorized) return false
     return true
-  }, [name, description, price, originalPrice, sku, quantity, extraCategoryIds, uncategorized])
+  }, [name, description, price, originalPrice, quantity, extraCategoryIds, uncategorized])
 
   const removeImageField = (idx: number) => setImages(prev => prev.filter((_, i) => i !== idx))
 
@@ -155,6 +166,7 @@ export default function NewProductPage() {
 
       const payload = {
         name: name.trim(),
+        slug: slug.trim(),
         description: description.trim(),
         shortDescription: shortDescription.trim(),
         price: parseFloat(price),
@@ -255,146 +267,158 @@ export default function NewProductPage() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Basic Info */}
-        <div className="bg-white rounded-lg shadow p-6 space-y-6">
-          <h2 className="text-lg font-medium text-gray-900">Basic Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Name *</label>
-              <input value={name} onChange={e => setName(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" required />
+      <form onSubmit={handleSubmit} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left column */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Basic Info */}
+            <div className="bg-white rounded-lg shadow p-6 space-y-6">
+              <h2 className="text-lg font-medium text-gray-900">Basic Information</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Name *</label>
+                  <input value={name} onChange={e => setName(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" required />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Slug *</label>
+                  <input value={slug} onChange={e => setSlug(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" required />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Short Description</label>
+                  <textarea value={shortDescription} onChange={e => setShortDescription(e.target.value)} rows={8} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Description *</label>
+                  <textarea value={description} onChange={e => setDescription(e.target.value)} rows={20} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" required />
+                </div>
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Short Description</label>
-              <input value={shortDescription} onChange={e => setShortDescription(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Full Description *</label>
-            <textarea value={description} onChange={e => setDescription(e.target.value)} rows={5} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" required />
-          </div>
-        </div>
 
-        {/* Pricing & Inventory */}
-        <div className="bg-white rounded-lg shadow p-6 space-y-6">
-          <h2 className="text-lg font-medium text-gray-900">Pricing & Inventory</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Price (USD) *</label>
-              <input inputMode="decimal" value={price} onChange={e => setPrice(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="0.00" required />
+            {/* Pricing & Inventory */}
+            <div className="bg-white rounded-lg shadow p-6 space-y-6">
+              <h2 className="text-lg font-medium text-gray-900">Pricing & Inventory</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Price (USD) *</label>
+                  <input inputMode="decimal" value={price} onChange={e => setPrice(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="0.00" required />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Original Price</label>
+                  <input inputMode="decimal" value={originalPrice} onChange={e => setOriginalPrice(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="0.00" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">SKU</label>
+                  <input value={sku} onChange={e => setSku(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Quantity *</label>
+                  <input inputMode="numeric" value={quantity} onChange={e => setQuantity(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" required />
+                </div>
+                <div className="flex items-center space-x-3 pt-7">
+                  <input id="trackInv" type="checkbox" checked={trackInventory} onChange={e => setTrackInventory(e.target.checked)} className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded" />
+                  <label htmlFor="trackInv" className="text-sm text-gray-700">Track Inventory</label>
+                </div>
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Original Price</label>
-              <input inputMode="decimal" value={originalPrice} onChange={e => setOriginalPrice(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="0.00" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">SKU *</label>
-              <input value={sku} onChange={e => setSku(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" required />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Quantity *</label>
-              <input inputMode="numeric" value={quantity} onChange={e => setQuantity(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" required />
-            </div>
-            <div className="flex items-center space-x-3 pt-7">
-              <input id="trackInv" type="checkbox" checked={trackInventory} onChange={e => setTrackInventory(e.target.checked)} className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded" />
-              <label htmlFor="trackInv" className="text-sm text-gray-700">Track Inventory</label>
-            </div>
-            <div className="flex items-center space-x-3 pt-7">
-              <input id="isActive" type="checkbox" checked={isActive} onChange={e => setIsActive(e.target.checked)} className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded" />
-              <label htmlFor="isActive" className="text-sm text-gray-700">Active</label>
-              <input id="isFeatured" type="checkbox" checked={isFeatured} onChange={e => setIsFeatured(e.target.checked)} className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded ml-6" />
-              <label htmlFor="isFeatured" className="text-sm text-gray-700">Featured</label>
-            </div>
-          </div>
-        </div>
 
-        {/* Categorization */}
-        <div className="bg-white rounded-lg shadow p-6 space-y-6">
-          <h2 className="text-lg font-medium text-gray-900">Categorization</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Tags (comma-separated)</label>
-              <input value={tagsInput} onChange={e => setTagsInput(e.target.value)} placeholder="e.g. indica, gassy, kush" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+            {/* SEO */}
+            <div className="bg-white rounded-lg shadow p-6 space-y-6">
+              <h2 className="text-lg font-medium text-gray-900">SEO</h2>
+              <SeoFields seo={seo} onChange={setSeo} keyphraseLabel="Focus Keyphrase" />
             </div>
           </div>
 
-          {/* Categories (checkboxes only) */}
-          <div className="pt-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Categories</label>
-            <div className="space-y-1">
-              {(byParent[''] || []).map(top => (
-                <div key={top._id} className="">
-                  {/* Top-level */}
-                  <label className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                      checked={extraCategoryIds.includes(top._id)}
-                      onChange={() => toggleExtraCategory(top._id)}
-                    />
-                    <span className={`text-sm text-gray-700`}>{top.name}</span>
-                  </label>
-                  {/* Children */}
-                  {(byParent[top._id] || []).map(child => (
-                    <div key={child._id} className="pl-6">
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                          checked={extraCategoryIds.includes(child._id)}
-                          onChange={() => toggleExtraCategory(child._id)}
-                        />
-                        <span className={`text-sm text-gray-700`}>{child.name}</span>
-                      </label>
+          {/* Right column (sidebar) */}
+          <div className="space-y-8">
+            {/* Visibility */}
+            <div className="bg-white rounded-lg shadow p-6 space-y-4">
+              <h2 className="text-lg font-medium text-gray-900">Visibility</h2>
+              <label className="flex items-center space-x-3">
+                <input id="isActive" type="checkbox" checked={isActive} onChange={e => setIsActive(e.target.checked)} className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded" />
+                <span className="text-sm text-gray-700">Visible</span>
+              </label>
+              <label className="flex items-center space-x-3">
+                <input id="isFeatured" type="checkbox" checked={isFeatured} onChange={e => setIsFeatured(e.target.checked)} className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded" />
+                <span className="text-sm text-gray-700">Featured</span>
+              </label>
+            </div>
+
+            {/* Images */}
+            <div className="bg-white rounded-lg shadow p-6 space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-medium text-gray-900">Images</h2>
+                <label className="inline-flex items-center px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 cursor-pointer">
+                  <input type="file" accept="image/*" className="hidden" onChange={e => {
+                    const f = e.target.files?.[0]
+                    if (f) void handleImageFile(f)
+                  }} />
+                  <Plus className="w-4 h-4 mr-2" /> Upload Image
+                </label>
+              </div>
+              {images.length === 0 ? (
+                <p className="text-sm text-gray-500">No images uploaded yet. Upload a primary image.</p>
+              ) : (
+                <div className="space-y-3">
+                  {images.map((url, idx) => (
+                    <div key={idx} className="flex items-center space-x-3">
+                      <div className="text-sm text-gray-700 flex-1 truncate">{idx === 0 ? 'Primary: ' : ''}{url}</div>
+                      <button type="button" onClick={() => removeImageField(idx)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   ))}
                 </div>
-              ))}
-              {uncategorized && (
-                <p className="text-xs text-gray-500 mt-2">If none selected, product will default to: {(uncategorized as any).name}</p>
               )}
             </div>
-          </div>
-        </div>
 
-        {/* Images */}
-        <div className="bg-white rounded-lg shadow p-6 space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-medium text-gray-900">Images</h2>
-            <label className="inline-flex items-center px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 cursor-pointer">
-              <input type="file" accept="image/*" className="hidden" onChange={e => {
-                const f = e.target.files?.[0]
-                if (f) void handleImageFile(f)
-              }} />
-              <Plus className="w-4 h-4 mr-2" /> Upload Image
-            </label>
-          </div>
-          {images.length === 0 ? (
-            <p className="text-sm text-gray-500">No images uploaded yet. Upload a primary image.</p>
-          ) : (
-            <div className="space-y-3">
-              {images.map((url, idx) => (
-                <div key={idx} className="flex items-center space-x-3">
-                  <div className="text-sm text-gray-700 flex-1 truncate">{idx === 0 ? 'Primary: ' : ''}{url}</div>
-                  <button type="button" onClick={() => removeImageField(idx)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
+            {/* Categories */}
+            <div className="bg-white rounded-lg shadow p-6 space-y-4">
+              <h2 className="text-lg font-medium text-gray-900">Categories</h2>
+              <div className="space-y-1">
+                {(byParent[''] || []).map(top => (
+                  <div key={top._id} className="">
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                        checked={extraCategoryIds.includes(top._id)}
+                        onChange={() => toggleExtraCategory(top._id)}
+                      />
+                      <span className={`text-sm text-gray-700`}>{top.name}</span>
+                    </label>
+                    {(byParent[top._id] || []).map(child => (
+                      <div key={child._id} className="pl-6">
+                        <label className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                            checked={extraCategoryIds.includes(child._id)}
+                            onChange={() => toggleExtraCategory(child._id)}
+                          />
+                          <span className={`text-sm text-gray-700`}>{child.name}</span>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+                {uncategorized && (
+                  <p className="text-xs text-gray-500 mt-2">If none selected, product will default to: {(uncategorized as any).name}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Tags (comma-separated)</label>
+                <input value={tagsInput} onChange={e => setTagsInput(e.target.value)} placeholder="e.g. indica, gassy, kush" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+              </div>
             </div>
-          )}
-        </div>
-
-        {/* SEO */}
-        <div className="bg-white rounded-lg shadow p-6 space-y-6">
-          <h2 className="text-lg font-medium text-gray-900">SEO</h2>
-          <SeoFields seo={seo} onChange={setSeo} keyphraseLabel="Focus Keyphrase" />
+          </div>
         </div>
 
         {/* Save */}
-        <div className="flex justify-end">
+        <div className="flex justify-end pt-8">
           <button type="submit" disabled={!canSave || saving} className="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50">
             <Save className="w-4 h-4 mr-2" />
             {saving ? 'Saving…' : 'Save Product'}
