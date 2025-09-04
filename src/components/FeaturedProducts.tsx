@@ -4,142 +4,20 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Star, ShoppingCart } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
-import { Product, Category } from '@/types'
+import useSWR from 'swr'
 
-// Sample featured products
-const featuredProducts: Product[] = [
-  {
-    _id: '1',
-    name: 'Wireless Bluetooth Headphones',
-    slug: 'wireless-bluetooth-headphones',
-    description: 'High-quality wireless headphones with noise cancellation',
-    price: 199.99,
-    originalPrice: 249.99,
-    images: [
-      { 
-        _id: '1',
-        url: 'https://picsum.photos/400/400?random=1', 
-        alt: 'Wireless Bluetooth Headphones',
-        width: 400,
-        height: 400,
-        isPrimary: true
-      }
-    ],
-    category: { _id: 'cat1', name: 'Electronics', slug: 'electronics' } as Category,
-    categories: [],
-    tags: ['wireless', 'bluetooth', 'headphones'],
-    inventory: { quantity: 50, lowStockThreshold: 10, sku: 'WBH-001', trackInventory: true },
-    seo: { title: 'Wireless Bluetooth Headphones', description: 'Buy wireless bluetooth headphones', keywords: [] },
-    variants: [],
-    reviews: [],
-    averageRating: 4.5,
-    reviewCount: 128,
-    isActive: true,
-    isFeatured: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    _id: '2',
-    name: 'Smart Fitness Watch',
-    slug: 'smart-fitness-watch',
-    description: 'Advanced fitness tracking with heart rate monitor',
-    price: 299.99,
-    originalPrice: 349.99,
-    images: [
-      { 
-        _id: '2',
-        url: 'https://picsum.photos/400/400?random=2', 
-        alt: 'Smart Fitness Watch',
-        width: 400,
-        height: 400,
-        isPrimary: true
-      }
-    ],
-    category: { _id: 'cat1', name: 'Electronics', slug: 'electronics' } as Category,
-    categories: [],
-    tags: ['fitness', 'smartwatch', 'health'],
-    inventory: { quantity: 30, lowStockThreshold: 5, sku: 'SFW-001', trackInventory: true },
-    seo: { title: 'Smart Fitness Watch', description: 'Buy smart fitness watch', keywords: [] },
-    variants: [],
-    reviews: [],
-    averageRating: 4.3,
-    reviewCount: 95,
-    isActive: true,
-    isFeatured: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    _id: '3',
-    name: 'Organic Cotton T-Shirt',
-    slug: 'organic-cotton-t-shirt',
-    description: '100% organic cotton, sustainable and comfortable',
-    price: 29.99,
-    originalPrice: 39.99,
-    images: [
-      { 
-        _id: '3',
-        url: 'https://picsum.photos/400/400?random=3', 
-        alt: 'Organic Cotton T-Shirt',
-        width: 400,
-        height: 400,
-        isPrimary: true
-      }
-    ],
-    category: { _id: 'cat2', name: 'Clothing', slug: 'clothing' } as Category,
-    categories: [],
-    tags: ['organic', 'cotton', 'sustainable'],
-    inventory: { quantity: 100, lowStockThreshold: 20, sku: 'OCT-001', trackInventory: true },
-    seo: { title: 'Organic Cotton T-Shirt', description: 'Buy organic cotton t-shirt', keywords: [] },
-    variants: [],
-    reviews: [],
-    averageRating: 4.7,
-    reviewCount: 203,
-    isActive: true,
-    isFeatured: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    _id: '4',
-    name: 'Modern Desk Lamp',
-    slug: 'modern-desk-lamp',
-    description: 'LED desk lamp with adjustable brightness and color temperature',
-    price: 79.99,
-    originalPrice: 99.99,
-    images: [
-      { 
-        _id: '4',
-        url: 'https://picsum.photos/400/400?random=4', 
-        alt: 'Modern Desk Lamp',
-        width: 400,
-        height: 400,
-        isPrimary: true
-      }
-    ],
-    category: { _id: 'cat3', name: 'Home & Garden', slug: 'home-garden' } as Category,
-    categories: [],
-    tags: ['lamp', 'led', 'modern'],
-    inventory: { quantity: 25, lowStockThreshold: 5, sku: 'MDL-001', trackInventory: true },
-    seo: { title: 'Modern Desk Lamp', description: 'Buy modern desk lamp', keywords: [] },
-    variants: [],
-    reviews: [],
-    averageRating: 4.4,
-    reviewCount: 67,
-    isActive: true,
-    isFeatured: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  }
-]
+const fetcher = (url: string) => fetch(url).then(res => res.json())
 
 export function FeaturedProducts() {
   const { addItem } = useCart()
+  const { data, error } = useSWR('/api/products?featured=true&limit=8', fetcher)
+  const products = data?.data || []
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = (product: any) => {
     addItem(product)
   }
+
+  if (error) return null
 
   return (
     <section className="py-16 bg-gray-50">
@@ -154,7 +32,7 @@ export function FeaturedProducts() {
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featuredProducts.map((product) => (
+          {products.map((product: any) => (
               <div key={product._id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 group">
                 {/* Product Image */}
                 <Link href={`/products/${product.slug}`} className="block relative aspect-square overflow-hidden">

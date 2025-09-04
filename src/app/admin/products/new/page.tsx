@@ -211,7 +211,23 @@ export default function NewProductPage() {
       }
 
       alert('Product created')
-      router.push('/products')
+      // Stay on create page and reset the form
+      setName('')
+      setSlug('')
+      setSlugEdited(false)
+      setDescription('')
+      setShortDescription('')
+      setPrice('')
+      setOriginalPrice('')
+      setImages([])
+      setExtraCategoryIds([])
+      setTagsInput('')
+      setQuantity('0')
+      setTrackInventory(true)
+      setIsActive(true)
+      setIsFeatured(false)
+      setSku('')
+      setSeo({ title: '', description: '', keywords: [] })
     } catch (err) {
       alert('Failed to create product')
     } finally {
