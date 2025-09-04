@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth/options'
 import { connectToDatabase } from '@/lib/mongodb'
-import Category from '@/lib/models/Category'
 import Navigation, { INavigationConfig } from '@/lib/models/Navigation'
 
 // GET - Fetch current navigation configuration
@@ -16,80 +15,27 @@ export async function GET(request: NextRequest) {
 
     await connectToDatabase()
 
-    // Get stored navigation config
-    let navigationConfig = await Navigation.findOne()
+    // Return stored navigation config only. Do NOT auto-sync with categories.
+    const navigationConfig = await Navigation.findOne()
 
-    if (!navigationConfig) {
-      // Create default navigation config if none exists
-      const categories = await Category.find({ isActive: true, parent: null })
-        .populate('children')
-        .sort({ name: 1 })
-
-      navigationConfig = new Navigation({
-        header: {
-          logo: {
-            text: 'E-Commerce',
-            href: '/',
-            image: '',
-            useImage: false
-          },
-          banner: {
-            text: 'Free shipping on orders over $50! Use code FREESHIP',
-            isActive: true
-          }
-        },
-        secondaryNav: [
-          { name: 'About Us', href: '/about', isActive: true },
-          { name: 'FAQ', href: '/faq', isActive: true },
-          { name: 'Blog', href: '/blog', isActive: true },
-          { name: 'Contact Us', href: '/contact', isActive: true }
-        ],
-        primaryNav: [
-          { name: 'Shop All', href: '/categories', isActive: true },
-          ...categories.map(category => ({
-            name: category.name,
-            href: `/categories/${category.slug}`,
-            categoryId: category._id.toString(),
-            isActive: category.isActive,
-            children: category.children?.map((child: any) => ({
-              name: child.name,
-              href: `/categories/${child.slug}`,
-              categoryId: child._id.toString(),
-              isActive: child.isActive
-            })) || []
-          }))
-        ]
-      })
-
-      await navigationConfig.save()
-    } else {
-      // Update primary navigation with latest categories
-      const categories = await Category.find({ isActive: true, parent: null })
-        .populate('children')
-        .sort({ name: 1 })
-
-      // Keep existing primary nav items, but sync with categories
-      const categoryNavItems = categories.map(category => ({
-        name: category.name,
-        href: `/categories/${category.slug}`,
-        categoryId: category._id.toString(),
-        isActive: category.isActive,
-        children: category.children?.map((child: any) => ({
-          name: child.name,
-          href: `/categories/${child.slug}`,
-          categoryId: child._id.toString(),
-          isActive: child.isActive
-        })) || []
-      }))
-
-      // Update primary nav while preserving non-category items
-      navigationConfig.primaryNav = [
-        ...navigationConfig.primaryNav.filter((item: any) => !item.categoryId),
-        ...categoryNavItems
-      ]
+    if (navigationConfig) {
+      return NextResponse.json(navigationConfig)
     }
 
-    return NextResponse.json(navigationConfig)
+    // If none exists, return a minimal default without persisting
+    return NextResponse.json({
+      header: {
+        logo: { text: 'E-Commerce', href: '/', image: '', useImage: false },
+        banner: { text: 'Free shipping on orders over $50! Use code FREESHIP', isActive: true }
+      },
+      secondaryNav: [
+        { name: 'About Us', href: '/about', isActive: true },
+        { name: 'FAQ', href: '/faq', isActive: true },
+        { name: 'Blog', href: '/blog', isActive: true },
+        { name: 'Contact Us', href: '/contact', isActive: true }
+      ],
+      primaryNav: []
+    })
   } catch (error) {
     console.error('Navigation fetch error:', error)
     return NextResponse.json({ error: 'Failed to fetch navigation' }, { status: 500 })
@@ -151,7 +97,7 @@ export async function PUT(request: NextRequest) {
       bannerActive: updateData.header.banner.isActive
     })
 
-    // Update or create navigation config
+    // Update or create navigation config (static; no category syncing)
     const updatedConfig = await Navigation.findOneAndUpdate(
       {},
       updateData,
@@ -161,35 +107,8 @@ export async function PUT(request: NextRequest) {
         runValidators: false // Disable validators to prevent schema conflicts
       }
     )
-
+    
     console.log('✅ Navigation updated successfully')
-
-    // Update categories based on primary navigation changes
-    try {
-      for (const navItem of navigationConfig.primaryNav) {
-        if (navItem.categoryId) {
-          await Category.findByIdAndUpdate(navItem.categoryId, {
-            name: navItem.name,
-            isActive: navItem.isActive
-          })
-
-          // Update children if they exist
-          if (navItem.children) {
-            for (const child of navItem.children) {
-              if (child.categoryId) {
-                await Category.findByIdAndUpdate(child.categoryId, {
-                  name: child.name,
-                  isActive: child.isActive
-                })
-              }
-            }
-          }
-        }
-      }
-    } catch (categoryError) {
-      console.warn('⚠️ Category update failed:', categoryError)
-      // Don't fail the whole request if category updates fail
-    }
 
     return NextResponse.json({ 
       message: 'Navigation updated successfully',
