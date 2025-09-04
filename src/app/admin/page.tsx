@@ -18,6 +18,10 @@ export default function AdminDashboard() {
   const [isChecking, setIsChecking] = useState(true)
   const [recentProducts, setRecentProducts] = useState<any[]>([])
   const [loadingProducts, setLoadingProducts] = useState(true)
+  const [page, setPage] = useState(1)
+  const limit = 10
+  const [totalPages, setTotalPages] = useState(1)
+  const [total, setTotal] = useState(0)
 
   useEffect(() => {
     if (status === 'loading') return // Still loading
@@ -39,16 +43,21 @@ export default function AdminDashboard() {
     let mounted = true
     ;(async () => {
       try {
-        const res = await fetch('/api/products?limit=10&sortBy=createdAt&sortOrder=desc', { cache: 'no-store' })
+        const res = await fetch(`/api/products?page=${page}&limit=${limit}&sortBy=createdAt&sortOrder=desc`, { cache: 'no-store' })
         if (!res.ok) return
         const json = await res.json().catch(() => ({} as any))
-        if (mounted) setRecentProducts(Array.isArray(json?.data) ? json.data : [])
+        if (mounted) {
+          setRecentProducts(Array.isArray(json?.data) ? json.data : [])
+          const pag = json?.pagination || {}
+          setTotalPages(pag.totalPages || 1)
+          setTotal(pag.total || 0)
+        }
       } finally {
         if (mounted) setLoadingProducts(false)
       }
     })()
     return () => { mounted = false }
-  }, [])
+  }, [page])
 
   if (status === 'loading' || isChecking) {
     return (
@@ -180,40 +189,74 @@ export default function AdminDashboard() {
             ) : recentProducts.length === 0 ? (
               <div className="p-6 text-gray-600">No products yet.</div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
-                      <th className="px-6 py-3" />
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {recentProducts.map((p: any) => (
-                      <tr key={p._id}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{p.name}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${Number(p.price || 0).toFixed(2)}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          {p.isActive ? (
-                            <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded bg-green-50 text-green-700">Visible</span>
-                          ) : (
-                            <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded bg-gray-100 text-gray-700">Hidden</span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                          {p.createdAt ? new Date(p.createdAt).toLocaleString() : ''}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                          <Link href={`/products/${p.slug}`} className="text-primary-600 hover:text-primary-700">View</Link>
-                        </td>
+              <>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                        <th className="px-6 py-3" />
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {recentProducts.map((p: any) => (
+                        <tr key={p._id}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{p.name}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${Number(p.price || 0).toFixed(2)}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            {p.isActive ? (
+                              <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded bg-green-50 text-green-700">Visible</span>
+                            ) : (
+                              <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded bg-gray-100 text-gray-700">Hidden</span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                            {p.createdAt ? new Date(p.createdAt).toLocaleString() : ''}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                            <Link href={`/products/${p.slug}`} className="text-primary-600 hover:text-primary-700">View</Link>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="px-4 py-3 flex items-center justify-between border-t border-gray-200">
+                  <div className="text-sm text-gray-600">
+                    Page {page} of {totalPages} • {total} total
+                  </div>
+                  <div className="inline-flex items-center space-x-2">
+                    <button
+                      disabled={page <= 1}
+                      onClick={() => setPage(p => Math.max(1, p - 1))}
+                      className={`px-3 py-2 text-sm rounded-lg border ${page <= 1 ? 'text-gray-400 border-gray-200 cursor-not-allowed' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
+                    >
+                      Prev
+                    </button>
+                    <div className="hidden sm:flex items-center space-x-1">
+                      {Array.from({ length: totalPages }).slice(0, 7).map((_, i) => (
+                        <button
+                          key={i}
+                          onClick={() => setPage(i + 1)}
+                          className={`px-3 py-2 text-sm rounded-lg border ${page === i + 1 ? 'bg-primary-600 text-white border-primary-600' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
+                        >
+                          {i + 1}
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      disabled={page >= totalPages}
+                      onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                      className={`px-3 py-2 text-sm rounded-lg border ${page >= totalPages ? 'text-gray-400 border-gray-200 cursor-not-allowed' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </>
             )}
           </div>
         </div>
