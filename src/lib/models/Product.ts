@@ -13,13 +13,13 @@ export interface IProductVariant {
   value: string
   price?: number
   inventory: number
-  sku: string
+  sku?: string
 }
 
 export interface IInventory {
   quantity: number
   lowStockThreshold: number
-  sku: string
+  sku?: string
   trackInventory: boolean
 }
 
@@ -70,13 +70,13 @@ const ProductVariantSchema = new Schema<IProductVariant>({
   value: { type: String, required: true },
   price: { type: Number },
   inventory: { type: Number, required: true, min: 0 },
-  sku: { type: String, required: true },
+  sku: { type: String },
 })
 
 const InventorySchema = new Schema<IInventory>({
   quantity: { type: Number, required: true, min: 0 },
   lowStockThreshold: { type: Number, default: 5 },
-  sku: { type: String, required: true },
+  sku: { type: String },
   trackInventory: { type: Boolean, default: true },
 })
 

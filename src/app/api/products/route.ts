@@ -180,8 +180,8 @@ export async function POST(request: NextRequest) {
       inventory: {
         quantity: inventory?.quantity || 0,
         lowStockThreshold: inventory?.lowStockThreshold || 5,
-        sku: inventory?.sku || '',
-        trackInventory: inventory?.trackInventory ?? true
+        trackInventory: inventory?.trackInventory ?? true,
+        ...(inventory?.sku ? { sku: inventory.sku } : {}),
       },
       seo: normalizedSeo,
       variants: variants || [],
