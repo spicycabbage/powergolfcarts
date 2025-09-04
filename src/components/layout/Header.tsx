@@ -165,13 +165,29 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
             {primaryNav
               .filter(l => l.isActive !== false)
               .map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className="text-gray-700 hover:text-primary-600 transition-colors font-medium"
-                >
-                  {link.name}
-                </Link>
+                <div key={link.name} className="relative group">
+                  <Link
+                    href={link.href}
+                    className="text-gray-700 hover:text-primary-600 transition-colors font-medium"
+                  >
+                    {link.name}
+                  </Link>
+                  {Array.isArray((link as any).children) && (link as any).children.length > 0 && (
+                    <div className="absolute left-0 top-full mt-2 hidden group-hover:block z-50">
+                      <div className="bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[200px]">
+                        {(link as any).children.map((child: any) => (
+                          <Link
+                            key={child.name}
+                            href={child.href}
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600"
+                          >
+                            {child.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               ))}
           </nav>
 

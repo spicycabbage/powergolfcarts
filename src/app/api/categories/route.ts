@@ -2,6 +2,30 @@ import { NextRequest, NextResponse } from 'next/server'
 import { connectToDatabase } from '@/lib/mongodb'
 import Category from '@/lib/models/Category'
 
+export const dynamic = 'force-dynamic'
+
+export async function GET(request: NextRequest) {
+  try {
+    await connectToDatabase()
+    const { searchParams } = new URL(request.url)
+    const parent = searchParams.get('parent')
+    const query: any = { isActive: true }
+    if (parent) query.parent = parent
+    const categories = await Category.find(query)
+      .select('name slug parent')
+      .sort({ name: 1 })
+      .lean()
+    return NextResponse.json(categories)
+  } catch (error) {
+    console.error('Public categories fetch error:', error)
+    return NextResponse.json([])
+  }
+}
+
+import { NextRequest, NextResponse } from 'next/server'
+import { connectToDatabase } from '@/lib/mongodb'
+import Category from '@/lib/models/Category'
+
 // GET /api/categories - Get all categories
 export async function GET(request: NextRequest) {
   try {
