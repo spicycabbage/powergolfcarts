@@ -184,8 +184,8 @@ export default function NewProductPage() {
         inventory: {
           quantity: parseInt(quantity) || 0,
           lowStockThreshold: 5,
-          sku: sku.trim(),
           trackInventory,
+          ...(sku.trim() ? { sku: sku.trim() } : {}),
         },
         seo: {
           title: seo.title?.trim() || name.trim(),
@@ -318,7 +318,7 @@ export default function NewProductPage() {
                   <input inputMode="decimal" value={originalPrice} onChange={e => setOriginalPrice(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="0.00" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">SKU</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">SKU (optional)</label>
                   <input value={sku} onChange={e => setSku(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
                 </div>
               </div>
