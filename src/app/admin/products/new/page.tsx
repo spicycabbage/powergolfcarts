@@ -268,9 +268,9 @@ export default function NewProductPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Left column */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-3 space-y-8">
             {/* Basic Info */}
             <div className="bg-white rounded-lg shadow p-6 space-y-6">
               <h2 className="text-lg font-medium text-gray-900">Basic Information</h2>
@@ -333,7 +333,7 @@ export default function NewProductPage() {
           </div>
 
           {/* Right column (sidebar) */}
-          <div className="space-y-8">
+          <div className="lg:col-span-1 space-y-8">
             {/* Visibility */}
             <div className="bg-white rounded-lg shadow p-6 space-y-4">
               <h2 className="text-lg font-medium text-gray-900">Visibility</h2>
@@ -366,9 +366,11 @@ export default function NewProductPage() {
                   {images.map((url, idx) => (
                     <div key={idx} className="border rounded-lg p-3 bg-gray-50">
                       <div className="text-xs text-gray-600 mb-2 font-medium">{idx === 0 ? 'Primary Image' : `Image ${idx + 1}`}</div>
-                      {/* Preview */}
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={url} alt={`Product image ${idx + 1}`} className="w-full h-40 object-cover rounded" />
+                      {/* Preview (square) */}
+                      <div className="w-full aspect-square overflow-hidden rounded bg-white">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={url} alt={`Product image ${idx + 1}`} className="w-full h-full object-cover" />
+                      </div>
                       <div className="mt-2 flex items-center justify-between">
                         <div className="text-xs text-gray-500 truncate">{url}</div>
                         <button type="button" onClick={() => removeImageField(idx)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg">
