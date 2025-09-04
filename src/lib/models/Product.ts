@@ -204,6 +204,10 @@ ProductSchema.pre('save', function(next) {
   next()
 })
 
+// In development, clear cached model to ensure schema updates are applied
+if (process.env.NODE_ENV === 'development' && (models as any).Product) {
+  delete (models as any).Product
+}
 const Product = models.Product || model<IProduct>('Product', ProductSchema)
 
 export default Product
