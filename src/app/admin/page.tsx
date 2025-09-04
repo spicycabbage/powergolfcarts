@@ -23,6 +23,7 @@ export default function AdminDashboard() {
   const limit = 10
   const [totalPages, setTotalPages] = useState(1)
   const [total, setTotal] = useState(0)
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
 
   useEffect(() => {
     if (status === 'loading') return // Still loading
@@ -183,7 +184,36 @@ export default function AdminDashboard() {
 
         {/* Recent Products */}
         <div className="mt-12">
-          <h3 className="text-lg font-semibold text-gray-900 mb-6">Inventory Management</h3>
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-semibold text-gray-900">Inventory Management</h3>
+            <button
+              disabled={selectedIds.length === 0}
+              onClick={async () => {
+                if (selectedIds.length === 0) return
+                if (!confirm(`Delete ${selectedIds.length} selected item(s)?`)) return
+                try {
+                  for (const id of selectedIds) {
+                    await fetch(`/api/products/${id}`, { method: 'DELETE' })
+                  }
+                  // refresh list
+                  setSelectedIds([])
+                  setLoadingProducts(true)
+                  const res = await fetch(`/api/products?page=${page}&limit=${limit}&sortBy=createdAt&sortOrder=desc`, { cache: 'no-store' })
+                  const json = await res.json().catch(() => ({} as any))
+                  setRecentProducts(Array.isArray(json?.data) ? json.data : [])
+                  const pag = json?.pagination || {}
+                  setTotalPages(pag.totalPages || 1)
+                  setTotal(pag.total || 0)
+                } catch {}
+                finally {
+                  setLoadingProducts(false)
+                }
+              }}
+              className={`px-4 py-2 rounded-lg border ${selectedIds.length === 0 ? 'text-gray-400 border-gray-200 cursor-not-allowed' : 'text-red-600 border-red-300 hover:bg-red-50'}`}
+            >
+              Delete
+            </button>
+          </div>
           <div className="bg-white rounded-lg shadow-sm border border-gray-200">
             {loadingProducts ? (
               <div className="p-6 text-gray-600">Loading…</div>
@@ -195,6 +225,17 @@ export default function AdminDashboard() {
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <input
+                            type="checkbox"
+                            className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                            checked={selectedIds.length > 0 && selectedIds.length === recentProducts.length}
+                            onChange={(e) => {
+                              if (e.target.checked) setSelectedIds(recentProducts.map((p: any) => p._id))
+                              else setSelectedIds([])
+                            }}
+                          />
+                        </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
@@ -209,6 +250,16 @@ export default function AdminDashboard() {
                     <tbody className="bg-white divide-y divide-gray-200">
                       {recentProducts.map((p: any) => (
                         <tr key={p._id}>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <input
+                              type="checkbox"
+                              className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                              checked={selectedIds.includes(p._id)}
+                              onChange={(e) => {
+                                setSelectedIds(prev => e.target.checked ? [...prev, p._id] : prev.filter(id => id !== p._id))
+                              }}
+                            />
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             {Array.isArray(p.images) && p.images.length > 0 ? (
                               <div className="w-12 h-12 relative rounded overflow-hidden bg-gray-100">
@@ -224,7 +275,9 @@ export default function AdminDashboard() {
                               <div className="w-12 h-12 rounded bg-gray-100" />
                             )}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{p.name}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <Link href={`/products/${p.slug}`} className="text-primary-600 hover:text-primary-700">{p.name}</Link>
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${Number(p.price || 0).toFixed(2)}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{p?.inventory?.quantity ?? 0}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{p?.category?.name || ''}</td>
@@ -241,9 +294,7 @@ export default function AdminDashboard() {
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                             {p.createdAt ? new Date(p.createdAt).toLocaleString() : ''}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                            <Link href={`/products/${p.slug}`} className="text-primary-600 hover:text-primary-700">View</Link>
-                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm"></td>
                         </tr>
                       ))}
                     </tbody>
