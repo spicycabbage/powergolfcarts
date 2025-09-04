@@ -321,7 +321,12 @@ export default function AdminDashboard() {
                               Update
                             </button>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{p?.category?.name || ''}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                            {[
+                              p?.category?.name,
+                              ...(Array.isArray(p?.categories) ? p.categories.map((c: any) => c?.name).filter(Boolean) : [])
+                            ].filter(Boolean).join(', ')}
+                          </td>
                           
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             {p.isFeatured ? (
