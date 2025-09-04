@@ -11,6 +11,7 @@ import {
   Package
 } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
@@ -182,7 +183,7 @@ export default function AdminDashboard() {
 
         {/* Recent Products */}
         <div className="mt-12">
-          <h3 className="text-lg font-semibold text-gray-900 mb-6">Recent Products</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-6">Inventory Management</h3>
           <div className="bg-white rounded-lg shadow-sm border border-gray-200">
             {loadingProducts ? (
               <div className="p-6 text-gray-600">Loading…</div>
@@ -194,23 +195,47 @@ export default function AdminDashboard() {
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Inventory</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tags</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Featured</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Published</th>
                         <th className="px-6 py-3" />
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {recentProducts.map((p: any) => (
                         <tr key={p._id}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            {Array.isArray(p.images) && p.images.length > 0 ? (
+                              <div className="w-12 h-12 relative rounded overflow-hidden bg-gray-100">
+                                <Image
+                                  src={typeof p.images[0] === 'string' ? p.images[0] : (p.images[0]?.url || '/placeholder-product.jpg')}
+                                  alt={typeof p.images[0] === 'string' ? p.name : (p.images[0]?.alt || p.name)}
+                                  width={48}
+                                  height={48}
+                                  className="object-cover"
+                                />
+                              </div>
+                            ) : (
+                              <div className="w-12 h-12 rounded bg-gray-100" />
+                            )}
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{p.name}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${Number(p.price || 0).toFixed(2)}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{p?.inventory?.quantity ?? 0}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{p?.category?.name || ''}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 max-w-xs truncate">
+                            {Array.isArray(p?.tags) && p.tags.length > 0 ? p.tags.join(', ') : ''}
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            {p.isActive ? (
-                              <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded bg-green-50 text-green-700">Visible</span>
+                            {p.isFeatured ? (
+                              <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded bg-yellow-50 text-yellow-700">Yes</span>
                             ) : (
-                              <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded bg-gray-100 text-gray-700">Hidden</span>
+                              <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded bg-gray-100 text-gray-700">No</span>
                             )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
