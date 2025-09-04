@@ -269,7 +269,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 <div className="text-gray-400 mb-4">
                   <ShoppingBag className="w-16 h-16 mx-auto" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No Products Found</h3>
                 <p className="text-gray-600 mb-6">
                   There are no products in this category yet.
                 </p>
