@@ -1,4 +1,7 @@
-require('dotenv').config()
+// Prefer .env.local, then fallback to default .env if present
+const dotenv = require('dotenv')
+dotenv.config({ path: '.env.local' })
+dotenv.config()
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 

@@ -4,10 +4,9 @@ import '../styles/globals.css'
 import { Providers } from '@/components/Providers'
 import JsonLd from '@/components/seo/JsonLd'
 import { getSiteConfig } from '@/lib/config'
-import { ConditionalHeader } from '@/components/layout/ConditionalHeader'
 import { ConditionalFooter } from '@/components/layout/ConditionalFooter'
-import { AnnouncementBar } from '@/components/layout/AnnouncementBar'
 import { SessionProvider } from '@/components/SessionProvider'
+import HeaderServer from '@/components/layout/HeaderServer'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -56,7 +55,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
@@ -90,8 +89,7 @@ export default function RootLayout({
         <SessionProvider>
           <Providers>
             <div className="min-h-screen flex flex-col">
-              <AnnouncementBar />
-              <ConditionalHeader />
+              <HeaderServer />
               <main className="flex-1">
                 {children}
               </main>

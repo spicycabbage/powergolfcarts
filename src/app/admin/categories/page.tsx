@@ -62,7 +62,7 @@ export default function CategoriesAdmin() {
   })
 
   const makeUniqueSlug = () => {
-    const base = formData.slug.trim().toLowerCase() || generateSlug(formData.name)
+    const base = (formData.slug.trim().toLowerCase() || generateSlug(formData.name)).replace(/^-+|-+$/g, '')
     let i = 2
     let candidate = `${base}-${i}`
     while (categories.some((cat) => cat.slug === candidate && (!editingCategory || cat._id !== editingCategory._id))) {
@@ -183,8 +183,15 @@ export default function CategoriesAdmin() {
         closeModal()
         alert('Category saved')
       } else {
-        const text = await response.text()
-        alert(text || 'Failed to save category')
+        let message = 'Failed to save category'
+        try {
+          const err = await response.json()
+          message = err?.error || err?.details || message
+        } catch {
+          const text = await response.text()
+          if (text) message = text
+        }
+        alert(message)
       }
     } catch (error) {
       console.error('Failed to save category:', error)
@@ -271,18 +278,6 @@ export default function CategoriesAdmin() {
         <div key={category._id} className="border border-gray-200 rounded-lg mb-4">
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center space-x-3">
-              {children.length > 0 && (
-                <button
-                  onClick={() => toggleExpanded(category._id)}
-                  className="p-1 hover:bg-gray-100 rounded"
-                >
-                  {isExpanded ? (
-                    <ChevronDown className="w-4 h-4" />
-                  ) : (
-                    <ChevronRight className="w-4 h-4" />
-                  )}
-                </button>
-              )}
               {isExpanded ? (
                 <FolderOpen className="w-5 h-5 text-blue-500" />
               ) : (
@@ -315,42 +310,66 @@ export default function CategoriesAdmin() {
             </div>
           </div>
 
-          {/* Child categories */}
-          {isExpanded && children.length > 0 && (
-            <div className="border-t border-gray-200 bg-gray-50 p-4">
-              <div className="space-y-2">
-                {children.map(child => (
-                  <div key={child._id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
-                    <div className="flex items-center space-x-3 pl-6">
-                      <Folder className="w-4 h-4 text-gray-400" />
-                      <div>
-                        <h4 className="font-medium text-gray-900">{child.name}</h4>
-                        <p className="text-sm text-gray-500">/{child.slug}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        child.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                      }`}>
-                        {child.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                      <button
-                        onClick={() => openModal(child)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(child._id)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+          {/* Below-row expand toggle (like Navigation Management) */}
+          {children.length > 0 && (
+            <div className="border-t border-gray-100 bg-gray-50">
+              <div className="px-4 py-2">
+                <button
+                  type="button"
+                  onClick={() => toggleExpanded(category._id)}
+                  className="inline-flex items-center text-sm text-gray-700 hover:text-gray-900"
+                  aria-label={isExpanded ? 'Collapse subcategories' : 'Show subcategories'}
+                  aria-expanded={isExpanded}
+                >
+                  {isExpanded ? (
+                    <>
+                      <ChevronDown className="w-4 h-4 mr-2" /> Hide subcategories
+                    </>
+                  ) : (
+                    <>
+                      <ChevronRight className="w-4 h-4 mr-2" /> Show subcategories
+                    </>
+                  )}
+                </button>
               </div>
+              {/* Child categories */}
+              {isExpanded && (
+                <div className="border-t border-gray-200 bg-gray-50 p-4">
+                  <div className="space-y-2">
+                    {children.map(child => (
+                      <div key={child._id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
+                        <div className="flex items-center space-x-3 pl-6">
+                          <Folder className="w-4 h-4 text-gray-400" />
+                          <div>
+                            <h4 className="font-medium text-gray-900">{child.name}</h4>
+                            <p className="text-sm text-gray-500">/{child.slug}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          <span className={`px-2 py-1 text-xs rounded-full ${
+                            child.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                          }`}>
+                            {child.isActive ? 'Active' : 'Inactive'}
+                          </span>
+                          <button
+                            onClick={() => openModal(child)}
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(child._id)}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

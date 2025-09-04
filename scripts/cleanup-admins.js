@@ -1,4 +1,6 @@
-require('dotenv').config()
+const dotenv = require('dotenv')
+dotenv.config({ path: '.env.local' })
+dotenv.config()
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 

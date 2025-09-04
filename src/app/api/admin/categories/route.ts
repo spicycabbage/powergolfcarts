@@ -39,6 +39,10 @@ export async function POST(request: NextRequest) {
 
     const categoryData = await request.json()
 
+    if (!categoryData || typeof categoryData.name !== 'string' || categoryData.name.trim().length === 0) {
+      return NextResponse.json({ error: 'Category name is required' }, { status: 400 })
+    }
+
     await connectToDatabase()
 
     // Generate slug if not provided
@@ -48,7 +52,7 @@ export async function POST(request: NextRequest) {
         .replace(/[^a-zA-Z0-9 ]/g, '')
         .replace(/\s+/g, '-')
         .replace(/-+/g, '-')
-        .trim('-')
+        .replace(/^-+|-+$/g, '')
     }
 
     // Set default SEO if not provided / normalize keywords
@@ -78,11 +82,16 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Enforce unique slug
-    const existing = await Category.findOne({ slug: categoryData.slug }).select('_id').lean()
-    if (existing) {
-      return NextResponse.json({ error: 'Category slug already exists' }, { status: 400 })
+    // Ensure unique slug (auto-increment suffix -2, -3, ... if needed)
+    const baseSlug = categoryData.slug
+    let uniqueSlug = baseSlug
+    let counter = 2
+    // Loop until slug is unique
+    while (await Category.exists({ slug: uniqueSlug })) {
+      uniqueSlug = `${baseSlug}-${counter}`
+      counter += 1
     }
+    categoryData.slug = uniqueSlug
 
     // Normalize parent field
     if (categoryData.parent === '' || categoryData.parent === null) {
@@ -107,6 +116,6 @@ export async function POST(request: NextRequest) {
     if (error?.name === 'ValidationError') {
       return NextResponse.json({ error: error.message }, { status: 400 })
     }
-    return NextResponse.json({ error: 'Failed to create category' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to create category', details: error?.message || 'Unknown error' }, { status: 500 })
   }
 }

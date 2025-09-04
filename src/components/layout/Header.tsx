@@ -6,26 +6,50 @@ import { Search, ShoppingCart, User, Menu, X } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { useAuth } from '@/hooks/useAuth'
 
-export function Header() {
+type NavigationItem = {
+  name: string
+  href: string
+  categoryId?: string
+  isActive?: boolean
+  children?: NavigationItem[]
+}
+
+type NavigationConfig = {
+  header: {
+    logo: { text: string; href: string; image?: string; useImage: boolean }
+    banner?: { text: string; isActive: boolean }
+  }
+  secondaryNav: NavigationItem[]
+  primaryNav: NavigationItem[]
+}
+
+export function Header({ initialNavigation }: { initialNavigation?: NavigationConfig }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const { cart } = useCart()
-  const { user, logout } = useAuth()
+  const { user, logout, isLoading } = useAuth()
 
-  // Load saved logo once so the header reflects admin changes
+  // Initialize from server-provided navigation when available
   const [logo, setLogo] = useState<{ text: string; href: string; image?: string; useImage: boolean }>(
-    { text: 'E-Commerce', href: '/', image: '', useImage: false }
+    initialNavigation?.header?.logo || { text: 'E-Commerce', href: '/', image: '', useImage: false }
   )
-  const [secondaryNav, setSecondaryNav] = useState<Array<{ name: string; href: string; isActive?: boolean }>>([
-    { name: 'About Us', href: '/about' },
-    { name: 'FAQ', href: '/faq' },
-    { name: 'Blog', href: '/blog' },
-    { name: 'Contact Us', href: '/contact' }
-  ])
-  const [primaryNav, setPrimaryNav] = useState<Array<{ name: string; href: string; isActive?: boolean }>>([])
+  const [secondaryNav, setSecondaryNav] = useState<Array<{ name: string; href: string; isActive?: boolean }>>(
+    Array.isArray(initialNavigation?.secondaryNav)
+      ? initialNavigation!.secondaryNav
+      : [
+          { name: 'About Us', href: '/about' },
+          { name: 'FAQ', href: '/faq' },
+          { name: 'Blog', href: '/blog' },
+          { name: 'Contact Us', href: '/contact' }
+        ]
+  )
+  const [primaryNav, setPrimaryNav] = useState<Array<{ name: string; href: string; isActive?: boolean }>>(
+    Array.isArray(initialNavigation?.primaryNav) ? initialNavigation!.primaryNav : []
+  )
 
   useEffect(() => {
+    if (initialNavigation) return
     let isMounted = true
     ;(async () => {
       try {
@@ -47,13 +71,13 @@ export function Header() {
           }
         }
       } catch (_) {
-        // keep existing defaults for secondary, leave primary empty if fetch fails
+        // keep existing defaults
       }
     })()
     return () => {
       isMounted = false
     }
-  }, [])
+  }, [initialNavigation])
 
   const cartItemCount = cart.items.reduce((total, item) => total + item.quantity, 0)
 
@@ -85,7 +109,7 @@ export function Header() {
             </nav>
 
             <div className="flex items-center space-x-4">
-              {user ? (
+              {!isLoading && user ? (
                 <div className="flex items-center space-x-4">
                   <Link
                     href="/account"
@@ -102,20 +126,22 @@ export function Header() {
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center space-x-4">
-                  <Link
-                    href="/auth/login"
-                    className="text-sm text-gray-600 hover:text-primary-600 transition-colors"
-                  >
-                    Sign In
-                  </Link>
-                  <Link
-                    href="/auth/register"
-                    className="text-sm text-primary-600 hover:text-primary-700 transition-colors font-medium"
-                  >
-                    Sign Up
-                  </Link>
-                </div>
+                isLoading ? null : (
+                  <div className="flex items-center space-x-4">
+                    <Link
+                      href="/auth/login"
+                      className="text-sm text-gray-600 hover:text-primary-600 transition-colors"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/auth/register"
+                      className="text-sm text-primary-600 hover:text-primary-700 transition-colors font-medium"
+                    >
+                      Sign Up
+                    </Link>
+                  </div>
+                )
               )}
             </div>
           </div>

@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth/options'
 import { connectToDatabase } from '@/lib/mongodb'
 import Navigation, { INavigationConfig } from '@/lib/models/Navigation'
+import { setNavigationConfig, clearNavigationConfig } from '@/lib/navigationStore'
 
 // GET - Fetch current navigation configuration
 export async function GET(request: NextRequest) {
@@ -109,6 +110,15 @@ export async function PUT(request: NextRequest) {
     )
     
     console.log('✅ Navigation updated successfully')
+
+    // Refresh in-memory cache immediately
+    if (updatedConfig) {
+      // Normalize to plain object for the cache
+      const plain = updatedConfig.toObject ? updatedConfig.toObject() : updatedConfig
+      setNavigationConfig(plain as INavigationConfig)
+    } else {
+      clearNavigationConfig()
+    }
 
     return NextResponse.json({ 
       message: 'Navigation updated successfully',

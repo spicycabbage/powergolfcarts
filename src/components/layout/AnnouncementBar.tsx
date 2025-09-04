@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { X } from 'lucide-react'
 
 interface BannerConfig {
@@ -8,36 +8,10 @@ interface BannerConfig {
   isActive: boolean
 }
 
-export function AnnouncementBar() {
-  const [isVisible, setIsVisible] = useState(false)
-  const [banner, setBanner] = useState<BannerConfig | null>(null)
+export function AnnouncementBar({ banner }: { banner?: BannerConfig }) {
+  const [isVisible, setIsVisible] = useState<boolean>(!!banner?.isActive)
 
-  useEffect(() => {
-    const fetchBanner = async () => {
-      try {
-        const response = await fetch('/api/navigation')
-        if (response.ok) {
-          const data = await response.json()
-          if (data.header?.banner) {
-            setBanner(data.header.banner)
-            setIsVisible(data.header.banner.isActive)
-          }
-        }
-      } catch (error) {
-        console.error('Failed to fetch banner:', error)
-        // Fallback to default
-        setBanner({
-          text: 'Free shipping on orders over $50! Use code FREESHIP',
-          isActive: true
-        })
-        setIsVisible(true)
-      }
-    }
-
-    fetchBanner()
-  }, [])
-
-  if (!isVisible || !banner?.isActive || !banner?.text) return null
+  if (!banner || !isVisible || !banner.isActive || !banner.text) return null
 
   return (
     <div className="bg-primary-600 text-white text-center py-2 px-4 relative">
