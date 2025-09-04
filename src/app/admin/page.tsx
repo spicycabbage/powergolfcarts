@@ -24,6 +24,8 @@ export default function AdminDashboard() {
   const [totalPages, setTotalPages] = useState(1)
   const [total, setTotal] = useState(0)
   const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [sortBy, setSortBy] = useState<'name'|'isFeatured'|'createdAt'>('createdAt')
+  const [sortOrder, setSortOrder] = useState<'asc'|'desc'>('desc')
 
   useEffect(() => {
     if (status === 'loading') return // Still loading
@@ -45,7 +47,7 @@ export default function AdminDashboard() {
     let mounted = true
     ;(async () => {
       try {
-        const res = await fetch(`/api/products?page=${page}&limit=${limit}&sortBy=createdAt&sortOrder=desc`, { cache: 'no-store' })
+        const res = await fetch(`/api/products?page=${page}&limit=${limit}&sortBy=${sortBy}&sortOrder=${sortOrder}`, { cache: 'no-store' })
         if (!res.ok) return
         const json = await res.json().catch(() => ({} as any))
         if (mounted) {
@@ -59,7 +61,7 @@ export default function AdminDashboard() {
       }
     })()
     return () => { mounted = false }
-  }, [page])
+  }, [page, sortBy, sortOrder])
 
   if (status === 'loading' || isChecking) {
     return (
@@ -237,13 +239,25 @@ export default function AdminDashboard() {
                           />
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <button onClick={() => { setSortBy('name'); setSortOrder(prev => sortBy==='name' && prev==='asc' ? 'desc' : 'asc') }} className="flex items-center space-x-1 hover:text-primary-600">
+                            <span>Name</span>
+                          </button>
+                        </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Inventory</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tags</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Featured</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Published</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <button onClick={() => { setSortBy('isFeatured'); setSortOrder(prev => sortBy==='isFeatured' && prev==='asc' ? 'desc' : 'asc') }} className="flex items-center space-x-1 hover:text-primary-600">
+                            <span>Featured</span>
+                          </button>
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <button onClick={() => { setSortBy('createdAt'); setSortOrder(prev => sortBy==='createdAt' && prev==='asc' ? 'desc' : 'asc') }} className="flex items-center space-x-1 hover:text-primary-600">
+                            <span>Date Published</span>
+                          </button>
+                        </th>
                         <th className="px-6 py-3" />
                       </tr>
                     </thead>
