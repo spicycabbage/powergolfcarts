@@ -191,9 +191,9 @@ ProductSchema.virtual('stockStatus').get(function() {
   return 'in_stock'
 })
 
-// Pre-save middleware to generate slug
-ProductSchema.pre('save', function(next) {
-  if (this.isModified('name') && !this.slug) {
+// Ensure slug is set from name before validation if missing
+ProductSchema.pre('validate', function(next) {
+  if (!this.slug && this.name) {
     this.slug = this.name
       .toLowerCase()
       .replace(/[^a-zA-Z0-9 ]/g, '')

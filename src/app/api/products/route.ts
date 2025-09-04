@@ -124,6 +124,7 @@ export async function POST(request: NextRequest) {
     const body = await parseRequestBody(request)
     const {
       name,
+      slug,
       description,
       shortDescription,
       price,
@@ -169,6 +170,7 @@ export async function POST(request: NextRequest) {
     // Create product
     const product = new Product({
       name,
+      slug,
       description,
       shortDescription,
       price,
@@ -189,7 +191,34 @@ export async function POST(request: NextRequest) {
       isFeatured: isFeatured ?? false
     })
 
-    const savedProduct = await product.save()
+    // Auto-unique slug if collision
+    let savedProduct
+    try {
+      savedProduct = await product.save()
+    } catch (e: any) {
+      if (e?.code === 11000 && e?.keyPattern?.slug) {
+        // try slug-2, slug-3, ...
+        const base = (product.slug || name).toLowerCase()
+          .replace(/[^a-zA-Z0-9 ]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-+|-+$/g, '')
+        let counter = 2
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+          const candidate = `${base}-${counter}`
+          const exists = await Product.exists({ slug: candidate })
+          if (!exists) {
+            product.slug = candidate
+            savedProduct = await product.save()
+            break
+          }
+          counter += 1
+        }
+      } else {
+        throw e
+      }
+    }
 
     return createSuccessResponse(savedProduct, 'Product created successfully', undefined, 201)
   } catch (error: any) {
