@@ -23,7 +23,10 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search')
     const minPrice = searchParams.get('minPrice')
     const maxPrice = searchParams.get('maxPrice')
-    const sortBy = searchParams.get('sortBy') || 'createdAt'
+    let sortBy = searchParams.get('sortBy') || 'createdAt'
+    if (sortBy === 'isFeatured') {
+      sortBy = 'isFeatured'
+    }
     const sortOrder = searchParams.get('sortOrder') || 'desc'
     const featured = searchParams.get('featured') === 'true'
     const inStock = searchParams.get('inStock') === 'true'

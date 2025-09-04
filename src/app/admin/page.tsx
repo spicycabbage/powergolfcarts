@@ -245,9 +245,8 @@ export default function AdminDashboard() {
                           </button>
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Inventory</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tags</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           <button onClick={() => { setSortBy('isFeatured'); setSortOrder(prev => sortBy==='isFeatured' && prev==='asc' ? 'desc' : 'asc') }} className="flex items-center space-x-1 hover:text-primary-600">
                             <span>Featured</span>
@@ -295,9 +294,7 @@ export default function AdminDashboard() {
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${Number(p.price || 0).toFixed(2)}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{p?.inventory?.quantity ?? 0}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{p?.category?.name || ''}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 max-w-xs truncate">
-                            {Array.isArray(p?.tags) && p.tags.length > 0 ? p.tags.join(', ') : ''}
-                          </td>
+                          
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             {p.isFeatured ? (
                               <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded bg-yellow-50 text-yellow-700">Yes</span>
@@ -306,7 +303,7 @@ export default function AdminDashboard() {
                             )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            {p.createdAt ? new Date(p.createdAt).toLocaleString() : ''}
+                            {p.createdAt ? new Date(p.createdAt).toLocaleDateString() : ''}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm"></td>
                         </tr>
