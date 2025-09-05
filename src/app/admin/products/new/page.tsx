@@ -114,8 +114,11 @@ export default function NewProductPage() {
 
   const toSlug = (s: string) =>
     s
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase()
-      .replace(/[^a-zA-Z0-9 ]/g, '')
+      .replace(/[^a-z0-9 -]/g, '')
+      .replace(/_/g, '-')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
       .replace(/^-+|-+$/g, '')
