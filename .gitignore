@@ -49,3 +49,9 @@ public/uploads/
 Thumbs.db
 # Local backup artifacts
 _backups/
+
+reports/
+
+.turbo/
+
+dev-server.log
