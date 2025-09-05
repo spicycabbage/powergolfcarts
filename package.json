@@ -17,7 +17,9 @@
     "backup": "node scripts/backup.js",
     "restore": "node scripts/restore.js",
     "create-site": "node scripts/create-site.js",
-    "deploy-site": "node scripts/deploy-site.js"
+    "deploy-site": "node scripts/deploy-site.js",
+    "create:contact-page": "node scripts/create-contact-page.js",
+    "create:sample-post": "node scripts/create-sample-post.js"
   },
   "dependencies": {
     "@stripe/stripe-js": "^3.0.0",
@@ -32,10 +34,18 @@
     "next": "^15.0.0",
     "next-auth": "^4.24.5",
     "next-seo": "^6.5.0",
+    "nodemailer": "^6.10.1",
+    "quill": "^2.0.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.49.2",
     "react-hot-toast": "^2.4.1",
+    "react-markdown": "^10.1.0",
+    "react-quill": "^2.0.0",
+    "rehype-raw": "^7.0.0",
+    "rehype-sanitize": "^6.0.0",
+    "remark-breaks": "^4.0.0",
+    "remark-gfm": "^4.0.1",
     "sharp": "^0.33.2",
     "stripe": "^14.17.0",
     "xml2js": "^0.6.2",
@@ -43,6 +53,7 @@
     "zustand": "^4.5.0"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.16",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
     "@types/bcryptjs": "^2.4.6",

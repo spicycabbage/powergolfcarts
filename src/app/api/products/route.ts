@@ -130,6 +130,7 @@ export async function POST(request: NextRequest) {
       slug,
       description,
       shortDescription,
+      productType,
       price,
       originalPrice,
       images,
@@ -154,15 +155,17 @@ export async function POST(request: NextRequest) {
             : [])
     }
 
-    // Validate required fields using utility
-    const validationError = await validateRequiredFields(body, ['name', 'description', 'price', 'category'])
+    // Validate required fields (description optional)
+    const validationError = await validateRequiredFields(body, ['name', 'category'])
     if (validationError) {
       return createErrorResponse(validationError, 400)
     }
-
-    if (!normalizedSeo.title || !normalizedSeo.description) {
-      return createErrorResponse('SEO title and description are required', 400)
+    const isVariable = (productType || 'simple') === 'variable'
+    if (!isVariable && price == null && originalPrice == null) {
+      return createErrorResponse('Regular Price is required', 400)
     }
+
+    // SEO optional; fill sensible defaults
 
     // Check if category exists
     const categoryExists = await Category.findById(category)
@@ -170,14 +173,66 @@ export async function POST(request: NextRequest) {
       return createErrorResponse('Invalid category', 400)
     }
 
+    // Normalize pricing: treat originalPrice as Regular Price and price as Sales Price (if any)
+    let regularPrice = originalPrice as number | undefined
+    let salesPrice = price as number | undefined
+    if (regularPrice != null && salesPrice != null) {
+      if (salesPrice < 0 || regularPrice < 0) {
+        return createErrorResponse('Prices must be positive', 400)
+      }
+      if (salesPrice >= regularPrice) {
+        return createErrorResponse('Sales Price must be less than Regular Price', 400)
+      }
+    }
+
+    // Normalize and validate variant pricing
+    let normalizedVariants: any[] = []
+    if (Array.isArray(variants)) {
+      for (const v of variants) {
+        const vRegular = v.originalPrice as number | undefined
+        let vSale = v.price as number | undefined
+        if (vRegular == null || Number.isNaN(vRegular) || vRegular <= 0) {
+          return createErrorResponse('Variant Regular Price is required and must be > 0', 400)
+        }
+        // Only validate when sale provided
+        if (vSale != null) {
+          if (Number.isNaN(vSale) || vSale < 0) {
+            return createErrorResponse('Variant prices must be positive', 400)
+          }
+          if (vSale >= vRegular) {
+            return createErrorResponse('Variant Sales Price must be less than Regular Price', 400)
+          }
+        }
+        normalizedVariants.push({ ...v, originalPrice: vRegular, price: vSale })
+      }
+    }
+
+    if (isVariable && normalizedVariants.length === 0) {
+      return createErrorResponse('At least one variant is required for variable products', 400)
+    }
+
+    // Derive top-level price/originalPrice for variable products
+    if (isVariable && normalizedVariants.length > 0) {
+      const effectivePrices = normalizedVariants.map(v => (v.price != null ? v.price : v.originalPrice))
+      const regulars = normalizedVariants.map(v => v.originalPrice)
+      const minEffective = Math.min(...effectivePrices)
+      const minRegular = Math.min(...regulars)
+      salesPrice = minEffective
+      regularPrice = minRegular
+    } else if (!isVariable && regularPrice != null && salesPrice == null) {
+      // For simple products without sale price, display regular as effective price
+      salesPrice = regularPrice
+    }
+
     // Create product
     const product = new Product({
       name,
       slug,
-      description,
-      shortDescription,
-      price,
-      originalPrice,
+      description: typeof description === 'string' ? description : String(description || ''),
+      shortDescription: typeof shortDescription === 'string' ? shortDescription : String(shortDescription || ''),
+      productType: productType || 'simple',
+      price: salesPrice,
+      originalPrice: regularPrice,
       images,
       category,
       categories: categories || [],
@@ -189,7 +244,7 @@ export async function POST(request: NextRequest) {
         ...(inventory?.sku ? { sku: inventory.sku } : {}),
       },
       seo: normalizedSeo,
-      variants: variants || [],
+      variants: normalizedVariants,
       isActive: isActive ?? true,
       isFeatured: isFeatured ?? false
     })

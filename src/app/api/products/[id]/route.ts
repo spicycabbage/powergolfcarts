@@ -6,12 +6,12 @@ import Review from '@/lib/models/Review'
 // GET /api/products/[id] - Get a single product
 export async function GET(
   request: NextRequest,
-  { params }: any
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectToDatabase()
 
-    const { id } = params as { id: string }
+    const { id } = await context.params
     const product = await Product.findById(id)
       .populate('category', 'name slug description')
       .populate('categories', 'name slug description')
@@ -66,15 +66,82 @@ export async function GET(
 // PUT /api/products/[id] - Update a product (Admin only)
 export async function PUT(
   request: NextRequest,
-  { params }: any
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectToDatabase()
 
     const body = await request.json()
-    const updateData = { ...body, updatedAt: new Date() }
+    const toNum = (val: any) => {
+      if (val === null || val === undefined) return undefined
+      const raw = typeof val === 'string' ? val.trim() : val
+      if (raw === '') return undefined
+      const num = Number(raw)
+      return Number.isFinite(num) ? num : undefined
+    }
 
-    const { id } = params as { id: string }
+    // Normalize pricing on update: originalPrice = Regular, price = Sales (optional)
+    let regularPrice = toNum(body.originalPrice)
+    let salesPrice = toNum(body.price)
+    if (regularPrice != null && salesPrice != null) {
+      if (salesPrice >= regularPrice) {
+        return NextResponse.json(
+          { success: false, error: 'Sales Price must be less than Regular Price' },
+          { status: 400 }
+        )
+      }
+    }
+
+    // Normalize variant pricing similarly
+    const normalizedVariants = Array.isArray(body.variants)
+      ? body.variants.map((v: any) => {
+          const vRegular = toNum(v.originalPrice)
+          const vSale = toNum(v.price)
+          if (vRegular != null && vSale != null && vSale >= vRegular) {
+            throw new Error('Variant Sales Price must be less than Regular Price')
+          }
+          return { ...v, originalPrice: vRegular, price: vSale }
+        })
+      : body.variants
+
+    const isVariable = (body.productType || (Array.isArray(normalizedVariants) && normalizedVariants.length > 0 ? 'variable' : 'simple')) === 'variable'
+
+    // Derive top-level pricing if needed
+    if (isVariable && Array.isArray(normalizedVariants) && normalizedVariants.length > 0) {
+      const effectivePrices = normalizedVariants
+        .map((v: any) => (v.price != null ? Number(v.price) : Number(v.originalPrice)))
+        .filter((n: any) => !Number.isNaN(n))
+      const regulars = normalizedVariants
+        .map((v: any) => (v.originalPrice != null ? Number(v.originalPrice) : (v.price != null ? Number(v.price) : undefined)))
+        .filter((n: any) => !Number.isNaN(n))
+      if (effectivePrices.length > 0) {
+        salesPrice = Math.min(...effectivePrices)
+      }
+      if (regulars.length > 0) {
+        regularPrice = Math.min(...regulars)
+      }
+    } else if (!isVariable) {
+      // For simple products: if only regular provided, make it effective price too
+      if (regularPrice != null && salesPrice == null) {
+        salesPrice = regularPrice
+      }
+    }
+
+    const updateData: any = {
+      ...body,
+      updatedAt: new Date()
+    }
+    // Guard: ensure description fields are strings
+    if (typeof updateData.description !== 'string') updateData.description = String(updateData.description || '')
+    if (typeof updateData.shortDescription !== 'string') updateData.shortDescription = String(updateData.shortDescription || '')
+    // Ensure we don't unset price/originalPrice unless we have derived values
+    if (salesPrice !== undefined) updateData.price = salesPrice
+    else delete updateData.price
+    if (regularPrice !== undefined) updateData.originalPrice = regularPrice
+    else delete updateData.originalPrice
+    if (Array.isArray(normalizedVariants)) updateData.variants = normalizedVariants
+
+    const { id } = await context.params
     const product = await Product.findByIdAndUpdate(
       id,
       updateData,
@@ -103,7 +170,7 @@ export async function PUT(
     }
 
     return NextResponse.json(
-      { success: false, error: 'Failed to update product' },
+      { success: false, error: error?.message || 'Failed to update product' },
       { status: 500 }
     )
   }
@@ -112,12 +179,12 @@ export async function PUT(
 // DELETE /api/products/[id] - Delete a product (Admin only)
 export async function DELETE(
   request: NextRequest,
-  { params }: any
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectToDatabase()
 
-    const { id } = params as { id: string }
+    const { id } = await context.params
     const product = await Product.findByIdAndDelete(id)
 
     if (!product) {

@@ -48,7 +48,7 @@ export default async function CategoriesPage() {
                 className="group bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-all duration-200 hover:-translate-y-1 cursor-default"
               >
                 <div className="aspect-square relative overflow-hidden">
-                  <Link href={`/categories/${category.slug}`} className="block">
+                  <Link href={`/categories/${category.slug}`} className="block cursor-pointer">
                     <Image
                       src={category.image || '/uploads/logo-1756875309898.jpg'}
                       alt={category.name}
@@ -66,7 +66,7 @@ export default async function CategoriesPage() {
                 </div>
 
                 <div className="p-6">
-                  <Link href={`/categories/${category.slug}`}>
+                  <Link href={`/categories/${category.slug}`} className="cursor-pointer">
                     <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors cursor-pointer">
                       {category.name}
                     </h3>
@@ -74,7 +74,7 @@ export default async function CategoriesPage() {
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                     {category.description || ''}
                   </p>
-                  <Link href={`/categories/${category.slug}`}>
+                  <Link href={`/categories/${category.slug}`} className="cursor-pointer">
                     <div className="flex items-center text-primary-600 font-medium group-hover:text-primary-700 transition-colors cursor-pointer">
                       Shop Now
                       <ArrowRight className="ml-2 w-4 h-4" />
@@ -99,7 +99,7 @@ export default async function CategoriesPage() {
                 className="group bg-gray-50 rounded-lg p-6 hover:bg-white hover:shadow-md transition-all duration-200 cursor-default"
               >
                 <div className="aspect-square relative overflow-hidden rounded-lg mb-4">
-                  <Link href={`/categories/${category.slug}`} className="block">
+                  <Link href={`/categories/${category.slug}`} className="block cursor-pointer">
                     <Image
                       src={category.image || '/uploads/logo-1756875309898.jpg'}
                       alt={category.name}
@@ -110,7 +110,7 @@ export default async function CategoriesPage() {
                   </Link>
                 </div>
 
-                <Link href={`/categories/${category.slug}`}>
+                <Link href={`/categories/${category.slug}`} className="cursor-pointer">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors cursor-pointer">
                     {category.name}
                   </h3>
@@ -122,7 +122,7 @@ export default async function CategoriesPage() {
                   <span className="text-sm text-gray-500">
                     {category.productCount ?? 0} products
                   </span>
-                  <Link href={`/categories/${category.slug}`}>
+                  <Link href={`/categories/${category.slug}`} className="cursor-pointer">
                     <ArrowRight className="w-4 h-4 text-primary-600 group-hover:translate-x-1 transition-transform cursor-pointer" />
                   </Link>
                 </div>

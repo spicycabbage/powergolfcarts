@@ -1,14 +1,15 @@
-import { Schema, model, models, Model } from 'mongoose'
+import { Schema, model, models, Model, Types } from 'mongoose'
 
 export interface IReview {
   _id?: string
   user: Schema.Types.ObjectId
   product: Schema.Types.ObjectId
   rating: number
-  title: string
+  title?: string
   comment: string
   images?: string[]
   isVerified: boolean
+  status?: 'pending' | 'approved' | 'rejected'
   helpful: number
   reported: boolean
   createdAt?: Date
@@ -42,7 +43,6 @@ const ReviewSchema = new Schema<IReview>({
   },
   title: {
     type: String,
-    required: [true, 'Review title is required'],
     trim: true,
     maxlength: [100, 'Title cannot exceed 100 characters']
   },
@@ -65,6 +65,11 @@ const ReviewSchema = new Schema<IReview>({
     type: Boolean,
     default: false
   },
+  status: {
+    type: String,
+    enum: ['pending', 'approved', 'rejected'],
+    default: 'pending'
+  },
   helpful: {
     type: Number,
     default: 0,
@@ -86,6 +91,7 @@ ReviewSchema.index({ user: 1, product: 1 }, { unique: true }) // One review per 
 ReviewSchema.index({ rating: 1 })
 ReviewSchema.index({ isVerified: 1 })
 ReviewSchema.index({ reported: 1 })
+ReviewSchema.index({ status: 1 })
 
 // Compound index for efficient queries
 ReviewSchema.index({ product: 1, rating: 1, createdAt: -1 })
@@ -117,6 +123,7 @@ ReviewSchema.statics.getProductReviews = async function(
   limit: number = 10,
   sortBy: 'newest' | 'oldest' | 'highest' | 'lowest' | 'helpful' = 'newest'
 ) {
+  const pid = typeof productId === 'string' ? new Types.ObjectId(productId) : productId
   const sortOptions = {
     newest: { createdAt: -1 },
     oldest: { createdAt: 1 },
@@ -125,14 +132,14 @@ ReviewSchema.statics.getProductReviews = async function(
     helpful: { helpful: -1 }
   }
 
-  const reviews = await this.find({ product: productId, reported: false })
+  const reviews = await this.find({ product: pid as any, reported: false, status: 'approved' })
     .populate('user', 'firstName lastName avatar')
     .sort(sortOptions[sortBy])
     .limit(limit)
     .skip((page - 1) * limit)
     .lean()
 
-  const total = await this.countDocuments({ product: productId, reported: false })
+  const total = await this.countDocuments({ product: pid as any, reported: false, status: 'approved' })
 
   return {
     reviews,
@@ -147,8 +154,9 @@ ReviewSchema.statics.getProductReviews = async function(
 
 // Static method to get product rating statistics
 ReviewSchema.statics.getProductRatingStats = async function(productId: string) {
+  const pid = typeof productId === 'string' ? new Types.ObjectId(productId) : productId
   const stats = await this.aggregate([
-    { $match: { product: productId, reported: false } },
+    { $match: { product: pid as any, reported: false, status: 'approved' } },
     {
       $group: {
         _id: null,
@@ -193,6 +201,10 @@ ReviewSchema.methods.report = function() {
   return this.save()
 }
 
+// In development, clear cached model to ensure schema updates are applied
+if (process.env.NODE_ENV === 'development' && (models as any).Review) {
+  delete (models as any).Review
+}
 const Review = (models.Review as unknown as IReviewModel) || model<IReview, IReviewModel>('Review', ReviewSchema)
 
 export default Review

@@ -81,7 +81,7 @@ const CategorySchema = new Schema<ICategory>({
 })
 
 // Indexes for performance
-CategorySchema.index({ slug: 1 })
+// slug already has a unique index via the field definition; avoid duplicate index
 CategorySchema.index({ parent: 1 })
 CategorySchema.index({ isActive: 1 })
 CategorySchema.index({ name: 'text', description: 'text' })

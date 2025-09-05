@@ -11,6 +11,7 @@ export interface IProductImage {
 export interface IProductVariant {
   name: string
   value: string
+  originalPrice?: number
   price?: number
   inventory: number
   sku?: string
@@ -39,6 +40,7 @@ export interface IProduct {
   slug: string
   description: string
   shortDescription?: string
+  productType?: 'simple' | 'variable'
   price: number
   originalPrice?: number
   images: IProductImage[]
@@ -68,6 +70,7 @@ const ProductImageSchema = new Schema<IProductImage>({
 const ProductVariantSchema = new Schema<IProductVariant>({
   name: { type: String, required: true },
   value: { type: String, required: true },
+  originalPrice: { type: Number },
   price: { type: Number },
   inventory: { type: Number, required: true, min: 0 },
   sku: { type: String },
@@ -81,8 +84,8 @@ const InventorySchema = new Schema<IInventory>({
 })
 
 const SEOSchema = new Schema<ISEO>({
-  title: { type: String, required: true },
-  description: { type: String, required: true },
+  title: { type: String },
+  description: { type: String },
   keywords: [{ type: String }],
   canonical: { type: String },
   ogImage: { type: String },
@@ -106,11 +109,15 @@ const ProductSchema = new Schema<IProduct>({
   },
   description: {
     type: String,
-    required: [true, 'Product description is required'],
   },
   shortDescription: {
     type: String,
-    maxlength: [300, 'Short description cannot exceed 300 characters']
+    maxlength: [500, 'Short description cannot exceed 500 characters']
+  },
+  productType: {
+    type: String,
+    enum: ['simple', 'variable'],
+    default: 'simple'
   },
   price: {
     type: Number,
@@ -166,11 +173,12 @@ const ProductSchema = new Schema<IProduct>({
 
 // Indexes for performance
 ProductSchema.index({ name: 'text', description: 'text' })
-ProductSchema.index({ slug: 1 })
+// slug already has a unique index via the field definition; avoid duplicate index
 ProductSchema.index({ category: 1 })
 ProductSchema.index({ categories: 1 })
 ProductSchema.index({ isActive: 1 })
 ProductSchema.index({ isFeatured: 1 })
+ProductSchema.index({ productType: 1 })
 ProductSchema.index({ price: 1 })
 ProductSchema.index({ averageRating: -1 })
 ProductSchema.index({ createdAt: -1 })

@@ -113,6 +113,30 @@ export default function AdminDashboard() {
       href: '/admin/products/new',
       color: 'bg-indigo-500',
       disabled: false
+    },
+    {
+      title: 'Reviews Moderation',
+      description: 'Approve, edit, or delete product reviews',
+      icon: Users,
+      href: '/admin/reviews',
+      color: 'bg-purple-500',
+      disabled: false
+    },
+    {
+      title: 'Pages',
+      description: 'Manage site pages like About, FAQ, Contact',
+      icon: Settings,
+      href: '/admin/pages',
+      color: 'bg-purple-500',
+      disabled: false
+    },
+    {
+      title: 'Blog',
+      description: 'Create and manage blog posts',
+      icon: Settings,
+      href: '/admin/blog',
+      color: 'bg-teal-500',
+      disabled: false
     }
   ]
 
@@ -244,6 +268,7 @@ export default function AdminDashboard() {
                             <span>Name</span>
                           </button>
                         </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Variants</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Update</th>
@@ -292,34 +317,109 @@ export default function AdminDashboard() {
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             <Link href={`/admin/products/${p._id}`} className="text-primary-600 hover:text-primary-700">{p.name}</Link>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${Number(p.price || 0).toFixed(2)}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{p?.inventory?.quantity ?? 0}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            <button
-                              onClick={async () => {
-                                const current = Number(p?.inventory?.quantity ?? 0)
-                                const input = prompt('Enter new stock quantity', String(current))
-                                if (input === null) return
-                                const qty = parseInt(input)
-                                if (isNaN(qty) || qty < 0) {
-                                  alert('Invalid quantity')
-                                  return
-                                }
-                                const res = await fetch(`/api/products/${p._id}`, {
-                                  method: 'PUT',
-                                  headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ inventory: { ...(p.inventory || {}), quantity: qty } })
-                                })
-                                if (!res.ok) {
-                                  alert('Failed to update stock')
-                                  return
-                                }
-                                setRecentProducts(prev => prev.map(x => x._id === p._id ? { ...x, inventory: { ...(x.inventory || {}), quantity: qty } } : x))
-                              }}
-                              className="px-3 py-1 text-sm rounded-lg border border-gray-300 hover:bg-gray-50"
-                            >
-                              Update
-                            </button>
+                          <td className="px-6 py-4 text-sm text-gray-700">{Array.isArray(p.variants) && p.variants.length > 0 ? (
+                            <div className="max-h-28 overflow-y-auto pr-1 space-y-1">
+                              {p.variants.map((v: any, vi: number) => (
+                                <div key={vi} className="flex items-center justify-between">
+                                  <div className="text-gray-700">
+                                    <span className="font-medium">{v.value}</span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="text-gray-400">—</span>
+                          )}</td>
+                          <td className="px-6 py-4 text-sm text-gray-700">{Array.isArray(p.variants) && p.variants.length > 0 ? (
+                            <div className="max-h-28 overflow-y-auto pr-1 space-y-1">
+                              {p.variants.map((v: any, vi: number) => (
+                                <div key={vi}>
+                                  {v.price != null ? (
+                                    <>
+                                      <span className="text-gray-900">${Number(v.price).toFixed(2)}</span>
+                                      {v.originalPrice != null && (
+                                        <span className="line-through text-gray-400 ml-1">${Number(v.originalPrice).toFixed(2)}</span>
+                                      )}
+                                    </>
+                                  ) : (
+                                    <span className="text-gray-900">${Number(v.originalPrice || 0).toFixed(2)}</span>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            `$${Number(p.price || 0).toFixed(2)}`
+                          )}</td>
+                          <td className="px-6 py-4 text-sm text-gray-700">{Array.isArray(p.variants) && p.variants.length > 0 ? (
+                            <div className="max-h-28 overflow-y-auto pr-1 space-y-1">
+                              {p.variants.map((v: any, vi: number) => (
+                                <div key={vi}>{v.inventory ?? 0}</div>
+                              ))}
+                            </div>
+                          ) : (
+                            p?.inventory?.quantity ?? 0
+                          )}</td>
+                          <td className="px-6 py-4 text-sm">
+                            {Array.isArray(p.variants) && p.variants.length > 0 ? (
+                              <div className="max-h-28 overflow-y-auto pr-1 space-y-1">
+                                {p.variants.map((v: any, vi: number) => (
+                                  <div key={vi}>
+                                    <button
+                                      onClick={async () => {
+                                        const current = Number(v.inventory ?? 0)
+                                        const input = prompt(`Enter new stock for ${v.value}`, String(current))
+                                        if (input === null) return
+                                        const qty = parseInt(input)
+                                        if (isNaN(qty) || qty < 0) {
+                                          alert('Invalid quantity')
+                                          return
+                                        }
+                                        const newVariants = (p.variants || []).map((vv: any, idx: number) => idx === vi ? { ...vv, inventory: qty } : vv)
+                                        const res = await fetch(`/api/products/${p._id}`, {
+                                          method: 'PUT',
+                                          headers: { 'Content-Type': 'application/json' },
+                                          body: JSON.stringify({ variants: newVariants })
+                                        })
+                                        if (!res.ok) {
+                                          alert('Failed to update variant stock')
+                                          return
+                                        }
+                                        setRecentProducts(prev => prev.map(x => x._id === p._id ? { ...x, variants: newVariants } : x))
+                                      }}
+                                      className="px-2 py-1 text-xs rounded-lg border border-gray-300 hover:bg-gray-50"
+                                    >
+                                      Update
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <button
+                                onClick={async () => {
+                                  const current = Number(p?.inventory?.quantity ?? 0)
+                                  const input = prompt('Enter new stock quantity', String(current))
+                                  if (input === null) return
+                                  const qty = parseInt(input)
+                                  if (isNaN(qty) || qty < 0) {
+                                    alert('Invalid quantity')
+                                    return
+                                  }
+                                  const res = await fetch(`/api/products/${p._id}`, {
+                                    method: 'PUT',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ inventory: { ...(p.inventory || {}), quantity: qty } })
+                                  })
+                                  if (!res.ok) {
+                                    alert('Failed to update stock')
+                                    return
+                                  }
+                                  setRecentProducts(prev => prev.map(x => x._id === p._id ? { ...x, inventory: { ...(x.inventory || {}), quantity: qty } } : x))
+                                }}
+                                className="px-3 py-1 text-sm rounded-lg border border-gray-300 hover:bg-gray-50"
+                              >
+                                Update
+                              </button>
+                            )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                             {(() => {
@@ -350,6 +450,7 @@ export default function AdminDashboard() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm"></td>
                         </tr>
+                        
                       ))}
                     </tbody>
                   </table>

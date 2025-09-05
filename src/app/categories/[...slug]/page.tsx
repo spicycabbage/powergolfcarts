@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Star, ShoppingCart, Filter, ArrowLeft, ShoppingBag } from 'lucide-react'
+import { Star, ShoppingCart, ArrowLeft, ShoppingBag } from 'lucide-react'
 import BreadcrumbsJsonLd from '@/components/seo/BreadcrumbsJsonLd'
 import { getSiteConfig } from '@/lib/config'
 import { notFound } from 'next/navigation'
@@ -12,15 +12,16 @@ import Category from '@/lib/models/Category'
 export const dynamic = 'force-dynamic'
 import SortSelect from '@/components/SortSelect'
 
-interface CategoryPageProps {
-  params: { slug: string }
+interface CatchAllCategoryPageProps {
+  params: { slug: string[] }
   searchParams?: { [key: string]: string | string[] | undefined }
 }
 
-export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
-  const { slug } = params
+export async function generateMetadata({ params }: CatchAllCategoryPageProps): Promise<Metadata> {
+  const segments = Array.isArray(params.slug) ? params.slug : [params.slug]
+  const lastSlug = segments[segments.length - 1]
   await connectToDatabase()
-  const category = await Category.findOne({ slug }).lean()
+  const category = await Category.findOne({ slug: lastSlug }).lean()
   if (!category) {
     return { title: 'Category Not Found | E-Commerce Store' }
   }
@@ -30,13 +31,31 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   }
 }
 
-export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
-  const { slug } = params
+export default async function CatchAllCategoryPage({ params, searchParams }: CatchAllCategoryPageProps) {
+  const segments = Array.isArray(params.slug) ? params.slug : [params.slug]
+  const lastSlug = segments[segments.length - 1]
+
   await connectToDatabase()
-  const category = await Category.findOne({ slug }).lean()
+  const category = await Category.findOne({ slug: lastSlug }).lean()
   if (!category) {
     notFound()
   }
+
+  // Collect this category and all descendant category IDs (recursive)
+  const ids: any[] = [(category as any)._id]
+  let frontier: any[] = [(category as any)._id]
+  // BFS to gather all children at any depth
+  // eslint-disable-next-line no-constant-condition
+  while (frontier.length > 0) {
+    const children = await Category.find({ parent: { $in: frontier } }).select('_id').lean()
+    const newIds = children
+      .map((c: any) => c._id)
+      .filter((id: any) => !ids.some((x) => String(x) === String(id)))
+    if (newIds.length === 0) break
+    ids.push(...newIds)
+    frontier = newIds
+  }
+  const idsAsStrings = ids.map((x: any) => String(x))
 
   const sortParam = (typeof searchParams?.sort === 'string'
     ? searchParams?.sort
@@ -59,15 +78,43 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     }
   })()
 
-  const products = await Product.find({
+  const typedQuery: any = {
     isActive: true,
     $or: [
-      { category: category._id },
-      { categories: category._id }
+      { category: { $in: ids } },
+      { categories: { $in: ids } },
+      { category: { $in: idsAsStrings } },
+      { categories: { $in: idsAsStrings } },
     ]
+  }
+  const productsTyped = await Product.find(typedQuery).sort(sortBy as any).lean()
+
+  // Legacy fallback: match documents that incorrectly stored slugs in category fields
+  const descendantCats = await Category.find({ _id: { $in: ids } }).select('slug name').lean()
+  const slugList = descendantCats.map((c: any) => c.slug)
+  const nameList = descendantCats.map((c: any) => c.name)
+  const nameRegexes = nameList.map((n: any) => new RegExp(`^${n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'))
+  const legacyQuery = {
+    isActive: true,
+    $or: [
+      { category: { $in: slugList } },
+      { categories: { $in: slugList } },
+      { category: { $in: nameList } },
+      { categories: { $in: nameList } },
+      { category: { $in: nameRegexes } },
+      { categories: { $in: nameRegexes } },
+    ]
+  }
+  const productsLegacy = await Product.collection.find(legacyQuery).sort(sortBy as any).toArray()
+
+  // Merge and dedupe by _id
+  const seen = new Set<string>()
+  const products = [...productsTyped, ...productsLegacy].filter((p: any) => {
+    const id = String(p._id)
+    if (seen.has(id)) return false
+    seen.add(id)
+    return true
   })
-    .sort(sortBy)
-    .lean()
 
   const name = (category as any).name as string
   const description = (category as any).description as string
@@ -76,7 +123,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   const crumbs = [
     { name: 'Home', item: `${baseUrl}/` },
     { name: 'Categories', item: `${baseUrl}/categories` },
-    { name: name, item: `${baseUrl}/categories/${slug}` },
+    { name: name, item: `${baseUrl}/categories/${lastSlug}` },
   ]
 
   return (
@@ -90,7 +137,6 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
             <span>/</span>
             <Link href="/categories" className="hover:text-primary-600">Categories</Link>
             <span>/</span>
-            {/* If we had parent context, we would render it here; this single-level page remains as-is */}
             <span className="text-gray-900 font-medium">{name}</span>
           </nav>
         </div>
@@ -137,13 +183,13 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
             {products.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-8">
                 {products.map((product) => (
-                  <div key={product._id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 group">
+                  <div key={(product as any)._id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 group">
                     {/* Product Image */}
-                    <Link href={`/products/${product.slug}`} className="block relative aspect-square overflow-hidden">
-                      {product.images && product.images.length > 0 ? (
+                    <Link href={`/products/${(product as any).slug}`} className="block relative aspect-square overflow-hidden cursor-pointer">
+                      {(product as any).images && (product as any).images.length > 0 ? (
                         <Image
-                          src={typeof product.images[0] === 'string' ? product.images[0] : product.images[0].url}
-                          alt={typeof product.images[0] === 'string' ? product.name : (product.images[0].alt || product.name)}
+                          src={typeof (product as any).images[0] === 'string' ? (product as any).images[0] : (product as any).images[0].url}
+                          alt={typeof (product as any).images[0] === 'string' ? (product as any).name : ((product as any).images[0].alt || (product as any).name)}
                           fill
                           className="object-cover group-hover:scale-105 transition-transform duration-200"
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
@@ -153,9 +199,9 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                           <span className="text-gray-400 text-sm">No image</span>
                         </div>
                       )}
-                      {product.originalPrice && product.originalPrice > product.price && (
+                      {(product as any).originalPrice && (product as any).originalPrice > (product as any).price && (
                         <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-medium">
-                          {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
+                          {Math.round(((((product as any).originalPrice - (product as any).price) / (product as any).originalPrice) * 100))}% OFF
                         </div>
                       )}
 
@@ -163,9 +209,9 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
                     {/* Product Info */}
                     <div className="p-5">
-                      <Link href={`/products/${product.slug}`}>
+                      <Link href={`/products/${(product as any).slug}`} className="cursor-pointer">
                         <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-primary-600 transition-colors">
-                          {product.name}
+                          {(product as any).name}
                         </h3>
                       </Link>
 
@@ -176,7 +222,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                             <Star
                               key={i}
                               className={`w-4 h-4 ${
-                                i < Math.floor(product.averageRating)
+                                i < Math.floor((product as any).averageRating)
                                   ? 'text-yellow-400 fill-current'
                                   : 'text-gray-300'
                               }`}
@@ -184,7 +230,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                           ))}
                         </div>
                         <span className="text-sm text-gray-600 ml-2">
-                          ({product.reviewCount})
+                          ({(product as any).reviewCount})
                         </span>
                       </div>
 
@@ -192,11 +238,11 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
                           <span className="text-xl font-bold text-gray-900">
-                            ${product.price.toFixed(2)}
+                            ${Number((product as any).price ?? (product as any).originalPrice ?? 0).toFixed(2)}
                           </span>
-                          {product.originalPrice && product.originalPrice > product.price && (
+                          {(product as any).originalPrice && (product as any).originalPrice > (product as any).price && (
                             <span className="text-sm text-gray-500 line-through">
-                              ${product.originalPrice.toFixed(2)}
+                              ${Number((product as any).originalPrice).toFixed(2)}
                             </span>
                           )}
                         </div>
@@ -208,15 +254,14 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
                       {/* Stock Status */}
                       <div className="mt-2">
-                        {(!product.inventory.trackInventory || product.inventory.quantity > 0) ? (
+                        {(!(product as any).inventory.trackInventory || (product as any).inventory.quantity > 0) ? (
                           <span className="text-sm text-green-600">In Stock</span>
                         ) : (
                           <span className="text-sm text-red-600">Out of Stock</span>
                         )}
                       </div>
                     </div>
-                  </div>
-                ))}
+                  </div>) )}
               </div>
             ) : (
               <div className="text-center py-12">
@@ -241,3 +286,5 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     </div>
   )
 }
+
+

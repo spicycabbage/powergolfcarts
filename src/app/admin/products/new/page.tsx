@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import SeoFields, { SeoData } from '@/components/seo/SeoFields'
 import { Save, Package, Plus, Trash2 } from 'lucide-react'
+import HtmlEditor from '@/components/forms/HtmlEditor'
 
 type Category = {
   _id: string
@@ -28,8 +29,8 @@ export default function NewProductPage() {
   const [slugEdited, setSlugEdited] = useState(false)
   const [description, setDescription] = useState('')
   const [shortDescription, setShortDescription] = useState('')
-  const [price, setPrice] = useState<string>('')
-  const [originalPrice, setOriginalPrice] = useState<string>('')
+  const [price, setPrice] = useState<string>('') // Sales Price (optional)
+  const [originalPrice, setOriginalPrice] = useState<string>('') // Regular Price (required)
   const [extraCategoryIds, setExtraCategoryIds] = useState<string[]>([])
   const [tagsInput, setTagsInput] = useState('')
   const [sku, setSku] = useState('')
@@ -39,6 +40,55 @@ export default function NewProductPage() {
   const [isFeatured, setIsFeatured] = useState(false)
   const [images, setImages] = useState<string[]>([])
   const [seo, setSeo] = useState<SeoData>({ title: '', description: '', keywords: [] })
+  const [productType, setProductType] = useState<'simple' | 'variable'>('simple')
+  const [variants, setVariants] = useState<Array<{ name: string; value: string; originalPrice?: string; price?: string; sku?: string; quantity: string }>>([])
+
+  const visibleTextLength = (html: string): number => {
+    if (!html) return 0
+    const text = html
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/&nbsp;/gi, ' ')
+      .replace(/&#\d+;|&[a-z]+;/gi, ' ')
+    return text.replace(/\s+/g, ' ').trim().length
+  }
+  const shortVisibleLen = useMemo(() => visibleTextLength(shortDescription), [shortDescription])
+  const longVisibleLen = useMemo(() => visibleTextLength(description), [description])
+
+  const validationErrors = useMemo(() => {
+    const errors: string[] = []
+    if (!name.trim()) errors.push('Name is required')
+    if (!slug.trim()) errors.push('Slug is required')
+    if (shortVisibleLen > 500) errors.push('Short Description exceeds 500 visible characters')
+    if (longVisibleLen > 2000) errors.push('Long Description exceeds 2000 visible characters')
+
+    const q = parseInt(quantity)
+    if (isNaN(q) || q < 0) errors.push('Quantity must be 0 or greater')
+
+    if (productType === 'simple') {
+      const op = originalPrice ? parseFloat(originalPrice) : undefined
+      const p = price ? parseFloat(price) : undefined
+      if (op === undefined || isNaN(op) || op <= 0) errors.push('Regular Price must be greater than 0')
+      if (p !== undefined && (isNaN(p) || p < 0)) errors.push('Sales Price must be 0 or greater')
+      if (p !== undefined && op !== undefined && p >= op) errors.push('Sales Price must be less than Regular Price')
+    }
+
+    if (productType === 'variable') {
+      if (variants.length === 0) errors.push('Add at least one variant')
+      const attrName = variants[0]?.name?.trim()
+      if (!attrName) errors.push('Attribute name is required')
+      variants.forEach((v, idx) => {
+        if (!v.value.trim()) errors.push(`Variant #${idx + 1}: Value is required`)
+        const vq = parseInt(v.quantity)
+        if (isNaN(vq) || vq < 0) errors.push(`Variant #${idx + 1}: Quantity must be 0 or greater`)
+        const vop = v.originalPrice !== undefined && v.originalPrice !== '' ? parseFloat(v.originalPrice) : undefined
+        const vp = v.price !== undefined && v.price !== '' ? parseFloat(v.price) : undefined
+        if (vop == null || isNaN(vop) || vop <= 0) errors.push(`Variant #${idx + 1}: Regular Price must be greater than 0`)
+        if (vp !== undefined && (isNaN(vp) || vp < 0)) errors.push(`Variant #${idx + 1}: Sales Price must be 0 or greater`)
+        if (vop != null && vp != null && vp >= vop) errors.push(`Variant #${idx + 1}: Sales Price must be less than Regular Price`)
+      })
+    }
+    return errors
+  }, [name, slug, description, shortVisibleLen, longVisibleLen, quantity, productType, originalPrice, price, variants])
 
   useEffect(() => {
     if (!isLoading && (!user || user.role !== 'admin')) {
@@ -86,6 +136,24 @@ export default function NewProductPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name, shortDescription, description, slugEdited])
 
+  // When switching to variable, ensure at least one starter variant exists
+  useEffect(() => {
+    if (productType === 'variable' && variants.length === 0) {
+      const reg = originalPrice ? parseFloat(originalPrice) : (price ? parseFloat(price) : undefined)
+      const sale = price ? parseFloat(price) : undefined
+      const qty = parseInt(quantity) || 0
+      setVariants([{
+        name: variants[0]?.name || 'Option',
+        value: 'Default',
+        originalPrice: reg != null && !Number.isNaN(reg) ? String(reg) : '',
+        price: sale != null && !Number.isNaN(sale) ? String(sale) : '',
+        sku: '',
+        quantity: String(qty)
+      }])
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productType])
+
   const topLevelCategories = useMemo(
     () => categories.filter((c: any) => !c.parent),
     [categories]
@@ -115,17 +183,36 @@ export default function NewProductPage() {
   const uncategorized = useMemo(() => categories.find(c => c.slug === 'uncategorized' || c.isSystem), [categories])
 
   const canSave = useMemo(() => {
-    const p = parseFloat(price)
     const op = originalPrice ? parseFloat(originalPrice) : undefined
+    const p = price ? parseFloat(price) : undefined
     if (!name.trim()) return false
-    if (!description.trim()) return false
-    if (isNaN(p) || p <= 0) return false
+    // Long description optional
     if (!slug.trim()) return false
-    if (op !== undefined && (isNaN(op) || op < 0)) return false
     const q = parseInt(quantity)
     if (isNaN(q) || q < 0) return false
+
+    if (productType === 'simple') {
+      if (op === undefined || isNaN(op) || op <= 0) return false
+      if (p !== undefined && (isNaN(p) || p < 0)) return false
+      if (p !== undefined && op !== undefined && p >= op) return false
+    }
+
+    if (productType === 'variable') {
+      if (variants.length === 0) return false
+      for (const v of variants) {
+        if (!v.name.trim() || !v.value.trim()) return false
+        const vq = parseInt(v.quantity)
+        if (isNaN(vq) || vq < 0) return false
+        const vop = v.originalPrice !== undefined && v.originalPrice !== '' ? parseFloat(v.originalPrice) : undefined
+        const vp = v.price !== undefined && v.price !== '' ? parseFloat(v.price) : undefined
+        if ((vop == null || isNaN(vop) || vop <= 0) && (vp == null || isNaN(vp) || vp < 0)) return false
+        if (vop != null && vp != null && vp >= vop) return false
+      }
+    }
+    if (shortVisibleLen > 500) return false
+    if (longVisibleLen > 2000) return false
     return true
-  }, [name, description, price, originalPrice, quantity, slug])
+  }, [name, description, longVisibleLen, shortVisibleLen, price, originalPrice, quantity, slug, productType, variants])
 
   const removeImageField = (idx: number) => setImages(prev => prev.filter((_, i) => i !== idx))
 
@@ -167,13 +254,14 @@ export default function NewProductPage() {
 
       const primaryCategoryId = extraCategoryIds[0] || (uncategorized ? (uncategorized as any)._id : undefined)
 
-      const payload = {
+      const payload: any = {
         name: name.trim(),
         slug: slug.trim(),
         description: description.trim(),
         shortDescription: shortDescription.trim(),
-        price: parseFloat(price),
-        originalPrice: originalPrice ? parseFloat(originalPrice) : undefined,
+        productType,
+        price: price ? parseFloat(price) : undefined, // Sales Price (optional)
+        originalPrice: originalPrice ? parseFloat(originalPrice) : undefined, // Regular Price
         images: imageObjects,
         category: primaryCategoryId,
         categories: extraCategoryIds.filter(id => id !== primaryCategoryId),
@@ -195,6 +283,17 @@ export default function NewProductPage() {
         variants: [],
         isActive,
         isFeatured,
+      }
+
+      if (productType === 'variable') {
+        payload.variants = variants.map(v => ({
+          name: v.name.trim(),
+          value: v.value.trim(),
+          originalPrice: v.originalPrice ? parseFloat(v.originalPrice) : undefined,
+          price: v.price ? parseFloat(v.price) : undefined,
+          sku: v.sku?.trim() || undefined,
+          inventory: parseInt(v.quantity) || 0
+        }))
       }
 
       const res = await fetch('/api/products', {
@@ -274,6 +373,21 @@ export default function NewProductPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Left column */}
           <div className="lg:col-span-3 space-y-8">
+            {/* Product Type */}
+            <div className="bg-white rounded-lg shadow p-6 space-y-4">
+              <h2 className="text-lg font-medium text-gray-900">Product Type</h2>
+              <div className="flex items-center space-x-6">
+                <label className="inline-flex items-center space-x-2">
+                  <input type="radio" name="ptype" checked={productType==='simple'} onChange={() => setProductType('simple')} className="text-primary-600" />
+                  <span className="text-sm text-gray-700">Simple</span>
+                </label>
+                <label className="inline-flex items-center space-x-2">
+                  <input type="radio" name="ptype" checked={productType==='variable'} onChange={() => setProductType('variable')} className="text-primary-600" />
+                  <span className="text-sm text-gray-700">Variable</span>
+                </label>
+              </div>
+            </div>
+
             {/* Basic Info */}
             <div className="bg-white rounded-lg shadow p-6 space-y-6">
               <h2 className="text-lg font-medium text-gray-900">Basic Information</h2>
@@ -295,27 +409,71 @@ export default function NewProductPage() {
               </div>
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Short Description</label>
-                  <textarea value={shortDescription} onChange={e => setShortDescription(e.target.value)} rows={8} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+                  <HtmlEditor label="Short Description" value={shortDescription} onChange={setShortDescription} rows={8} placeholder="Write a short summary (HTML supported)" />
+                  <div className={`mt-1 text-xs text-right ${shortVisibleLen > 500 ? 'text-red-600' : 'text-gray-500'}`}>{shortVisibleLen}/500 visible chars</div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Long Description *</label>
-                  <textarea value={description} onChange={e => setDescription(e.target.value)} rows={24} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" required />
+                  <HtmlEditor label="Long Description" value={description} onChange={setDescription} rows={24} placeholder="Write detailed description (HTML supported)" />
+                  <div className={`mt-1 text-xs text-right ${longVisibleLen > 2000 ? 'text-red-600' : 'text-gray-500'}`}>{longVisibleLen}/2000 visible chars</div>
                 </div>
               </div>
             </div>
 
-            {/* Pricing & Inventory */}
+            {/* Variants (Variable products) */}
+            {productType === 'variable' && (
+              <div className="bg-white rounded-lg shadow p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-medium text-gray-900">Variants</h2>
+                  <button type="button" onClick={() => setVariants(v => [...v, { name: variants[0]?.name || '', value: '', originalPrice: '', price: '', sku: '', quantity: '0' }])} className="px-3 py-2 text-sm rounded-lg border border-gray-300 hover:bg-gray-50">Add Variant</button>
+                </div>
+                <div className="space-y-3">
+                  {variants.map((v, idx) => (
+                    <div key={idx} className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
+                      <div>
+                        <label className="block text-xs text-gray-600 mb-1">Attribute</label>
+                        <input value={variants[0]?.name || ''} onChange={e => setVariants(arr => arr.map((x)=> ({ ...x, name: e.target.value })))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="e.g. Size" />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-600 mb-1">Value</label>
+                        <input value={v.value} onChange={e => setVariants(arr => arr.map((x,i)=> i===idx? { ...x, value: e.target.value }: x))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="e.g. 1g" />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-600 mb-1">Reg Price</label>
+                        <input value={v.originalPrice || ''} onChange={e => setVariants(arr => arr.map((x,i)=> i===idx? { ...x, originalPrice: e.target.value }: x))} inputMode="decimal" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="0.00" />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-600 mb-1">Sales Price</label>
+                        <input value={v.price || ''} onChange={e => setVariants(arr => arr.map((x,i)=> i===idx? { ...x, price: e.target.value }: x))} inputMode="decimal" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="0.00" />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-600 mb-1">SKU</label>
+                        <input value={v.sku || ''} onChange={e => setVariants(arr => arr.map((x,i)=> i===idx? { ...x, sku: e.target.value }: x))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-600 mb-1">Quantity</label>
+                        <input value={v.quantity} onChange={e => setVariants(arr => arr.map((x,i)=> i===idx? { ...x, quantity: e.target.value }: x))} inputMode="numeric" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+                      </div>
+                      <div className="text-right">
+                        <button type="button" onClick={() => setVariants(arr => arr.filter((_,i)=> i!==idx))} className="px-3 py-2 text-sm rounded-lg border border-red-300 text-red-600 hover:bg-red-50">Remove</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Pricing & Inventory (Simple products only) */}
+            {productType === 'simple' && (
             <div className="bg-white rounded-lg shadow p-6 space-y-6">
               <h2 className="text-lg font-medium text-gray-900">Pricing & Inventory</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Price (USD) *</label>
-                  <input inputMode="decimal" value={price} onChange={e => setPrice(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="0.00" required />
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Regular Price *</label>
+                  <input inputMode="decimal" value={originalPrice} onChange={e => setOriginalPrice(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="0.00" required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Original Price</label>
-                  <input inputMode="decimal" value={originalPrice} onChange={e => setOriginalPrice(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="0.00" />
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Sales Price</label>
+                  <input inputMode="decimal" value={price} onChange={e => setPrice(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="0.00" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">SKU (optional)</label>
@@ -333,6 +491,7 @@ export default function NewProductPage() {
                 </div>
               </div>
             </div>
+            )}
 
             {/* SEO */}
             <div className="bg-white rounded-lg shadow p-6 space-y-6">
@@ -442,6 +601,18 @@ export default function NewProductPage() {
           </button>
         </div>
       </form>
+      {!canSave && validationErrors.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+          <div className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            <p className="font-medium mb-2">Cannot save. Fix the following:</p>
+            <ul className="list-disc pl-5 space-y-1">
+              {validationErrors.slice(0, 8).map((e, i) => (
+                <li key={i}>{e}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
