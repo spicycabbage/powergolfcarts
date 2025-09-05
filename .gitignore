@@ -47,3 +47,5 @@ public/uploads/
 
 # OS
 Thumbs.db
+# Local backup artifacts
+_backups/
