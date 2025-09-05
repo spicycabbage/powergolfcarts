@@ -12,6 +12,7 @@ import { connectToDatabase } from '@/lib/mongodb'
 import Product from '@/lib/models/Product'
 import Category from '@/lib/models/Category'
 import { ReviewsTabs } from '@/components/ReviewsTabs'
+import LearnMore from '@/components/LearnMore'
 
 // DB-backed implementation
 
@@ -272,6 +273,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
           </div>
         )}
+
+        {/* Learn more (guides) */}
+        {/* Prefer product tags; fallback to category name */}
+        {/* @ts-expect-error Async Server Component */}
+        <LearnMore tags={(Array.isArray((product as any).tags) && (product as any).tags.length ? (product as any).tags : [categoryName]).filter(Boolean)} />
       </div>
     </div>
   )
