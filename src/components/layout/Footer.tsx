@@ -9,12 +9,11 @@ export function Footer() {
   const footerLinks = {
     shop: [
       { name: 'Shop All', href: '/categories' },
-      { name: 'Electronics', href: '/categories/electronics' },
-      { name: 'Clothing', href: '/categories/clothing' },
-      { name: 'Home & Garden', href: '/categories/home' },
-      { name: 'Sports', href: '/categories/sports' },
-      { name: 'New Arrivals', href: '/categories/new-arrivals' },
-      { name: 'Sale', href: '/categories/sale' }
+      { name: 'Flowers', href: '/categories/flowers' },
+      { name: 'Concentrates', href: '/categories/concentrates' },
+      { name: 'Hash', href: '/categories/hash' },
+      { name: 'Edibles', href: '/categories/edibles' },
+      { name: 'CBD', href: '/categories/cbd' }
     ],
     support: [
       { name: 'Contact Us', href: '/contact' },
@@ -64,11 +63,19 @@ export function Footer() {
             {/* Newsletter Signup */}
             <div className="mb-6">
               <h3 className="text-lg font-semibold mb-3">Stay Updated</h3>
-              <form className="flex flex-col sm:flex-row gap-2">
+              <form
+                className="flex flex-col sm:flex-row gap-2"
+                autoComplete="off"
+                data-lpignore="true"
+                data-lastpass-ignore="true"
+                suppressHydrationWarning
+              >
                 <input
                   type="email"
                   placeholder="Enter your email"
                   className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  name="newsletter_email"
+                  autoComplete="off"
                 />
                 <button
                   type="submit"
