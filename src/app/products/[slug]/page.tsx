@@ -11,6 +11,7 @@ import { getSiteConfig } from '@/lib/config'
 import { connectToDatabase } from '@/lib/mongodb'
 import Product from '@/lib/models/Product'
 import Category from '@/lib/models/Category'
+import { isUsingDataApi, findOne as dataFindOne, findMany as dataFindMany } from '@/lib/dataApi'
 import { ReviewsTabs } from '@/components/ReviewsTabs'
 import LearnMore from '@/components/LearnMore'
 import { serializeProductForClient } from '@/lib/serializers'
@@ -36,7 +37,7 @@ function normalizeContent(html: string): string {
 
 // DB-backed implementation
 
-export const revalidate = 300
+export const dynamic = 'force-dynamic'
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>
@@ -44,12 +45,21 @@ interface ProductPageProps {
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params
-  await connectToDatabase()
-  await import('@/lib/models/Category')
-  const product = await Product.findOne({ slug, isActive: true })
-    .select('name slug shortDescription description images price originalPrice inventory averageRating reviewCount category tags variants.name variants.value variants.price variants.originalPrice variants.inventory variants.sku')
-    .populate('category', 'name slug')
-    .lean()
+  let product: any
+  if (isUsingDataApi()) {
+    product = await dataFindOne('products', { slug, isActive: true }, {
+      name: 1, slug: 1, shortDescription: 1, description: 1, images: 1,
+      price: 1, originalPrice: 1, inventory: 1, averageRating: 1, reviewCount: 1,
+      category: 1, tags: 1, variants: 1
+    })
+  } else {
+    await connectToDatabase()
+    await import('@/lib/models/Category')
+    product = await Product.findOne({ slug, isActive: true })
+      .select('name slug shortDescription description images price originalPrice inventory averageRating reviewCount category tags variants.name variants.value variants.price variants.originalPrice variants.inventory variants.sku')
+      .populate('category', 'name slug')
+      .lean()
+  }
 
   if (!product) {
     return { title: 'Product Not Found | E-Commerce Store' }
@@ -63,28 +73,53 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params
-  await connectToDatabase()
-  await import('@/lib/models/Category')
-  const product = await Product.findOne({ slug, isActive: true })
-    .select('name slug shortDescription description images price originalPrice inventory averageRating reviewCount category tags variants.name variants.value variants.price variants.originalPrice variants.inventory variants.sku')
-    .populate('category', 'name slug')
-    .lean()
+  let product: any
+  if (isUsingDataApi()) {
+    product = await dataFindOne('products', { slug, isActive: true }, {
+      name: 1, slug: 1, shortDescription: 1, description: 1, images: 1,
+      price: 1, originalPrice: 1, inventory: 1, averageRating: 1, reviewCount: 1,
+      category: 1, tags: 1, variants: 1
+    })
+  } else {
+    await connectToDatabase()
+    await import('@/lib/models/Category')
+    product = await Product.findOne({ slug, isActive: true })
+      .select('name slug shortDescription description images price originalPrice inventory averageRating reviewCount category tags variants.name variants.value variants.price variants.originalPrice variants.inventory variants.sku')
+      .populate('category', 'name slug')
+      .lean()
+  }
 
   if (!product) {
     notFound()
   }
 
   // Related products (same primary category)
-  const related = await Product.find({
-    isActive: true,
-    slug: { $ne: slug },
-    $or: [
-      { category: (product as any).category?._id || (product as any).category },
-      { categories: (product as any).category?._id || (product as any).category }
-    ]
-  }).select('name slug price originalPrice images')
-    .limit(8)
-    .lean()
+  let related: any[] = []
+  if (isUsingDataApi()) {
+    related = await dataFindMany('products', {
+      filter: {
+        isActive: true,
+        slug: { $ne: slug },
+        $or: [
+          { category: (product as any).category?._id || (product as any).category },
+          { categories: (product as any).category?._id || (product as any).category }
+        ]
+      },
+      projection: { name: 1, slug: 1, price: 1, originalPrice: 1, images: 1 },
+      limit: 8,
+    })
+  } else {
+    related = await Product.find({
+      isActive: true,
+      slug: { $ne: slug },
+      $or: [
+        { category: (product as any).category?._id || (product as any).category },
+        { categories: (product as any).category?._id || (product as any).category }
+      ]
+    }).select('name slug price originalPrice images')
+      .limit(8)
+      .lean()
+  }
 
   const categorySlug = (product as any).category?.slug
   const categoryName = (product as any).category?.name

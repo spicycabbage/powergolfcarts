@@ -11,12 +11,16 @@ import {
   validateRequiredFields,
   parseRequestBody
 } from '@/utils/apiResponse'
+import { isUsingDataApi, findMany as dataFindMany, count as dataCount, insertOne as dataInsertOne, findOne as dataFindOne } from '@/lib/dataApi'
 
 // GET /api/products - Get all products with filtering and pagination
 export async function GET(request: NextRequest) {
   try {
-    // Ensure database connection
-    await connectToDatabase()
+    const usingDataApi = isUsingDataApi()
+    if (!usingDataApi) {
+      // Ensure database connection (Mongoose path)
+      await connectToDatabase()
+    }
 
     const { searchParams } = new URL(request.url)
     const page = parseInt(searchParams.get('page') || '1')
@@ -109,28 +113,47 @@ export async function GET(request: NextRequest) {
     // Execute query with pagination
     const skip = (page - 1) * limit
 
-    let findQuery = Product.find(query)
-      .sort(sortOptions)
-      .skip(skip)
-      .limit(limit)
-      .lean()
+    let products: any[] = []
+    let total = 0
+    if (usingDataApi) {
+      const projection: any = {}
+      if (fieldsParam) {
+        for (const f of fieldsParam.split(',').map(s => s.trim()).filter(Boolean)) projection[f] = 1
+      }
+      products = await dataFindMany('products', {
+        filter: query,
+        sort: sortOptions,
+        projection: Object.keys(projection).length ? projection : undefined,
+        limit,
+        skip,
+      })
+      total = await dataCount('products', query)
+    } else {
+      let findQuery = Product.find(query)
+        .sort(sortOptions)
+        .skip(skip)
+        .limit(limit)
+        .lean()
 
-    if (fieldsParam) {
-      // Support comma-separated fields; allow nested dot paths
-      const normalized = fieldsParam.split(',').map(f => f.trim()).filter(Boolean).join(' ')
-      findQuery = findQuery.select(normalized)
+      if (fieldsParam) {
+        // Support comma-separated fields; allow nested dot paths
+        const normalized = fieldsParam.split(',').map(f => f.trim()).filter(Boolean).join(' ')
+        findQuery = findQuery.select(normalized)
+      }
+
+      if (doPopulate) {
+        findQuery = findQuery
+          .populate('category', 'name slug')
+          .populate('categories', 'name slug')
+      }
+
+      const [docs, cnt] = await Promise.all([
+        findQuery,
+        Product.countDocuments(query)
+      ])
+      products = docs as any
+      total = cnt
     }
-
-    if (doPopulate) {
-      findQuery = findQuery
-        .populate('category', 'name slug')
-        .populate('categories', 'name slug')
-    }
-
-    const [products, total] = await Promise.all([
-      findQuery,
-      Product.countDocuments(query)
-    ])
 
     // Add virtual fields
     const productsWithVirtuals = products.map(product => ({
@@ -161,8 +184,10 @@ export async function GET(request: NextRequest) {
 // POST /api/products - Create a new product (Admin only)
 export async function POST(request: NextRequest) {
   try {
-    // Ensure database connection
-    await connectToDatabase()
+    const usingDataApi = isUsingDataApi()
+    if (!usingDataApi) {
+      await connectToDatabase()
+    }
 
     const body = await parseRequestBody(request)
     const {
@@ -207,10 +232,19 @@ export async function POST(request: NextRequest) {
 
     // SEO optional; fill sensible defaults
 
-    // Check if category exists
-    const categoryExists = await Category.findById(category)
-    if (!categoryExists) {
-      return createErrorResponse('Invalid category', 400)
+    // Check if category exists (best-effort)
+    if (category) {
+      try {
+        if (usingDataApi) {
+          const cat = await dataFindOne('categories', { _id: category }, { _id: 1 })
+          if (!cat) return createErrorResponse('Invalid category', 400)
+        } else {
+          const categoryExists = await Category.findById(category)
+          if (!categoryExists) return createErrorResponse('Invalid category', 400)
+        }
+      } catch {
+        // fall through and let insert fail if truly invalid
+      }
     }
 
     // Normalize pricing: treat originalPrice as Regular Price and price as Sales Price (if any)
@@ -264,8 +298,7 @@ export async function POST(request: NextRequest) {
       salesPrice = regularPrice
     }
 
-    // Create product
-    const product = new Product({
+    const toInsert = {
       name,
       slug,
       description: typeof description === 'string' ? description : String(description || ''),
@@ -286,39 +319,33 @@ export async function POST(request: NextRequest) {
       seo: normalizedSeo,
       variants: normalizedVariants,
       isActive: isActive ?? true,
-      isFeatured: isFeatured ?? false
-    })
-
-    // Auto-unique slug if collision
-    let savedProduct
-    try {
-      savedProduct = await product.save()
-    } catch (e: any) {
-      if (e?.code === 11000 && e?.keyPattern?.slug) {
-        // try slug-2, slug-3, ...
-        const base = (product.slug || name).toLowerCase()
-          .replace(/[^a-zA-Z0-9 ]/g, '')
-          .replace(/\s+/g, '-')
-          .replace(/-+/g, '-')
-          .replace(/^-+|-+$/g, '')
-        let counter = 2
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
-          const candidate = `${base}-${counter}`
-          const exists = await Product.exists({ slug: candidate })
-          if (!exists) {
-            product.slug = candidate
-            savedProduct = await product.save()
-            break
-          }
-          counter += 1
-        }
-      } else {
-        throw e
-      }
+      isFeatured: isFeatured ?? false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }
 
-    return createSuccessResponse(savedProduct, 'Product created successfully', undefined, 201)
+    if (usingDataApi) {
+      // Auto-unique slug loop using Data API
+      let base = (slug || name).toLowerCase()
+        .replace(/[^a-zA-Z0-9 ]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-+|-+$/g, '')
+      let candidate = base
+      let counter = 1
+      while (await dataFindOne('products', { slug: candidate }, { _id: 1 })) {
+        counter += 1
+        candidate = `${base}-${counter}`
+      }
+      toInsert.slug = candidate
+      const insertedId = await dataInsertOne('products', toInsert)
+      return createSuccessResponse({ _id: insertedId, ...toInsert }, 'Product created successfully', undefined, 201)
+    }
+
+    // Mongoose path
+    const product = new Product(toInsert as any)
+    const saved = await product.save()
+    return createSuccessResponse(saved, 'Product created successfully', undefined, 201)
   } catch (error: any) {
     console.error('Error creating product:', error)
 

@@ -10,8 +10,9 @@ import { notFound } from 'next/navigation'
 import { connectToDatabase } from '@/lib/mongodb'
 import Product from '@/lib/models/Product'
 import Category from '@/lib/models/Category'
+import { isUsingDataApi, findOne as dataFindOne, findMany as dataFindMany } from '@/lib/dataApi'
 
-export const revalidate = 300
+export const dynamic = 'force-dynamic'
 import SortSelect from '@/components/SortSelect'
 
 interface CatchAllCategoryPageProps {
@@ -23,8 +24,13 @@ export async function generateMetadata({ params }: CatchAllCategoryPageProps): P
   const resolved = await params
   const segments = Array.isArray(resolved.slug) ? resolved.slug : [resolved.slug]
   const lastSlug = segments[segments.length - 1]
-  await connectToDatabase()
-  const category: any = await Category.findOne({ slug: lastSlug }).lean()
+  let category: any
+  if (isUsingDataApi()) {
+    category = await dataFindOne('categories', { slug: lastSlug })
+  } else {
+    await connectToDatabase()
+    category = await Category.findOne({ slug: lastSlug }).lean()
+  }
   if (!category) {
     return { title: 'Category Not Found | E-Commerce Store' }
   }
@@ -39,8 +45,13 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
   const segments = Array.isArray(resolved.slug) ? resolved.slug : [resolved.slug]
   const lastSlug = segments[segments.length - 1]
 
-  await connectToDatabase()
-  const category: any = await Category.findOne({ slug: lastSlug }).lean()
+  let category: any
+  if (isUsingDataApi()) {
+    category = await dataFindOne('categories', { slug: lastSlug })
+  } else {
+    await connectToDatabase()
+    category = await Category.findOne({ slug: lastSlug }).lean()
+  }
   if (!category) {
     notFound()
   }
@@ -51,7 +62,12 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
   // BFS to gather all children at any depth
   // eslint-disable-next-line no-constant-condition
   while (frontier.length > 0) {
-    const children = await Category.find({ parent: { $in: frontier } }).select('_id').lean()
+    let children: any[] = []
+    if (isUsingDataApi()) {
+      children = await dataFindMany('categories', { filter: { parent: { $in: frontier } }, projection: { _id: 1 } })
+    } else {
+      children = await Category.find({ parent: { $in: frontier } }).select('_id').lean()
+    }
     const newIds = children
       .map((c: any) => c._id)
       .filter((id: any) => !ids.some((x) => String(x) === String(id)))
@@ -93,16 +109,33 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
     ]
   }
   // Fetch only fields needed for the grid to reduce payload
-  const productsTyped = await Product.find(typedQuery)
-    .select('name slug price originalPrice images averageRating reviewCount inventory variants.name variants.value variants.price variants.originalPrice variants.inventory variants.sku')
-    .sort(sortBy as any)
-    .lean()
+  let productsTyped: any[] = []
+  if (isUsingDataApi()) {
+    productsTyped = await dataFindMany('products', {
+      filter: typedQuery,
+      projection: {
+        name: 1, slug: 1, price: 1, originalPrice: 1, images: 1,
+        averageRating: 1, reviewCount: 1, inventory: 1, variants: 1
+      },
+      sort: sortBy as any,
+    })
+  } else {
+    productsTyped = await Product.find(typedQuery)
+      .select('name slug price originalPrice images averageRating reviewCount inventory variants.name variants.value variants.price variants.originalPrice variants.inventory variants.sku')
+      .sort(sortBy as any)
+      .lean()
+  }
 
   // Legacy fallback: match documents that incorrectly stored slugs in category fields
   // Only run legacy fallback when no typed matches were found
   let productsLegacy: any[] = []
   if (!productsTyped.length) {
-    const descendantCats = await Category.find({ _id: { $in: ids } }).select('slug name').lean()
+    let descendantCats: any[] = []
+    if (isUsingDataApi()) {
+      descendantCats = await dataFindMany('categories', { filter: { _id: { $in: ids } }, projection: { slug: 1, name: 1 } })
+    } else {
+      descendantCats = await Category.find({ _id: { $in: ids } }).select('slug name').lean()
+    }
     const slugList = descendantCats.map((c: any) => c.slug)
     const nameList = descendantCats.map((c: any) => c.name)
     const nameRegexes = nameList.map((n: any) => new RegExp(`^${n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'))
@@ -118,7 +151,11 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
       ]
     }
     const projection = { name: 1, slug: 1, price: 1, originalPrice: 1, images: 1, averageRating: 1, reviewCount: 1, inventory: 1, variants: 1 }
-    productsLegacy = await Product.collection.find(legacyQuery, { projection }).sort(sortBy as any).toArray()
+    if (isUsingDataApi()) {
+      productsLegacy = await dataFindMany('products', { filter: legacyQuery, projection, sort: sortBy as any })
+    } else {
+      productsLegacy = await Product.collection.find(legacyQuery, { projection }).sort(sortBy as any).toArray()
+    }
   }
 
   // Merge and dedupe by _id

@@ -1,5 +1,6 @@
 import { connectToDatabase } from '@/lib/mongodb'
 import Navigation, { INavigationConfig } from '@/lib/models/Navigation'
+import { isUsingDataApi, findOne as dataFindOne } from '@/lib/dataApi'
 
 // Module-level cache for navigation (per server instance)
 let cachedNavigation: INavigationConfig | null = null
@@ -51,18 +52,17 @@ export const defaultNavigation: INavigationConfig = {
 }
 
 export async function getNavigationConfig(): Promise<INavigationConfig> {
-  if (cachedNavigation) return cachedNavigation
-
-  // During production build, avoid DB entirely for speed/clean builds
-  if (process.env.SKIP_DB_AT_BUILD === '1') {
-    cachedNavigation = { ...defaultNavigation }
-    return cachedNavigation
-  }
+  // Always fetch fresh to avoid stale nav in serverless/runtime caches
 
   try {
-    await connectToDatabase()
-    const doc = await Navigation.findOne().lean<any>().exec()
-    cachedNavigation = sanitizeNavigation(doc)
+    if (isUsingDataApi()) {
+      const doc = await dataFindOne('navigations', {}, { _id: 0 })
+      cachedNavigation = sanitizeNavigation(doc)
+    } else {
+      await connectToDatabase()
+      const doc = await Navigation.findOne().lean<any>().exec()
+      cachedNavigation = sanitizeNavigation(doc)
+    }
   } catch (err) {
     cachedNavigation = { ...defaultNavigation }
   }
