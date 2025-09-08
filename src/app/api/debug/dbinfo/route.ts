@@ -25,6 +25,10 @@ export async function GET(req: NextRequest) {
   const conn = mongoose.connection
   const db = conn.db
 
+  if (!db) {
+    return json({ error: 'Database connection failed' }, 500)
+  }
+
   const slug = new URL(req.url).searchParams.get('slug') || undefined
 
   const productsCol = db.collection('products')
