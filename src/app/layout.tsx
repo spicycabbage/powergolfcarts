@@ -3,7 +3,6 @@ import { Inter } from 'next/font/google'
 import '../styles/globals.css'
 import { Providers } from '@/components/Providers'
 import JsonLd from '@/components/seo/JsonLd'
-import { getSiteConfig } from '@/lib/config'
 import { ConditionalFooter } from '@/components/layout/ConditionalFooter'
 import { SessionProvider } from '@/components/SessionProvider'
 import HeaderServer from '@/components/layout/HeaderServer'
@@ -94,24 +93,24 @@ export default async function RootLayout({
             })();
           `}} />
         )}
-        {/* Global JSON-LD: Organization and Website */}
+        {/* Global JSON-LD: Organization and Website (env-based to avoid fs/dynamic at build) */}
         <JsonLd
           data={[
             {
               '@context': 'https://schema.org',
               '@type': 'Organization',
-              name: getSiteConfig().name,
-              url: `https://${getSiteConfig().domain}`,
+              name: process.env.NEXT_PUBLIC_SITE_NAME || 'E-Commerce Store',
+              url: `https://${process.env.NEXT_PUBLIC_DOMAIN || 'example.com'}`,
               logo: '/favicon.ico'
             },
             {
               '@context': 'https://schema.org',
               '@type': 'WebSite',
-              name: getSiteConfig().name,
-              url: `https://${getSiteConfig().domain}`,
+              name: process.env.NEXT_PUBLIC_SITE_NAME || 'E-Commerce Store',
+              url: `https://${process.env.NEXT_PUBLIC_DOMAIN || 'example.com'}`,
               potentialAction: {
                 '@type': 'SearchAction',
-                target: `https://${getSiteConfig().domain}/search?q={search_term_string}`,
+                target: `https://${process.env.NEXT_PUBLIC_DOMAIN || 'example.com'}/search?q={search_term_string}`,
                 'query-input': 'required name=search_term_string'
               }
             }
