@@ -34,11 +34,13 @@ export async function connectToDatabase() {
 
     const opts = {
       bufferCommands: false,
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
+      maxPoolSize: 30,
+      minPoolSize: 5,
+      maxIdleTimeMS: 3600000,
+      serverSelectionTimeoutMS: 3000,
       socketTimeoutMS: 45000,
       family: 4
-    }
+    } as any
 
     cached.promise = mongoose.connect(effectiveUri, opts).then((mongoose) => {
       // Avoid logging full URI; log only database name when possible

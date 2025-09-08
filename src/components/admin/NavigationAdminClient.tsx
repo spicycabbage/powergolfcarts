@@ -13,9 +13,9 @@ import {
   EyeOff,
   ChevronDown,
   ChevronRight,
-  ChevronLeft,
   Menu
 } from 'lucide-react'
+import BackToAdmin from '@/components/admin/BackToAdmin'
 import { ArrowUp, ArrowDown } from 'lucide-react'
 
 interface NavigationItem {
@@ -419,32 +419,23 @@ export default function NavigationAdminClient({ session }: NavigationAdminClient
               <Settings className="w-6 h-6 text-primary-600 mr-3" />
               <h1 className="text-xl font-semibold text-gray-900">Navigation Management</h1>
             </div>
-            <div className="flex items-center space-x-3">
-              <button
-                type="button"
-                onClick={() => router.push('/admin')}
-                className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
-                aria-label="Back to Dashboard"
-              >
-                <ChevronLeft className="w-4 h-4 mr-2" />
-                Back to Dashboard
-              </button>
-              <span className="text-sm text-gray-600">Welcome, {session.user?.name}</span>
-              <button
-                type="button"
-                onClick={saveNavigation}
-                disabled={saving}
-                className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50"
-              >
-                <Save className="w-4 h-4 mr-2" />
-                {saving ? 'Saving...' : 'Save Changes'}
-              </button>
-            </div>
+            <BackToAdmin />
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-8">
+        <div className="flex items-center justify-end mb-2">
+          <button
+            type="button"
+            onClick={saveNavigation}
+            disabled={saving}
+            className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50"
+          >
+            <Save className="w-4 h-4 mr-2" />
+            {saving ? 'Saving...' : 'Save Changes'}
+          </button>
+        </div>
         {/* Tabs */}
         <div className="mb-8">
           <div className="border-b border-gray-200">

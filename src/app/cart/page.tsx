@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from '@/hooks/useCart'
@@ -9,31 +9,90 @@ import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft } from 'lucide-react'
 export default function CartPage() {
   const { cart, updateQuantity, removeItem, clearCart } = useCart()
   const [isUpdating, setIsUpdating] = useState<string | null>(null)
+  const [shippingConfig, setShippingConfig] = useState<{ methods: Array<{ name: string, price: number, freeThreshold?: number, sortOrder?: number, isActive?: boolean }> } | null>(null)
+  const [selectedShippingKey, setSelectedShippingKey] = useState<string>('')
 
-  const handleQuantityChange = async (productId: string, newQuantity: number) => {
+  const handleQuantityChange = async (productId: string, newQuantity: number, variant?: any) => {
     if (newQuantity < 1) return
     
     setIsUpdating(productId)
     try {
-      updateQuantity(productId, newQuantity)
+      updateQuantity(productId, newQuantity, variant)
     } finally {
       setIsUpdating(null)
     }
   }
 
-  const handleRemoveItem = async (productId: string) => {
+  const handleRemoveItem = async (productId: string, variant?: any) => {
     setIsUpdating(productId)
     try {
-      removeItem(productId)
+      removeItem(productId, variant)
     } finally {
       setIsUpdating(null)
     }
   }
 
   const subtotal = cart.items.reduce((total, item) => total + (item.product.price * item.quantity), 0)
-  const shipping = subtotal > 50 ? 0 : 9.99
-  const tax = subtotal * 0.08
-  const total = subtotal + shipping + tax
+  const tax = 0
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const res = await fetch('/api/shipping', { cache: 'no-store' })
+        const json = await res.json().catch(() => ({} as any))
+        const data = json?.data
+        const activeMethods = (Array.isArray(data?.methods) ? data.methods : []).filter((m: any) => m?.isActive !== false)
+        setShippingConfig({
+          methods: activeMethods.map((m: any) => ({
+            name: String(m.name || 'Method'),
+            price: Number(m.price || 0),
+            freeThreshold: m.freeThreshold != null ? Number(m.freeThreshold) : undefined,
+            sortOrder: m.sortOrder != null ? Number(m.sortOrder) : undefined,
+            isActive: m.isActive !== false,
+          }))
+        })
+      } catch {}
+    })()
+  }, [])
+
+  const shippingOptions = useMemo(() => {
+    const keyFromName = (n: string) => n.toLowerCase().trim().replace(/\s+/g, '-')
+    const methods = (shippingConfig?.methods || [])
+      .slice()
+      .sort((a, b) => (a.sortOrder ?? 999) - (b.sortOrder ?? 999) || a.price - b.price)
+    const opts: Array<{ key: string, label: string, price: number }> = []
+    methods.forEach((m) => {
+      const nameKey = keyFromName(m.name)
+      const hasPerMethodThreshold = m.freeThreshold != null && !Number.isNaN(Number(m.freeThreshold))
+      const canadaPostName = /canada\s*post/i.test(m.name)
+      const qualifiesPerMethod = hasPerMethodThreshold && subtotal >= Number(m.freeThreshold)
+      const qualifiesCanadaPostDefault = !hasPerMethodThreshold && canadaPostName && subtotal >= 175
+      const isFree = qualifiesPerMethod || qualifiesCanadaPostDefault
+      const price = isFree ? 0 : m.price
+      opts.push({ key: nameKey, label: m.name, price })
+    })
+    return opts
+  }, [shippingConfig, subtotal])
+
+  useEffect(() => {
+    if (shippingOptions.length === 0) return
+    // Select cheapest (0 first). If current selection not present, reset.
+    const cheapest = shippingOptions.reduce((min, cur) => (cur.price < min.price ? cur : min), shippingOptions[0])
+    setSelectedShippingKey(prev => (prev && shippingOptions.some(o => o.key === prev)) ? prev : cheapest.key)
+  }, [shippingOptions])
+
+  const selectedShipping = useMemo(() => shippingOptions.find(o => o.key === selectedShippingKey) || shippingOptions[0], [shippingOptions, selectedShippingKey])
+  const computedShippingCost = selectedShipping ? selectedShipping.price : 0
+  const displayTotal = subtotal + computedShippingCost
+
+  // Persist selected shipping for checkout page to consume
+  useEffect(() => {
+    try {
+      if (!selectedShipping) return
+      const payload = { key: selectedShipping.key, name: selectedShipping.label, price: selectedShipping.price }
+      sessionStorage.setItem('checkout_selected_shipping', JSON.stringify(payload))
+    } catch {}
+  }, [selectedShipping])
 
   if (cart.items.length === 0) {
     return (
@@ -89,8 +148,9 @@ export default function CartPage() {
                   ? (typeof item.product.images[0] === 'string' ? item.product.images[0] : item.product.images[0].url)
                   : '/placeholder.jpg'
 
+                const variantKey = (item as any)?.variant?._id || (item as any)?.variant?.value || 'default'
                 return (
-                  <div key={`${item.product._id}-${item.variant || 'default'}`} className={`p-6 ${index !== cart.items.length - 1 ? 'border-b border-gray-200' : ''}`}>
+                  <div key={`${item.product._id}-${variantKey}`} className={`p-6 ${index !== cart.items.length - 1 ? 'border-b border-gray-200' : ''}`}>
                     <div className="flex items-center space-x-4">
                       {/* Product Image */}
                       <div className="flex-shrink-0 w-[100px] h-[100px]">
@@ -142,7 +202,7 @@ export default function CartPage() {
                                 onClick={(e) => {
                                   e.preventDefault()
                                   e.stopPropagation()
-                                  handleQuantityChange(item.product._id, item.quantity - 1)
+                                  handleQuantityChange(item.product._id, item.quantity - 1, item.variant)
                                 }}
                                 disabled={item.quantity <= 1 || isUpdating === item.product._id}
                                 className="p-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -157,7 +217,7 @@ export default function CartPage() {
                                 onClick={(e) => {
                                   e.preventDefault()
                                   e.stopPropagation()
-                                  handleQuantityChange(item.product._id, item.quantity + 1)
+                                  handleQuantityChange(item.product._id, item.quantity + 1, item.variant)
                                 }}
                                 disabled={isUpdating === item.product._id}
                                 className="p-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -172,7 +232,7 @@ export default function CartPage() {
                               onClick={(e) => {
                                 e.preventDefault()
                                 e.stopPropagation()
-                                handleRemoveItem(item.product._id)
+                                handleRemoveItem(item.product._id, item.variant)
                               }}
                               disabled={isUpdating === item.product._id}
                               className="p-2 text-red-600 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -202,29 +262,50 @@ export default function CartPage() {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-sm p-6 sticky top-8">
               <h3 className="text-lg font-medium text-gray-900 mb-6">Order Summary</h3>
-              
+
               <div className="space-y-4">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Subtotal</span>
                   <span className="text-gray-900">${subtotal.toFixed(2)}</span>
                 </div>
-                
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Shipping</span>
-                  <span className="text-gray-900">
-                    {shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}
-                  </span>
+
+                {/* Shipping Method Selection (below Subtotal) */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">Shipping</h4>
+                  {shippingOptions.length === 0 ? (
+                    <p className="text-sm text-gray-600">No shipping methods available.</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {shippingOptions.map((opt) => (
+                        <label key={opt.key} className="flex items-center w-full cursor-pointer">
+                          <span className="flex items-center">
+                            <input
+                              type="radio"
+                              name="shippingMethod"
+                              className="mr-2"
+                              checked={selectedShippingKey === opt.key}
+                              onChange={() => setSelectedShippingKey(opt.key)}
+                            />
+                            <span className="text-sm text-gray-800">{opt.label}</span>
+                            {selectedShippingKey !== opt.key && (
+                              <span className="ml-2 text-sm text-gray-500">{opt.price === 0 ? 'Free' : `$${opt.price.toFixed(2)}`}</span>
+                            )}
+                          </span>
+                          {selectedShippingKey === opt.key && (
+                            <span className="ml-auto text-sm text-gray-900">{opt.price === 0 ? 'Free' : `$${opt.price.toFixed(2)}`}</span>
+                          )}
+                        </label>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Tax</span>
-                  <span className="text-gray-900">${tax.toFixed(2)}</span>
-                </div>
+                {/* Tax row removed: prices include tax */}
                 
                 <div className="border-t border-gray-200 pt-4">
                   <div className="flex justify-between text-lg font-medium">
                     <span className="text-gray-900">Total</span>
-                    <span className="text-gray-900">${total.toFixed(2)}</span>
+                    <span className="text-gray-900">${displayTotal.toFixed(2)}</span>
                   </div>
                 </div>
               </div>

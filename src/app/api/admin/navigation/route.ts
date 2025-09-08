@@ -8,9 +8,9 @@ import { setNavigationConfig, clearNavigationConfig } from '@/lib/navigationStor
 // GET - Fetch current navigation configuration
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session: any = await getServerSession(authOptions as any)
     
-    if (!session?.user || session.user.role !== 'admin') {
+    if (!session || !session.user || session.user.role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -46,9 +46,9 @@ export async function GET(request: NextRequest) {
 // PUT - Update navigation configuration
 export async function PUT(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session: any = await getServerSession(authOptions as any)
     
-    if (!session?.user || session.user.role !== 'admin') {
+    if (!session || !session.user || session.user.role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

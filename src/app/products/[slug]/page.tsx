@@ -13,10 +13,30 @@ import Product from '@/lib/models/Product'
 import Category from '@/lib/models/Category'
 import { ReviewsTabs } from '@/components/ReviewsTabs'
 import LearnMore from '@/components/LearnMore'
+import { serializeProductForClient } from '@/lib/serializers'
+
+function normalizeContent(html: string): string {
+  try {
+    if (!html) return ''
+    const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i)
+    if (bodyMatch && bodyMatch[1]) return bodyMatch[1]
+    const articleMatch = html.match(/<article[^>]*>([\s\S]*?)<\/article>/i)
+    if (articleMatch && articleMatch[1]) return articleMatch[1]
+    let out = html
+      .replace(/<\/?html[^>]*>/gi, '')
+      .replace(/<\/?head[^>]*>[\s\S]*?<\/?head>/gi, '')
+    // Strip script/style tags for safety and to avoid render issues
+    out = out.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+             .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    return out
+  } catch {
+    return html
+  }
+}
 
 // DB-backed implementation
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 300
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>
@@ -27,6 +47,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   await connectToDatabase()
   await import('@/lib/models/Category')
   const product = await Product.findOne({ slug, isActive: true })
+    .select('name slug shortDescription description images price originalPrice inventory averageRating reviewCount category tags variants.name variants.value variants.price variants.originalPrice variants.inventory variants.sku')
     .populate('category', 'name slug')
     .lean()
 
@@ -45,6 +66,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   await connectToDatabase()
   await import('@/lib/models/Category')
   const product = await Product.findOne({ slug, isActive: true })
+    .select('name slug shortDescription description images price originalPrice inventory averageRating reviewCount category tags variants.name variants.value variants.price variants.originalPrice variants.inventory variants.sku')
     .populate('category', 'name slug')
     .lean()
 
@@ -60,7 +82,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       { category: (product as any).category?._id || (product as any).category },
       { categories: (product as any).category?._id || (product as any).category }
     ]
-  })
+  }).select('name slug price originalPrice images')
     .limit(8)
     .lean()
 
@@ -75,6 +97,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
     ...(categorySlug ? [{ name: categoryName, item: `${baseUrl}${categoryPath}` }] as any : []),
     { name: (product as any).name, item: `${baseUrl}/products/${(product as any).slug}` },
   ]
+
+  const variants: any[] = Array.isArray((product as any).variants) ? (product as any).variants : []
+  const totalVariantInventory = variants.reduce((sum: number, v: any) => sum + Number(v?.inventory || 0), 0)
+  const isVariable = variants.length > 0
 
   return (
     <div className="min-h-screen bg-white">
@@ -96,7 +122,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             '@type': 'Offer',
             priceCurrency: 'USD',
             price: (product as any).price,
-            availability: (product as any).inventory?.quantity > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+            availability: (isVariable ? (totalVariantInventory > 0) : ((product as any).inventory?.quantity > 0)) ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
             url: `${baseUrl}/products/${(product as any).slug}`
           },
           aggregateRating: (product as any).reviewCount > 0
@@ -106,7 +132,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       />
       {/* Breadcrumb */}
       <section className="bg-gray-50 border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <nav className="flex items-center space-x-2 text-sm text-gray-600">
             <Link href="/" className="hover:text-primary-600">Home</Link>
             <span>/</span>
@@ -126,11 +152,23 @@ export default async function ProductPage({ params }: ProductPageProps) {
           {/* Product Images */}
           <ProductImageGallery
             images={Array.isArray((product as any).images)
-              ? (product as any).images.map((img: any, idx: number) => (
-                  typeof img === 'string'
-                    ? { _id: String(idx), url: img, alt: (product as any).name, width: 800, height: 800, isPrimary: idx === 0 }
-                    : img
-                ))
+              ? (product as any).images
+                  .map((img: any, idx: number) => {
+                    if (typeof img === 'string') {
+                      return { url: img, alt: (product as any).name, width: 800, height: 800, isPrimary: idx === 0 }
+                    }
+                    if (img && typeof img === 'object') {
+                      return {
+                        url: String(img.url || ''),
+                        alt: String(img.alt || (product as any).name || ''),
+                        width: Number(img.width || 800),
+                        height: Number(img.height || 800),
+                        isPrimary: Boolean(img.isPrimary),
+                      }
+                    }
+                    return null
+                  })
+                  .filter(Boolean)
               : []}
             productName={(product as any).name}
           />
@@ -178,23 +216,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
               )}
             </div>
 
-            {/* Stock Status */}
-            <div className="flex items-center space-x-2">
-              {(product as any).inventory?.quantity > 0 ? (
-                <>
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <span className="text-green-600 font-medium">In Stock ({(product as any).inventory.quantity})</span>
-                </>
-              ) : (
-                <>
-                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                  <span className="text-red-600 font-medium">Out of Stock</span>
-                </>
-              )}
-            </div>
+            {/* Stock status intentionally hidden per requirements */}
 
             {/* Product Actions */}
-            <ProductActions product={product as any} />
+            <ProductActions product={serializeProductForClient(product as any) as any} />
 
             {/* Product Details */}
             <div className="border-t border-gray-200 pt-6">
@@ -211,7 +236,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <div>
                   <span className="font-medium text-gray-600">Stock:</span>
                   <span className="ml-2 text-gray-900">
-                    {(product as any).inventory?.quantity > 0 ? `${(product as any).inventory.quantity} available` : 'Out of Stock'}
+                    {isVariable
+                      ? (totalVariantInventory > 0 ? `${totalVariantInventory} available` : 'Out of Stock')
+                      : ((product as any).inventory?.quantity > 0 ? `${(product as any).inventory.quantity} available` : 'Out of Stock')}
                   </span>
                 </div>
               </div>
@@ -235,7 +262,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
 
         {/* Description / Reviews Tabs */}
-        <ReviewsTabs productId={String((product as any)._id)} htmlDescription={(product as any).description || ''} />
+        {(() => {
+          const raw = String((product as any).description || '')
+          const norm = normalizeContent(raw)
+          const html = (norm && norm.trim().length > 0) ? norm : raw
+          return (
+            <ReviewsTabs productId={String((product as any)._id)} htmlDescription={html} />
+          )
+        })()}
 
         {/* Related Products */}
         {Array.isArray(related) && related.length > 0 && (
@@ -276,7 +310,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
         {/* Learn more (guides) */}
         {/* Prefer product tags; fallback to category name */}
-        {/* @ts-expect-error Async Server Component */}
         <LearnMore tags={(Array.isArray((product as any).tags) && (product as any).tags.length ? (product as any).tags : [categoryName]).filter(Boolean)} />
       </div>
     </div>

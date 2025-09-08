@@ -8,8 +8,8 @@ import Product from '@/lib/models/Product'
 // GET /api/admin/reviews?status=pending&page=1&limit=20
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions as any)
-    if (!session?.user || (session.user as any).role !== 'admin') {
+    const session: any = await getServerSession(authOptions as any)
+    if (!session || !session.user || session.user.role !== 'admin') {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
     await connectToDatabase()
@@ -39,8 +39,8 @@ export async function GET(req: NextRequest) {
 // PUT /api/admin/reviews - update status or content
 export async function PUT(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions as any)
-    if (!session?.user || (session.user as any).role !== 'admin') {
+    const session: any = await getServerSession(authOptions as any)
+    if (!session || !session.user || session.user.role !== 'admin') {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
     await connectToDatabase()
@@ -74,8 +74,8 @@ export async function PUT(req: NextRequest) {
 // DELETE /api/admin/reviews?id=...
 export async function DELETE(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions as any)
-    if (!session?.user || (session.user as any).role !== 'admin') {
+    const session: any = await getServerSession(authOptions as any)
+    if (!session || !session.user || session.user.role !== 'admin') {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
     await connectToDatabase()

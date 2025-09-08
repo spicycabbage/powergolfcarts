@@ -7,8 +7,8 @@ import Post from '@/lib/models/Post'
 // GET /api/admin/posts?search=&page=1&limit=20
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions as any)
-    if (!session?.user || (session.user as any).role !== 'admin') {
+    const session: any = await getServerSession(authOptions as any)
+    if (!session || !session.user || session.user.role !== 'admin') {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
     await connectToDatabase()
@@ -18,7 +18,12 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20')
     const q: any = search ? { $text: { $search: search } } : {}
     const [items, total] = await Promise.all([
-      Post.find(q).sort({ publishedAt: -1, updatedAt: -1 }).skip((page-1)*limit).limit(limit).lean(),
+      Post.find(q)
+        .select('title slug tags topic isPublished publishedAt updatedAt')
+        .sort({ publishedAt: -1, updatedAt: -1 })
+        .skip((page-1)*limit)
+        .limit(limit)
+        .lean(),
       Post.countDocuments(q)
     ])
     return NextResponse.json({ success: true, data: items, pagination: { page, limit, total, totalPages: Math.ceil(total/limit) } })
@@ -31,13 +36,13 @@ export async function GET(req: NextRequest) {
 // POST /api/admin/posts
 export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions as any)
-    if (!session?.user || (session.user as any).role !== 'admin') {
+    const session: any = await getServerSession(authOptions as any)
+    if (!session || !session.user || session.user.role !== 'admin') {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
     await connectToDatabase()
     const body = await req.json()
-    const { title, slug, excerpt, content, coverImage, tags, seo, isPublished, publishedAt } = body || {}
+    const { title, slug, excerpt, content, coverImage, tags, topic, seo, isPublished, publishedAt } = body || {}
     if (!title || !slug) {
       return NextResponse.json({ success: false, error: 'Missing title or slug' }, { status: 400 })
     }
@@ -48,6 +53,7 @@ export async function POST(req: NextRequest) {
       content: content || '',
       coverImage,
       tags: Array.isArray(tags) ? tags : (typeof tags === 'string' && tags.trim() ? tags.split(',').map((t: string) => t.trim()).filter(Boolean) : []),
+      topic: typeof topic === 'string' ? topic.trim().toLowerCase() : undefined,
       seo,
       isPublished: !!isPublished,
       publishedAt: isPublished ? (publishedAt ? new Date(publishedAt) : new Date()) : null,

@@ -1,4 +1,6 @@
 import { NextRequest } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth/options'
 import { connectToDatabase } from '@/lib/mongodb'
 import Product from '@/lib/models/Product'
 import Category from '@/lib/models/Category'
@@ -30,12 +32,26 @@ export async function GET(request: NextRequest) {
     const sortOrder = searchParams.get('sortOrder') || 'desc'
     const featured = searchParams.get('featured') === 'true'
     const inStock = searchParams.get('inStock') === 'true'
+    const includeInactive = searchParams.get('includeInactive') === 'true'
     const fieldsParam = (searchParams.get('fields') || '').trim()
     const populateParam = (searchParams.get('populate') || 'true').toLowerCase()
     const doPopulate = populateParam !== 'false'
 
     // Build query
-    const query: any = { isActive: true }
+    const query: any = {}
+
+    // Visibility filter: only allow includeInactive for admins
+    if (includeInactive) {
+      const session: any = await getServerSession(authOptions as any)
+      if (!session || !session.user || session.user.role !== 'admin') {
+        // Fallback to active-only for non-admins
+        query.isActive = true
+      }
+      // Admins can see all (no isActive filter)
+    } else {
+      // Default: only active
+      query.isActive = true
+    }
 
     // Category filter
     if (category) {

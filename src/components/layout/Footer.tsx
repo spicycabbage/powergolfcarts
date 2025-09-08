@@ -1,10 +1,13 @@
 'use client'
 
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import { Facebook, Twitter, Instagram, Youtube } from 'lucide-react'
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   const footerLinks = {
     shop: [
@@ -60,31 +63,32 @@ export function Footer() {
               great customer service, and a wide variety of products to choose from.
             </p>
 
-            {/* Newsletter Signup */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-3">Stay Updated</h3>
-              <form
-                className="flex flex-col sm:flex-row gap-2"
-                autoComplete="off"
-                data-lpignore="true"
-                data-lastpass-ignore="true"
-                suppressHydrationWarning
-              >
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                  name="newsletter_email"
+            {/* Newsletter Signup (client-only to avoid hydration mismatches from extensions) */}
+            {mounted && (
+              <div className="mb-6" suppressHydrationWarning>
+                <h3 className="text-lg font-semibold mb-3">Stay Updated</h3>
+                <form
+                  className="flex flex-col sm:flex-row gap-2"
                   autoComplete="off"
-                />
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors whitespace-nowrap"
+                  data-lpignore="true"
+                  data-lastpass-ignore="true"
                 >
-                  Subscribe
-                </button>
-              </form>
-            </div>
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    name="newsletter_email"
+                    autoComplete="off"
+                  />
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors whitespace-nowrap"
+                  >
+                    Subscribe
+                  </button>
+                </form>
+              </div>
+            )}
 
             {/* Social Links */}
             <div className="flex space-x-4">

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import { normalizeImageUrl } from '@/utils/image'
 
 interface ProductImage {
   _id: string
@@ -29,12 +30,7 @@ export function ProductImageGallery({ images, productName }: ProductImageGallery
   }
 
   // Helper function to get image source
-  const getImageSrc = (image: string | ProductImage): string => {
-    if (typeof image === 'string') {
-      return image
-    }
-    return image.url
-  }
+  const getImageSrc = (image: string | ProductImage): string => normalizeImageUrl(image as any)
 
   // Helper function to get image alt text
   const getImageAlt = (image: string | ProductImage, index: number): string => {

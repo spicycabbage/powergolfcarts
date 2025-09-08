@@ -7,8 +7,8 @@ import Review from '@/lib/models/Review'
 // GET /api/admin/reviews/legacy - find old reviews missing status field
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions as any)
-    if (!session?.user || (session.user as any).role !== 'admin') {
+    const session: any = await getServerSession(authOptions as any)
+    if (!session || !session.user || session.user.role !== 'admin') {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
     await connectToDatabase()
@@ -27,8 +27,8 @@ export async function GET(req: NextRequest) {
 // PUT /api/admin/reviews/legacy - migrate one or many legacy reviews to a given status
 export async function PUT(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions as any)
-    if (!session?.user || (session.user as any).role !== 'admin') {
+    const session: any = await getServerSession(authOptions as any)
+    if (!session || !session.user || session.user.role !== 'admin') {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
     await connectToDatabase()

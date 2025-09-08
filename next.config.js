@@ -2,6 +2,9 @@
 const path = require('path')
 
 const nextConfig = {
+  experimental: {
+    optimizePackageImports: ['lucide-react'],
+  },
   outputFileTracingRoot: path.join(__dirname),
   images: {
     remotePatterns: [

@@ -108,12 +108,17 @@ export async function PUT(
 
     // Derive top-level pricing if needed
     if (isVariable && Array.isArray(normalizedVariants) && normalizedVariants.length > 0) {
-      const effectivePrices = normalizedVariants
-        .map((v: any) => (v.price != null ? Number(v.price) : Number(v.originalPrice)))
-        .filter((n: any) => !Number.isNaN(n))
-      const regulars = normalizedVariants
-        .map((v: any) => (v.originalPrice != null ? Number(v.originalPrice) : (v.price != null ? Number(v.price) : undefined)))
-        .filter((n: any) => !Number.isNaN(n))
+      const effectiveCandidatePrices = normalizedVariants.map((v: any) => {
+        const val = v.price != null ? Number(v.price) : (v.originalPrice != null ? Number(v.originalPrice) : NaN)
+        return Number.isFinite(val) ? val : NaN
+      })
+      const effectivePrices: number[] = effectiveCandidatePrices.filter((n: number): n is number => Number.isFinite(n))
+
+      const regularCandidatePrices = normalizedVariants.map((v: any) => {
+        const val = v.originalPrice != null ? Number(v.originalPrice) : (v.price != null ? Number(v.price) : NaN)
+        return Number.isFinite(val) ? val : NaN
+      })
+      const regulars: number[] = regularCandidatePrices.filter((n: number): n is number => Number.isFinite(n))
       if (effectivePrices.length > 0) {
         salesPrice = Math.min(...effectivePrices)
       }

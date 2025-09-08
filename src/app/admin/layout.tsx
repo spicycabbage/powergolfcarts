@@ -13,7 +13,14 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  return children
+  return (
+    <div className="admin-root">
+      <style>{`
+        @media print { header, footer, .announcement-bar, [data-announcement], .free-shipping-banner { display: none !important; } }
+      `}</style>
+      {children}
+    </div>
+  )
 }
 
 

@@ -18,6 +18,7 @@ export interface IPost {
   content: string
   coverImage?: string
   tags?: string[]
+  topic?: string
   seo?: IPostSEO
   isPublished: boolean
   publishedAt?: Date | null
@@ -42,6 +43,7 @@ const PostSchema = new Schema<IPost>({
   content: { type: String, default: '' },
   coverImage: { type: String },
   tags: [{ type: String }],
+  topic: { type: String, trim: true, lowercase: true },
   seo: { type: PostSEOSchema },
   isPublished: { type: Boolean, default: false },
   publishedAt: { type: Date, default: null },
@@ -50,6 +52,7 @@ const PostSchema = new Schema<IPost>({
 // Indexes
 PostSchema.index({ slug: 1 }, { unique: true })
 PostSchema.index({ title: 'text', content: 'text', excerpt: 'text', tags: 'text' })
+PostSchema.index({ topic: 1 })
 PostSchema.index({ isPublished: 1, publishedAt: 1 })
 
 // Generate slug from title if missing

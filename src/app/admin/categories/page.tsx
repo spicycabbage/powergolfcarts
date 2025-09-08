@@ -15,6 +15,7 @@ import {
   FolderOpen
 } from 'lucide-react'
 import SeoFields from '@/components/seo/SeoFields'
+import BackToAdmin from '@/components/admin/BackToAdmin'
 
 interface Category {
   _id: string
@@ -399,25 +400,22 @@ export default function CategoriesAdmin() {
               <h1 className="text-xl font-semibold text-gray-900">Category Management</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <button
-                onClick={() => router.push('/admin/navigation')}
-                className="px-4 py-2 text-gray-600 hover:text-gray-900"
-              >
-                Back to Navigation
-              </button>
-              <button
-                onClick={() => openModal()}
-                className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Category
-              </button>
+              <BackToAdmin />
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-8">
+        <div className="flex items-center justify-end mb-6">
+          <button
+            onClick={() => openModal()}
+            className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add Category
+          </button>
+        </div>
         {categories.length === 0 ? (
           <div className="text-center py-12">
             <Folder className="w-12 h-12 text-gray-400 mx-auto mb-4" />

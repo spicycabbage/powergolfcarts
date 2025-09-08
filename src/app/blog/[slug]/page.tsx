@@ -13,7 +13,7 @@ interface BlogPageProps {
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
   const { slug } = await params
   await connectToDatabase()
-  const post = await Post.findOne({ slug, isPublished: true }).lean()
+  const post: any = await Post.findOne({ slug, isPublished: true }).lean()
   if (!post) return { title: 'Post' }
   return {
     title: post.seo?.title || post.title,
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
 export default async function BlogPostPage({ params }: BlogPageProps) {
   const { slug } = await params
   await connectToDatabase()
-  const post = await Post.findOne({ slug, isPublished: true }).lean()
+  const post: any = await Post.findOne({ slug, isPublished: true }).lean()
   if (!post) notFound()
 
   return (

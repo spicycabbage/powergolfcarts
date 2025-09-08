@@ -3,11 +3,11 @@ import { notFound } from 'next/navigation'
 import { connectToDatabase } from '@/lib/mongodb'
 import Page from '@/lib/models/Page'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 300
 
 export async function generateMetadata(): Promise<Metadata> {
   await connectToDatabase()
-  const page = await Page.findOne({ slug: 'about-us', isPublished: true }).lean()
+  const page: any = await Page.findOne({ slug: 'about-us', isPublished: true }).lean()
   if (!page) return { title: 'About Us' }
   return {
     title: page.seo?.title || page.title || 'About Us',
@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function AboutUsPage() {
   await connectToDatabase()
-  const page = await Page.findOne({ slug: 'about-us', isPublished: true }).lean()
+  const page: any = await Page.findOne({ slug: 'about-us', isPublished: true }).lean()
   if (!page) notFound()
 
   return (

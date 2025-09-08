@@ -80,11 +80,11 @@ const CategorySchema = new Schema<ICategory>({
   toObject: { virtuals: true }
 })
 
-// Indexes for performance
-// slug already has a unique index via the field definition; avoid duplicate index
+// Indexes for performance (avoid slug duplicate; field already has unique index)
 CategorySchema.index({ parent: 1 })
 CategorySchema.index({ isActive: 1 })
 CategorySchema.index({ name: 'text', description: 'text' })
+CategorySchema.index({ name: 1 })
 
 // Virtual for full path (breadcrumbs)
 CategorySchema.virtual('path').get(async function() {

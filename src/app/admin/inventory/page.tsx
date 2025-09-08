@@ -25,6 +25,7 @@ export default function AdminInventoryPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('')
   const [searchTerm, setSearchTerm] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [showHidden, setShowHidden] = useState(false)
 
   // Debounce search input to avoid excessive requests
   useEffect(() => {
@@ -50,9 +51,9 @@ export default function AdminInventoryPage() {
     ;(async () => {
       try {
         const fields = [
-          '_id','name','price','originalPrice','images','inventory','isFeatured','createdAt','category','categories','variants'
+          '_id','name','price','originalPrice','images','inventory','isFeatured','createdAt','category','categories','variants','isActive'
         ].join(',')
-        const url = `/api/products?page=${page}&limit=${limit}&sortBy=${sortBy}&sortOrder=${sortOrder}${selectedCategory ? `&category=${encodeURIComponent(selectedCategory)}` : ''}${debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : ''}&fields=${encodeURIComponent(fields)}&populate=false`
+        const url = `/api/products?page=${page}&limit=${limit}&sortBy=${sortBy}&sortOrder=${sortOrder}${selectedCategory ? `&category=${encodeURIComponent(selectedCategory)}` : ''}${debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : ''}&fields=${encodeURIComponent(fields)}&populate=false${showHidden ? '&includeInactive=true' : ''}`
         const res = await fetch(url, { cache: 'no-store' })
         if (!res.ok) return
         const json = await res.json().catch(() => ({} as any))
@@ -67,7 +68,7 @@ export default function AdminInventoryPage() {
       }
     })()
     return () => { mounted = false }
-  }, [page, sortBy, sortOrder, selectedCategory, debouncedSearch])
+  }, [page, sortBy, sortOrder, selectedCategory, debouncedSearch, showHidden])
 
   useEffect(() => {
     let mounted = true
@@ -145,6 +146,15 @@ export default function AdminInventoryPage() {
                 </button>
               )}
             </div>
+            <label className="inline-flex items-center gap-2 ml-2 text-sm text-gray-700">
+              <input
+                type="checkbox"
+                checked={showHidden}
+                onChange={(e) => { setShowHidden(e.target.checked); setPage(1) }}
+                className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+              />
+              Show hidden
+            </label>
           </div>
           <button
             disabled={selectedIds.length === 0}
@@ -157,7 +167,7 @@ export default function AdminInventoryPage() {
                 }
                 setSelectedIds([])
                 setLoadingProducts(true)
-                const url = `/api/products?page=${page}&limit=${limit}&sortBy=createdAt&sortOrder=desc${selectedCategory ? `&category=${encodeURIComponent(selectedCategory)}` : ''}${debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : ''}&fields=_id,name,price,images,inventory,isFeatured,createdAt,category&populate=false`
+                const url = `/api/products?page=${page}&limit=${limit}&sortBy=createdAt&sortOrder=desc${selectedCategory ? `&category=${encodeURIComponent(selectedCategory)}` : ''}${debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : ''}&fields=_id,name,price,images,inventory,isFeatured,createdAt,category,isActive&populate=false${showHidden ? '&includeInactive=true' : ''}`
                 const res = await fetch(url, { cache: 'no-store' })
                 const json = await res.json().catch(() => ({} as any))
                 setRecentProducts(Array.isArray(json?.data) ? json.data : [])
@@ -235,16 +245,17 @@ export default function AdminInventoryPage() {
                           <span>Name</span>
                         </button>
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Variant</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ width: '30%' }}>Variant</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Update</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ width: '1%' }}>
                         <button onClick={() => { setSortBy('isFeatured'); setSortOrder(prev => sortBy==='isFeatured' && prev==='asc' ? 'desc' : 'asc') }} className="flex items-center space-x-1 hover:text-primary-600">
-                          <span>Featured</span>
+                          <span>FEAT</span>
                         </button>
                       </th>
+                      <th className="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ width: '1%' }}>VIS</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         <button onClick={() => { setSortBy('createdAt'); setSortOrder(prev => sortBy==='createdAt' && prev==='asc' ? 'desc' : 'asc') }} className="flex items-center space-x-1 hover:text-primary-600">
                           <span>Date Published</span>
@@ -404,7 +415,14 @@ export default function AdminInventoryPage() {
                           )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                          {p.createdAt ? new Date(p.createdAt).toLocaleDateString() : ''}
+                          {p?.isActive === false ? (
+                            <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded bg-gray-100 text-gray-700">No</span>
+                          ) : (
+                            <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded bg-green-50 text-green-700">Yes</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                          {p.createdAt ? new Date(p.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm"></td>
                       </tr>

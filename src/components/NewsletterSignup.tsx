@@ -1,12 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Mail, Check } from 'lucide-react'
 
 export function NewsletterSignup() {
   const [email, setEmail] = useState('')
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => { setMounted(true) }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -50,28 +53,40 @@ export function NewsletterSignup() {
           </p>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email address"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                  required
-                  disabled={isLoading}
-                />
+          {mounted ? (
+            <form
+              onSubmit={handleSubmit}
+              className="max-w-md mx-auto"
+              autoComplete="off"
+              data-lpignore="true"
+              data-lastpass-ignore="true"
+            >
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex-1">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email address"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                    required
+                    disabled={isLoading}
+                    name="newsletter_email"
+                    autoComplete="off"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={isLoading || !email}
+                  className="px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
+                >
+                  {isLoading ? 'Subscribing...' : 'Subscribe'}
+                </button>
               </div>
-              <button
-                type="submit"
-                disabled={isLoading || !email}
-                className="px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
-              >
-                {isLoading ? 'Subscribing...' : 'Subscribe'}
-              </button>
-            </div>
-          </form>
+            </form>
+          ) : (
+            <div className="h-[52px]" aria-hidden="true" />
+          )}
 
           {/* Success Message */}
           {isSubscribed && (

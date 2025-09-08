@@ -21,12 +21,9 @@
     @apply outline-none ring-2 ring-primary-500 ring-offset-2;
   }
 
-  /* Fix cursor issues - ensure proper cursor inheritance */
-  * {
-    cursor: inherit;
-  }
-
-  a, button, [role="button"], input[type="submit"], input[type="button"] {
+  /* Interactive elements get pointer cursor */
+  a, button, [role="button"], input[type="submit"], input[type="button"],
+  .clickable, .clickable-area {
     cursor: pointer;
   }
 
@@ -41,12 +38,8 @@
     pointer-events: auto;
   }
 
-  /* Fix Link component sizing issues */
-  a {
-    display: inline;
-    width: auto;
-    height: auto;
-  }
+  /* Fix Link component sizing issues but keep pointer */
+  a { display: inline; width: auto; height: auto; }
 
   /* Ensure proper containment of clickable areas */
   .clickable-area {
@@ -66,15 +59,8 @@
     cursor: pointer;
   }
 
-  /* Ensure card containers are not clickable by default */
-  .card, .product-card, .category-card {
-    cursor: default;
-  }
-
-  /* Only make specific elements within cards clickable */
-  .card a, .product-card a, .category-card a {
-    cursor: pointer;
-  }
+  /* Card containers become pointer when they navigate */
+  .card.clickable, .product-card.clickable, .category-card.clickable { cursor: pointer; }
 
   /* Custom scrollbar */
   ::-webkit-scrollbar {

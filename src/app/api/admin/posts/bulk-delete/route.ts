@@ -7,8 +7,8 @@ import Post from '@/lib/models/Post'
 // DELETE /api/admin/posts/bulk-delete  { ids: string[] }
 export async function DELETE(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions as any)
-    if (!session?.user || (session.user as any).role !== 'admin') {
+    const session: any = await getServerSession(authOptions as any)
+    if (!session || !session.user || session.user.role !== 'admin') {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
 

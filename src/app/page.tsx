@@ -15,6 +15,14 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <div className="min-h-screen">
+      {/* Warm backend on first visit to reduce cold-start latency */}
+      <script dangerouslySetInnerHTML={{ __html: `
+        (function(){
+          if (typeof window==='undefined') return;
+          if (window.__warmed) return; window.__warmed = true;
+          try { fetch('/api/warmup', { cache: 'no-store' }); } catch(e){}
+        })();
+      `}} />
       {/* Hero Section */}
       <HeroSection />
 

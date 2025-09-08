@@ -4,13 +4,13 @@ import { connectToDatabase } from '@/lib/mongodb'
 import Page from '@/lib/models/Page'
 import ContactForm from '@/components/ContactForm'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 300
 
 const candidateSlugs = ['contact', 'contact-us']
 
 export async function generateMetadata(): Promise<Metadata> {
   await connectToDatabase()
-  const page = await Page.findOne({ slug: { $in: candidateSlugs }, isPublished: true }).lean()
+  const page = await Page.findOne({ slug: { $in: candidateSlugs }, isPublished: true }).lean<any>()
   if (!page) return { title: 'Contact' }
   return {
     title: page.seo?.title || page.title || 'Contact',
@@ -20,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ContactPage() {
   await connectToDatabase()
-  const page = await Page.findOne({ slug: { $in: candidateSlugs }, isPublished: true }).lean()
+  const page = await Page.findOne({ slug: { $in: candidateSlugs }, isPublished: true }).lean<any>()
   if (!page) notFound()
 
   return (

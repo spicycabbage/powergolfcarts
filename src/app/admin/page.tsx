@@ -11,21 +11,13 @@ import {
   Package
 } from 'lucide-react'
 import Link from 'next/link'
-import Image from 'next/image'
+ 
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [isChecking, setIsChecking] = useState(true)
-  const [recentProducts, setRecentProducts] = useState<any[]>([])
-  const [loadingProducts, setLoadingProducts] = useState(true)
-  const [page, setPage] = useState(1)
-  const limit = 10
-  const [totalPages, setTotalPages] = useState(1)
-  const [total, setTotal] = useState(0)
-  const [selectedIds, setSelectedIds] = useState<string[]>([])
-  const [sortBy, setSortBy] = useState<'name'|'isFeatured'|'createdAt'>('createdAt')
-  const [sortOrder, setSortOrder] = useState<'asc'|'desc'>('desc')
+  // Removed inventory state from dashboard to speed up initial load
 
   useEffect(() => {
     if (status === 'loading') return // Still loading
@@ -43,25 +35,7 @@ export default function AdminDashboard() {
     setIsChecking(false)
   }, [session, status, router])
 
-  useEffect(() => {
-    let mounted = true
-    ;(async () => {
-      try {
-        const res = await fetch(`/api/products?page=${page}&limit=${limit}&sortBy=${sortBy}&sortOrder=${sortOrder}`, { cache: 'no-store' })
-        if (!res.ok) return
-        const json = await res.json().catch(() => ({} as any))
-        if (mounted) {
-          setRecentProducts(Array.isArray(json?.data) ? json.data : [])
-          const pag = json?.pagination || {}
-          setTotalPages(pag.totalPages || 1)
-          setTotal(pag.total || 0)
-        }
-      } finally {
-        if (mounted) setLoadingProducts(false)
-      }
-    })()
-    return () => { mounted = false }
-  }, [page, sortBy, sortOrder])
+  // no inventory fetching here
 
   if (status === 'loading' || isChecking) {
     return (
@@ -77,22 +51,25 @@ export default function AdminDashboard() {
   const adminTools = [
     {
       title: 'Navigation Management',
-      description: 'Edit header, secondary navigation, and primary navigation',
       icon: Settings,
       href: '/admin/navigation',
       color: 'bg-blue-500'
     },
     {
       title: 'Category Management',
-      description: 'Create and manage product categories and subcategories',
       icon: Folder,
       href: '/admin/categories',
       color: 'bg-green-500'
     },
+    {
+      title: 'Inventory Management',
+      icon: Settings,
+      href: '/admin/inventory',
+      color: 'bg-gray-500'
+    },
     // Removed Product Import per request
     {
       title: 'Analytics',
-      description: 'View sales reports and analytics (Coming Soon)',
       icon: BarChart3,
       href: '#',
       color: 'bg-orange-500',
@@ -100,15 +77,34 @@ export default function AdminDashboard() {
     },
     {
       title: 'User Management',
-      description: 'Manage customer accounts (Coming Soon)',
       icon: Users,
       href: '#',
       color: 'bg-red-500',
       disabled: true
     },
     {
+      title: 'Shipping',
+      icon: Settings,
+      href: '/admin/shipping',
+      color: 'bg-blue-600',
+      disabled: false
+    },
+    {
+      title: 'Payment Options',
+      icon: Settings,
+      href: '/admin/payment',
+      color: 'bg-amber-600',
+      disabled: false
+    },
+    {
+      title: 'View Orders',
+      icon: Settings,
+      href: '/admin/orders',
+      color: 'bg-emerald-600',
+      disabled: false
+    },
+    {
       title: 'Create Product',
-      description: 'Add a new product with pricing, images, categories, and SEO',
       icon: Package,
       href: '/admin/products/new',
       color: 'bg-indigo-500',
@@ -116,7 +112,6 @@ export default function AdminDashboard() {
     },
     {
       title: 'Reviews Moderation',
-      description: 'Approve, edit, or delete product reviews',
       icon: Users,
       href: '/admin/reviews',
       color: 'bg-purple-500',
@@ -124,7 +119,6 @@ export default function AdminDashboard() {
     },
     {
       title: 'Pages',
-      description: 'Manage site pages like About, FAQ, Contact',
       icon: Settings,
       href: '/admin/pages',
       color: 'bg-purple-500',
@@ -132,7 +126,6 @@ export default function AdminDashboard() {
     },
     {
       title: 'Blog',
-      description: 'Create and manage blog posts',
       icon: Settings,
       href: '/admin/blog',
       color: 'bg-teal-500',
@@ -170,21 +163,10 @@ export default function AdminDashboard() {
               return (
                 <div
                   key={tool.title}
-                  className={`bg-white rounded-lg shadow-sm border border-gray-200 p-6 opacity-50 cursor-not-allowed`}
+                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 opacity-50 cursor-not-allowed text-center"
                   aria-disabled
                 >
-                  <div className="flex items-center mb-4">
-                    <div className={`p-3 rounded-lg ${tool.color} text-white mr-4`}>
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">{tool.title}</h3>
-                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                        Coming Soon
-                      </span>
-                    </div>
-                  </div>
-                  <p className="text-gray-600 text-sm">{tool.description}</p>
+                  <span className="text-base font-semibold text-gray-700">{tool.title}</span>
                 </div>
               )
             }
@@ -192,305 +174,15 @@ export default function AdminDashboard() {
               <Link
                 key={tool.title}
                 href={tool.href}
-                className={`block bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all hover:border-primary-300 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500`}
+                prefetch
+                className="block bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all hover:border-primary-300 hover:bg-gray-50 text-center"
               >
-                <div className="flex items-center mb-4">
-                  <div className={`p-3 rounded-lg ${tool.color} text-white mr-4`}>
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900">{tool.title}</h3>
-                  </div>
-                </div>
-                <p className="text-gray-600 text-sm">{tool.description}</p>
+                <span className="text-base font-semibold text-gray-900">{tool.title}</span>
               </Link>
             )
           })}
         </div>
 
-        {/* Recent Products */}
-        <div className="mt-12">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-900">Inventory Management</h3>
-            <button
-              disabled={selectedIds.length === 0}
-              onClick={async () => {
-                if (selectedIds.length === 0) return
-                if (!confirm(`Delete ${selectedIds.length} selected item(s)?`)) return
-                try {
-                  for (const id of selectedIds) {
-                    await fetch(`/api/products/${id}`, { method: 'DELETE' })
-                  }
-                  // refresh list
-                  setSelectedIds([])
-                  setLoadingProducts(true)
-                  const res = await fetch(`/api/products?page=${page}&limit=${limit}&sortBy=createdAt&sortOrder=desc`, { cache: 'no-store' })
-                  const json = await res.json().catch(() => ({} as any))
-                  setRecentProducts(Array.isArray(json?.data) ? json.data : [])
-                  const pag = json?.pagination || {}
-                  setTotalPages(pag.totalPages || 1)
-                  setTotal(pag.total || 0)
-                } catch {}
-                finally {
-                  setLoadingProducts(false)
-                }
-              }}
-              className={`px-4 py-2 rounded-lg border ${selectedIds.length === 0 ? 'text-gray-400 border-gray-200 cursor-not-allowed' : 'text-red-600 border-red-300 hover:bg-red-50'}`}
-            >
-              Delete
-            </button>
-          </div>
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-            {loadingProducts ? (
-              <div className="p-6 text-gray-600">Loading…</div>
-            ) : recentProducts.length === 0 ? (
-              <div className="p-6 text-gray-600">No products yet.</div>
-            ) : (
-              <>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          <input
-                            type="checkbox"
-                            className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                            checked={selectedIds.length > 0 && selectedIds.length === recentProducts.length}
-                            onChange={(e) => {
-                              if (e.target.checked) setSelectedIds(recentProducts.map((p: any) => p._id))
-                              else setSelectedIds([])
-                            }}
-                          />
-                        </th>
-                        <th className="px-1 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          <button onClick={() => { setSortBy('name'); setSortOrder(prev => sortBy==='name' && prev==='asc' ? 'desc' : 'asc') }} className="flex items-center space-x-1 hover:text-primary-600">
-                            <span>Name</span>
-                          </button>
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Variants</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Update</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          <button onClick={() => { setSortBy('isFeatured'); setSortOrder(prev => sortBy==='isFeatured' && prev==='asc' ? 'desc' : 'asc') }} className="flex items-center space-x-1 hover:text-primary-600">
-                            <span>Featured</span>
-                          </button>
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          <button onClick={() => { setSortBy('createdAt'); setSortOrder(prev => sortBy==='createdAt' && prev==='asc' ? 'desc' : 'asc') }} className="flex items-center space-x-1 hover:text-primary-600">
-                            <span>Date Published</span>
-                          </button>
-                        </th>
-                        <th className="px-6 py-3" />
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {recentProducts.map((p: any) => (
-                        <tr key={p._id}>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <input
-                              type="checkbox"
-                              className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                              checked={selectedIds.includes(p._id)}
-                              onChange={(e) => {
-                                setSelectedIds(prev => e.target.checked ? [...prev, p._id] : prev.filter(id => id !== p._id))
-                              }}
-                            />
-                          </td>
-                          <td className="px-1 py-4 whitespace-nowrap text-sm">
-                            {Array.isArray(p.images) && p.images.length > 0 ? (
-                              <div className="w-12 h-12 relative rounded overflow-hidden bg-gray-100">
-                                <Image
-                                  src={typeof p.images[0] === 'string' ? p.images[0] : (p.images[0]?.url || '/placeholder-product.jpg')}
-                                  alt={typeof p.images[0] === 'string' ? p.name : (p.images[0]?.alt || p.name)}
-                                  width={48}
-                                  height={48}
-                                  className="object-cover"
-                                />
-                              </div>
-                            ) : (
-                              <div className="w-12 h-12 rounded bg-gray-100" />
-                            )}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            <Link href={`/admin/products/${p._id}`} className="text-primary-600 hover:text-primary-700">{p.name}</Link>
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-700">{Array.isArray(p.variants) && p.variants.length > 0 ? (
-                            <div className="max-h-28 overflow-y-auto pr-1 space-y-1">
-                              {p.variants.map((v: any, vi: number) => (
-                                <div key={vi} className="flex items-center justify-between">
-                                  <div className="text-gray-700">
-                                    <span className="font-medium">{v.value}</span>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            <span className="text-gray-400">—</span>
-                          )}</td>
-                          <td className="px-6 py-4 text-sm text-gray-700">{Array.isArray(p.variants) && p.variants.length > 0 ? (
-                            <div className="max-h-28 overflow-y-auto pr-1 space-y-1">
-                              {p.variants.map((v: any, vi: number) => (
-                                <div key={vi}>
-                                  {v.price != null ? (
-                                    <>
-                                      <span className="text-gray-900">${Number(v.price).toFixed(2)}</span>
-                                      {v.originalPrice != null && (
-                                        <span className="line-through text-gray-400 ml-1">${Number(v.originalPrice).toFixed(2)}</span>
-                                      )}
-                                    </>
-                                  ) : (
-                                    <span className="text-gray-900">${Number(v.originalPrice || 0).toFixed(2)}</span>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            `$${Number(p.price || 0).toFixed(2)}`
-                          )}</td>
-                          <td className="px-6 py-4 text-sm text-gray-700">{Array.isArray(p.variants) && p.variants.length > 0 ? (
-                            <div className="max-h-28 overflow-y-auto pr-1 space-y-1">
-                              {p.variants.map((v: any, vi: number) => (
-                                <div key={vi}>{v.inventory ?? 0}</div>
-                              ))}
-                            </div>
-                          ) : (
-                            p?.inventory?.quantity ?? 0
-                          )}</td>
-                          <td className="px-6 py-4 text-sm">
-                            {Array.isArray(p.variants) && p.variants.length > 0 ? (
-                              <div className="max-h-28 overflow-y-auto pr-1 space-y-1">
-                                {p.variants.map((v: any, vi: number) => (
-                                  <div key={vi}>
-                                    <button
-                                      onClick={async () => {
-                                        const current = Number(v.inventory ?? 0)
-                                        const input = prompt(`Enter new stock for ${v.value}`, String(current))
-                                        if (input === null) return
-                                        const qty = parseInt(input)
-                                        if (isNaN(qty) || qty < 0) {
-                                          alert('Invalid quantity')
-                                          return
-                                        }
-                                        const newVariants = (p.variants || []).map((vv: any, idx: number) => idx === vi ? { ...vv, inventory: qty } : vv)
-                                        const res = await fetch(`/api/products/${p._id}`, {
-                                          method: 'PUT',
-                                          headers: { 'Content-Type': 'application/json' },
-                                          body: JSON.stringify({ variants: newVariants })
-                                        })
-                                        if (!res.ok) {
-                                          alert('Failed to update variant stock')
-                                          return
-                                        }
-                                        setRecentProducts(prev => prev.map(x => x._id === p._id ? { ...x, variants: newVariants } : x))
-                                      }}
-                                      className="px-2 py-1 text-xs rounded-lg border border-gray-300 hover:bg-gray-50"
-                                    >
-                                      Update
-                                    </button>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <button
-                                onClick={async () => {
-                                  const current = Number(p?.inventory?.quantity ?? 0)
-                                  const input = prompt('Enter new stock quantity', String(current))
-                                  if (input === null) return
-                                  const qty = parseInt(input)
-                                  if (isNaN(qty) || qty < 0) {
-                                    alert('Invalid quantity')
-                                    return
-                                  }
-                                  const res = await fetch(`/api/products/${p._id}`, {
-                                    method: 'PUT',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ inventory: { ...(p.inventory || {}), quantity: qty } })
-                                  })
-                                  if (!res.ok) {
-                                    alert('Failed to update stock')
-                                    return
-                                  }
-                                  setRecentProducts(prev => prev.map(x => x._id === p._id ? { ...x, inventory: { ...(x.inventory || {}), quantity: qty } } : x))
-                                }}
-                                className="px-3 py-1 text-sm rounded-lg border border-gray-300 hover:bg-gray-50"
-                              >
-                                Update
-                              </button>
-                            )}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            {(() => {
-                              const names = [
-                                p?.category?.name,
-                                ...(Array.isArray(p?.categories) ? p.categories.map((c: any) => c?.name).filter(Boolean) : [])
-                              ].filter(Boolean) as string[]
-                              const seen = new Set<string>()
-                              const unique = names.filter(n => {
-                                const key = String(n).toLowerCase().trim()
-                                if (seen.has(key)) return false
-                                seen.add(key)
-                                return true
-                              })
-                              return unique.join(', ')
-                            })()}
-                          </td>
-                          
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            {p.isFeatured ? (
-                              <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded bg-yellow-50 text-yellow-700">Yes</span>
-                            ) : (
-                              <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded bg-gray-100 text-gray-700">No</span>
-                            )}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            {p.createdAt ? new Date(p.createdAt).toLocaleDateString() : ''}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm"></td>
-                        </tr>
-                        
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <div className="px-4 py-3 flex items-center justify-between border-t border-gray-200">
-                  <div className="text-sm text-gray-600">
-                    Page {page} of {totalPages} • {total} total
-                  </div>
-                  <div className="inline-flex items-center space-x-2">
-              <button
-                      disabled={page <= 1}
-                      onClick={() => setPage(p => Math.max(1, p - 1))}
-                      className={`px-3 py-2 text-sm rounded-lg border ${page <= 1 ? 'text-gray-400 border-gray-200 cursor-not-allowed' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
-              >
-                      Prev
-              </button>
-                    <div className="hidden sm:flex items-center space-x-1">
-                      {Array.from({ length: totalPages }).slice(0, 7).map((_, i) => (
-              <button
-                          key={i}
-                          onClick={() => setPage(i + 1)}
-                          className={`px-3 py-2 text-sm rounded-lg border ${page === i + 1 ? 'bg-primary-600 text-white border-primary-600' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
-              >
-                          {i + 1}
-              </button>
-                      ))}
-                    </div>
-              <button
-                      disabled={page >= totalPages}
-                      onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                      className={`px-3 py-2 text-sm rounded-lg border ${page >= totalPages ? 'text-gray-400 border-gray-200 cursor-not-allowed' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
-              >
-                      Next
-              </button>
-            </div>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
       </div>
     </div>
   )
