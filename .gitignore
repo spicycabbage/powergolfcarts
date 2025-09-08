@@ -39,7 +39,7 @@ backups/
 database-backups/
 
 # Uploads
-public/uploads/
+# public/uploads/  # Commented out to allow product images in Git
 
 # IDE
 .vscode/

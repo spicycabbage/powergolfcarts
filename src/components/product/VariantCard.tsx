@@ -43,7 +43,7 @@ export default function VariantCard({ product }: { product: CardProduct }) {
     const img = (product as any).images?.[0]
     const src = normalizeImageUrl(img)
     if (!src || src.trim() === '' || src === '/favicon.ico') {
-      return '/uploads/logo-1756956312364.jpg'
+      return '/placeholder-product.jpg'
     }
     return src
   }, [product])
@@ -118,6 +118,11 @@ export default function VariantCard({ product }: { product: CardProduct }) {
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-200"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          unoptimized
+          onError={(e) => {
+            const target = e.target as HTMLImageElement
+            target.src = '/placeholder-product.jpg'
+          }}
         />
       </Link>
       <div className="p-4">
