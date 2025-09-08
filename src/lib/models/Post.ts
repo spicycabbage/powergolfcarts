@@ -38,7 +38,7 @@ const PostSEOSchema = new Schema<IPostSEO>({
 
 const PostSchema = new Schema<IPost>({
   title: { type: String, required: true, trim: true, maxlength: 180 },
-  slug: { type: String, required: true, unique: true, trim: true, lowercase: true },
+  slug: { type: String, required: true, trim: true, lowercase: true },
   excerpt: { type: String, default: '' },
   content: { type: String, default: '' },
   coverImage: { type: String },

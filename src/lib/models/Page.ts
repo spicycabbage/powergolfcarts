@@ -33,7 +33,7 @@ const PageSEOSchema = new Schema<IPageSEO>({
 
 const PageSchema = new Schema<IPage>({
   title: { type: String, required: true, trim: true, maxlength: 180 },
-  slug: { type: String, required: true, unique: true, trim: true, lowercase: true },
+  slug: { type: String, required: true, trim: true, lowercase: true },
   content: { type: String, default: '' },
   seo: { type: PageSEOSchema },
   isPublished: { type: Boolean, default: false },
