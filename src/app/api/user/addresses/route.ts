@@ -6,9 +6,9 @@ import User from '@/lib/models/User'
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session: any = await getServerSession(authOptions as any)
 
-    if (!session?.user?.id) {
+    if (!session || !session.user || !session.user.id) {
       return NextResponse.json(
         { message: 'Unauthorized' },
         { status: 401 }
@@ -39,9 +39,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session: any = await getServerSession(authOptions as any)
 
-    if (!session?.user?.id) {
+    if (!session || !session.user || !session.user.id) {
       return NextResponse.json(
         { message: 'Unauthorized' },
         { status: 401 }

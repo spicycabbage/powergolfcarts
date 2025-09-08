@@ -111,6 +111,7 @@ export default function AdminBlogList() {
                   </th>
                   <th className="px-4 py-3">Title</th>
                   <th className="px-4 py-3">Tags</th>
+                  <th className="px-4 py-3">Category</th>
                   <th className="px-4 py-3">Published</th>
                   <th className="px-4 py-3">Published At</th>
                   <th className="px-4 py-3">Updated</th>
@@ -132,6 +133,7 @@ export default function AdminBlogList() {
                       <Link href={`/admin/blog/${p._id}`} className="text-primary-700 hover:underline">{p.title}</Link>
                     </td>
                     <td className="px-4 py-3">{Array.isArray(p.tags) && p.tags.length ? p.tags.join(', ') : ''}</td>
+                    <td className="px-4 py-3">{p.topic || ''}</td>
                     <td className="px-4 py-3">{p.isPublished ? 'Yes' : 'No'}</td>
                     <td className="px-4 py-3">{p.publishedAt ? new Date(p.publishedAt).toLocaleDateString() : ''}</td>
                     <td className="px-4 py-3">{p.updatedAt ? new Date(p.updatedAt).toLocaleDateString() : ''}</td>

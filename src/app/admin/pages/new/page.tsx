@@ -16,7 +16,15 @@ export default function NewPage() {
   const [isPublished, setIsPublished] = useState(false)
   const [saving, setSaving] = useState(false)
 
-  const toSlug = (s: string) => s.toLowerCase().replace(/[^a-zA-Z0-9 ]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-+|-+$/g,'')
+  const toSlug = (s: string) => s
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .toLowerCase()
+    .replace(/[^a-z0-9 -]/g,'')
+    .replace(/_/g,'-')
+    .replace(/\s+/g,'-')
+    .replace(/-+/g,'-')
+    .replace(/^-+|-+$/g,'')
 
   useEffect(() => {
     if (!slugEdited) {

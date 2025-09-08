@@ -1,4 +1,4 @@
-import { Schema, model, models } from 'mongoose'
+import mongoose, { Schema } from 'mongoose'
 
 export interface IOrderItem {
   product: Schema.Types.ObjectId
@@ -29,11 +29,12 @@ export interface IOrder {
   _id?: string
   user: Schema.Types.ObjectId
   items: IOrderItem[]
+  invoiceNumber?: number
   subtotal: number
   tax: number
   shipping: number
   total: number
-  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded'
+  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded' | 'completed'
   paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded'
   shippingAddress: {
     firstName: string
@@ -62,6 +63,8 @@ export interface IOrder {
   paymentMethod: IPaymentMethod
   stripePaymentIntentId?: string
   trackingNumber?: string
+  trackingCarrier?: string
+  tracking?: { carrier: string; number: string; createdAt?: Date }[]
   notes?: string
   createdAt?: Date
   updatedAt?: Date
@@ -131,6 +134,9 @@ const OrderSchema = new Schema<IOrder>({
     ref: 'User',
     required: [true, 'User is required']
   },
+  invoiceNumber: {
+    type: Number
+  },
   items: [OrderItemSchema],
   subtotal: {
     type: Number,
@@ -154,7 +160,7 @@ const OrderSchema = new Schema<IOrder>({
   },
   status: {
     type: String,
-    enum: ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'],
+    enum: ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded', 'completed'],
     default: 'pending'
   },
   paymentStatus: {
@@ -167,6 +173,8 @@ const OrderSchema = new Schema<IOrder>({
   paymentMethod: PaymentMethodSchema,
   stripePaymentIntentId: String,
   trackingNumber: String,
+  trackingCarrier: String,
+  tracking: [{ carrier: String, number: String, createdAt: { type: Date, default: Date.now } }],
   notes: {
     type: String,
     maxlength: [1000, 'Notes cannot exceed 1000 characters']
@@ -178,6 +186,7 @@ const OrderSchema = new Schema<IOrder>({
 })
 
 // Indexes for performance
+OrderSchema.index({ invoiceNumber: 1 }, { unique: true, sparse: true })
 OrderSchema.index({ user: 1 })
 OrderSchema.index({ status: 1 })
 OrderSchema.index({ paymentStatus: 1 })
@@ -249,7 +258,12 @@ OrderSchema.statics.getOrderStats = async function(userId?: string) {
   }
 }
 
-const Order = models.Order || model<IOrder>('Order', OrderSchema)
+// In dev/hot-reload, ensure single compiled model
+if (process.env.NODE_ENV !== 'production' && (mongoose.models as any).Order) {
+  delete (mongoose.models as any).Order
+}
+
+const Order = mongoose.models.Order || mongoose.model<IOrder>('Order', OrderSchema)
 
 export default Order
 

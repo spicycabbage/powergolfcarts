@@ -5,6 +5,7 @@ import { connectToDatabase } from '@/lib/mongodb'
 import Post from '@/lib/models/Post'
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -13,27 +14,33 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-interface BlogIndexProps { searchParams?: { [key: string]: string | string[] | undefined } }
-
-export default async function BlogIndex({ searchParams }: BlogIndexProps) {
-  await connectToDatabase()
-  const pageParam = (searchParams?.page as string) || '1'
-  const page = Math.max(parseInt(pageParam || '1', 10) || 1, 1)
+export default async function BlogIndex({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  let posts: any[] = []
+  let total = 0
+  let tag = ''
+  let page = 1
   const limit = 10
-  const skip = (page - 1) * limit
-
-  const tag = typeof searchParams?.tag === 'string' ? String(searchParams?.tag).toLowerCase() : ''
-  const filter: any = { isPublished: true }
-  if (tag) filter.tags = { $elemMatch: { $regex: `^${tag}$`, $options: 'i' } }
-
-  const [posts, total] = await Promise.all([
-    Post.find(filter)
-      .sort({ publishedAt: -1, updatedAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .lean(),
-    Post.countDocuments(filter)
-  ])
+  try {
+    await connectToDatabase()
+    const sp = await searchParams
+    const pageParam = (sp?.page as string) || '1'
+    page = Math.max(parseInt(pageParam || '1', 10) || 1, 1)
+    const skip = (page - 1) * limit
+    tag = typeof sp?.tag === 'string' ? String(sp?.tag).toLowerCase() : ''
+    const filter: any = { isPublished: true }
+    if (tag) filter.tags = { $elemMatch: { $regex: `^${tag}$`, $options: 'i' } }
+    const result = await Promise.all([
+      Post.find(filter)
+        .select('title slug excerpt tags coverImage publishedAt updatedAt')
+        .sort({ publishedAt: -1, updatedAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Post.countDocuments(filter)
+    ])
+    posts = result[0]
+    total = result[1]
+  } catch {}
 
   const totalPages = Math.max(Math.ceil(total / limit), 1)
 

@@ -3,7 +3,6 @@ import { Inter } from 'next/font/google'
 import '../styles/globals.css'
 import { Providers } from '@/components/Providers'
 import JsonLd from '@/components/seo/JsonLd'
-import { getSiteConfig } from '@/lib/config'
 import { ConditionalFooter } from '@/components/layout/ConditionalFooter'
 import { SessionProvider } from '@/components/SessionProvider'
 import HeaderServer from '@/components/layout/HeaderServer'
@@ -63,24 +62,55 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        {/* Global JSON-LD: Organization and Website */}
+        {/* Auto warmup: run once per process after server starts */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function(){
+            if (typeof window==='undefined') return;
+            if (window.__globalWarmed) return; window.__globalWarmed = true;
+            try { fetch('/api/warmup', { cache: 'no-store' }); } catch(e){}
+          })();
+        `}} />
+        {process.env.NODE_ENV !== 'production' && (
+          <script dangerouslySetInnerHTML={{ __html: `
+            (function(){
+              if (typeof window==='undefined') return;
+              var reloaded = false;
+              function maybeReload(msg){
+                if (!reloaded && /ChunkLoadError|Loading chunk \\d+ failed/i.test(String(msg||''))) {
+                  reloaded = true; try { sessionStorage.setItem('__chunk_reload__','1'); } catch(_){}
+                  location.reload();
+                }
+              }
+              window.addEventListener('error', function(e){
+                maybeReload(e && (e.message || (e.error && (e.error.name||e.error.message))));
+              }, true);
+              window.addEventListener('unhandledrejection', function(e){
+                var r = e && e.reason; maybeReload(r && (r.message || r));
+              });
+              try {
+                if (sessionStorage.getItem('__chunk_reload__')==='1') { sessionStorage.removeItem('__chunk_reload__'); }
+              } catch(_){}
+            })();
+          `}} />
+        )}
+        {/* Global JSON-LD: Organization and Website (env-based to avoid fs/dynamic at build) */}
         <JsonLd
           data={[
             {
               '@context': 'https://schema.org',
               '@type': 'Organization',
-              name: getSiteConfig().name,
-              url: `https://${getSiteConfig().domain}`,
+              name: process.env.NEXT_PUBLIC_SITE_NAME || 'E-Commerce Store',
+              url: `https://${process.env.NEXT_PUBLIC_DOMAIN || 'example.com'}`,
               logo: '/favicon.ico'
             },
             {
               '@context': 'https://schema.org',
               '@type': 'WebSite',
-              name: getSiteConfig().name,
-              url: `https://${getSiteConfig().domain}`,
+              name: process.env.NEXT_PUBLIC_SITE_NAME || 'E-Commerce Store',
+              url: `https://${process.env.NEXT_PUBLIC_DOMAIN || 'example.com'}`,
               potentialAction: {
                 '@type': 'SearchAction',
-                target: `https://${getSiteConfig().domain}/search?q={search_term_string}`,
+                target: `https://${process.env.NEXT_PUBLIC_DOMAIN || 'example.com'}/search?q={search_term_string}`,
                 'query-input': 'required name=search_term_string'
               }
             }

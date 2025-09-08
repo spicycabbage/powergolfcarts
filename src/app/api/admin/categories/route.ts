@@ -8,18 +8,19 @@ import mongoose from 'mongoose'
 // GET - Fetch all categories with hierarchy
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions)
+    const session: any = await getServerSession(authOptions as any)
     
-    if (!session?.user || session.user.role !== 'admin') {
+    if (!session || !session.user || session.user.role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     await connectToDatabase()
 
-    const categories = await Category.find({})
-      .populate('children')
-      .populate('parent')
+    const categories = await Category.find({},
+      'name slug description image parent isActive seo'
+    )
       .sort({ name: 1 })
+      .lean()
 
     return NextResponse.json(categories)
   } catch (error) {
@@ -31,9 +32,9 @@ export async function GET() {
 // POST - Create new category
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session: any = await getServerSession(authOptions as any)
     
-    if (!session?.user || session.user.role !== 'admin') {
+    if (!session || !session.user || session.user.role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

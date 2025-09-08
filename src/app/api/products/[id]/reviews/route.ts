@@ -42,8 +42,8 @@ export async function POST(
 ) {
   try {
     await connectToDatabase()
-    const session = await getServerSession(authOptions as any)
-    if (!session?.user?.id) {
+    const session: any = await getServerSession(authOptions as any)
+    if (!session || !session.user || !session.user.id) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -67,7 +67,7 @@ export async function POST(
     }
 
     // Create or update existing review (one per user per product)
-    const userId = (session.user as any).id
+    const userId = session.user.id
     const existing = await Review.findOne({ user: userId, product: product._id })
     if (existing) {
       existing.rating = rating

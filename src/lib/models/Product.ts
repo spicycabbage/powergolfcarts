@@ -182,6 +182,8 @@ ProductSchema.index({ productType: 1 })
 ProductSchema.index({ price: 1 })
 ProductSchema.index({ averageRating: -1 })
 ProductSchema.index({ createdAt: -1 })
+// Speed up sort by name (asc/desc)
+ProductSchema.index({ name: 1 })
 
 // Virtual for discount percentage
 ProductSchema.virtual('discountPercentage').get(function() {

@@ -59,7 +59,7 @@ export default function NewProductPage() {
     if (!name.trim()) errors.push('Name is required')
     if (!slug.trim()) errors.push('Slug is required')
     if (shortVisibleLen > 500) errors.push('Short Description exceeds 500 visible characters')
-    if (longVisibleLen > 2000) errors.push('Long Description exceeds 2000 visible characters')
+    if (longVisibleLen > 2500) errors.push('Long Description exceeds 2500 visible characters')
 
     const q = parseInt(quantity)
     if (isNaN(q) || q < 0) errors.push('Quantity must be 0 or greater')
@@ -114,8 +114,11 @@ export default function NewProductPage() {
 
   const toSlug = (s: string) =>
     s
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase()
-      .replace(/[^a-zA-Z0-9 ]/g, '')
+      .replace(/[^a-z0-9 -]/g, '')
+      .replace(/_/g, '-')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
       .replace(/^-+|-+$/g, '')
@@ -340,12 +343,7 @@ export default function NewProductPage() {
               <h1 className="text-xl font-semibold text-gray-900">Create Product</h1>
             </div>
             <div className="flex items-center space-x-3">
-              <button
-                onClick={() => router.push('/admin')}
-                className="px-4 py-2 text-gray-600 hover:text-gray-900"
-              >
-                Back to Admin
-              </button>
+              <Link href="/admin/inventory" className="inline-flex items-center px-3 py-2 text-sm rounded-lg bg-gray-100 text-gray-900 hover:bg-gray-200">Back to Inventory</Link>
               <button
                 onClick={handleSubmit}
                 disabled={!canSave || saving}
@@ -414,7 +412,7 @@ export default function NewProductPage() {
                 </div>
                 <div>
                   <HtmlEditor label="Long Description" value={description} onChange={setDescription} rows={24} placeholder="Write detailed description (HTML supported)" />
-                  <div className={`mt-1 text-xs text-right ${longVisibleLen > 2000 ? 'text-red-600' : 'text-gray-500'}`}>{longVisibleLen}/2000 visible chars</div>
+                  <div className={`mt-1 text-xs text-right ${longVisibleLen > 2500 ? 'text-red-600' : 'text-gray-500'}`}>{longVisibleLen}/2500 visible chars</div>
                 </div>
               </div>
             </div>

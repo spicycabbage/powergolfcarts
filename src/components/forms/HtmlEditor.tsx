@@ -17,6 +17,7 @@ export default function HtmlEditor({ label, value, onChange, rows = 12, required
 
   const editorRef = useRef<HTMLDivElement | null>(null)
   const quillRef = useRef<any>(null)
+  const suppressChangeRef = useRef<boolean>(false)
 
   const toolbarOptions = useMemo(() => ([
     [{ header: [1, 2, 3, false] }],
@@ -42,6 +43,26 @@ export default function HtmlEditor({ label, value, onChange, rows = 12, required
     }
   }
 
+  // Sanitize editor output: remove empty paragraphs, stray &nbsp;, and redundant breaks
+  const sanitizeHtml = (html: string): string => {
+    try {
+      if (!html) return ''
+      let out = html
+      // Remove script/style blocks entirely
+      out = out.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+               .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+      // Remove empty paragraphs like <p><br></p>, <p>&nbsp;</p>, or <p>   </p>
+      out = out.replace(/<p>(?:\s|&nbsp;|<br\s*\/?>(?:\s|&nbsp;)*)*<\/p>/gi, '')
+      // Collapse multiple blank lines
+      out = out.replace(/(\n|\r){2,}/g, '\n')
+      // Trim whitespace
+      out = out.trim()
+      return out
+    } catch {
+      return html
+    }
+  }
+
   useEffect(() => {
     if (mode !== 'visual') return
     if (quillRef.current) return
@@ -53,6 +74,7 @@ export default function HtmlEditor({ label, value, onChange, rows = 12, required
         theme: 'snow',
         modules: {
           toolbar: toolbarOptions,
+          history: { userOnly: true },
         },
       })
       // Match textarea (Code) font sizing
@@ -61,12 +83,17 @@ export default function HtmlEditor({ label, value, onChange, rows = 12, required
         quillRef.current.root.style.lineHeight = '1.5'
       } catch {}
       // Set initial HTML (normalized)
-      if (typeof value === 'string' && value.length > 0) {
-        quillRef.current.root.innerHTML = extractInnerContent(value)
+      if (typeof value === 'string') {
+        suppressChangeRef.current = true
+        const html = sanitizeHtml(extractInnerContent(value))
+        try { quillRef.current.clipboard.dangerouslyPasteHTML(0, html, 'silent') } catch { quillRef.current.root.innerHTML = html }
+        // Allow one microtask for DOM to settle, then re-enable
+        setTimeout(() => { suppressChangeRef.current = false }, 0)
       }
       quillRef.current.on('text-change', () => {
+        if (suppressChangeRef.current) return
         const html: string = quillRef.current.root.innerHTML || ''
-        onChange(html)
+        onChange(sanitizeHtml(html))
       })
     })()
     return () => { mounted = false }
@@ -79,7 +106,9 @@ export default function HtmlEditor({ label, value, onChange, rows = 12, required
     if (quillRef.current && typeof value === 'string') {
       const currentHtml: string = quillRef.current.root.innerHTML || ''
       if (value !== currentHtml) {
-        quillRef.current.root.innerHTML = extractInnerContent(value)
+        suppressChangeRef.current = true
+        quillRef.current.root.innerHTML = sanitizeHtml(extractInnerContent(value))
+        setTimeout(() => { suppressChangeRef.current = false }, 0)
       }
     }
   }, [value, mode])
@@ -100,14 +129,14 @@ export default function HtmlEditor({ label, value, onChange, rows = 12, required
         <div className="inline-flex rounded-md border border-gray-300 overflow-hidden">
           <button
             type="button"
-            className={`px-3 py-1 text-xs ${mode === 'visual' ? 'bg-gray-100 text-gray-900' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+            className={`px-3 py-1 text-xs ${mode === 'visual' ? 'bg-gray-800 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
             onClick={() => setMode('visual')}
           >
             Visual
           </button>
           <button
             type="button"
-            className={`px-3 py-1 text-xs border-l border-gray-300 ${mode === 'code' ? 'bg-gray-100 text-gray-900' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+            className={`px-3 py-1 text-xs border-l border-gray-300 ${mode === 'code' ? 'bg-gray-800 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
             onClick={() => setMode('code')}
           >
             Code
@@ -121,7 +150,7 @@ export default function HtmlEditor({ label, value, onChange, rows = 12, required
       ) : (
         <textarea
           value={value}
-          onChange={e => onChange(e.target.value)}
+          onChange={e => onChange(sanitizeHtml(e.target.value))}
           rows={rows}
           placeholder={placeholder}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"

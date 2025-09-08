@@ -14,7 +14,7 @@ export function AnnouncementBar({ banner }: { banner?: BannerConfig }) {
   if (!banner || !isVisible || !banner.isActive || !banner.text) return null
 
   return (
-    <div className="bg-primary-600 text-white text-center py-2 px-4 relative">
+    <div className="bg-primary-600 text-white text-center py-2 px-4 relative announcement-bar" data-announcement>
       <div className="max-w-7xl mx-auto flex items-center justify-center">
         <p className="text-sm font-medium">
           {banner.text}

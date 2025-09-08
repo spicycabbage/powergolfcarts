@@ -9,7 +9,7 @@ const candidateSlugs = ['faq', 'faqs']
 
 export async function generateMetadata(): Promise<Metadata> {
   await connectToDatabase()
-  const page = await Page.findOne({ slug: { $in: candidateSlugs }, isPublished: true }).lean()
+  const page: any = await Page.findOne({ slug: { $in: candidateSlugs }, isPublished: true }).lean()
   if (!page) return { title: 'FAQ' }
   return {
     title: page.seo?.title || page.title || 'FAQ',
@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function FAQPage() {
   await connectToDatabase()
-  const page = await Page.findOne({ slug: { $in: candidateSlugs }, isPublished: true }).lean()
+  const page: any = await Page.findOne({ slug: { $in: candidateSlugs }, isPublished: true }).lean()
   if (!page) notFound()
 
   return (

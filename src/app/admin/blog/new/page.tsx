@@ -16,6 +16,7 @@ export default function NewPost() {
   const [content, setContent] = useState('')
   const [tags, setTags] = useState<string>('')
   const [seo, setSeo] = useState<SeoData>({ title: '', description: '', keywords: [] })
+  const [topic, setTopic] = useState<string>('')
   const [coverImage, setCoverImage] = useState<string>('')
   const [isPublished, setIsPublished] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -63,7 +64,7 @@ export default function NewPost() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ title, slug, excerpt, content: normalizeContent(content), coverImage, tags: tags.split(',').map(t=>t.trim()).filter(Boolean), seo, isPublished })
+        body: JSON.stringify({ title, slug, excerpt, content: normalizeContent(content), coverImage, tags: tags.split(',').map(t=>t.trim()).filter(Boolean), topic, seo, isPublished })
       })
       const json = await res.json()
       if (!json.success) {
@@ -83,7 +84,7 @@ export default function NewPost() {
           <h1 className="text-xl font-semibold text-gray-900">New Post</h1>
           <div className="flex items-center space-x-3">
             <BackToAdmin />
-            <Link href="/admin/blog" className="text-sm text-gray-600 hover:text-gray-900">Back to Blog</Link>
+            <Link href="/admin/blog" className="inline-flex items-center px-3 py-2 text-sm rounded-lg bg-gray-100 text-gray-900 hover:bg-gray-200">Back to Blog</Link>
           </div>
         </div>
       </div>
@@ -152,6 +153,11 @@ export default function NewPost() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Tags (comma-separated)</label>
                 <input value={tags} onChange={e=>setTags(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Category (topic)</label>
+                <input value={topic} onChange={e=>setTopic(e.target.value)} placeholder="e.g. concentrates, flowers, vapes" className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                <p className="mt-1 text-xs text-gray-500">One topic only. Used for hubs/breadcrumbs.</p>
               </div>
               <label className="flex items-center space-x-2">
                 <input type="checkbox" checked={isPublished} onChange={e=>setIsPublished(e.target.checked)} className="h-4 w-4 text-primary-600" />

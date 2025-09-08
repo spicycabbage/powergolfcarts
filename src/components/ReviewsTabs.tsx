@@ -95,7 +95,10 @@ export function ReviewsTabs({ productId, htmlDescription }: { productId: string,
       </div>
 
       {tab === 'description' && (
-        <div className="mt-6 prose max-w-none text-gray-700" dangerouslySetInnerHTML={{ __html: htmlDescription }} />
+        <div className="mt-6">
+          <div className="prose max-w-none text-gray-700 [ul]:list-disc [ul]:pl-6 [ol]:list-decimal [ol]:pl-6 [li]:my-1"
+               dangerouslySetInnerHTML={{ __html: htmlDescription || '' }} />
+        </div>
       )}
 
       {tab === 'reviews' && (

@@ -1,4 +1,6 @@
 import { z } from 'zod'
+import fs from 'fs'
+import path from 'path'
 
 // Site configuration schema
 export const SiteConfigSchema = z.object({
@@ -60,15 +62,21 @@ export const getSiteConfig = (): SiteConfig => {
   const siteId = process.env.NEXT_PUBLIC_SITE_ID || 'default'
 
   // Load site-specific configuration
-  const configPath = `./sites/${siteId}/config.json`
+  const configPathFs = path.join(process.cwd(), 'sites', siteId, 'config.json')
 
   try {
-    // In production, this would load from a database or CDN
-    const config = require(configPath)
-    return SiteConfigSchema.parse(config)
+    // Prefer filesystem read to avoid bundler dynamic require issues
+    if (fs.existsSync(configPathFs)) {
+      const raw = fs.readFileSync(configPathFs, 'utf8')
+      const parsed = JSON.parse(raw)
+      return SiteConfigSchema.parse(parsed)
+    }
   } catch (error) {
-    // Fallback to environment variables
-    return SiteConfigSchema.parse({
+    // swallow and fall back below
+  }
+
+  // Fallback to environment variables
+  return SiteConfigSchema.parse({
       id: siteId,
       name: process.env.NEXT_PUBLIC_SITE_NAME || 'My Store',
       domain: process.env.NEXT_PUBLIC_DOMAIN || 'localhost:3000',
@@ -111,7 +119,6 @@ export const getSiteConfig = (): SiteConfig => {
         from: process.env.SMTP_FROM || 'noreply@mystore.com',
       },
     })
-  }
 }
 
 // Database connection based on site

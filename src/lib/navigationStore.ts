@@ -53,6 +53,12 @@ export const defaultNavigation: INavigationConfig = {
 export async function getNavigationConfig(): Promise<INavigationConfig> {
   if (cachedNavigation) return cachedNavigation
 
+  // During production build, avoid DB entirely for speed/clean builds
+  if (process.env.SKIP_DB_AT_BUILD === '1') {
+    cachedNavigation = { ...defaultNavigation }
+    return cachedNavigation
+  }
+
   try {
     await connectToDatabase()
     const doc = await Navigation.findOne().lean<any>().exec()

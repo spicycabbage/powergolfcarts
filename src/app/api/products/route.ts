@@ -1,4 +1,6 @@
 import { NextRequest } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth/options'
 import { connectToDatabase } from '@/lib/mongodb'
 import Product from '@/lib/models/Product'
 import Category from '@/lib/models/Category'
@@ -30,9 +32,26 @@ export async function GET(request: NextRequest) {
     const sortOrder = searchParams.get('sortOrder') || 'desc'
     const featured = searchParams.get('featured') === 'true'
     const inStock = searchParams.get('inStock') === 'true'
+    const includeInactive = searchParams.get('includeInactive') === 'true'
+    const fieldsParam = (searchParams.get('fields') || '').trim()
+    const populateParam = (searchParams.get('populate') || 'true').toLowerCase()
+    const doPopulate = populateParam !== 'false'
 
     // Build query
-    const query: any = { isActive: true }
+    const query: any = {}
+
+    // Visibility filter: only allow includeInactive for admins
+    if (includeInactive) {
+      const session: any = await getServerSession(authOptions as any)
+      if (!session || !session.user || session.user.role !== 'admin') {
+        // Fallback to active-only for non-admins
+        query.isActive = true
+      }
+      // Admins can see all (no isActive filter)
+    } else {
+      // Default: only active
+      query.isActive = true
+    }
 
     // Category filter
     if (category) {
@@ -51,9 +70,18 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Search filter
-    if (search) {
-      query.$text = { $search: search }
+    // Search filter (regex-based to avoid text-index dependency)
+    if (search && search.trim()) {
+      const escaped = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const regex = new RegExp(escaped, 'i')
+      const searchOr = [{ name: regex }, { description: regex }]
+      if (query.$or) {
+        // Combine existing $or (e.g., category) with search using $and
+        query.$and = [{ $or: query.$or }, { $or: searchOr }]
+        delete query.$or
+      } else {
+        query.$or = searchOr
+      }
     }
 
     // Price filters
@@ -81,14 +109,26 @@ export async function GET(request: NextRequest) {
     // Execute query with pagination
     const skip = (page - 1) * limit
 
-    const [products, total] = await Promise.all([
-      Product.find(query)
+    let findQuery = Product.find(query)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(limit)
+      .lean()
+
+    if (fieldsParam) {
+      // Support comma-separated fields; allow nested dot paths
+      const normalized = fieldsParam.split(',').map(f => f.trim()).filter(Boolean).join(' ')
+      findQuery = findQuery.select(normalized)
+    }
+
+    if (doPopulate) {
+      findQuery = findQuery
         .populate('category', 'name slug')
         .populate('categories', 'name slug')
-        .sort(sortOptions)
-        .skip(skip)
-        .limit(limit)
-        .lean(),
+    }
+
+    const [products, total] = await Promise.all([
+      findQuery,
       Product.countDocuments(query)
     ])
 

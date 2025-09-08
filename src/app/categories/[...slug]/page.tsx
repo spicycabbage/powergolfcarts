@@ -3,25 +3,28 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Star, ShoppingCart, ArrowLeft, ShoppingBag } from 'lucide-react'
 import BreadcrumbsJsonLd from '@/components/seo/BreadcrumbsJsonLd'
+import VariantCard from '@/components/product/VariantCard'
+import { serializeProductForClient } from '@/lib/serializers'
 import { getSiteConfig } from '@/lib/config'
 import { notFound } from 'next/navigation'
 import { connectToDatabase } from '@/lib/mongodb'
 import Product from '@/lib/models/Product'
 import Category from '@/lib/models/Category'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 300
 import SortSelect from '@/components/SortSelect'
 
 interface CatchAllCategoryPageProps {
-  params: { slug: string[] }
-  searchParams?: { [key: string]: string | string[] | undefined }
+  params: Promise<{ slug: string[] }>
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 export async function generateMetadata({ params }: CatchAllCategoryPageProps): Promise<Metadata> {
-  const segments = Array.isArray(params.slug) ? params.slug : [params.slug]
+  const resolved = await params
+  const segments = Array.isArray(resolved.slug) ? resolved.slug : [resolved.slug]
   const lastSlug = segments[segments.length - 1]
   await connectToDatabase()
-  const category = await Category.findOne({ slug: lastSlug }).lean()
+  const category: any = await Category.findOne({ slug: lastSlug }).lean()
   if (!category) {
     return { title: 'Category Not Found | E-Commerce Store' }
   }
@@ -32,11 +35,12 @@ export async function generateMetadata({ params }: CatchAllCategoryPageProps): P
 }
 
 export default async function CatchAllCategoryPage({ params, searchParams }: CatchAllCategoryPageProps) {
-  const segments = Array.isArray(params.slug) ? params.slug : [params.slug]
+  const resolved = await params
+  const segments = Array.isArray(resolved.slug) ? resolved.slug : [resolved.slug]
   const lastSlug = segments[segments.length - 1]
 
   await connectToDatabase()
-  const category = await Category.findOne({ slug: lastSlug }).lean()
+  const category: any = await Category.findOne({ slug: lastSlug }).lean()
   if (!category) {
     notFound()
   }
@@ -57,10 +61,11 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
   }
   const idsAsStrings = ids.map((x: any) => String(x))
 
-  const sortParam = (typeof searchParams?.sort === 'string'
-    ? searchParams?.sort
-    : Array.isArray(searchParams?.sort)
-    ? searchParams?.sort[0]
+  const sp = searchParams ? await searchParams : undefined
+  const sortParam = (typeof sp?.sort === 'string'
+    ? sp?.sort
+    : Array.isArray(sp?.sort)
+    ? sp?.sort[0]
     : undefined) || 'popular'
 
   const sortBy = (() => {
@@ -87,25 +92,34 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
       { categories: { $in: idsAsStrings } },
     ]
   }
-  const productsTyped = await Product.find(typedQuery).sort(sortBy as any).lean()
+  // Fetch only fields needed for the grid to reduce payload
+  const productsTyped = await Product.find(typedQuery)
+    .select('name slug price originalPrice images averageRating reviewCount inventory variants.name variants.value variants.price variants.originalPrice variants.inventory variants.sku')
+    .sort(sortBy as any)
+    .lean()
 
   // Legacy fallback: match documents that incorrectly stored slugs in category fields
-  const descendantCats = await Category.find({ _id: { $in: ids } }).select('slug name').lean()
-  const slugList = descendantCats.map((c: any) => c.slug)
-  const nameList = descendantCats.map((c: any) => c.name)
-  const nameRegexes = nameList.map((n: any) => new RegExp(`^${n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'))
-  const legacyQuery = {
-    isActive: true,
-    $or: [
-      { category: { $in: slugList } },
-      { categories: { $in: slugList } },
-      { category: { $in: nameList } },
-      { categories: { $in: nameList } },
-      { category: { $in: nameRegexes } },
-      { categories: { $in: nameRegexes } },
-    ]
+  // Only run legacy fallback when no typed matches were found
+  let productsLegacy: any[] = []
+  if (!productsTyped.length) {
+    const descendantCats = await Category.find({ _id: { $in: ids } }).select('slug name').lean()
+    const slugList = descendantCats.map((c: any) => c.slug)
+    const nameList = descendantCats.map((c: any) => c.name)
+    const nameRegexes = nameList.map((n: any) => new RegExp(`^${n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'))
+    const legacyQuery = {
+      isActive: true,
+      $or: [
+        { category: { $in: slugList } },
+        { categories: { $in: slugList } },
+        { category: { $in: nameList } },
+        { categories: { $in: nameList } },
+        { category: { $in: nameRegexes } },
+        { categories: { $in: nameRegexes } },
+      ]
+    }
+    const projection = { name: 1, slug: 1, price: 1, originalPrice: 1, images: 1, averageRating: 1, reviewCount: 1, inventory: 1, variants: 1 }
+    productsLegacy = await Product.collection.find(legacyQuery, { projection }).sort(sortBy as any).toArray()
   }
-  const productsLegacy = await Product.collection.find(legacyQuery).sort(sortBy as any).toArray()
 
   // Merge and dedupe by _id
   const seen = new Set<string>()
@@ -144,11 +158,11 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
 
       {/* Category Header */}
       <section className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{name}</h1>
-              <p className="text-gray-600 mb-4">{description}</p>
+              <h1 className="text-2xl font-bold text-gray-900 mb-1">{name}</h1>
+              <p className="text-gray-600 mb-2">{description}</p>
               <p className="text-sm text-gray-500">
                 {products.length} product{products.length !== 1 ? 's' : ''} available
               </p>
@@ -169,7 +183,7 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
           {/* Main Content */}
           <main>
             {/* Sort Options */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-3">
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-600">Sort by:</span>
                 <SortSelect value={sortParam} />
@@ -183,85 +197,8 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
             {products.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-8">
                 {products.map((product) => (
-                  <div key={(product as any)._id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 group">
-                    {/* Product Image */}
-                    <Link href={`/products/${(product as any).slug}`} className="block relative aspect-square overflow-hidden cursor-pointer">
-                      {(product as any).images && (product as any).images.length > 0 ? (
-                        <Image
-                          src={typeof (product as any).images[0] === 'string' ? (product as any).images[0] : (product as any).images[0].url}
-                          alt={typeof (product as any).images[0] === 'string' ? (product as any).name : ((product as any).images[0].alt || (product as any).name)}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-200"
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                          <span className="text-gray-400 text-sm">No image</span>
-                        </div>
-                      )}
-                      {(product as any).originalPrice && (product as any).originalPrice > (product as any).price && (
-                        <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-medium">
-                          {Math.round(((((product as any).originalPrice - (product as any).price) / (product as any).originalPrice) * 100))}% OFF
-                        </div>
-                      )}
-
-                    </Link>
-
-                    {/* Product Info */}
-                    <div className="p-5">
-                      <Link href={`/products/${(product as any).slug}`} className="cursor-pointer">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-primary-600 transition-colors">
-                          {(product as any).name}
-                        </h3>
-                      </Link>
-
-                      {/* Rating */}
-                      <div className="flex items-center mb-2">
-                        <div className="flex items-center">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`w-4 h-4 ${
-                                i < Math.floor((product as any).averageRating)
-                                  ? 'text-yellow-400 fill-current'
-                                  : 'text-gray-300'
-                              }`}
-                            />
-                          ))}
-                        </div>
-                        <span className="text-sm text-gray-600 ml-2">
-                          ({(product as any).reviewCount})
-                        </span>
-                      </div>
-
-                      {/* Price */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <span className="text-xl font-bold text-gray-900">
-                            ${Number((product as any).price ?? (product as any).originalPrice ?? 0).toFixed(2)}
-                          </span>
-                          {(product as any).originalPrice && (product as any).originalPrice > (product as any).price && (
-                            <span className="text-sm text-gray-500 line-through">
-                              ${Number((product as any).originalPrice).toFixed(2)}
-                            </span>
-                          )}
-                        </div>
-
-                        <button className="p-2 text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-lg transition-colors">
-                          <ShoppingCart className="w-5 h-5" />
-                        </button>
-                      </div>
-
-                      {/* Stock Status */}
-                      <div className="mt-2">
-                        {(!(product as any).inventory.trackInventory || (product as any).inventory.quantity > 0) ? (
-                          <span className="text-sm text-green-600">In Stock</span>
-                        ) : (
-                          <span className="text-sm text-red-600">Out of Stock</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>) )}
+                  <VariantCard key={String((product as any)._id)} product={serializeProductForClient(product) as any} />
+                ))}
               </div>
             ) : (
               <div className="text-center py-12">

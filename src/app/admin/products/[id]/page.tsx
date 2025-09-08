@@ -6,7 +6,11 @@ import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import SeoFields, { SeoData } from '@/components/seo/SeoFields'
 import { Save, Package, Plus, Trash2 } from 'lucide-react'
-import HtmlEditor from '@/components/forms/HtmlEditor'
+import dynamic from 'next/dynamic'
+const HtmlEditor = dynamic(() => import('@/components/forms/HtmlEditor'), {
+  ssr: false,
+  loading: () => <div className="h-48 bg-gray-100 rounded animate-pulse" />
+})
 
 type Category = {
   _id: string
@@ -71,10 +75,10 @@ export default function EditProductPage() {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch('/api/admin/categories')
+      const res = await fetch('/api/categories?activeOnly=true&limit=1000', { cache: 'no-store' })
       if (!res.ok) return
-      const data = await res.json()
-      setCategories(Array.isArray(data) ? data : [])
+      const json = await res.json().catch(() => ({} as any))
+      setCategories(Array.isArray(json?.data) ? json.data : (Array.isArray(json) ? json : []))
     } finally {
       setLoadingCats(false)
     }
@@ -82,9 +86,12 @@ export default function EditProductPage() {
 
   const fetchProduct = async () => {
     try {
-      const res = await fetch(`/api/products/${productId}`)
+      const fields = [
+        'name','slug','description','shortDescription','price','originalPrice','images','tags','inventory','seo','variants','productType','category','categories','isActive','isFeatured'
+      ].join(',')
+      const res = await fetch(`/api/products/${productId}?fields=${encodeURIComponent(fields)}&populate=false`, { cache: 'no-store' })
       if (!res.ok) return
-      const json = await res.json()
+      const json = await res.json().catch(() => ({} as any))
       const p = json?.data
       if (!p) return
       setName(p.name || '')
@@ -131,8 +138,11 @@ export default function EditProductPage() {
 
   const toSlug = (s: string) =>
     s
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase()
-      .replace(/[^a-zA-Z0-9 ]/g, '')
+      .replace(/[^a-z0-9 -]/g, '')
+      .replace(/_/g, '-')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
       .replace(/^-+|-+$/g, '')
@@ -215,7 +225,7 @@ export default function EditProductPage() {
       }
     }
     if (shortVisibleLen > 500) return false
-    if (longVisibleLen > 2000) return false
+    if (longVisibleLen > 2500) return false
     return true
   }, [name, description, longVisibleLen, shortVisibleLen, price, originalPrice, quantity, slug, productType, variants])
 
@@ -352,12 +362,7 @@ export default function EditProductPage() {
               <h1 className="text-xl font-semibold text-gray-900">Edit Product</h1>
             </div>
             <div className="flex items-center space-x-3">
-              <button
-                onClick={() => router.push('/admin')}
-                className="px-4 py-2 text-gray-600 hover:text-gray-900"
-              >
-                Back to Admin
-              </button>
+              <Link href="/admin/inventory" className="inline-flex items-center px-3 py-2 text-sm rounded-lg bg-gray-100 text-gray-900 hover:bg-gray-200">Back to Inventory</Link>
               <button
                 onClick={handleSubmit}
                 disabled={!canSave || saving}
@@ -426,7 +431,7 @@ export default function EditProductPage() {
                 </div>
                 <div>
                   <HtmlEditor label="Long Description" value={description} onChange={setDescription} rows={24} required placeholder="Write detailed description (HTML supported)" />
-                  <div className={`mt-1 text-xs text-right ${longVisibleLen > 2000 ? 'text-red-600' : 'text-gray-500'}`}>{longVisibleLen}/2000 visible chars</div>
+                  <div className={`mt-1 text-xs text-right ${longVisibleLen > 2500 ? 'text-red-600' : 'text-gray-500'}`}>{longVisibleLen}/2500 visible chars</div>
                 </div>
               </div>
             </div>

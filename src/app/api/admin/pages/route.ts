@@ -7,8 +7,8 @@ import Page from '@/lib/models/Page'
 // GET /api/admin/pages?search=&page=1&limit=20
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions as any)
-    if (!session?.user || (session.user as any).role !== 'admin') {
+    const session: any = await getServerSession(authOptions as any)
+    if (!session || !session.user || session.user.role !== 'admin') {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
     await connectToDatabase()
@@ -18,7 +18,12 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20')
     const q: any = search ? { $text: { $search: search } } : {}
     const [items, total] = await Promise.all([
-      Page.find(q).sort({ updatedAt: -1 }).skip((page-1)*limit).limit(limit).lean(),
+      Page.find(q)
+        .select('title slug updatedAt isPublished')
+        .sort({ updatedAt: -1 })
+        .skip((page-1)*limit)
+        .limit(limit)
+        .lean(),
       Page.countDocuments(q)
     ])
     return NextResponse.json({ success: true, data: items, pagination: { page, limit, total, totalPages: Math.ceil(total/limit) } })
@@ -31,8 +36,8 @@ export async function GET(req: NextRequest) {
 // POST /api/admin/pages
 export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions as any)
-    if (!session?.user || (session.user as any).role !== 'admin') {
+    const session: any = await getServerSession(authOptions as any)
+    if (!session || !session.user || session.user.role !== 'admin') {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
     await connectToDatabase()
