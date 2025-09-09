@@ -134,6 +134,8 @@ export default function CategoriesAdmin() {
         image: '',
         parent: '',
         isActive: true,
+        featuredOnHomepage: false,
+        homepageOrder: 0,
         seo: {
           title: '',
           description: '',
