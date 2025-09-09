@@ -32,7 +32,15 @@ export async function GET(
     }
 
     // Get review statistics
-    const reviewStats = await Review.getProductRatingStats(id)
+    const reviews = await Review.find({ product: id, isApproved: true }).lean()
+    const totalReviews = reviews.length
+    const averageRating = totalReviews > 0 
+      ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews 
+      : 0
+    const reviewStats = {
+      averageRating: Math.round(averageRating * 10) / 10,
+      totalReviews
+    }
 
     // Add virtual fields
     const productWithVirtuals = {
