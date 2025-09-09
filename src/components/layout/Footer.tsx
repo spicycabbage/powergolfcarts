@@ -20,24 +20,15 @@ export function Footer() {
     ],
     support: [
       { name: 'Contact Us', href: '/contact' },
-      { name: 'FAQ', href: '/faq' },
-      { name: 'Shipping Info', href: '/shipping' },
-      { name: 'Returns', href: '/returns' },
-      { name: 'Size Guide', href: '/size-guide' },
-      { name: 'Track Order', href: '/track-order' }
+      { name: 'FAQ', href: '/faq' }
     ],
     company: [
       { name: 'About Us', href: '/about' },
-      { name: 'Careers', href: '/careers' },
-      { name: 'Press', href: '/press' },
-      { name: 'Blog', href: '/blog' },
-      { name: 'Sustainability', href: '/sustainability' }
+      { name: 'Blog', href: '/blog' }
     ],
     legal: [
-      { name: 'Privacy Policy', href: '/privacy' },
-      { name: 'Terms of Service', href: '/terms' },
-      { name: 'Cookie Policy', href: '/cookies' },
-      { name: 'Accessibility', href: '/accessibility' }
+      { name: 'Privacy Policy', href: '/privacy-policy' },
+      { name: 'Terms of Service', href: '/terms-conditions' }
     ]
   }
 

@@ -1,11 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
+import { OptimizedImage } from '@/components/OptimizedImage'
 import { useMemo, useState } from 'react'
 import { normalizeImageUrl } from '@/utils/image'
 import { ShoppingCart } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
+import { ProductRating } from '@/components/ProductRating'
 
 type Variant = {
   _id?: string
@@ -112,18 +113,14 @@ export default function VariantCard({ product }: { product: CardProduct }) {
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 group product-card clickable">
       <Link href={`/products/${product.slug}`} className="block relative aspect-square overflow-hidden cursor-pointer">
-        <Image
-          src={imageSrc}
-          alt={product.name}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-200"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          unoptimized
-          onError={(e) => {
-            const target = e.target as HTMLImageElement
-            target.src = '/placeholder-product.jpg'
-          }}
-        />
+            <OptimizedImage
+              src={imageSrc}
+              alt={product.name}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-200"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              quality={85}
+            />
       </Link>
       <div className="p-4">
         <Link href={`/products/${product.slug}`} className="cursor-pointer">
@@ -132,8 +129,14 @@ export default function VariantCard({ product }: { product: CardProduct }) {
           </h3>
         </Link>
 
-        {/* Ratings placeholder spacing */}
-        <div className="h-5 mb-2" aria-hidden="true" />
+        {/* Product Rating */}
+        <div className="mb-2">
+          <ProductRating 
+            averageRating={product.averageRating || 0}
+            reviewCount={product.reviewCount || 0}
+            size="sm"
+          />
+        </div>
 
         {Array.isArray(product.variants) && product.variants.length > 0 && (
           <div className="mb-3">

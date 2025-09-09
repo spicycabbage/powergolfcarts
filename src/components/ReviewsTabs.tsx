@@ -14,7 +14,7 @@ export function ReviewsTabs({ productId, htmlDescription }: { productId: string,
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch(`/api/products/${productId}/reviews?page=${pageNum}&limit=5`, { credentials: 'include' })
+      const res = await fetch(`/api/products/${productId}/reviews?page=${pageNum}&limit=15`, { credentials: 'include' })
       const json = await res.json()
       if (!json.success) throw new Error(json.error || 'Failed to fetch reviews')
       setReviews(json.data.reviews)
@@ -78,17 +78,19 @@ export function ReviewsTabs({ productId, htmlDescription }: { productId: string,
   }
 
   return (
-    <div className="mt-12 border-t border-gray-200 pt-12">
+    <div className="mt-12 border-t border-gray-200 pt-12" data-reviews-tabs>
       <div className="flex space-x-6 border-b border-gray-200">
         <button
           className={`px-4 py-2 -mb-px border-b-2 ${tab==='description' ? 'border-primary-600 text-primary-700' : 'border-transparent text-gray-500'} hover:text-primary-600`}
           onClick={() => setTab('description')}
+          data-tab="description"
         >
           Description
         </button>
         <button
           className={`px-4 py-2 -mb-px border-b-2 ${tab==='reviews' ? 'border-primary-600 text-primary-700' : 'border-transparent text-gray-500'} hover:text-primary-600`}
           onClick={() => setTab('reviews')}
+          data-tab="reviews"
         >
           Reviews{(stats || reviews.length > 0) ? ` (${stats?.totalReviews ?? reviews.length})` : ''}
         </button>
@@ -138,14 +140,50 @@ export function ReviewsTabs({ productId, htmlDescription }: { productId: string,
                 ) : (
                   <ul className="space-y-4">
                     {reviews.map((r) => (
-                      <li key={String(r._id)} className="border rounded-lg p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="font-medium text-gray-900">{r.user?.firstName || (r.user?.name ? String(r.user.name).split(' ')[0] : 'Anonymous')}</div>
-                          <div className="text-sm text-gray-600">{new Date(r.createdAt).toLocaleDateString()}</div>
+                      <li key={String(r._id)} className="border border-gray-200 rounded-lg p-6 bg-white">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <div className="font-semibold text-gray-900 text-lg">
+                              {r.user?.firstName || r.user?.name || r.customerName || 'Anonymous'}
+                            </div>
+                            <div className="flex items-center mt-1">
+                              {Array.from({ length: 5 }).map((_, i) => (
+                                <span
+                                  key={i}
+                                  className={`text-lg ${
+                                    i < r.rating ? 'text-yellow-400' : 'text-gray-300'
+                                  }`}
+                                >
+                                  ★
+                                </span>
+                              ))}
+                              <span className="ml-2 text-sm text-gray-600">
+                                {r.rating}/5
+                              </span>
+                            </div>
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {new Date(r.createdAt).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </div>
                         </div>
-                        <div className="text-yellow-500 text-sm">{'★'.repeat(r.rating)}{'☆'.repeat(5-r.rating)}</div>
-                        <div className="mt-1 font-semibold">{r.title}</div>
-                        <div className="mt-1 text-gray-700">{r.comment}</div>
+                        
+                        {r.title && (
+                          <div className="mb-2 font-medium text-gray-900">{r.title}</div>
+                        )}
+                        
+                        <div className="text-gray-700 leading-relaxed">
+                          {r.comment}
+                        </div>
+                        
+                        {r.helpfulCount > 0 && (
+                          <div className="mt-3 text-sm text-gray-500">
+                            {r.helpfulCount} people found this helpful
+                          </div>
+                        )}
                       </li>
                     ))}
                   </ul>

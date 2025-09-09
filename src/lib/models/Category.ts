@@ -19,6 +19,8 @@ export interface ICategory {
   }
   isSystem?: boolean
   isActive: boolean
+  featuredOnHomepage?: boolean
+  homepageOrder?: number
   createdAt?: Date
   updatedAt?: Date
 }
@@ -73,6 +75,14 @@ const CategorySchema = new Schema<ICategory>({
   isActive: {
     type: Boolean,
     default: true
+  },
+  featuredOnHomepage: {
+    type: Boolean,
+    default: false
+  },
+  homepageOrder: {
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: true,
@@ -83,6 +93,8 @@ const CategorySchema = new Schema<ICategory>({
 // Indexes for performance (avoid slug duplicate; field already has unique index)
 CategorySchema.index({ parent: 1 })
 CategorySchema.index({ isActive: 1 })
+CategorySchema.index({ featuredOnHomepage: 1 })
+CategorySchema.index({ featuredOnHomepage: 1, homepageOrder: 1 })
 CategorySchema.index({ name: 'text', description: 'text' })
 CategorySchema.index({ name: 1 })
 

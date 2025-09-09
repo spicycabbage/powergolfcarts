@@ -1,212 +1,83 @@
-import { Schema, model, models, Model, Types } from 'mongoose'
+import mongoose from 'mongoose'
 
 export interface IReview {
-  _id?: string
-  user: Schema.Types.ObjectId
-  product: Schema.Types.ObjectId
-  rating: number
-  title?: string
+  _id: mongoose.Types.ObjectId
+  product: mongoose.Types.ObjectId
+  customerName: string
+  customerEmail?: string
+  rating: number // 1-5 stars
   comment: string
-  images?: string[]
-  isVerified: boolean
-  status?: 'pending' | 'approved' | 'rejected'
-  helpful: number
-  reported: boolean
-  createdAt?: Date
-  updatedAt?: Date
+  isApproved: boolean
+  isVerifiedPurchase: boolean
+  helpfulCount: number
+  createdAt: Date
+  updatedAt: Date
+  // WordPress import fields
+  wpCommentId?: number
+  wpPostId?: number
+  wpParentId?: number
 }
 
-interface IReviewModel extends Model<IReview> {
-  getProductRatingStats(productId: string): Promise<{
-    averageRating: number
-    totalReviews: number
-    ratingDistribution: Record<number, number>
-  }>
-}
-
-const ReviewSchema = new Schema<IReview>({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: [true, 'User is required']
-  },
+const ReviewSchema = new mongoose.Schema<IReview>({
   product: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Product',
-    required: [true, 'Product is required']
+    required: true,
+    index: true
+  },
+  customerName: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  customerEmail: {
+    type: String,
+    trim: true,
+    lowercase: true
   },
   rating: {
     type: Number,
-    required: [true, 'Rating is required'],
-    min: [1, 'Rating must be at least 1'],
-    max: [5, 'Rating cannot exceed 5']
-  },
-  title: {
-    type: String,
-    trim: true,
-    maxlength: [100, 'Title cannot exceed 100 characters']
+    required: true,
+    min: 1,
+    max: 5
   },
   comment: {
     type: String,
-    required: [true, 'Review comment is required'],
-    trim: true,
-    maxlength: [1000, 'Comment cannot exceed 1000 characters']
+    required: true,
+    trim: true
   },
-  images: [{
-    type: String,
-    validate: {
-      validator: function(v: string[]) {
-        return v.length <= 5 // Maximum 5 images per review
-      },
-      message: 'Cannot upload more than 5 images'
-    }
-  }],
-  isVerified: {
+  isApproved: {
+    type: Boolean,
+    default: true
+  },
+  isVerifiedPurchase: {
     type: Boolean,
     default: false
   },
-  status: {
-    type: String,
-    enum: ['pending', 'approved', 'rejected'],
-    default: 'pending'
-  },
-  helpful: {
+  helpfulCount: {
     type: Number,
-    default: 0,
-    min: 0
+    default: 0
   },
-  reported: {
-    type: Boolean,
-    default: false
+  // WordPress import tracking
+  wpCommentId: {
+    type: Number
+  },
+  wpPostId: {
+    type: Number,
+    sparse: true
+  },
+  wpParentId: {
+    type: Number,
+    sparse: true
   }
 }, {
-  timestamps: true,
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true }
+  timestamps: true
 })
 
 // Indexes for performance
 ReviewSchema.index({ product: 1, createdAt: -1 })
-ReviewSchema.index({ user: 1, product: 1 }, { unique: true }) // One review per user per product
-ReviewSchema.index({ rating: 1 })
-ReviewSchema.index({ isVerified: 1 })
-ReviewSchema.index({ reported: 1 })
-ReviewSchema.index({ status: 1 })
+ReviewSchema.index({ product: 1, rating: -1 })
+ReviewSchema.index({ isApproved: 1 })
+ReviewSchema.index({ wpCommentId: 1 }, { unique: true, sparse: true })
 
-// Compound index for efficient queries
-ReviewSchema.index({ product: 1, rating: 1, createdAt: -1 })
-
-// Virtual for time ago
-ReviewSchema.virtual('timeAgo').get(function() {
-  if (!this.createdAt) return null
-
-  const now = new Date()
-  const diffInSeconds = Math.floor((now.getTime() - this.createdAt.getTime()) / 1000)
-
-  if (diffInSeconds < 60) return `${diffInSeconds} seconds ago`
-  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`
-  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`
-  if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} days ago`
-  if (diffInSeconds < 31536000) return `${Math.floor(diffInSeconds / 2592000)} months ago`
-  return `${Math.floor(diffInSeconds / 31536000)} years ago`
-})
-
-// Virtual for rating stars
-ReviewSchema.virtual('ratingStars').get(function() {
-  return '★'.repeat(this.rating) + '☆'.repeat(5 - this.rating)
-})
-
-// Static method to get product reviews with pagination
-ReviewSchema.statics.getProductReviews = async function(
-  productId: string,
-  page: number = 1,
-  limit: number = 10,
-  sortBy: 'newest' | 'oldest' | 'highest' | 'lowest' | 'helpful' = 'newest'
-) {
-  const pid = typeof productId === 'string' ? new Types.ObjectId(productId) : productId
-  const sortOptions = {
-    newest: { createdAt: -1 },
-    oldest: { createdAt: 1 },
-    highest: { rating: -1 },
-    lowest: { rating: 1 },
-    helpful: { helpful: -1 }
-  }
-
-  const reviews = await this.find({ product: pid as any, reported: false, status: 'approved' })
-    .populate('user', 'firstName lastName avatar')
-    .sort(sortOptions[sortBy])
-    .limit(limit)
-    .skip((page - 1) * limit)
-    .lean()
-
-  const total = await this.countDocuments({ product: pid as any, reported: false, status: 'approved' })
-
-  return {
-    reviews,
-    pagination: {
-      page,
-      limit,
-      total,
-      totalPages: Math.ceil(total / limit)
-    }
-  }
-}
-
-// Static method to get product rating statistics
-ReviewSchema.statics.getProductRatingStats = async function(productId: string) {
-  const pid = typeof productId === 'string' ? new Types.ObjectId(productId) : productId
-  const stats = await this.aggregate([
-    { $match: { product: pid as any, reported: false, status: 'approved' } },
-    {
-      $group: {
-        _id: null,
-        averageRating: { $avg: '$rating' },
-        totalReviews: { $sum: 1 },
-        ratingDistribution: {
-          $push: '$rating'
-        }
-      }
-    }
-  ])
-
-  if (stats.length === 0) {
-    return {
-      averageRating: 0,
-      totalReviews: 0,
-      ratingDistribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
-    }
-  }
-
-  const distribution = stats[0].ratingDistribution.reduce((acc: any, rating: any) => {
-    acc[rating] = (acc[rating] || 0) + 1
-    return acc
-  }, { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 })
-
-  return {
-    averageRating: Math.round(stats[0].averageRating * 10) / 10,
-    totalReviews: stats[0].totalReviews,
-    ratingDistribution: distribution
-  }
-}
-
-// Instance method to mark as helpful
-ReviewSchema.methods.markAsHelpful = function() {
-  this.helpful += 1
-  return this.save()
-}
-
-// Instance method to report review
-ReviewSchema.methods.report = function() {
-  this.reported = true
-  return this.save()
-}
-
-// In development, clear cached model to ensure schema updates are applied
-if (process.env.NODE_ENV === 'development' && (models as any).Review) {
-  delete (models as any).Review
-}
-const Review = (models.Review as unknown as IReviewModel) || model<IReview, IReviewModel>('Review', ReviewSchema)
-
-export default Review
-
-
+export default mongoose.models.Review || mongoose.model<IReview>('Review', ReviewSchema)

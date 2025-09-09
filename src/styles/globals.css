@@ -98,6 +98,30 @@
     @apply btn border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-500;
   }
 
+  /* Fix button click issues - ensure entire button area is clickable */
+  .btn > *,
+  .btn-primary > *,
+  .btn-secondary > *,
+  .btn-outline > *,
+  button > *,
+  button > svg,
+  button > span,
+  a[role="button"] > *,
+  a[role="button"] > svg,
+  a[role="button"] > span {
+    pointer-events: none !important;
+  }
+
+  /* Ensure buttons themselves remain clickable */
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-outline,
+  button,
+  a[role="button"] {
+    pointer-events: auto !important;
+  }
+
   .input {
     @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200;
   }
@@ -122,5 +146,29 @@
 
 .bounce-in {
   animation: bounceIn 0.6s ease-out;
+}
+
+/* CRITICAL: Universal button click fix - must be at the end to override everything */
+button svg,
+button span,
+button div,
+button *:not(button) {
+  pointer-events: none !important;
+}
+
+button {
+  pointer-events: auto !important;
+}
+
+/* Fix Link components acting as buttons */
+a.block span,
+a.block div,
+a.block svg,
+a.block *:not(a) {
+  pointer-events: none !important;
+}
+
+a.block {
+  pointer-events: auto !important;
 }
 

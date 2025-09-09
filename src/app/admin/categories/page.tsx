@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import SeoFields from '@/components/seo/SeoFields'
 import BackToAdmin from '@/components/admin/BackToAdmin'
+import Button from '@/components/ui/Button'
 
 interface Category {
   _id: string
@@ -26,6 +27,8 @@ interface Category {
   parent?: string
   children: string[]
   isActive: boolean
+  featuredOnHomepage?: boolean
+  homepageOrder?: number
   seo: {
     title: string
     description: string
@@ -50,6 +53,8 @@ export default function CategoriesAdmin() {
     image: '',
     parent: '',
     isActive: true,
+    featuredOnHomepage: false,
+    homepageOrder: 0,
     seo: {
       title: '',
       description: '',
@@ -112,6 +117,8 @@ export default function CategoriesAdmin() {
           ? String((category as any).parent._id)
           : (typeof (category as any).parent === 'string' ? String((category as any).parent) : ''),
         isActive: category.isActive,
+        featuredOnHomepage: category.featuredOnHomepage || false,
+        homepageOrder: category.homepageOrder || 0,
         seo: {
           title: category.seo.title,
           description: category.seo.description,
@@ -160,6 +167,8 @@ export default function CategoriesAdmin() {
         image: (formData.image || '').trim(),
         parent: formData.parent && formData.parent !== '' ? formData.parent : undefined,
         isActive: formData.isActive,
+        featuredOnHomepage: formData.featuredOnHomepage,
+        homepageOrder: formData.homepageOrder,
         seo: {
           title: (formData.seo.title || '').trim() || formData.name.trim(),
           description: (formData.seo.description || '').trim() || `Shop ${formData.name.trim()} products`,
@@ -298,15 +307,15 @@ export default function CategoriesAdmin() {
               </span>
               <button
                 onClick={() => openModal(category)}
-                className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors flex items-center justify-center clickable"
               >
-                <Edit className="w-4 h-4" />
+                Edit
               </button>
               <button
                 onClick={() => handleDelete(category._id)}
-                className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                className="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 transition-colors flex items-center justify-center clickable"
               >
-                <Trash2 className="w-4 h-4" />
+                Delete
               </button>
             </div>
           </div>
@@ -318,19 +327,11 @@ export default function CategoriesAdmin() {
                 <button
                   type="button"
                   onClick={() => toggleExpanded(category._id)}
-                  className="inline-flex items-center text-sm text-gray-700 hover:text-gray-900"
+                  className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors flex items-center justify-center clickable"
                   aria-label={isExpanded ? 'Collapse subcategories' : 'Show subcategories'}
                   aria-expanded={isExpanded}
                 >
-                  {isExpanded ? (
-                    <>
-                      <ChevronDown className="w-4 h-4 mr-2" /> Hide subcategories
-                    </>
-                  ) : (
-                    <>
-                      <ChevronRight className="w-4 h-4 mr-2" /> Show subcategories
-                    </>
-                  )}
+                  {isExpanded ? 'Hide subcategories' : 'Show subcategories'}
                 </button>
               </div>
               {/* Child categories */}
@@ -355,15 +356,15 @@ export default function CategoriesAdmin() {
                           </span>
                           <button
                             onClick={() => openModal(child)}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                            className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors flex items-center justify-center clickable"
                           >
-                            <Edit className="w-4 h-4" />
+                            Edit
                           </button>
                           <button
                             onClick={() => handleDelete(child._id)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                            className="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 transition-colors flex items-center justify-center clickable"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            Delete
                           </button>
                         </div>
                       </div>
@@ -400,7 +401,7 @@ export default function CategoriesAdmin() {
               <h1 className="text-xl font-semibold text-gray-900">Category Management</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <BackToAdmin />
+              <BackToAdmin label="Back to Admin" href="/admin" />
             </div>
           </div>
         </div>
@@ -408,26 +409,27 @@ export default function CategoriesAdmin() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-8">
         <div className="flex items-center justify-end mb-6">
-          <button
+          <Button
             onClick={() => openModal()}
-            className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+            icon={Plus}
+            variant="primary"
           >
-            <Plus className="w-4 h-4 mr-2" />
             Add Category
-          </button>
+          </Button>
         </div>
         {categories.length === 0 ? (
           <div className="text-center py-12">
             <Folder className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No categories yet</h3>
             <p className="text-gray-600 mb-6">Get started by creating your first category</p>
-            <button
+            <Button
               onClick={() => openModal()}
-              className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 mx-auto"
+              icon={Plus}
+              variant="primary"
+              className="mx-auto"
             >
-              <Plus className="w-4 h-4 mr-2" />
               Add Category
-            </button>
+            </Button>
           </div>
         ) : (
           <div>
@@ -578,13 +580,14 @@ export default function CategoriesAdmin() {
                         />
                         Replace Image
                       </label>
-                      <button
+                      <Button
                         type="button"
                         onClick={() => setFormData({ ...formData, image: '' })}
-                        className="px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100"
+                        variant="danger"
+                        size="sm"
                       >
                         Remove
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 ) : (
@@ -657,6 +660,42 @@ export default function CategoriesAdmin() {
                 </label>
               </div>
 
+              {/* Homepage Featured Section */}
+              <div className="border-t pt-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Homepage Display</h3>
+                
+                <div className="flex items-center mb-4">
+                  <input
+                    type="checkbox"
+                    id="featuredOnHomepage"
+                    checked={formData.featuredOnHomepage}
+                    onChange={(e) => setFormData({ ...formData, featuredOnHomepage: e.target.checked })}
+                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="featuredOnHomepage" className="ml-2 block text-sm text-gray-700">
+                    Featured on Homepage (show in homepage category grid)
+                  </label>
+                </div>
+
+                {formData.featuredOnHomepage && (
+                  <div>
+                    <label htmlFor="homepageOrder" className="block text-sm font-medium text-gray-700 mb-2">
+                      Homepage Order
+                    </label>
+                    <input
+                      type="number"
+                      id="homepageOrder"
+                      value={formData.homepageOrder}
+                      onChange={(e) => setFormData({ ...formData, homepageOrder: parseInt(e.target.value) || 0 })}
+                      min="0"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                      placeholder="0"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Lower numbers appear first (0 = first position)</p>
+                  </div>
+                )}
+              </div>
+
               {/* SEO Section */}
               <div className="border-t pt-6">
                 <h3 className="text-lg font-medium text-gray-900 mb-4">SEO Settings</h3>
@@ -668,20 +707,21 @@ export default function CategoriesAdmin() {
               </div>
 
               <div className="flex justify-end space-x-4 pt-6 border-t">
-                <button
+                <Button
                   type="button"
                   onClick={closeModal}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                  variant="ghost"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
-                  className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+                  icon={Save}
+                  variant="primary"
+                  loading={isSaving}
                 >
-                  <Save className="w-4 h-4 mr-2" />
                   {editingCategory ? 'Update' : 'Create'} Category
-                </button>
+                </Button>
               </div>
             </form>
           </div>

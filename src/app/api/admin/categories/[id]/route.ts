@@ -17,8 +17,9 @@ export async function GET(
     }
 
     await connectToDatabase()
+    const { id } = await params
 
-    const category = await Category.findById(params.id)
+    const category = await Category.findById(id)
       .populate('children')
       .populate('parent')
 
@@ -48,9 +49,10 @@ export async function PUT(
     const categoryData = await request.json()
 
     await connectToDatabase()
+    const { id } = await params
 
     const category = await Category.findByIdAndUpdate(
-      params.id,
+      id,
       categoryData,
       { new: true, runValidators: true }
     )
@@ -79,9 +81,10 @@ export async function DELETE(
     }
 
     await connectToDatabase()
+    const { id } = await params
 
     // Check if category has children
-    const category = await Category.findById(params.id).populate('children')
+    const category = await Category.findById(id).populate('children')
     
     if (!category) {
       return NextResponse.json({ error: 'Category not found' }, { status: 404 })
@@ -104,7 +107,7 @@ export async function DELETE(
       })
     }
 
-    await Category.findByIdAndDelete(params.id)
+    await Category.findByIdAndDelete(id)
 
     return NextResponse.json({ message: 'Category deleted successfully' })
   } catch (error) {

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
+import { OptimizedImage } from '@/components/OptimizedImage'
 import { normalizeImageUrl } from '@/utils/image'
 
 interface ProductImage {
@@ -56,13 +56,14 @@ export function ProductImageGallery({ images, productName }: ProductImageGallery
     <div className="space-y-4">
       {/* Main Image */}
       <div className="aspect-square relative overflow-hidden rounded-lg bg-gray-100">
-        <Image
+        <OptimizedImage
           src={imageSrc}
           alt={getImageAlt(currentImage, selectedImage)}
           fill
           className="object-cover"
           sizes="(max-width: 1024px) 100vw, 50vw"
-          unoptimized
+          quality={90}
+          priority
         />
       </div>
 
@@ -86,13 +87,13 @@ export function ProductImageGallery({ images, productName }: ProductImageGallery
                   selectedImage === index ? 'border-primary-600' : 'border-gray-200'
                 }`}
               >
-                <Image
+                <OptimizedImage
                   src={thumbSrc}
                   alt={thumbAlt}
                   fill
                   className="object-cover"
                   sizes="80px"
-                  unoptimized
+                  quality={75}
                 />
               </button>
             )

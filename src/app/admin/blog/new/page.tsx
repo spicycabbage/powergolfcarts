@@ -2,10 +2,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import BackToAdmin from '@/components/admin/BackToAdmin'
 import HtmlEditor from '@/components/forms/HtmlEditor'
 import SeoFields, { SeoData } from '@/components/seo/SeoFields'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus, Trash2, ChevronLeft } from 'lucide-react'
 
 export default function NewPost() {
   const router = useRouter()
@@ -83,8 +82,10 @@ export default function NewPost() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <h1 className="text-xl font-semibold text-gray-900">New Post</h1>
           <div className="flex items-center space-x-3">
-            <BackToAdmin />
-            <Link href="/admin/blog" className="inline-flex items-center px-3 py-2 text-sm rounded-lg bg-gray-100 text-gray-900 hover:bg-gray-200">Back to Blog</Link>
+            <Link href="/admin/blog" className="inline-flex items-center px-3 py-2 text-sm rounded-lg bg-gray-100 text-gray-900 hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500">
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              Back to Blog
+            </Link>
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
+import { ChevronLeft } from 'lucide-react'
 import HtmlEditor from '@/components/forms/HtmlEditor'
 import SeoFields, { SeoData } from '@/components/seo/SeoFields'
 
@@ -66,7 +67,10 @@ export default function EditPage() {
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <h1 className="text-xl font-semibold text-gray-900">Edit Page</h1>
-          <Link href="/admin/pages" className="text-sm text-gray-600 hover:text-gray-900">Back to Pages</Link>
+          <Link href="/admin/pages" className="inline-flex items-center px-3 py-2 text-sm rounded-lg bg-gray-100 text-gray-900 hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500">
+            <ChevronLeft className="w-4 h-4 mr-2" />
+            Back to Pages
+          </Link>
         </div>
       </div>
       <form onSubmit={handleSubmit} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

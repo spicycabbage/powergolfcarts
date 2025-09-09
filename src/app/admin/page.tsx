@@ -177,7 +177,7 @@ export default function AdminDashboard() {
                 prefetch
                 className="block bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all hover:border-primary-300 hover:bg-gray-50 text-center"
               >
-                <span className="text-base font-semibold text-gray-900">{tool.title}</span>
+                <span className="text-base font-semibold text-gray-900" style={{ pointerEvents: 'none' }}>{tool.title}</span>
               </Link>
             )
           })}

@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20')
     const activeOnly = searchParams.get('active') !== 'false'
     const parent = searchParams.get('parent')
+    const featured = searchParams.get('featured') === 'true'
 
     const query: any = {}
     if (activeOnly) {
@@ -24,15 +25,27 @@ export async function GET(request: NextRequest) {
       query.parent = parent
     }
 
-    const categories = await Category.find(query)
-      .select('name slug description image parent')
+    let categoriesQuery = Category.find(query)
+      .select('name slug description image parent isActive featuredOnHomepage homepageOrder')
       .sort({ name: 1 })
       .limit(limit)
-      .lean()
+
+    // For featured categories (homepage), filter by featuredOnHomepage and sort by homepageOrder
+    if (featured) {
+      categoriesQuery = Category.find({
+        ...query,
+        featuredOnHomepage: true
+      })
+        .select('name slug description image parent isActive featuredOnHomepage homepageOrder')
+        .sort({ homepageOrder: 1, name: 1 }) // Sort by order first, then name
+        .limit(limit)
+    }
+
+    const categories = await categoriesQuery.lean()
 
     return NextResponse.json({
       success: true,
-      data: categories,
+      categories: categories, // Changed from 'data' to 'categories' to match CategoryGrid
       count: categories.length
     })
   } catch (error) {

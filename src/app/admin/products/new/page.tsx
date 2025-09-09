@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import SeoFields, { SeoData } from '@/components/seo/SeoFields'
-import { Save, Package, Plus, Trash2 } from 'lucide-react'
+import { Save, Package, Plus, Trash2, ChevronLeft } from 'lucide-react'
 import HtmlEditor from '@/components/forms/HtmlEditor'
 
 type Category = {
@@ -343,7 +343,10 @@ export default function NewProductPage() {
               <h1 className="text-xl font-semibold text-gray-900">Create Product</h1>
             </div>
             <div className="flex items-center space-x-3">
-              <Link href="/admin/inventory" className="inline-flex items-center px-3 py-2 text-sm rounded-lg bg-gray-100 text-gray-900 hover:bg-gray-200">Back to Inventory</Link>
+              <Link href="/admin/inventory" className="inline-flex items-center px-3 py-2 text-sm rounded-lg bg-gray-100 text-gray-900 hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500">
+                <ChevronLeft className="w-4 h-4 mr-2" />
+                Back to Inventory
+              </Link>
               <button
                 onClick={handleSubmit}
                 disabled={!canSave || saving}

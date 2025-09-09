@@ -5,9 +5,9 @@ import { Star } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import { ProductImageGallery } from '@/components/ProductImageGallery'
 import { ProductActions } from '@/components/ProductActions'
+import { ClickableRating } from '@/components/ClickableRating'
 import JsonLd from '@/components/seo/JsonLd'
 import BreadcrumbsJsonLd from '@/components/seo/BreadcrumbsJsonLd'
-import { getSiteConfig } from '@/lib/config'
 import { connectToDatabase } from '@/lib/mongodb'
 import Product from '@/lib/models/Product'
 import Category from '@/lib/models/Category'
@@ -124,8 +124,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const categorySlug = (product as any).category?.slug
   const categoryName = (product as any).category?.name
   const categoryPath = categorySlug ? `/categories/${categorySlug}` : '/categories'
-  const cfg = getSiteConfig()
-  const baseUrl = cfg.domain.startsWith('http') ? cfg.domain : `https://${cfg.domain}`
+  
+  // Use environment variables directly to avoid config import issues
+  const domain = process.env.NEXT_PUBLIC_DOMAIN || 'localhost:3000'
+  const baseUrl = domain.startsWith('http') ? domain : `https://${domain}`
   const crumbs = [
     { name: 'Home', item: `${baseUrl}/` },
     { name: 'Categories', item: `${baseUrl}/categories` },
@@ -216,23 +218,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
 
             {/* Rating */}
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`w-5 h-5 ${
-                      i < Math.floor((product as any).averageRating || 0)
-                        ? 'text-yellow-400 fill-current'
-                        : 'text-gray-300'
-                    }`}
-                  />
-                ))}
-              </div>
-              <span className="text-gray-600">
-                {(product as any).averageRating || 0} ({(product as any).reviewCount || 0} reviews)
-              </span>
-            </div>
+            <ClickableRating 
+              averageRating={(product as any).averageRating || 0}
+              reviewCount={(product as any).reviewCount || 0}
+            />
 
             {/* Price */}
             <div className="flex items-center space-x-4">

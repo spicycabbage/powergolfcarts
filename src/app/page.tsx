@@ -32,9 +32,7 @@ export default function HomePage() {
       </Suspense>
 
       {/* Category Grid */}
-      <Suspense fallback={<LoadingSpinner />}>
-        <CategoryGrid />
-      </Suspense>
+      <CategoryGrid />
 
       {/* Newsletter Signup */}
       <NewsletterSignup />

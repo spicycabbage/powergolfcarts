@@ -42,7 +42,14 @@ export async function POST(request: NextRequest) {
     const extFromType = file.type?.split('/')[1] ? `.${file.type.split('/')[1]}` : ''
     const ext = extFromName || extFromType || '.png'
 
-    const filename = `cat-${Date.now()}${ext}`
+    // Preserve SEO-friendly filename, just add timestamp to avoid conflicts
+    const baseName = path.basename(originalName, extFromName)
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, '-') // Replace non-alphanumeric with hyphens
+      .replace(/-+/g, '-') // Replace multiple hyphens with single
+      .replace(/^-|-$/g, '') // Remove leading/trailing hyphens
+    
+    const filename = `${baseName}-${Date.now()}${ext}`
     const filepath = path.join(uploadsDir, filename)
     fs.writeFileSync(filepath, buffer)
 

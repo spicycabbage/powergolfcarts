@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import { OptimizedImage } from '@/components/OptimizedImage'
 import Link from 'next/link'
 
 export function HeroSection() {
@@ -40,11 +40,21 @@ export function HeroSection() {
 
           {/* Hero Image */}
           <div className="relative">
-            <div className="relative h-96 lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-              <div className="text-center text-gray-600">
-                <div className="text-6xl mb-4">🛍️</div>
-                <div className="text-xl font-semibold">Your Store</div>
-                <div className="text-sm">Premium Products</div>
+            <div className="relative h-96 lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl">
+              <OptimizedImage
+                src="/uploads/products/blue-dream.jpeg"
+                alt="Premium Cannabis Products"
+                fill
+                className="object-cover"
+                priority
+                quality={95}
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center text-white">
+                  <div className="text-xl font-semibold mb-2">Premium Quality</div>
+                  <div className="text-sm opacity-90">Trusted Products</div>
+                </div>
               </div>
             </div>
 

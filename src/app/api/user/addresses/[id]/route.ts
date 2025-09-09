@@ -18,7 +18,7 @@ export async function PUT(
       )
     }
 
-    const addressId = params.id
+    const { id: addressId } = await params
     const addressData = await request.json()
     const { type, firstName, lastName, company, address1, address2, city, state, postalCode, country, phone, isDefault } = addressData
 
@@ -113,7 +113,7 @@ export async function DELETE(
       )
     }
 
-    const addressId = params.id
+    const { id: addressId } = await params
 
     await connectToDatabase()
 

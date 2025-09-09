@@ -43,15 +43,15 @@ export default function AdminPagesList() {
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <h1 className="text-xl font-semibold text-gray-900">Pages</h1>
-            <BackToAdmin />
-          </div>
-          <Link href="/admin/pages/new" className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700">New Page</Link>
+          <h1 className="text-xl font-semibold text-gray-900">Pages</h1>
+          <BackToAdmin label="Back to Admin" href="/admin" />
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex justify-end mb-6">
+          <Link href="/admin/pages/new" className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700">New Page</Link>
+        </div>
         {error && <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
         {loading ? (
           <div className="text-gray-600">Loading…</div>

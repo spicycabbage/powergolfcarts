@@ -419,7 +419,7 @@ export default function NavigationAdminClient({ session }: NavigationAdminClient
               <Settings className="w-6 h-6 text-primary-600 mr-3" />
               <h1 className="text-xl font-semibold text-gray-900">Navigation Management</h1>
             </div>
-            <BackToAdmin />
+            <BackToAdmin label="Back to Admin" href="/admin" />
           </div>
         </div>
       </div>

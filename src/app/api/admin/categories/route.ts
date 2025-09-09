@@ -17,7 +17,7 @@ export async function GET() {
     await connectToDatabase()
 
     const categories = await Category.find({},
-      'name slug description image parent isActive seo'
+      'name slug description image parent isActive featuredOnHomepage homepageOrder seo'
     )
       .sort({ name: 1 })
       .lean()
