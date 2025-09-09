@@ -64,7 +64,7 @@ export async function GET(
       data: {
         reviews: reviews.map(review => ({
           ...review,
-          _id: review._id.toString(),
+          _id: review._id?.toString() || review._id,
           user: {
             name: review.customerName || 'Anonymous',
             firstName: review.customerName?.split(' ')[0] || 'Anonymous'
