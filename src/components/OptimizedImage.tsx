@@ -37,7 +37,7 @@ export function OptimizedImage({
   const [imageSrc, setImageSrc] = useState(src)
   const [hasError, setHasError] = useState(false)
 
-  // Generate optimized image path with fallback logic
+  // Generate optimized image path with SEO-friendly fallback logic
   const getOptimizedSrc = (originalSrc: string, preferredFormat: 'webp' | 'jpg' = 'webp') => {
     // If it's already an external URL, return as-is
     if (originalSrc.startsWith('http') || originalSrc.startsWith('//')) {
@@ -49,7 +49,7 @@ export function OptimizedImage({
       return originalSrc
     }
 
-    // Convert uploads path to optimized path
+    // Convert uploads path to optimized path while preserving SEO filename
     if (originalSrc.startsWith('/uploads/')) {
       const pathWithoutUploads = originalSrc.replace('/uploads/', '')
       const pathParts = pathWithoutUploads.split('/')
@@ -57,10 +57,11 @@ export function OptimizedImage({
       const directory = pathParts.join('/')
       
       if (filename) {
+        // Extract the SEO-friendly name and extension
         const nameWithoutExt = filename.replace(/\.(jpg|jpeg|png|webp)$/i, '')
         const optimizedFilename = `${nameWithoutExt}.${preferredFormat}`
         
-        // Build the correct path - optimized images are in the same directory structure
+        // Build the optimized path maintaining directory structure
         if (directory) {
           return `/optimized/${directory}/${optimizedFilename}`
         } else {
@@ -72,10 +73,26 @@ export function OptimizedImage({
     return originalSrc
   }
 
-  // Simple error handling - fallback to placeholder
+  // Error handling with fallback chain
   const handleError = () => {
     if (!hasError) {
       setHasError(true)
+      
+      // Try fallback to JPEG if we were trying WebP
+      if (imageSrc.includes('.webp')) {
+        const jpegSrc = imageSrc.replace('.webp', '.jpg')
+        setImageSrc(jpegSrc)
+        return
+      }
+      
+      // If JPEG also fails, try original
+      if (imageSrc.includes('/optimized/')) {
+        const originalSrc = imageSrc.replace('/optimized/', '/uploads/')
+        setImageSrc(originalSrc)
+        return
+      }
+      
+      // Final fallback to placeholder
       setImageSrc('/placeholder-product.jpg')
     }
     onError?.()
@@ -86,9 +103,8 @@ export function OptimizedImage({
     onLoad?.()
   }
 
-  // Use original images directly for best performance
-  // Skip optimization attempts since most WebP files don't exist yet
-  const optimizedSrc = imageSrc
+  // Try optimized WebP first, with fallback chain
+  const optimizedSrc = hasError ? imageSrc : getOptimizedSrc(imageSrc, 'webp')
 
   // Generate responsive sizes if not provided
   const responsiveSizes = sizes || (

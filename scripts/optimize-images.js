@@ -33,47 +33,51 @@ class ImageOptimizer {
   async init() {
     // Create optimized directory structure
     await this.ensureDir(OPTIMIZED_DIR)
-    await this.ensureDir(path.join(OPTIMIZED_DIR, 'products'))
-    await this.ensureDir(path.join(OPTIMIZED_DIR, 'categories'))
-    await this.ensureDir(path.join(OPTIMIZED_DIR, 'posts'))
-    
-    console.log('🚀 Starting image optimization...')
-    console.log(`📁 Source: ${UPLOAD_DIR}`)
-    console.log(`📁 Output: ${OPTIMIZED_DIR}`)
+    console.log('🚀 Image optimization started...')
   }
 
-  async ensureDir(dirPath) {
-    if (!fs.existsSync(dirPath)) {
-      fs.mkdirSync(dirPath, { recursive: true })
+  async ensureDir(dir) {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true })
+      console.log(`📁 Created directory: ${dir}`)
     }
   }
 
-  isImageFile(filename) {
-    const ext = path.extname(filename).toLowerCase()
-    return ['.jpg', '.jpeg', '.png', '.webp'].includes(ext)
-  }
-
-  getOutputPath(inputPath, size, format = 'webp') {
+  // Preserve original filename for SEO
+  getOptimizedPath(inputPath, size = 'original', format = 'webp') {
     const relativePath = path.relative(UPLOAD_DIR, inputPath)
     const parsedPath = path.parse(relativePath)
-    const sizePrefix = size === 'original' ? '' : `_${size}`
-    const newName = `${parsedPath.name}${sizePrefix}.${format}`
-    return path.join(OPTIMIZED_DIR, parsedPath.dir, newName)
+    
+    // Keep the original directory structure
+    const dir = parsedPath.dir
+    const name = parsedPath.name
+    
+    // Create size suffix only for non-original sizes
+    const sizeSuffix = size === 'original' ? '' : `_${size}`
+    const optimizedName = `${name}${sizeSuffix}.${format}`
+    
+    const outputDir = path.join(OPTIMIZED_DIR, dir)
+    return {
+      outputPath: path.join(outputDir, optimizedName),
+      outputDir: outputDir
+    }
   }
 
-  async optimizeImage(inputPath, outputPath, width, quality = WEBP_QUALITY) {
+  async optimizeImage(inputPath, outputPath, width = null, quality = WEBP_QUALITY) {
     try {
-      const image = sharp(inputPath)
-      const metadata = await image.metadata()
-      
-      // Don't upscale images
-      const targetWidth = width && width < metadata.width ? width : metadata.width
-      
-      await image
-        .resize(targetWidth, null, {
+      const outputDir = path.dirname(outputPath)
+      await this.ensureDir(outputDir)
+
+      let pipeline = sharp(inputPath)
+
+      if (width) {
+        pipeline = pipeline.resize(width, null, {
           withoutEnlargement: true,
           fit: 'inside'
         })
+      }
+
+      await pipeline
         .webp({ quality })
         .toFile(outputPath)
 
@@ -85,28 +89,46 @@ class ImageOptimizer {
     }
   }
 
+  async optimizeJpeg(inputPath, outputPath, quality = JPEG_QUALITY) {
+    try {
+      const outputDir = path.dirname(outputPath)
+      await this.ensureDir(outputDir)
+
+      await sharp(inputPath)
+        .jpeg({ quality, progressive: true })
+        .toFile(outputPath)
+
+      return true
+    } catch (error) {
+      console.error(`❌ Error creating JPEG ${inputPath}:`, error.message)
+      this.stats.errors++
+      return false
+    }
+  }
+
   async processImage(inputPath) {
     try {
       const stats = fs.statSync(inputPath)
       this.stats.originalSize += stats.size
 
-      console.log(`📸 Processing: ${path.basename(inputPath)}`)
+      const filename = path.basename(inputPath)
+      console.log(`📸 Processing: ${filename}`)
 
       // Generate WebP versions in multiple sizes
       const tasks = []
       
-      // Original size WebP
-      const originalOutput = this.getOutputPath(inputPath, 'original', 'webp')
+      // Original size WebP - preserves SEO filename
+      const { outputPath: originalOutput, outputDir } = this.getOptimizedPath(inputPath, 'original', 'webp')
       tasks.push(this.optimizeImage(inputPath, originalOutput, null))
 
-      // Responsive sizes
+      // Responsive sizes with SEO filename + size suffix
       for (const [sizeName, width] of Object.entries(SIZES)) {
-        const sizeOutput = this.getOutputPath(inputPath, sizeName, 'webp')
+        const { outputPath: sizeOutput } = this.getOptimizedPath(inputPath, sizeName, 'webp')
         tasks.push(this.optimizeImage(inputPath, sizeOutput, width))
       }
 
-      // Also create a high-quality JPEG fallback
-      const jpegOutput = this.getOutputPath(inputPath, 'original', 'jpg')
+      // Also create a high-quality JPEG fallback with SEO filename
+      const { outputPath: jpegOutput } = this.getOptimizedPath(inputPath, 'original', 'jpg')
       tasks.push(this.optimizeJpeg(inputPath, jpegOutput))
 
       await Promise.all(tasks)
@@ -125,76 +147,80 @@ class ImageOptimizer {
     }
   }
 
-  async optimizeJpeg(inputPath, outputPath, quality = JPEG_QUALITY) {
-    try {
-      await sharp(inputPath)
-        .jpeg({ quality, progressive: true })
-        .toFile(outputPath)
-      return true
-    } catch (error) {
-      console.error(`❌ Error creating JPEG ${inputPath}:`, error.message)
-      return false
+  async processDirectory(directory) {
+    if (!fs.existsSync(directory)) {
+      console.log(`⚠️  Directory not found: ${directory}`)
+      return
     }
-  }
 
-  async processDirectory(dirPath) {
-    const items = fs.readdirSync(dirPath)
+    const files = fs.readdirSync(directory)
     
-    for (const item of items) {
-      const itemPath = path.join(dirPath, item)
-      const stat = fs.statSync(itemPath)
+    for (const file of files) {
+      const filePath = path.join(directory, file)
+      const stat = fs.statSync(filePath)
       
       if (stat.isDirectory()) {
-        await this.processDirectory(itemPath)
-      } else if (this.isImageFile(item)) {
-        await this.processImage(itemPath)
+        // Recursively process subdirectories
+        await this.processDirectory(filePath)
+      } else if (this.isImageFile(file)) {
+        // Check if already optimized
+        const { outputPath } = this.getOptimizedPath(filePath, 'original', 'webp')
+        
+        if (fs.existsSync(outputPath)) {
+          console.log(`⏭️  Skipping (already optimized): ${file}`)
+          this.stats.skipped++
+          continue
+        }
+        
+        await this.processImage(filePath)
       }
     }
   }
 
-  formatBytes(bytes) {
-    if (bytes === 0) return '0 Bytes'
-    const k = 1024
-    const sizes = ['Bytes', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  isImageFile(filename) {
+    const ext = path.extname(filename).toLowerCase()
+    return ['.jpg', '.jpeg', '.png', '.webp'].includes(ext)
   }
 
   printStats() {
-    const savings = this.stats.originalSize - this.stats.optimizedSize
-    const savingsPercent = this.stats.originalSize > 0 
-      ? ((savings / this.stats.originalSize) * 100).toFixed(1)
-      : 0
-
-    console.log('\n🎉 Optimization Complete!')
-    console.log('═'.repeat(50))
-    console.log(`📊 Images processed: ${this.stats.processed}`)
-    console.log(`❌ Errors: ${this.stats.errors}`)
-    console.log(`📏 Original size: ${this.formatBytes(this.stats.originalSize)}`)
-    console.log(`📦 Optimized size: ${this.formatBytes(this.stats.optimizedSize)}`)
-    console.log(`💾 Space saved: ${this.formatBytes(savings)} (${savingsPercent}%)`)
-    console.log('═'.repeat(50))
+    console.log('\n📊 Optimization Complete!')
+    console.log('─'.repeat(40))
+    console.log(`✅ Processed: ${this.stats.processed} images`)
+    console.log(`⏭️  Skipped: ${this.stats.skipped} images`)
+    console.log(`❌ Errors: ${this.stats.errors} images`)
+    
+    if (this.stats.originalSize > 0) {
+      const originalMB = (this.stats.originalSize / 1024 / 1024).toFixed(2)
+      const optimizedMB = (this.stats.optimizedSize / 1024 / 1024).toFixed(2)
+      const savings = ((this.stats.originalSize - this.stats.optimizedSize) / this.stats.originalSize * 100).toFixed(1)
+      
+      console.log(`💾 Original size: ${originalMB} MB`)
+      console.log(`🗜️  Optimized size: ${optimizedMB} MB`)
+      console.log(`📉 Space saved: ${savings}%`)
+    }
+    console.log('─'.repeat(40))
   }
 
   async run() {
     await this.init()
-    
-    if (!fs.existsSync(UPLOAD_DIR)) {
-      console.error(`❌ Upload directory not found: ${UPLOAD_DIR}`)
-      return
+
+    // Process all image directories
+    const directories = [
+      path.join(UPLOAD_DIR, 'products'),
+      path.join(UPLOAD_DIR, 'categories'), 
+      path.join(UPLOAD_DIR, 'posts')
+    ]
+
+    for (const dir of directories) {
+      console.log(`\n🔍 Processing directory: ${path.relative(process.cwd(), dir)}`)
+      await this.processDirectory(dir)
     }
 
-    await this.processDirectory(UPLOAD_DIR)
     this.printStats()
-
-    console.log('\n📝 Next steps:')
-    console.log('1. Update your image components to use optimized images')
-    console.log('2. Configure Next.js for WebP support')
-    console.log('3. Test image loading on your site')
   }
 }
 
-// Run if called directly
+// Run the optimizer
 if (require.main === module) {
   const optimizer = new ImageOptimizer()
   optimizer.run().catch(console.error)
