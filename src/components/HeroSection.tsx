@@ -14,15 +14,15 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
       </div>
 
-      <div className="relative h-full flex items-center justify-center sm:justify-start">
-        <div className="mx-auto sm:ml-8 md:ml-16 lg:ml-[300px] xl:ml-[450px] sm:mx-0 px-4 sm:px-6 lg:px-8">
+      <div className="relative h-full flex items-center justify-center">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8">
           {/* Content */}
-          <div className="text-center sm:text-left">
+          <div className="text-center">
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
               Discover Amazing
               <span className="block text-primary-200">Products</span>
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-primary-100 mb-6 sm:mb-8 max-w-xs sm:max-w-sm md:max-w-lg mx-auto sm:mx-0">
+            <p className="text-base sm:text-lg md:text-xl text-primary-100 mb-6 sm:mb-8 max-w-xs sm:max-w-sm md:max-w-lg mx-auto">
               Shop the latest trends with fast shipping, great prices, and exceptional customer service.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

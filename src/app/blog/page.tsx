@@ -7,7 +7,18 @@ import Post from '@/lib/models/Post'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }): Promise<Metadata> {
+  const sp = await searchParams
+  const tag = typeof sp?.tag === 'string' ? String(sp?.tag).toLowerCase() : ''
+  
+  if (tag) {
+    const tagTitle = tag.charAt(0).toUpperCase() + tag.slice(1)
+    return {
+      title: `${tagTitle} - Blog`,
+      description: `Latest posts about ${tagTitle.toLowerCase()}`,
+    }
+  }
+  
   return {
     title: 'Blog',
     description: 'Latest updates, guides, and news',
@@ -43,13 +54,18 @@ export default async function BlogIndex({ searchParams }: { searchParams: Promis
   } catch {}
 
   const totalPages = Math.max(Math.ceil(total / limit), 1)
+  const tagTitle = tag ? tag.charAt(0).toUpperCase() + tag.slice(1) : ''
 
   return (
     <div className="min-h-screen bg-gray-50">
       <section className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-3xl font-bold text-gray-900">Blog</h1>
-          <p className="text-gray-600 mt-2">Read our latest posts and updates.</p>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {tag ? `${tagTitle} - Blog` : 'Blog'}
+          </h1>
+          <p className="text-gray-600 mt-2">
+            {tag ? `Posts about ${tagTitle.toLowerCase()}` : 'Read our latest posts and updates.'}
+          </p>
         </div>
       </section>
 

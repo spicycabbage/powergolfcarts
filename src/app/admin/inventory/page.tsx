@@ -76,7 +76,7 @@ export default function AdminInventoryPage() {
       try {
         const res = await fetch('/api/categories?activeOnly=true&limit=1000', { cache: 'no-store' })
         const json = await res.json().catch(() => ({} as any))
-        if (mounted) setCategories(Array.isArray(json?.data) ? json.data : [])
+        if (mounted) setCategories(Array.isArray(json?.categories) ? json.categories : [])
       } catch {}
     })()
     return () => { mounted = false }
@@ -113,20 +113,23 @@ export default function AdminInventoryPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-12 relative" style={{ zIndex: 100 }}>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 relative z-50">
               <label className="text-sm text-gray-700">Category</label>
-              <select
-                value={selectedCategory}
-                onChange={(e) => { setSelectedCategory(e.target.value); setPage(1) }}
-                className="px-3 py-2 text-sm rounded-lg border border-gray-300 bg-white"
-              >
-                <option value="">All</option>
-                {categories.map((c: any) => (
-                  <option key={String(c._id)} value={String(c._id)}>{c.name}</option>
-                ))}
-              </select>
+              <div className="relative">
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => { setSelectedCategory(e.target.value); setPage(1) }}
+                  className="px-3 py-2 text-sm rounded-lg border border-gray-300 bg-white relative z-50"
+                  style={{ position: 'relative', zIndex: 9999 }}
+                >
+                  <option value="">All</option>
+                  {categories.map((c: any) => (
+                    <option key={String(c._id)} value={String(c._id)}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <label className="text-sm text-gray-700">Search</label>
@@ -185,7 +188,7 @@ export default function AdminInventoryPage() {
           </button>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 relative z-10">
           {loadingProducts ? (
             <div className="p-6 text-gray-600">Loading…</div>
           ) : recentProducts.length === 0 ? (
@@ -224,7 +227,7 @@ export default function AdminInventoryPage() {
                   </button>
                 </div>
               </div>
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto" style={{ zIndex: 1 }}>
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>

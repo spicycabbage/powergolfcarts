@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { Facebook, Twitter, Instagram, Youtube } from 'lucide-react'
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
@@ -32,12 +31,6 @@ export function Footer() {
     ]
   }
 
-  const socialLinks = [
-    { name: 'Facebook', href: '#', icon: Facebook },
-    { name: 'Twitter', href: '#', icon: Twitter },
-    { name: 'Instagram', href: '#', icon: Instagram },
-    { name: 'YouTube', href: '#', icon: Youtube }
-  ]
 
   return (
     <footer className="bg-gray-900 text-white">
@@ -81,22 +74,6 @@ export function Footer() {
               </div>
             )}
 
-            {/* Social Links */}
-            <div className="flex space-x-4">
-              {socialLinks.map((social) => {
-                const Icon = social.icon
-                return (
-                  <a
-                    key={social.name}
-                    href={social.href}
-                    className="text-gray-400 hover:text-white transition-colors"
-                    aria-label={social.name}
-                  >
-                    <Icon size={20} />
-                  </a>
-                )
-              })}
-            </div>
           </div>
 
           {/* Shop Links */}
@@ -177,15 +154,12 @@ export function Footer() {
               © {currentYear} Godbud.cc. All rights reserved.
             </p>
             <div className="flex items-center space-x-6 mt-4 md:mt-0">
-              <div className="flex items-center space-x-4">
-                <span className="text-gray-400 text-sm">We accept:</span>
-                <div className="flex items-center space-x-2">
-                  {/* Payment method icons would go here */}
-                  <div className="w-8 h-5 bg-gray-600 rounded"></div>
-                  <div className="w-8 h-5 bg-gray-600 rounded"></div>
-                  <div className="w-8 h-5 bg-gray-600 rounded"></div>
-                  <div className="w-8 h-5 bg-gray-600 rounded"></div>
-                </div>
+              <div className="flex items-center">
+                <img 
+                  src="/trust-badges.webp" 
+                  alt="Accepted payment methods: Norton Secured, SSL Certificate, PayPal, Credit Cards, Bitcoin"
+                  className="h-8 w-auto"
+                />
               </div>
             </div>
           </div>
