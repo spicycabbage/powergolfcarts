@@ -24,8 +24,8 @@ export default function ShatterVsDiamonds() {
 
       <h2>Try these</h2>
       <p>
-        <a href="/products/blue-dream-shatter">Blue Dream Shatter</a> and{' '}
-        <a href="/products/wedding-cake-diamonds">Wedding Cake Diamonds</a>
+        <a href="/products/la-kush-cake-shatter">LA Kush Cake Shatter</a> and{' '}
+        <a href="/products/wedding-cake-diamond">Wedding Cake Diamond</a>
       </p>
     </article>
   )

@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | E-Commerce Store',
+  title: 'Privacy Policy | Godbud.cc',
   description: 'Our privacy policy explains how we collect, use, and protect your personal information.',
 }
 

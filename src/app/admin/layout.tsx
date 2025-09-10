@@ -2,8 +2,8 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Admin - E-Commerce Store',
-    default: 'Admin - E-Commerce Store',
+    template: '%s | Admin - Godbud.cc',
+    default: 'Admin - Godbud.cc',
   },
   description: 'Admin panel for managing your ecommerce store',
 }

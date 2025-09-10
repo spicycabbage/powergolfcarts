@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Categories | E-Commerce Store',
+  title: 'Categories | Godbud.cc',
   description: 'Browse our product categories and find exactly what you need.',
 }
 

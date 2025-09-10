@@ -62,11 +62,11 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   }
 
   if (!product) {
-    return { title: 'Product Not Found | E-Commerce Store' }
+    return { title: 'Product Not Found | Godbud.cc' }
   }
 
   return {
-    title: `${(product as any).name} | E-Commerce Store`,
+    title: `${(product as any).name} | Godbud.cc`,
     description: (product as any).shortDescription || (product as any).description || ''
   }
 }
@@ -154,7 +154,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           image: Array.isArray((product as any).images)
             ? (product as any).images.map((img: any) => (typeof img === 'string' ? img : img.url)).slice(0, 5)
             : [],
-          brand: { '@type': 'Brand', name: 'E-Commerce Store' },
+          brand: { '@type': 'Brand', name: 'Godbud.cc' },
           offers: {
             '@type': 'Offer',
             priceCurrency: 'USD',

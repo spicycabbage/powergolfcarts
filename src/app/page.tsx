@@ -7,7 +7,7 @@ import { NewsletterSignup } from '@/components/NewsletterSignup'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 export const metadata: Metadata = {
-  title: 'Home | E-Commerce Store',
+  title: 'Home | Godbud.cc',
   description: 'Discover amazing products at our online store. Shop the latest trends with fast shipping and great prices.',
   keywords: 'ecommerce, shopping, online store, featured products, deals',
 }

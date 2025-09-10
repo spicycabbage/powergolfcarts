@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Terms & Conditions | E-Commerce Store',
+  title: 'Terms & Conditions | Godbud.cc',
   description: 'Our terms and conditions outline the rules and regulations for using our website and services.',
 }
 

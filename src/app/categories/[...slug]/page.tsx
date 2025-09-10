@@ -32,10 +32,10 @@ export async function generateMetadata({ params }: CatchAllCategoryPageProps): P
     category = await Category.findOne({ slug: lastSlug }).lean()
   }
   if (!category) {
-    return { title: 'Category Not Found | E-Commerce Store' }
+    return { title: 'Category Not Found | Godbud.cc' }
   }
   return {
-    title: `${category.name} | E-Commerce Store`,
+    title: `${category.name} | Godbud.cc`,
     description: category.description || ''
   }
 }

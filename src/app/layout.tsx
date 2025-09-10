@@ -10,12 +10,12 @@ import HeaderServer from '@/components/layout/HeaderServer'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'E-Commerce Store',
+  title: 'Godbud.cc',
   description: 'Your one-stop shop for quality products',
   keywords: 'ecommerce, shopping, online store, products',
-  authors: [{ name: 'E-Commerce Store' }],
-  creator: 'E-Commerce Store',
-  publisher: 'E-Commerce Store',
+  authors: [{ name: 'Godbud.cc' }],
+  creator: 'Godbud.cc',
+  publisher: 'Godbud.cc',
   formatDetection: {
     email: false,
     address: false,
@@ -29,13 +29,13 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: 'https://yourdomain.com',
-    title: 'E-Commerce Store',
+    title: 'Godbud.cc',
     description: 'Your one-stop shop for quality products',
-    siteName: 'E-Commerce Store',
+    siteName: 'Godbud.cc',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'E-Commerce Store',
+    title: 'Godbud.cc',
     description: 'Your one-stop shop for quality products',
   },
   robots: {
@@ -99,14 +99,14 @@ export default async function RootLayout({
             {
               '@context': 'https://schema.org',
               '@type': 'Organization',
-              name: process.env.NEXT_PUBLIC_SITE_NAME || 'E-Commerce Store',
+              name: process.env.NEXT_PUBLIC_SITE_NAME || 'Godbud.cc',
               url: `https://${process.env.NEXT_PUBLIC_DOMAIN || 'example.com'}`,
               logo: '/favicon.ico'
             },
             {
               '@context': 'https://schema.org',
               '@type': 'WebSite',
-              name: process.env.NEXT_PUBLIC_SITE_NAME || 'E-Commerce Store',
+              name: process.env.NEXT_PUBLIC_SITE_NAME || 'Godbud.cc',
               url: `https://${process.env.NEXT_PUBLIC_DOMAIN || 'example.com'}`,
               potentialAction: {
                 '@type': 'SearchAction',

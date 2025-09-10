@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { ProductList } from '@/components/ProductList'
 
 export const metadata: Metadata = {
-  title: 'Products | E-Commerce Store',
+  title: 'Products | Godbud.cc',
   description: 'Browse our complete product catalog with advanced filtering and search.',
 }
 
