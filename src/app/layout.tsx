@@ -99,18 +99,24 @@ export default async function RootLayout({
             {
               '@context': 'https://schema.org',
               '@type': 'Organization',
-              name: process.env.NEXT_PUBLIC_SITE_NAME || 'Godbud.cc',
-              url: `https://${process.env.NEXT_PUBLIC_DOMAIN || 'example.com'}`,
-              logo: '/favicon.ico'
+              name: 'Godbud.cc',
+              url: 'https://www.godbud.cc',
+              logo: 'https://www.godbud.cc/favicon.ico',
+              description: 'Premium cannabis products delivered across Canada',
+              address: {
+                '@type': 'PostalAddress',
+                addressCountry: 'CA'
+              }
             },
             {
               '@context': 'https://schema.org',
               '@type': 'WebSite',
-              name: process.env.NEXT_PUBLIC_SITE_NAME || 'Godbud.cc',
-              url: `https://${process.env.NEXT_PUBLIC_DOMAIN || 'example.com'}`,
+              name: 'Godbud.cc',
+              url: 'https://www.godbud.cc',
+              description: 'Premium cannabis products delivered across Canada',
               potentialAction: {
                 '@type': 'SearchAction',
-                target: `https://${process.env.NEXT_PUBLIC_DOMAIN || 'example.com'}/search?q={search_term_string}`,
+                target: 'https://www.godbud.cc/categories?search={search_term_string}',
                 'query-input': 'required name=search_term_string'
               }
             }

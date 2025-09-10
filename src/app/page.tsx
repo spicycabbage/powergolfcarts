@@ -26,6 +26,29 @@ export default function HomePage() {
       {/* Hero Section */}
       <HeroSection />
 
+      {/* Voted Text Section */}
+      <section className="bg-white pt-4 pb-1">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-lg font-medium text-gray-900 mb-2">
+            Voted one of Canada's top online dispensary
+          </h2>
+          <p className="text-sm text-gray-600">
+            As seen on:
+          </p>
+        </div>
+      </section>
+
+      {/* Trust Logos Section */}
+      <section className="h-[200px] bg-white flex items-center justify-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <img 
+            src="/trust-logos.png" 
+            alt="Trusted by leading companies"
+            className="w-full h-auto max-h-[160px] object-contain"
+          />
+        </div>
+      </section>
+
       {/* Featured Products */}
       <Suspense fallback={<LoadingSpinner />}>
         <FeaturedProducts />
