@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export function HeroSection() {
   return (
-    <section className="relative text-white overflow-hidden h-[500px]">
+    <section className="relative text-white overflow-hidden h-[350px] md:h-[500px]">
       {/* Background Images - Responsive */}
       <div className="absolute inset-0">
         {/* Mobile Image */}

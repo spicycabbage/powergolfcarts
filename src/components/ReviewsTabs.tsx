@@ -1,7 +1,13 @@
 "use client"
 import { useEffect, useMemo, useState } from 'react'
+import ReviewSchema from './seo/ReviewSchema'
 
-export function ReviewsTabs({ productId, htmlDescription }: { productId: string, htmlDescription: string }) {
+export function ReviewsTabs({ productId, htmlDescription, productName, productSlug }: { 
+  productId: string, 
+  htmlDescription: string,
+  productName?: string,
+  productSlug?: string 
+}) {
   const [tab, setTab] = useState<'description' | 'reviews'>('description')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -134,6 +140,15 @@ export function ReviewsTabs({ productId, htmlDescription }: { productId: string,
               </div>
 
               <div>
+                {/* Review Schema for SEO */}
+                {reviews.length > 0 && productName && productSlug && (
+                  <ReviewSchema 
+                    reviews={reviews}
+                    productName={productName}
+                    productUrl={`${typeof window !== 'undefined' ? window.location.origin : 'https://www.godbud.cc'}/products/${productSlug}`}
+                  />
+                )}
+                
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Reviews</h3>
                 {reviews.length === 0 ? (
                   <p className="text-gray-600">No reviews yet.</p>

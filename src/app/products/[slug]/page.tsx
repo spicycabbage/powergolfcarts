@@ -145,28 +145,72 @@ export default async function ProductPage({ params }: ProductPageProps) {
   return (
     <div className="min-h-screen bg-white">
       <BreadcrumbsJsonLd crumbs={crumbs} />
-      {/* JSON-LD: Product */}
+      {/* JSON-LD: Enhanced Product Schema */}
       <JsonLd
         data={{
           '@context': 'https://schema.org',
           '@type': 'Product',
           name: (product as any).name,
           description: (product as any).shortDescription || (product as any).description?.slice(0, 160),
-          sku: (product as any).inventory?.sku,
+          sku: (product as any).inventory?.sku || (product as any).slug,
           category: categoryName,
+          condition: 'https://schema.org/NewCondition',
           image: Array.isArray((product as any).images)
             ? (product as any).images.map((img: any) => (typeof img === 'string' ? img : img.url)).slice(0, 5)
             : [],
-          brand: { '@type': 'Brand', name: 'Godbud.cc' },
+          brand: { 
+            '@type': 'Brand', 
+            name: 'Godbud.cc',
+            url: baseUrl
+          },
+          manufacturer: {
+            '@type': 'Organization',
+            name: 'Godbud.cc'
+          },
           offers: {
             '@type': 'Offer',
-            priceCurrency: 'USD',
+            priceCurrency: 'CAD',
             price: (product as any).price,
+            priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 1 year from now
             availability: (isVariable ? (totalVariantInventory > 0) : ((product as any).inventory?.quantity > 0)) ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-            url: `${baseUrl}/products/${(product as any).slug}`
+            url: `${baseUrl}/products/${(product as any).slug}`,
+            seller: {
+              '@type': 'Organization',
+              name: 'Godbud.cc',
+              url: baseUrl
+            },
+            shippingDetails: {
+              '@type': 'OfferShippingDetails',
+              shippingRate: {
+                '@type': 'MonetaryAmount',
+                currency: 'CAD',
+                value: '0'
+              },
+              deliveryTime: {
+                '@type': 'ShippingDeliveryTime',
+                handlingTime: {
+                  '@type': 'QuantitativeValue',
+                  minValue: 1,
+                  maxValue: 2,
+                  unitCode: 'DAY'
+                },
+                transitTime: {
+                  '@type': 'QuantitativeValue',
+                  minValue: 2,
+                  maxValue: 5,
+                  unitCode: 'DAY'
+                }
+              }
+            }
           },
           aggregateRating: (product as any).reviewCount > 0
-            ? { '@type': 'AggregateRating', ratingValue: (product as any).averageRating, reviewCount: (product as any).reviewCount }
+            ? { 
+                '@type': 'AggregateRating', 
+                ratingValue: (product as any).averageRating, 
+                reviewCount: (product as any).reviewCount,
+                bestRating: 5,
+                worstRating: 1
+              }
             : undefined
         }}
       />
@@ -271,7 +315,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
           const norm = normalizeContent(raw)
           const html = (norm && norm.trim().length > 0) ? norm : raw
           return (
-            <ReviewsTabs productId={String((product as any)._id)} htmlDescription={html} />
+            <ReviewsTabs 
+              productId={String((product as any)._id)} 
+              htmlDescription={html}
+              productName={(product as any).name}
+              productSlug={(product as any).slug}
+            />
           )
         })()}
 
