@@ -62,11 +62,19 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
   }
 
   // Manually fetch breadcrumbs to ensure the path is populated
-  const breadcrumbsData = await (Category as any).getBreadcrumbs(category._id);
-  const crumbs = breadcrumbsData.map((segment: { name: string; slug: string; }) => ({
+  const breadcrumbData = await (Category as any).getBreadcrumbs(category._id);
+  const breadcrumbItems = breadcrumbData.map((segment: { name: string; slug: string; }) => ({
     name: segment.name,
     href: `/categories/${segment.slug}`,
   }));
+
+  const cfg = getSiteConfig();
+  const baseUrl = cfg.domain.startsWith('http') ? cfg.domain : `https://${cfg.domain}`;
+  const jsonLdCrumbs = breadcrumbItems.map(item => ({
+    name: item.name,
+    item: `${baseUrl}${item.href}`
+  }));
+
 
   // Collect this category and all descendant category IDs (recursive)
   const ids: any[] = [(category as any)._id]
@@ -191,12 +199,12 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <BreadcrumbsJsonLd crumbs={crumbs.map(c => ({ name: c.name, item: c.href }))} />
+      <BreadcrumbsJsonLd crumbs={jsonLdCrumbs} />
       {/* Page Header */}
       <section className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-4">
-            <Breadcrumbs items={crumbs} /> {/* Display Breadcrumbs */}
+            <Breadcrumbs items={breadcrumbItems} /> {/* Display Breadcrumbs */}
           </div>
           <h1 className="text-3xl font-bold text-gray-900">{name}</h1>
           {description && (
