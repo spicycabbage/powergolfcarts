@@ -62,8 +62,8 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
   }
 
   // Manually fetch breadcrumbs to ensure the path is populated
-  const breadcrumbsData = await Category.getBreadcrumbs(category._id);
-  const breadcrumbItems = breadcrumbsData.map((segment: { name: string; slug: string; }) => ({
+  const breadcrumbsData = await (Category as any).getBreadcrumbs(category._id);
+  const crumbs = breadcrumbsData.map((segment: { name: string; slug: string; }) => ({
     name: segment.name,
     href: `/categories/${segment.slug}`,
   }));
@@ -191,12 +191,12 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <BreadcrumbsJsonLd categoryId={String(category._id)} />
+      <BreadcrumbsJsonLd crumbs={crumbs.map(c => ({ name: c.name, item: c.href }))} />
       {/* Page Header */}
       <section className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-4">
-            <Breadcrumbs items={breadcrumbItems} />
+            <Breadcrumbs items={crumbs} /> {/* Display Breadcrumbs */}
           </div>
           <h1 className="text-3xl font-bold text-gray-900">{name}</h1>
           {description && (
