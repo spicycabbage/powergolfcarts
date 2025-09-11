@@ -206,6 +206,23 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   maxValue: 5,
                   unitCode: 'DAY'
                 }
+              },
+              shippingDestination: {
+                '@type': 'DefinedRegion',
+                addressCountry: 'CA'
+              }
+            },
+            hasMerchantReturnPolicy: {
+              '@type': 'MerchantReturnPolicy',
+              applicableCountry: 'CA',
+              returnPolicyCategory: 'https://schema.org/MerchantReturnNotPermitted',
+              merchantReturnDays: 0,
+              returnMethod: 'https://schema.org/ReturnByMail',
+              returnFees: 'https://schema.org/FreeReturn',
+              additionalProperty: {
+                '@type': 'PropertyValue',
+                name: 'Store Credit Policy',
+                value: 'No returns but store credit for unsatisfied items'
               }
             }
           },
