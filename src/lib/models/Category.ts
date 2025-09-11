@@ -1,4 +1,4 @@
-import { Schema, model, models } from 'mongoose'
+import { Schema, model, models, Model } from 'mongoose'
 
 export interface ICategory {
   _id?: string
@@ -23,6 +23,13 @@ export interface ICategory {
   homepageOrder?: number
   createdAt?: Date
   updatedAt?: Date
+}
+
+// Interface for the model's statics
+export interface ICategoryModel extends Model<ICategory> {
+  getOrCreateUncategorized(): Promise<ICategory>;
+  getCategoryTree(): Promise<any[]>;
+  getBreadcrumbs(categoryId: string): Promise<{ _id: string; name: string; slug: string; }[]>;
 }
 
 const SEOSchema = new Schema({
@@ -104,7 +111,7 @@ CategorySchema.virtual('path').get(async function() {
   let current = this
 
   while (current.parent) {
-    const parent = await Category.findById(current.parent)
+    const parent = await (models.Category as ICategoryModel).findById(current.parent)
     if (parent) {
       path.unshift(parent.name)
       current = parent
@@ -188,7 +195,7 @@ CategorySchema.statics.getBreadcrumbs = async function(categoryId: string) {
   return breadcrumbs
 }
 
-const Category = models.Category || model<ICategory>('Category', CategorySchema)
+const Category = (models.Category as ICategoryModel) || model<ICategory, ICategoryModel>('Category', CategorySchema)
 
 export default Category
 
