@@ -103,15 +103,26 @@ export default function HomePage() {
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
             Voted One of Canada's Top Online Dispensaries
           </h2>
-          <p className="text-gray-600 mb-6">
-            As seen on:
+          <p className="text-gray-600 mb-4">
+            Trusted by thousands of customers and featured across major cannabis platforms
           </p>
-          <div className="flex justify-center">
+          <p className="text-sm text-gray-500 mb-6">
+            As seen on Cannabis Culture, Weedmaps, The Weed Blog, and Leafly - Canada's most trusted cannabis review platforms
+          </p>
+          <div className="flex justify-center mb-6">
             <img
               src="/trust-logos.webp"
               alt="As seen on platforms like Cannabis Culture, Weedmaps, The Weed Blog, and Leafly"
               className="h-auto max-h-[120px] object-contain"
             />
+          </div>
+          <div className="max-w-3xl mx-auto">
+            <p className="text-gray-600 text-sm leading-relaxed">
+              Since 2019, Godbud.cc has been recognized as one of Canada's premier online cannabis dispensaries. 
+              Our commitment to quality, customer service, and competitive pricing has earned us features on leading 
+              cannabis platforms and thousands of positive customer reviews. Join the community of satisfied customers 
+              who trust us for their cannabis needs across Canada.
+            </p>
           </div>
         </div>
       </section>
