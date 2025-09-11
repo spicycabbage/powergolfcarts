@@ -7,16 +7,18 @@ export function HeroSection() {
       {/* Background Images - Responsive */}
       <div className="absolute inset-0">
         {/* Mobile Image */}
-        <img 
-          src="/god-mobile.jpg" 
+        <img
+          src="/god-mobile.webp"
           alt="Buy Weed Online Canada - Godbud"
           className="block md:hidden w-full h-full object-cover"
+          loading="eager"
         />
         {/* Desktop Image */}
-        <img 
-          src="/buy-weed-online-canada-godbud.jpg" 
+        <img
+          src="/buy-weed-online-canada-godbud.webp"
           alt="Buy Weed Online Canada - Godbud"
           className="hidden md:block w-full h-full object-cover"
+          loading="eager"
         />
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
       </div>

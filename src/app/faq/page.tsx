@@ -10,10 +10,18 @@ const candidateSlugs = ['faq', 'faqs']
 export async function generateMetadata(): Promise<Metadata> {
   await connectToDatabase()
   const page: any = await Page.findOne({ slug: { $in: candidateSlugs }, isPublished: true }).lean()
-  if (!page) return { title: 'FAQ | Godbud.cc' }
+  if (!page) return {
+    title: 'FAQ | Godbud.cc',
+    alternates: {
+      canonical: '/faq',
+    },
+  }
   return {
     title: page.seo?.title || `${page.title} | Godbud.cc`,
     description: page.seo?.description || '',
+    alternates: {
+      canonical: '/faq',
+    },
   }
 }
 

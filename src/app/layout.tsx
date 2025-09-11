@@ -95,7 +95,7 @@ export default async function RootLayout({
         )}
         {/* Global JSON-LD: Organization and Website (env-based to avoid fs/dynamic at build) */}
         <JsonLd
-          data={[
+          data={
             {
               '@context': 'https://schema.org',
               '@type': 'Organization',
@@ -106,21 +106,14 @@ export default async function RootLayout({
               address: {
                 '@type': 'PostalAddress',
                 addressCountry: 'CA'
-              }
-            },
-            {
-              '@context': 'https://schema.org',
-              '@type': 'WebSite',
-              name: 'Godbud.cc',
-              url: 'https://www.godbud.cc',
-              description: 'Premium cannabis products delivered across Canada',
+              },
               potentialAction: {
                 '@type': 'SearchAction',
                 target: 'https://www.godbud.cc/categories?search={search_term_string}',
                 'query-input': 'required name=search_term_string'
               }
             }
-          ]}
+          }
         />
         <SessionProvider>
           <Providers>

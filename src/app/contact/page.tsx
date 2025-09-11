@@ -12,13 +12,26 @@ export async function generateMetadata(): Promise<Metadata> {
   try {
     await connectToDatabase()
     const page = await Page.findOne({ slug: { $in: candidateSlugs }, isPublished: true }).lean<any>()
-    if (!page) return { title: 'Contact' }
+    if (!page) return { 
+      title: 'Contact',
+      alternates: {
+        canonical: '/contact',
+      },
+    }
     return {
       title: page.seo?.title || page.title || 'Contact',
       description: page.seo?.description || '',
+      alternates: {
+        canonical: '/contact',
+      },
     }
   } catch {
-    return { title: 'Contact' }
+    return { 
+      title: 'Contact',
+      alternates: {
+        canonical: '/contact',
+      },
+    }
   }
 }
 

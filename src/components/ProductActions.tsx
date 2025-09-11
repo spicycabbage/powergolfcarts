@@ -160,20 +160,14 @@ export function ProductActions({ product }: ProductActionsProps) {
       {/* Secondary actions */}
       <div className="flex items-center gap-3">
         <button
-          onClick={handleAddToWishlist}
-          className="flex-1 border border-gray-300 text-gray-700 py-3 px-6 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center justify-center"
-        >
-          <Heart className="w-5 h-5 mr-2" />
-          Add to Wishlist
-        </button>
-        <button
           onClick={handleShare}
-          className="p-3 border border-gray-300 text-gray-600 hover:text-gray-800 rounded-lg hover:bg-gray-50 transition-colors"
-          title="Share product"
+          className="w-full mt-2 text-sm text-gray-600 hover:text-primary-600 flex items-center justify-center p-2 rounded-lg border hover:bg-gray-50 transition-colors"
         >
-          <Share2 className="w-5 h-5" />
+          <Share2 className="w-4 h-4 mr-2" />
+          Share
         </button>
       </div>
+
     </div>
   )
 }

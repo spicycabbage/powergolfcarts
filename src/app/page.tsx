@@ -39,8 +39,8 @@ export default function HomePage() {
             As seen on:
           </p>
           <div className="flex justify-center">
-            <img 
-              src="/trust-logos.png" 
+            <img
+              src="/trust-logos.webp"
               alt="As seen on platforms like Cannabis Culture, Weedmaps, The Weed Blog, and Leafly"
               className="h-auto max-h-[120px] object-contain"
             />

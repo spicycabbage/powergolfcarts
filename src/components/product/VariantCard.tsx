@@ -31,7 +31,7 @@ type CardProduct = {
   variants?: Variant[]
 }
 
-export default function VariantCard({ product }: { product: CardProduct }) {
+export default function VariantCard({ product, priority = false }: { product: CardProduct, priority?: boolean }) {
   const { addItem } = useCart()
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null)
 
@@ -112,7 +112,7 @@ export default function VariantCard({ product }: { product: CardProduct }) {
 
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 group product-card clickable">
-      <Link href={`/products/${product.slug}`} className="block relative aspect-square overflow-hidden cursor-pointer">
+      <Link href={`/products/${product.slug}`} className="block relative h-48 sm:h-56 overflow-hidden cursor-pointer">
             <OptimizedImage
               src={imageSrc}
               alt={product.name}
@@ -120,6 +120,7 @@ export default function VariantCard({ product }: { product: CardProduct }) {
               className="object-cover group-hover:scale-105 transition-transform duration-200"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
               quality={85}
+              priority={priority}
             />
       </Link>
       <div className="p-4 text-center">

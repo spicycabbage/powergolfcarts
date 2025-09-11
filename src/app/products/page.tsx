@@ -4,6 +4,9 @@ import { ProductList } from '@/components/ProductList'
 export const metadata: Metadata = {
   title: 'Products | Godbud.cc',
   description: 'Browse our complete product catalog with advanced filtering and search.',
+  alternates: {
+    canonical: '/products',
+  },
 }
 
 export default function ProductsPage() {

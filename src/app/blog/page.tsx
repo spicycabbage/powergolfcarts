@@ -81,7 +81,7 @@ export default async function BlogIndex({ searchParams }: { searchParams: Promis
           <div className="bg-white rounded-lg shadow p-6 text-gray-700">No posts yet.</div>
         ) : (
           <div className="grid grid-cols-1 gap-6">
-            {posts.map((p: any) => (
+            {posts.map((p: any, index: number) => (
               <article key={String(p._id)} className="bg-white rounded-lg shadow p-6">
                 <div className="flex items-start gap-6">
                   {p.coverImage && (
@@ -90,7 +90,7 @@ export default async function BlogIndex({ searchParams }: { searchParams: Promis
                       src={p.coverImage}
                       alt={p.title}
                       className="w-48 h-32 md:w-60 md:h-40 rounded object-cover flex-shrink-0"
-                      loading="lazy"
+                      loading={index === 0 ? 'eager' : 'lazy'}
                     />
                   )}
                   <div className="min-w-0">

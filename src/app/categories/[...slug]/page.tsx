@@ -11,6 +11,7 @@ import { connectToDatabase } from '@/lib/mongodb'
 import Product from '@/lib/models/Product'
 import Category from '@/lib/models/Category'
 import { isUsingDataApi, findOne as dataFindOne, findMany as dataFindMany } from '@/lib/dataApi'
+import { Breadcrumbs } from '@/components/Breadcrumbs' // Import Breadcrumbs
 
 export const dynamic = 'force-dynamic'
 import SortSelect from '@/components/SortSelect'
@@ -35,8 +36,12 @@ export async function generateMetadata({ params }: CatchAllCategoryPageProps): P
     return { title: 'Category Not Found | Godbud.cc' }
   }
   return {
-    title: `${category.name} | Godbud.cc`,
-    description: category.description || ''
+    title: category.seo?.title || `${category.name} | Godbud.cc`,
+    description: category.seo?.description || category.description || '',
+    keywords: category.seo?.keywords || [],
+    alternates: {
+      canonical: category.seo?.canonical || `/categories/${lastSlug}`,
+    },
   }
 }
 
@@ -53,8 +58,15 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
     category = await Category.findOne({ slug: lastSlug }).lean()
   }
   if (!category) {
-    notFound()
+    return notFound()
   }
+
+  // Manually fetch breadcrumbs to ensure the path is populated
+  const breadcrumbsData = await Category.getBreadcrumbs(category._id);
+  const breadcrumbItems = breadcrumbsData.map((segment: { name: string; slug: string; }) => ({
+    name: segment.name,
+    href: `/categories/${segment.slug}`,
+  }));
 
   // Collect this category and all descendant category IDs (recursive)
   const ids: any[] = [(category as any)._id]
@@ -179,73 +191,64 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <BreadcrumbsJsonLd crumbs={crumbs} />
-      {/* Breadcrumb */}
+      <BreadcrumbsJsonLd categoryId={String(category._id)} />
+      {/* Page Header */}
       <section className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <nav className="flex items-center space-x-2 text-sm text-gray-600">
-            <Link href="/" className="hover:text-primary-600">Home</Link>
-            <span>/</span>
-            <Link href="/categories" className="hover:text-primary-600">Categories</Link>
-            <span>/</span>
-            <span className="text-gray-900 font-medium">{name}</span>
-          </nav>
-        </div>
-      </section>
-
-      {/* Category Header */}
-      <section className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">{name}</h1>
-            <p className="text-gray-600 mb-2">{description}</p>
-            <p className="text-sm text-gray-500">
-              {products.length} product{products.length !== 1 ? 's' : ''} available
-            </p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="mb-4">
+            <Breadcrumbs items={breadcrumbItems} />
           </div>
+          <h1 className="text-3xl font-bold text-gray-900">{name}</h1>
+          {description && (
+            <div className="mt-4 prose max-w-none text-gray-600">
+              <p>{description}</p>
+            </div>
+          )}
         </div>
       </section>
 
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col gap-8">
-          {/* Main Content */}
-          <main>
-            {/* Sort Options */}
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-600">Sort by:</span>
-                <SortSelect value={sortParam} />
-              </div>
-              <span className="text-sm text-gray-600">
-                Showing {products.length} product{products.length !== 1 ? 's' : ''}
-              </span>
+          {/* Sort Options */}
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-600">Sort by:</span>
+              <SortSelect value={sortParam} />
             </div>
+            <span className="text-sm text-gray-600">
+              Showing {products.length} product{products.length !== 1 ? 's' : ''}
+            </span>
+          </div>
 
-            {/* Products Grid */}
-            {products.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-8">
-                {products.map((product) => (
-                  <VariantCard key={String((product as any)._id)} product={serializeProductForClient(product) as any} />
-                ))}
+          {/* Products Grid */}
+          {products.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-8">
+              {products.map((product, index) => (
+                <VariantCard 
+                  key={String((product as any)._id)} 
+                  product={serializeProductForClient(product) as any}
+                  priority={index < 4} // Add priority loading for the first 4 images
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <div className="text-gray-400 mb-4">
+                <ShoppingBag className="w-16 h-16 mx-auto" />
               </div>
-            ) : (
-              <div className="text-center py-12">
-                <div className="text-gray-400 mb-4">
-                  <ShoppingBag className="w-16 h-16 mx-auto" />
-                </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No Products Found</h3>
-                <p className="text-gray-600 mb-6">
-                  There are no products in this category yet.
-                </p>
-                <Link
-                  href="/products"
-                  className="inline-flex items-center px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
-                >
-                  Browse All Products
-                </Link>
-              </div>
-            )}
-          </main>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Products Found</h3>
+              <p className="text-gray-600 mb-6">
+                There are no products in this category yet.
+              </p>
+              <Link
+                href="/products"
+                className="inline-flex items-center px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+              >
+                Browse All Products
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -67,7 +67,10 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
   return {
     title: `${(product as any).name} | Godbud.cc`,
-    description: (product as any).shortDescription || (product as any).description || ''
+    description: (product as any).shortDescription || (product as any).description || '',
+    alternates: {
+      canonical: `/products/${slug}`,
+    },
   }
 }
 
@@ -244,29 +247,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
             {/* Product Actions */}
             <ProductActions product={serializeProductForClient(product as any) as any} />
-
-            {/* Product Details */}
-            <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Details</h3>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="font-medium text-gray-600">SKU:</span>
-                  <span className="ml-2 text-gray-900">{(product as any).inventory?.sku || '-'}</span>
-                </div>
-                <div>
-                  <span className="font-medium text-gray-600">Category:</span>
-                  <span className="ml-2 text-gray-900">{categoryName || '-'}</span>
-                </div>
-                <div>
-                  <span className="font-medium text-gray-600">Stock:</span>
-                  <span className="ml-2 text-gray-900">
-                    {isVariable
-                      ? (totalVariantInventory > 0 ? `${totalVariantInventory} available` : 'Out of Stock')
-                      : ((product as any).inventory?.quantity > 0 ? `${(product as any).inventory.quantity} available` : 'Out of Stock')}
-                  </span>
-                </div>
-              </div>
-            </div>
 
             {/* Features */}
             {Array.isArray((product as any).features) && (product as any).features.length > 0 && (
