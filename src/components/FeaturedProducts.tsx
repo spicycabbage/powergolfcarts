@@ -1,127 +1,57 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
-import { Star, ShoppingCart } from 'lucide-react'
-import { useCart } from '@/hooks/useCart'
-import { useEffect, useState } from 'react'
+import { Product } from '@/types'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import VariantCard from '@/components/product/VariantCard' // Import VariantCard
 
 export function FeaturedProducts() {
-  const { addItem } = useCart()
-  const [products, setProducts] = useState<any[]>([])
+  const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    let isMounted = true
-    ;(async () => {
+    async function fetchFeaturedProducts() {
       try {
-        const res = await fetch('/api/products?featured=true&limit=8', { cache: 'no-store' })
-        const json = await res.json().catch(() => ({}))
-        if (!res.ok) return
-        if (isMounted) setProducts(Array.isArray(json?.data) ? json.data : [])
+        const res = await fetch('/api/products?featured=true&limit=4')
+        if (res.ok) {
+          const data = await res.json()
+          setProducts(Array.isArray(data.data) ? data.data : [])
+        }
+      } catch (error) {
+        console.error('Failed to fetch featured products:', error)
       } finally {
-        if (isMounted) setLoading(false)
+        setLoading(false)
       }
-    })()
-    return () => { isMounted = false }
+    }
+    fetchFeaturedProducts()
   }, [])
 
-  const handleAddToCart = (product: any) => {
-    addItem(product)
+  if (loading) {
+    return (
+      <div className="py-12 text-center">
+        <LoadingSpinner />
+      </div>
+    )
+  }
+
+  if (products.length === 0) {
+    return null // Don't render the section if there are no featured products
   }
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="bg-gray-50 py-8 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Products</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Discover our handpicked selection of top-rated products loved by our customers
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-bold text-gray-900">Featured Products</h2>
+          <p className="mt-4 text-lg text-gray-600">
+            Handpicked selections you're sure to love.
           </p>
         </div>
-
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((product: any) => (
-              <div key={product._id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 group">
-                {/* Product Image */}
-                <Link href={`/products/${product.slug}`} className="block relative aspect-square overflow-hidden">
-                  <Image
-                    src={product.images[0]?.url || '/placeholder-product.jpg'}
-                    alt={product.images[0]?.alt || product.name}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-200"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  />
-                  {product.originalPrice && product.originalPrice > product.price && (
-                    <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-medium">
-                      {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
-                    </div>
-                  )}
-                </Link>
-
-                {/* Product Info */}
-                <div className="p-4">
-                  <Link href={`/products/${product.slug}`}>
-                    <h3 className="font-medium text-gray-900 mb-2 line-clamp-2 hover:text-primary-600 transition-colors">
-                      {product.name}
-                    </h3>
-                  </Link>
-
-                  {/* Rating */}
-                  <div className="flex items-center mb-2">
-                    <div className="flex items-center">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${
-                            i < Math.floor(product.averageRating)
-                              ? 'text-yellow-400 fill-current'
-                              : 'text-gray-300'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                    <span className="text-sm text-gray-600 ml-2">
-                      ({product.reviewCount})
-                    </span>
-                  </div>
-
-                  {/* Price */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-lg font-bold text-gray-900">
-                        ${product.price.toFixed(2)}
-                      </span>
-                      {product.originalPrice && product.originalPrice > product.price && (
-                        <span className="text-sm text-gray-500 line-through">
-                          ${product.originalPrice.toFixed(2)}
-                        </span>
-                      )}
-                    </div>
-
-                    <button
-                      onClick={() => handleAddToCart(product)}
-                      className="p-2 text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-lg transition-colors"
-                      aria-label={`Add ${product.name} to cart`}
-                    >
-                      <ShoppingCart className="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-        {/* View All Link */}
-        <div className="text-center mt-12">
-          <Link
-            href="/categories"
-            className="inline-flex items-center px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
-          >
-            View All Products
-          </Link>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {products.map((product) => (
+            <VariantCard key={product._id} product={product} />
+          ))}
         </div>
       </div>
     </section>

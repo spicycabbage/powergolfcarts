@@ -122,7 +122,7 @@ export default function VariantCard({ product }: { product: CardProduct }) {
               quality={85}
             />
       </Link>
-      <div className="p-4">
+      <div className="p-4 text-center">
         <Link href={`/products/${product.slug}`} className="cursor-pointer">
           <h3 className="font-medium text-gray-900 mb-1 line-clamp-2 group-hover:text-primary-600 transition-colors">
             {product.name}
@@ -130,7 +130,7 @@ export default function VariantCard({ product }: { product: CardProduct }) {
         </Link>
 
         {/* Product Rating */}
-        <div className="mb-2">
+        <div className="mb-2 flex justify-center">
           <ProductRating 
             averageRating={product.averageRating || 0}
             reviewCount={product.reviewCount || 0}

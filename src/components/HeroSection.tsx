@@ -26,11 +26,11 @@ export function HeroSection() {
           {/* Content */}
           <div className="text-center">
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
-              Discover Amazing
-              <span className="block text-primary-200">Products</span>
+              Buy Weed Online
+              <span className="block text-primary-200">In Canada</span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-primary-100 mb-6 sm:mb-8 max-w-xs sm:max-w-sm md:max-w-lg mx-auto">
-              Shop the latest trends with fast shipping, great prices, and exceptional customer service.
+              High-quality cannabis, edibles, vapes, and concentrates delivered directly to your door.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link

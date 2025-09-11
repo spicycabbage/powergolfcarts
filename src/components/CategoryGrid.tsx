@@ -103,17 +103,19 @@ export function CategoryGrid() {
                   <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-200"></div>
                 </div>
 
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
+                <div className="p-4 text-center">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
                     {category.name}
                   </h3>
                   {category.description && (
-                    <p className="text-gray-600 text-sm line-clamp-2">
+                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">
                       {category.description}
                     </p>
                   )}
-                  <div className="mt-4 text-primary-600 font-medium group-hover:text-primary-700 transition-colors">
-                    Shop Now →
+                  <div className="mt-4">
+                    <span className="inline-block bg-primary-600 text-white py-2 px-4 rounded-lg font-medium group-hover:bg-primary-700 transition-colors">
+                      Shop Now →
+                    </span>
                   </div>
                 </div>
               </Link>
