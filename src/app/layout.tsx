@@ -95,10 +95,11 @@ export default async function RootLayout({
         )}
         {/* Global JSON-LD: Organization and Website (env-based to avoid fs/dynamic at build) */}
         <JsonLd
-          data={
+          data={[
             {
               '@context': 'https://schema.org',
               '@type': 'Organization',
+              '@id': 'https://www.godbud.cc/#organization',
               name: 'Godbud.cc',
               url: 'https://www.godbud.cc',
               logo: 'https://www.godbud.cc/favicon.ico',
@@ -106,6 +107,16 @@ export default async function RootLayout({
               address: {
                 '@type': 'PostalAddress',
                 addressCountry: 'CA'
+              }
+            },
+            {
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              '@id': 'https://www.godbud.cc/#website',
+              name: 'Godbud.cc',
+              url: 'https://www.godbud.cc',
+              publisher: {
+                '@id': 'https://www.godbud.cc/#organization'
               },
               potentialAction: {
                 '@type': 'SearchAction',
@@ -113,7 +124,7 @@ export default async function RootLayout({
                 'query-input': 'required name=search_term_string'
               }
             }
-          }
+          ]}
         />
         <SessionProvider>
           <Providers>

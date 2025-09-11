@@ -150,11 +150,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
         data={{
           '@context': 'https://schema.org',
           '@type': 'Product',
+          '@id': `${baseUrl}/products/${(product as any).slug}#product`,
           name: (product as any).name,
           description: (product as any).shortDescription || (product as any).description?.slice(0, 160),
           sku: (product as any).inventory?.sku || (product as any).slug,
+          mpn: (product as any).inventory?.sku || (product as any).slug,
           category: categoryName,
-          condition: 'https://schema.org/NewCondition',
+          itemCondition: 'https://schema.org/NewCondition',
           image: Array.isArray((product as any).images)
             ? (product as any).images.map((img: any) => (typeof img === 'string' ? img : img.url)).slice(0, 5)
             : [],
@@ -165,17 +167,21 @@ export default async function ProductPage({ params }: ProductPageProps) {
           },
           manufacturer: {
             '@type': 'Organization',
-            name: 'Godbud.cc'
+            name: 'Godbud.cc',
+            url: baseUrl
           },
           offers: {
             '@type': 'Offer',
+            '@id': `${baseUrl}/products/${(product as any).slug}#offer`,
             priceCurrency: 'CAD',
-            price: (product as any).price,
+            price: Number((product as any).price).toFixed(2),
             priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 1 year from now
             availability: (isVariable ? (totalVariantInventory > 0) : ((product as any).inventory?.quantity > 0)) ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
             url: `${baseUrl}/products/${(product as any).slug}`,
+            itemCondition: 'https://schema.org/NewCondition',
             seller: {
               '@type': 'Organization',
+              '@id': 'https://www.godbud.cc/#organization',
               name: 'Godbud.cc',
               url: baseUrl
             },
