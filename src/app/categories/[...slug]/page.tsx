@@ -49,22 +49,23 @@ export async function generateMetadata({ params }: CatchAllCategoryPageProps): P
 }
 
 export default async function CatchAllCategoryPage({ params, searchParams }: CatchAllCategoryPageProps) {
-  const resolvedParams = await params
-  const resolvedSearchParams = searchParams ? await searchParams : {}
-  const segments = Array.isArray(resolvedParams.slug) ? resolvedParams.slug : [resolvedParams.slug]
-  const lastSlug = segments[segments.length - 1]
+  try {
+    const resolvedParams = await params
+    const resolvedSearchParams = searchParams ? await searchParams : {}
+    const segments = Array.isArray(resolvedParams.slug) ? resolvedParams.slug : [resolvedParams.slug]
+    const lastSlug = segments[segments.length - 1]
 
-  let category: any
-  if (isUsingDataApi()) {
-    category = await dataFindOne('categories', { slug: lastSlug })
-  } else {
-    await connectToDatabase()
-    category = await Category.findOne({ slug: lastSlug }).lean()
-  }
+    let category: any
+    if (isUsingDataApi()) {
+      category = await dataFindOne('categories', { slug: lastSlug })
+    } else {
+      await connectToDatabase()
+      category = await Category.findOne({ slug: lastSlug }).lean()
+    }
 
-  if (!category) {
-    return notFound()
-  }
+    if (!category) {
+      return notFound()
+    }
 
   // --- Breadcrumb Data Fetching and Formatting ---
   const breadcrumbData = await Category.getBreadcrumbs(String(category._id));
@@ -115,7 +116,9 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
   const products = await Product.find(query)
     .select('name slug price originalPrice images averageRating reviewCount inventory variants.name variants.value variants.price variants.originalPrice variants.inventory variants.sku badges')
     .sort(sortBy as any)
+    .limit(100) // Limit to prevent mobile timeouts
     .lean()
+    .maxTimeMS(10000) // 10 second timeout
 
   const { name, description } = category;
 
@@ -177,14 +180,33 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
         </div>
 
         {/* Category Information Section - Below Products */}
-        <CategoryInfoSection 
-          categoryName={category?.name || 'Products'} 
-          categorySlug={category?.slug || ''} 
-          productCount={products.length}
-        />
+        {products.length > 0 && (
+          <CategoryInfoSection 
+            categoryName={category?.name || 'Products'} 
+            categorySlug={category?.slug || ''} 
+            productCount={products.length}
+          />
+        )}
       </div>
     </div>
-  )
+  ) 
+  } catch (error) {
+    console.error('Category page error:', error)
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Something went wrong</h1>
+          <p className="text-gray-600 mb-6">We're having trouble loading this category page.</p>
+          <Link
+            href="/categories"
+            className="inline-flex items-center px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+          >
+            Back to Categories
+          </Link>
+        </div>
+      </div>
+    )
+  }
 }
 
 

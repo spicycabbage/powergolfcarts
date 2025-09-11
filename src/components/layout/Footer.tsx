@@ -1,12 +1,52 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
   const [mounted, setMounted] = useState(false)
+  const [email, setEmail] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [isSubscribed, setIsSubscribed] = useState(false)
+  
   useEffect(() => setMounted(true), [])
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!email || isLoading) return
+
+    setIsLoading(true)
+
+    try {
+      const response = await fetch('/api/email-subscribers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          source: 'footer'
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setIsSubscribed(true)
+        setEmail('')
+        // Reset success message after 3 seconds
+        setTimeout(() => setIsSubscribed(false), 3000)
+      } else {
+        console.error('Subscription error:', data.error)
+      }
+    } catch (error) {
+      console.error('Footer newsletter signup error:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const footerLinks = {
     shop: [
@@ -40,7 +80,7 @@ export function Footer() {
           {/* Company Info */}
           <div className="lg:col-span-2">
             <Link href="/" className="inline-block mb-4">
-              <h2 className="text-2xl font-bold text-white">E-Commerce</h2>
+              <h2 className="text-2xl font-bold text-white">Godbud.cc</h2>
             </Link>
             <p className="text-gray-300 mb-6 max-w-md">
               Your one-stop shop for quality products. We offer fast shipping,
@@ -51,26 +91,38 @@ export function Footer() {
             {mounted && (
               <div className="mb-6" suppressHydrationWarning>
                 <h3 className="text-lg font-semibold mb-3">Stay Updated</h3>
-                <form
-                  className="flex flex-col sm:flex-row gap-2"
-                  autoComplete="off"
-                  data-lpignore="true"
-                  data-lastpass-ignore="true"
-                >
-                  <input
-                    type="email"
-                    placeholder="Enter your email"
-                    className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    name="newsletter_email"
+                {isSubscribed ? (
+                  <div className="text-green-400 text-sm">
+                    ✓ Successfully subscribed!
+                  </div>
+                ) : (
+                  <form
+                    onSubmit={handleNewsletterSubmit}
+                    className="flex flex-col sm:flex-row gap-2"
                     autoComplete="off"
-                  />
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors whitespace-nowrap"
+                    data-lpignore="true"
+                    data-lastpass-ignore="true"
                   >
-                    Subscribe
-                  </button>
-                </form>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email"
+                      className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                      name="newsletter_email"
+                      autoComplete="off"
+                      required
+                      disabled={isLoading}
+                    />
+                    <button
+                      type="submit"
+                      disabled={isLoading || !email}
+                      className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isLoading ? 'Subscribing...' : 'Subscribe'}
+                    </button>
+                  </form>
+                )}
               </div>
             )}
 

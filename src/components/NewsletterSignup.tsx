@@ -19,14 +19,28 @@ export function NewsletterSignup() {
     setIsLoading(true)
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const response = await fetch('/api/email-subscribers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          source: 'newsletter'
+        })
+      })
 
-      setIsSubscribed(true)
-      setEmail('')
+      const data = await response.json()
 
-      // Reset success message after 5 seconds
-      setTimeout(() => setIsSubscribed(false), 5000)
+      if (data.success) {
+        setIsSubscribed(true)
+        setEmail('')
+        // Reset success message after 5 seconds
+        setTimeout(() => setIsSubscribed(false), 5000)
+      } else {
+        console.error('Subscription error:', data.error)
+        // You could show an error message here
+      }
     } catch (error) {
       console.error('Newsletter signup error:', error)
     } finally {

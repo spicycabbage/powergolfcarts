@@ -108,14 +108,8 @@ export default function HomePage() {
       {/* Category Grid */}
       <CategoryGrid />
       
-      {/* Introduction Section */}
-      <Introduction />
-
-      {/* Recent Blog Posts */}
-      <RecentBlogPosts />
-
       {/* Trust Logos & "As Seen On" Section */}
-      <section className="bg-gray-50 pt-8 pb-12">
+      <section className="bg-white pt-8 pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
             Voted One of Canada's Top Online Dispensaries
@@ -143,6 +137,12 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Recent Blog Posts */}
+      <RecentBlogPosts />
+
+      {/* Introduction Section */}
+      <Introduction />
 
       {/* Newsletter Signup */}
       <NewsletterSignup />
