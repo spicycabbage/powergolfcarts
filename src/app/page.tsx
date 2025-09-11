@@ -8,6 +8,7 @@ import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { RecentBlogPosts } from '@/components/RecentBlogPosts'
 import { WhyChooseUs } from '@/components/WhyChooseUs'
 import { Introduction } from '@/components/Introduction'
+import JsonLd from '@/components/seo/JsonLd'
 
 export const metadata: Metadata = {
   title: 'Godbud.cc: Buy Weed Online in Canada | Mail Order Marijuana',
@@ -18,6 +19,73 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <div className="min-h-screen">
+      {/* Additional Schema Markup for Homepage */}
+      <JsonLd
+        data={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Store',
+            '@id': 'https://www.godbud.cc/#store',
+            name: 'Godbud.cc',
+            description: "Canada's top online dispensary for high-quality cannabis products",
+            url: 'https://www.godbud.cc',
+            telephone: '+1-800-GODBUD',
+            address: {
+              '@type': 'PostalAddress',
+              addressCountry: 'CA'
+            },
+            openingHours: 'Mo-Su 00:00-23:59',
+            currenciesAccepted: 'CAD',
+            paymentAccepted: ['Credit Card', 'Debit Card', 'E-Transfer']
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            '@id': 'https://www.godbud.cc/#productcategories',
+            name: 'Cannabis Product Categories',
+            description: 'Browse our selection of premium cannabis products',
+            numberOfItems: 6,
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Flowers',
+                url: 'https://www.godbud.cc/categories/flowers'
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Edibles',
+                url: 'https://www.godbud.cc/categories/edibles'
+              },
+              {
+                '@type': 'ListItem',
+                position: 3,
+                name: 'Concentrates',
+                url: 'https://www.godbud.cc/categories/concentrates'
+              },
+              {
+                '@type': 'ListItem',
+                position: 4,
+                name: 'Vapes',
+                url: 'https://www.godbud.cc/categories/vapes'
+              },
+              {
+                '@type': 'ListItem',
+                position: 5,
+                name: 'Pre-Rolls',
+                url: 'https://www.godbud.cc/categories/pre-rolls'
+              },
+              {
+                '@type': 'ListItem',
+                position: 6,
+                name: 'Accessories',
+                url: 'https://www.godbud.cc/categories/accessories'
+              }
+            ]
+          }
+        ]}
+      />
       {/* Warm backend on first visit to reduce cold-start latency */}
       <script dangerouslySetInnerHTML={{ __html: `
         (function(){
