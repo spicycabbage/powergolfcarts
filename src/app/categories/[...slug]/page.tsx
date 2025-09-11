@@ -16,12 +16,13 @@ import SortSelect from '@/components/SortSelect'
 export const dynamic = 'force-dynamic'
 
 interface CatchAllCategoryPageProps {
-  params: { slug: string[] }
-  searchParams?: { [key: string]: string | string[] | undefined }
+  params: Promise<{ slug: string[] }>
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 export async function generateMetadata({ params }: CatchAllCategoryPageProps): Promise<Metadata> {
-  const segments = Array.isArray(params.slug) ? params.slug : [params.slug]
+  const { slug } = await params
+  const segments = Array.isArray(slug) ? slug : [slug]
   const lastSlug = segments[segments.length - 1]
   
   let category: any
@@ -47,7 +48,9 @@ export async function generateMetadata({ params }: CatchAllCategoryPageProps): P
 }
 
 export default async function CatchAllCategoryPage({ params, searchParams }: CatchAllCategoryPageProps) {
-  const segments = Array.isArray(params.slug) ? params.slug : [params.slug]
+  const resolvedParams = await params
+  const resolvedSearchParams = searchParams ? await searchParams : {}
+  const segments = Array.isArray(resolvedParams.slug) ? resolvedParams.slug : [resolvedParams.slug]
   const lastSlug = segments[segments.length - 1]
 
   let category: any
@@ -89,7 +92,7 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
     frontier = newIds
   }
 
-  const sortParam = searchParams?.sort ? String(searchParams.sort) : 'default';
+  const sortParam = resolvedSearchParams?.sort ? String(resolvedSearchParams.sort) : 'default';
   const sortBy = (() => {
     switch (sortParam) {
       case 'priceAsc': return { price: 1 }
