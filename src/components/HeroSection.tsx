@@ -4,12 +4,19 @@ import Link from 'next/link'
 export function HeroSection() {
   return (
     <section className="relative text-white overflow-hidden h-[500px]">
-      {/* Background Image */}
+      {/* Background Images - Responsive */}
       <div className="absolute inset-0">
+        {/* Mobile Image */}
+        <img 
+          src="/god-mobile.jpg" 
+          alt="Buy Weed Online Canada - Godbud"
+          className="block md:hidden w-full h-full object-cover"
+        />
+        {/* Desktop Image */}
         <img 
           src="/buy-weed-online-canada-godbud.jpg" 
           alt="Buy Weed Online Canada - Godbud"
-          className="w-full h-full object-cover"
+          className="hidden md:block w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
       </div>
@@ -27,10 +34,10 @@ export function HeroSection() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/categories"
+                href="/categories/flowers"
                 className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary-600 font-semibold rounded-lg hover:bg-gray-50 transition-colors duration-200 shadow-lg"
               >
-                Shop Now
+                Shop Flowers
               </Link>
             </div>
           </div>

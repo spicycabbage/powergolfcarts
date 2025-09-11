@@ -27,9 +27,15 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [mounted, setMounted] = useState(false)
   const { cart } = useCart()
   const { user, logout, isLoading } = useAuth()
   const [openIndex, setOpenIndex] = useState<number | null>(null)
+
+  // Prevent hydration mismatch for auth state
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Initialize from server-provided navigation when available
   const [logo, setLogo] = useState<{ text: string; href: string; image?: string; useImage: boolean }>(
@@ -110,39 +116,52 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
             </nav>
 
             <div className="flex items-center space-x-4">
-              {!isLoading && user ? (
-                <div className="flex items-center space-x-4">
-                  <Link
-                    href="/account"
-                    className="text-sm text-gray-600 hover:text-primary-600 transition-colors flex items-center"
-                  >
-                    <User size={16} className="mr-1" />
-                    {user.firstName}
-                  </Link>
-                  <button
-                    onClick={logout}
-                    className="text-sm text-gray-600 hover:text-primary-600 transition-colors"
-                  >
-                    Logout
-                  </button>
-                </div>
-              ) : (
-                isLoading ? null : (
+              {mounted ? (
+                !isLoading && user ? (
                   <div className="flex items-center space-x-4">
                     <Link
-                      href="/auth/login"
+                      href="/account"
+                      className="text-sm text-gray-600 hover:text-primary-600 transition-colors flex items-center"
+                    >
+                      <User size={16} className="mr-1" />
+                      {user.firstName}
+                    </Link>
+                    <button
+                      onClick={logout}
                       className="text-sm text-gray-600 hover:text-primary-600 transition-colors"
                     >
-                      Sign In
-                    </Link>
-                    <Link
-                      href="/auth/register"
-                      className="text-sm text-primary-600 hover:text-primary-700 transition-colors font-medium"
-                    >
-                      Sign Up
-                    </Link>
+                      Logout
+                    </button>
                   </div>
+                ) : (
+                  isLoading ? (
+                    <div className="flex items-center space-x-4">
+                      <div className="w-16 h-4 bg-gray-200 rounded animate-pulse"></div>
+                      <div className="w-12 h-4 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center space-x-4">
+                      <Link
+                        href="/auth/login"
+                        className="text-sm text-gray-600 hover:text-primary-600 transition-colors"
+                      >
+                        Sign In
+                      </Link>
+                      <Link
+                        href="/auth/register"
+                        className="text-sm text-primary-600 hover:text-primary-700 transition-colors font-medium"
+                      >
+                        Sign Up
+                      </Link>
+                    </div>
+                  )
                 )
+              ) : (
+                // Placeholder during hydration to prevent layout shift
+                <div className="flex items-center space-x-4">
+                  <div className="w-16 h-4 bg-transparent"></div>
+                  <div className="w-12 h-4 bg-transparent"></div>
+                </div>
               )}
             </div>
           </div>

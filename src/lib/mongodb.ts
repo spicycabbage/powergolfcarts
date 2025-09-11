@@ -48,13 +48,9 @@ export async function connectToDatabase() {
       try {
         const connectedDb = (mongoose.connection as any)?.db
         const dbName: string | undefined = connectedDb?.databaseName
-        if (dbName) {
-          console.log(`Connected to MongoDB database: ${dbName}`)
-        } else {
-          console.log('Connected to MongoDB with Mongoose')
-        }
+        // Connection established
       } catch {
-        console.log('Connected to MongoDB with Mongoose')
+        // Connection established
       }
       return mongoose
     })
@@ -75,7 +71,6 @@ export async function disconnectDatabase(): Promise<void> {
     await mongoose.disconnect()
     cached.conn = null
     cached.promise = null
-    console.log('Disconnected from MongoDB')
   }
 }
 

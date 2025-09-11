@@ -14,14 +14,20 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   if (tag) {
     const tagTitle = tag.charAt(0).toUpperCase() + tag.slice(1)
     return {
-      title: `${tagTitle} - Blog`,
+      title: `${tagTitle} Posts | Godbud.cc Blog`,
       description: `Latest posts about ${tagTitle.toLowerCase()}`,
+      alternates: {
+        canonical: `/blog?tag=${tag}`,
+      },
     }
   }
   
   return {
-    title: 'Blog',
+    title: 'Blog | Godbud.cc',
     description: 'Latest updates, guides, and news',
+    alternates: {
+      canonical: '/blog',
+    },
   }
 }
 
@@ -61,10 +67,10 @@ export default async function BlogIndex({ searchParams }: { searchParams: Promis
       <section className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            {tag ? `${tagTitle} - Blog` : 'Blog'}
+            {tag ? `${tagTitle} Posts` : 'Blog'}
           </h1>
           <p className="text-gray-600 mt-2">
-            {tag ? `Posts about ${tagTitle.toLowerCase()}` : 'Read our latest posts and updates.'}
+            {tag ? `Posts about ${tag.toLowerCase()}` : 'Read our latest posts and updates.'}
           </p>
         </div>
       </section>

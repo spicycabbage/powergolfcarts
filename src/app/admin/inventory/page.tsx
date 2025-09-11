@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import BackToAdmin from '@/components/admin/BackToAdmin'
+import Pagination from '@/components/admin/Pagination'
 
 export default function AdminInventoryPage() {
   const { data: session, status } = useSession()
@@ -15,9 +16,14 @@ export default function AdminInventoryPage() {
   const [recentProducts, setRecentProducts] = useState<any[]>([])
   const [loadingProducts, setLoadingProducts] = useState(true)
   const [page, setPage] = useState(1)
-  const limit = 10
+  const [limit, setLimit] = useState(20)
   const [totalPages, setTotalPages] = useState(1)
   const [total, setTotal] = useState(0)
+
+  const handleLimitChange = (newLimit: number) => {
+    setLimit(newLimit)
+    setPage(1) // Reset to first page when changing limit
+  }
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [sortBy, setSortBy] = useState<'name'|'isFeatured'|'createdAt'>('createdAt')
   const [sortOrder, setSortOrder] = useState<'asc'|'desc'>('desc')
@@ -68,7 +74,7 @@ export default function AdminInventoryPage() {
       }
     })()
     return () => { mounted = false }
-  }, [page, sortBy, sortOrder, selectedCategory, debouncedSearch, showHidden])
+  }, [page, limit, sortBy, sortOrder, selectedCategory, debouncedSearch, showHidden])
 
   useEffect(() => {
     let mounted = true
@@ -195,37 +201,15 @@ export default function AdminInventoryPage() {
             <div className="p-6 text-gray-600">No products yet.</div>
           ) : (
             <>
-              <div className="px-4 py-3 flex items-center justify-between border-b border-gray-200">
-                <div className="text-sm text-gray-600">
-                  Page {page} of {totalPages} • {total} total
-                </div>
-                <div className="inline-flex items-center space-x-2">
-                  <button
-                    disabled={page <= 1}
-                    onClick={() => setPage(p => Math.max(1, p - 1))}
-                    className={`px-3 py-2 text-sm rounded-lg border ${page <= 1 ? 'text-gray-400 border-gray-200 cursor-not-allowed' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
-                  >
-                    Prev
-                  </button>
-                  <div className="hidden sm:flex items-center space-x-1">
-                    {Array.from({ length: totalPages }).slice(0, 7).map((_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setPage(i + 1)}
-                        className={`px-3 py-2 text-sm rounded-lg border ${page === i + 1 ? 'bg-primary-600 text-white border-primary-600' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
-                      >
-                        {i + 1}
-                      </button>
-                    ))}
-                  </div>
-                  <button
-                    disabled={page >= totalPages}
-                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                    className={`px-3 py-2 text-sm rounded-lg border ${page >= totalPages ? 'text-gray-400 border-gray-200 cursor-not-allowed' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
-                  >
-                    Next
-                  </button>
-                </div>
+              <div className="px-4 py-3 border-b border-gray-200">
+                <Pagination 
+                  page={page} 
+                  totalPages={totalPages}
+                  total={total}
+                  limit={limit}
+                  onChange={setPage}
+                  onLimitChange={handleLimitChange}
+                />
               </div>
               <div className="overflow-x-auto" style={{ zIndex: 1 }}>
                 <table className="min-w-full divide-y divide-gray-200">
@@ -433,37 +417,15 @@ export default function AdminInventoryPage() {
                   </tbody>
                 </table>
               </div>
-              <div className="px-4 py-3 flex items-center justify-between border-t border-gray-200">
-                <div className="text-sm text-gray-600">
-                  Page {page} of {totalPages} • {total} total
-                </div>
-                <div className="inline-flex items-center space-x-2">
-                  <button
-                    disabled={page <= 1}
-                    onClick={() => setPage(p => Math.max(1, p - 1))}
-                    className={`px-3 py-2 text-sm rounded-lg border ${page <= 1 ? 'text-gray-400 border-gray-200 cursor-not-allowed' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
-                  >
-                    Prev
-                  </button>
-                  <div className="hidden sm:flex items-center space-x-1">
-                    {Array.from({ length: totalPages }).slice(0, 7).map((_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setPage(i + 1)}
-                        className={`px-3 py-2 text-sm rounded-lg border ${page === i + 1 ? 'bg-primary-600 text-white border-primary-600' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
-                      >
-                        {i + 1}
-                      </button>
-                    ))}
-                  </div>
-                  <button
-                    disabled={page >= totalPages}
-                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                    className={`px-3 py-2 text-sm rounded-lg border ${page >= totalPages ? 'text-gray-400 border-gray-200 cursor-not-allowed' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
-                  >
-                    Next
-                  </button>
-                </div>
+              <div className="px-4 py-3 border-t border-gray-200">
+                <Pagination 
+                  page={page} 
+                  totalPages={totalPages} 
+                  total={total} 
+                  limit={limit}
+                  onChange={setPage} 
+                  onLimitChange={handleLimitChange}
+                />
               </div>
             </>
           )}

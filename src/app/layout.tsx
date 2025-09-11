@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Godbud.cc',
-  description: 'Your one-stop shop for quality products',
+  description: 'Premium cannabis products delivered across Canada',
   keywords: 'ecommerce, shopping, online store, products',
   authors: [{ name: 'Godbud.cc' }],
   creator: 'Godbud.cc',
@@ -21,22 +21,22 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://yourdomain.com'),
+  metadataBase: new URL('https://www.godbud.cc'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://yourdomain.com',
+    url: 'https://www.godbud.cc',
     title: 'Godbud.cc',
-    description: 'Your one-stop shop for quality products',
+    description: 'Premium cannabis products delivered across Canada',
     siteName: 'Godbud.cc',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Godbud.cc',
-    description: 'Your one-stop shop for quality products',
+    description: 'Premium cannabis products delivered across Canada',
   },
   robots: {
     index: true,

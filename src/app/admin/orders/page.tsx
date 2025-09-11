@@ -195,10 +195,13 @@ export default function AdminOrdersList() {
           </div>
         )}
 
-        <div className="mt-4 flex items-center justify-end space-x-2">
-          <button disabled={page<=1} onClick={() => setPage(p=>p-1)} className="px-3 py-1 border rounded-lg disabled:opacity-50">Prev</button>
-          <span className="text-sm text-gray-600">Page {page} / {totalPages}</span>
-          <button disabled={page>=totalPages} onClick={() => setPage(p=>p+1)} className="px-3 py-1 border rounded-lg disabled:opacity-50">Next</button>
+        <div className="mt-4">
+          <Pagination 
+            page={page} 
+            totalPages={totalPages} 
+            total={total} 
+            onChange={setPage} 
+          />
         </div>
       </div>
     </div>

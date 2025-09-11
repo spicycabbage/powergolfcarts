@@ -68,7 +68,6 @@ export default function NavigationAdminClient({ session }: NavigationAdminClient
       if (response.ok) {
         const data = await response.json()
         setConfig(data)
-        console.log('✅ Navigation loaded successfully')
       } else {
         console.error('Failed to fetch navigation:', response.status, response.statusText)
         // Create default config if API fails
@@ -99,7 +98,6 @@ export default function NavigationAdminClient({ session }: NavigationAdminClient
             { name: 'Sports', href: '/categories/sports', isActive: true }
           ]
         })
-        console.log('⚠️ Using default navigation config')
       }
     } catch (error) {
       console.error('Failed to fetch navigation:', error)
@@ -131,7 +129,6 @@ export default function NavigationAdminClient({ session }: NavigationAdminClient
           { name: 'Sports', href: '/categories/sports', isActive: true }
         ]
       })
-      console.log('🔄 Using fallback navigation config')
     } finally {
       setLoading(false)
     }
@@ -153,8 +150,6 @@ export default function NavigationAdminClient({ session }: NavigationAdminClient
 
     setSaving(true)
     try {
-      console.log('🔄 Saving navigation config:', config)
-      console.log('🧪 Payload logo.useImage:', config.header.logo.useImage, 'logo.image length:', (config.header.logo.image || '').length)
       
       const response = await fetch('/api/admin/navigation', {
         method: 'PUT',
@@ -165,11 +160,8 @@ export default function NavigationAdminClient({ session }: NavigationAdminClient
         body: JSON.stringify(config)
       })
 
-      console.log('📡 Response status:', response.status)
-
       if (response.ok) {
         const result = await response.json()
-        console.log('✅ Save successful:', result)
         alert('Navigation updated successfully!')
         // Refresh the navigation data
         fetchNavigation()
@@ -205,11 +197,8 @@ export default function NavigationAdminClient({ session }: NavigationAdminClient
   const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) {
-      console.log('❌ No file selected')
       return
     }
-
-    console.log('📁 File selected:', file.name, 'Size:', file.size, 'Type:', file.type)
 
     if (!file.type.startsWith('image/')) {
       alert('Please select an image file')
@@ -241,7 +230,6 @@ export default function NavigationAdminClient({ session }: NavigationAdminClient
 
       const data = await res.json()
       const url: string = data.url
-      console.log('✅ Upload success, url:', url)
 
       // Single functional update to avoid stale state overwriting
       setConfig(prev => {

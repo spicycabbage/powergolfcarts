@@ -295,17 +295,7 @@ export function useCart() {
     updateQuantity: store.updateQuantity,
     clearCart: store.clearCart,
     itemCount: store.getItemCount(),
-    totalPrice: store.getTotalPrice(),
-    // Debug function to help troubleshoot cart issues
-    debugCart: () => {
-      console.log('Current cart state:', store.cart)
-      console.log('Cart items with variants:', store.cart.items.map(item => ({
-        productId: item.product._id,
-        productName: item.product.name,
-        variant: item.variant,
-        quantity: item.quantity
-      })))
-    }
+    totalPrice: store.getTotalPrice()
   }
 }
 

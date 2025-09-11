@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { ChevronLeft } from 'lucide-react'
+import Pagination from '@/components/admin/Pagination'
 
 export default function AdminReviewsPage() {
   const [items, setItems] = useState<any[]>([])
@@ -67,7 +68,7 @@ export default function AdminReviewsPage() {
               <button key={s} onClick={() => { setStatus(s); setPage(1) }} className={`px-3 py-1 rounded-lg border ${status===s?'bg-primary-600 text-white border-primary-600':'border-gray-300'}`}>{s[0].toUpperCase()+s.slice(1)}</button>
             ))}
           </div>
-          <div className="text-sm text-gray-600">Page {page} / {totalPages}</div>
+          <div className="text-sm text-gray-600">Showing reviews</div>
         </div>
 
         {error && <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
@@ -108,9 +109,12 @@ export default function AdminReviewsPage() {
           </div>
         )}
 
-        <div className="mt-4 flex items-center justify-end space-x-2">
-          <button disabled={page<=1} onClick={() => setPage(p=>p-1)} className="px-3 py-1 border rounded-lg disabled:opacity-50">Prev</button>
-          <button disabled={page>=totalPages} onClick={() => setPage(p=>p+1)} className="px-3 py-1 border rounded-lg disabled:opacity-50">Next</button>
+        <div className="mt-4">
+          <Pagination 
+            page={page} 
+            totalPages={totalPages} 
+            onChange={setPage} 
+          />
         </div>
       </div>
     </div>

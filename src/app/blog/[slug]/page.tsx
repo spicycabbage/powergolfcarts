@@ -18,6 +18,9 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   return {
     title: post.seo?.title || post.title,
     description: post.seo?.description || post.excerpt || '',
+    alternates: {
+      canonical: `/blog/${slug}`,
+    },
   }
 }
 

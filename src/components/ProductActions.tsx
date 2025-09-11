@@ -50,7 +50,7 @@ export function ProductActions({ product }: ProductActionsProps) {
 
   const handleAddToWishlist = () => {
     // Add to wishlist logic here
-    console.log(`Added ${product.name} to wishlist`)
+    // TODO: Implement wishlist functionality
   }
 
   const handleShare = () => {

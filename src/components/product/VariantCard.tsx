@@ -138,7 +138,7 @@ export default function VariantCard({ product }: { product: CardProduct }) {
           />
         </div>
 
-        {Array.isArray(product.variants) && product.variants.length > 0 && (
+        {Array.isArray(product.variants) && product.variants.length > 0 ? (
           <div className="mb-3">
             <div className="text-xs text-gray-700 mb-1">Select Option</div>
             <div className="grid grid-cols-2 gap-2">
@@ -167,6 +167,20 @@ export default function VariantCard({ product }: { product: CardProduct }) {
                   </button>
                 )
               })}
+            </div>
+          </div>
+        ) : (
+          // Show main product price when no variants
+          <div className="mb-3">
+            <div className="flex items-center space-x-2">
+              <span className="text-lg font-bold text-gray-900">
+                ${Number(product.price || 0).toFixed(2)}
+              </span>
+              {product.originalPrice && product.originalPrice > (product.price || 0) && (
+                <span className="text-sm text-gray-500 line-through">
+                  ${Number(product.originalPrice).toFixed(2)}
+                </span>
+              )}
             </div>
           </div>
         )}

@@ -90,13 +90,11 @@ export default function CategoriesAdmin() {
   }, [user?.role, isLoading]) // Only depend on user.role, not the entire user object
 
   const fetchCategories = async () => {
-    console.log('🔄 Fetching categories...') // Add logging to track when this is called
     try {
       const response = await fetch('/api/admin/categories')
       if (response.ok) {
         const data = await response.json()
         setCategories(data)
-        console.log('✅ Categories fetched successfully:', data.length, 'categories')
       }
     } catch (error) {
       console.error('Failed to fetch categories:', error)

@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import BackToAdmin from '@/components/admin/BackToAdmin'
+import Pagination from '@/components/admin/Pagination'
 
 export default function AdminPagesList() {
   const [items, setItems] = useState<any[]>([])
@@ -85,10 +86,12 @@ export default function AdminPagesList() {
           </div>
         )}
 
-        <div className="mt-4 flex items-center justify-end space-x-2">
-          <button disabled={page<=1} onClick={() => setPage(p=>p-1)} className="px-3 py-1 border rounded-lg disabled:opacity-50">Prev</button>
-          <span className="text-sm text-gray-600">Page {page} / {totalPages}</span>
-          <button disabled={page>=totalPages} onClick={() => setPage(p=>p+1)} className="px-3 py-1 border rounded-lg disabled:opacity-50">Next</button>
+        <div className="mt-4">
+          <Pagination 
+            page={page} 
+            totalPages={totalPages} 
+            onChange={setPage} 
+          />
         </div>
       </div>
     </div>
