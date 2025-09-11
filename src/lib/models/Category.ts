@@ -111,7 +111,7 @@ CategorySchema.virtual('path').get(async function() {
   let current = this
 
   while (current.parent) {
-    const parent = await (models.Category as ICategoryModel).findById(current.parent)
+    const parent = await (models.Category as unknown as ICategoryModel).findById(current.parent)
     if (parent) {
       path.unshift(parent.name)
       current = parent
