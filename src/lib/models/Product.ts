@@ -34,6 +34,18 @@ export interface ISEO {
   noIndex?: boolean
 }
 
+export interface IBadge {
+  text: string
+  color: 'red' | 'blue' | 'green' | 'yellow' | 'purple' | 'orange' | 'gray' | 'black'
+}
+
+export interface IProductBadges {
+  topLeft?: IBadge
+  topRight?: IBadge
+  bottomLeft?: IBadge
+  bottomRight?: IBadge
+}
+
 export interface IProduct {
   _id?: string
   name: string
@@ -55,6 +67,7 @@ export interface IProduct {
   reviewCount: number
   isActive: boolean
   isFeatured: boolean
+  badges?: IProductBadges
   createdAt?: Date
   updatedAt?: Date
 }
@@ -92,6 +105,37 @@ const SEOSchema = new Schema<ISEO>({
   twitterImage: { type: String },
   noIndex: { type: Boolean, default: false },
 })
+
+const ProductBadgesSchema = new Schema<IProductBadges>({
+  topLeft: {
+    text: { type: String },
+    color: { 
+      type: String,
+      enum: ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'gray', 'black']
+    }
+  },
+  topRight: {
+    text: { type: String },
+    color: { 
+      type: String,
+      enum: ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'gray', 'black']
+    }
+  },
+  bottomLeft: {
+    text: { type: String },
+    color: { 
+      type: String,
+      enum: ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'gray', 'black']
+    }
+  },
+  bottomRight: {
+    text: { type: String },
+    color: { 
+      type: String,
+      enum: ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'gray', 'black']
+    }
+  }
+}, { _id: false })
 
 const ProductSchema = new Schema<IProduct>({
   name: {
@@ -164,7 +208,8 @@ const ProductSchema = new Schema<IProduct>({
   isFeatured: {
     type: Boolean,
     default: false
-  }
+  },
+  badges: ProductBadgesSchema
 }, {
   timestamps: true,
   toJSON: { virtuals: true },

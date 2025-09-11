@@ -53,6 +53,7 @@ export function serializeProductForClient(p: any) {
     reviewCount: Number(p.reviewCount || 0),
     isActive: Boolean(p.isActive),
     isFeatured: Boolean(p.isFeatured),
+    badges: p.badges || undefined,
     createdAt: new Date(p.createdAt || Date.now()),
     updatedAt: new Date(p.updatedAt || Date.now())
   }

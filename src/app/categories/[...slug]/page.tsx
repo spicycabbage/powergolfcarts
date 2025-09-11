@@ -112,7 +112,7 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
   }
 
   const products = await Product.find(query)
-    .select('name slug price originalPrice images averageRating reviewCount inventory variants.name variants.value variants.price variants.originalPrice variants.inventory variants.sku')
+    .select('name slug price originalPrice images averageRating reviewCount inventory variants.name variants.value variants.price variants.originalPrice variants.inventory variants.sku badges')
     .sort(sortBy as any)
     .lean()
 

@@ -7,6 +7,7 @@ import { normalizeImageUrl } from '@/utils/image'
 import { ShoppingCart } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { ProductRating } from '@/components/ProductRating'
+import ProductBadge from './ProductBadge'
 
 type Variant = {
   _id?: string
@@ -16,6 +17,18 @@ type Variant = {
   originalPrice?: number
   sku?: string
   inventory?: number
+}
+
+type Badge = {
+  text: string
+  color: 'red' | 'blue' | 'green' | 'yellow' | 'purple' | 'orange' | 'gray' | 'black'
+}
+
+type ProductBadges = {
+  topLeft?: Badge
+  topRight?: Badge
+  bottomLeft?: Badge
+  bottomRight?: Badge
 }
 
 type CardProduct = {
@@ -29,11 +42,13 @@ type CardProduct = {
   reviewCount?: number
   inventory?: { quantity?: number }
   variants?: Variant[]
+  badges?: ProductBadges
 }
 
 export default function VariantCard({ product, priority = false }: { product: CardProduct, priority?: boolean }) {
   const { addItem } = useCart()
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null)
+
 
   const selectedVariant = useMemo(() => {
     if (!Array.isArray(product.variants) || product.variants.length === 0) return null
@@ -122,6 +137,36 @@ export default function VariantCard({ product, priority = false }: { product: Ca
               quality={85}
               priority={priority}
             />
+            
+            {/* Product Badges */}
+            {product.badges?.topLeft && (
+              <ProductBadge 
+                text={product.badges.topLeft.text} 
+                color={product.badges.topLeft.color} 
+                position="top-left" 
+              />
+            )}
+            {product.badges?.topRight && (
+              <ProductBadge 
+                text={product.badges.topRight.text} 
+                color={product.badges.topRight.color} 
+                position="top-right" 
+              />
+            )}
+            {product.badges?.bottomLeft && (
+              <ProductBadge 
+                text={product.badges.bottomLeft.text} 
+                color={product.badges.bottomLeft.color} 
+                position="bottom-left" 
+              />
+            )}
+            {product.badges?.bottomRight && (
+              <ProductBadge 
+                text={product.badges.bottomRight.text} 
+                color={product.badges.bottomRight.color} 
+                position="bottom-right" 
+              />
+            )}
       </Link>
       <div className="p-4 text-center">
         <Link href={`/products/${product.slug}`} className="cursor-pointer">

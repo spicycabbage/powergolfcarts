@@ -43,6 +43,12 @@ export default function NewProductPage() {
   const [productType, setProductType] = useState<'simple' | 'variable'>('simple')
   const [variants, setVariants] = useState<Array<{ name: string; value: string; originalPrice?: string; price?: string; sku?: string; quantity: string }>>([])
 
+  // Badge states
+  const [badgeTL, setBadgeTL] = useState({ text: '', color: 'red' as const })
+  const [badgeTR, setBadgeTR] = useState({ text: '', color: 'red' as const })
+  const [badgeBL, setBadgeBL] = useState({ text: '', color: 'red' as const })
+  const [badgeBR, setBadgeBR] = useState({ text: '', color: 'red' as const })
+
   const visibleTextLength = (html: string): number => {
     if (!html) return 0
     const text = html
@@ -103,10 +109,14 @@ export default function NewProductPage() {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch('/api/admin/categories')
+      const res = await fetch('/api/categories?activeOnly=true&limit=1000', { cache: 'no-store' })
       if (!res.ok) return
-      const data = await res.json()
-      setCategories(Array.isArray(data) ? data : [])
+      const json = await res.json().catch(() => ({} as any))
+      // Handle different API response structures
+      const cats = Array.isArray(json?.data) ? json.data : 
+                   Array.isArray(json?.categories) ? json.categories : 
+                   (Array.isArray(json) ? json : [])
+      setCategories(cats)
     } finally {
       setLoadingCats(false)
     }
@@ -283,6 +293,14 @@ export default function NewProductPage() {
           description: seo.description?.trim() || shortDescription.trim() || description.trim(),
           keywords: Array.isArray(seo.keywords) ? seo.keywords.filter(Boolean) : [],
         },
+        ...(badgeTL.text.trim() || badgeTR.text.trim() || badgeBL.text.trim() || badgeBR.text.trim() ? {
+          badges: {
+            ...(badgeTL.text.trim() ? { topLeft: { text: badgeTL.text.trim(), color: badgeTL.color } } : {}),
+            ...(badgeTR.text.trim() ? { topRight: { text: badgeTR.text.trim(), color: badgeTR.color } } : {}),
+            ...(badgeBL.text.trim() ? { bottomLeft: { text: badgeBL.text.trim(), color: badgeBL.color } } : {}),
+            ...(badgeBR.text.trim() ? { bottomRight: { text: badgeBR.text.trim(), color: badgeBR.color } } : {}),
+          }
+        } : {}),
         variants: [],
         isActive,
         isFeatured,
@@ -494,6 +512,126 @@ export default function NewProductPage() {
             </div>
             )}
 
+            {/* Product Badges */}
+            <div className="bg-white rounded-lg shadow p-6 space-y-6">
+              <h2 className="text-lg font-medium text-gray-900">Product Badges</h2>
+              <p className="text-sm text-gray-600">Add optional badges to display on product cards. Each badge can be positioned in a different corner.</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Top Left Badge */}
+                <div className="space-y-3">
+                  <h3 className="text-sm font-medium text-gray-900">TL (Top Left)</h3>
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      placeholder="Badge text (optional)"
+                      value={badgeTL.text}
+                      onChange={e => setBadgeTL(prev => ({ ...prev, text: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    />
+                    <select
+                      value={badgeTL.color}
+                      onChange={e => setBadgeTL(prev => ({ ...prev, color: e.target.value as any }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    >
+                      <option value="red">Red</option>
+                      <option value="blue">Blue</option>
+                      <option value="green">Green</option>
+                      <option value="yellow">Yellow</option>
+                      <option value="purple">Purple</option>
+                      <option value="orange">Orange</option>
+                      <option value="gray">Gray</option>
+                      <option value="black">Black</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Top Right Badge */}
+                <div className="space-y-3">
+                  <h3 className="text-sm font-medium text-gray-900">TR (Top Right)</h3>
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      placeholder="Badge text (optional)"
+                      value={badgeTR.text}
+                      onChange={e => setBadgeTR(prev => ({ ...prev, text: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    />
+                    <select
+                      value={badgeTR.color}
+                      onChange={e => setBadgeTR(prev => ({ ...prev, color: e.target.value as any }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    >
+                      <option value="red">Red</option>
+                      <option value="blue">Blue</option>
+                      <option value="green">Green</option>
+                      <option value="yellow">Yellow</option>
+                      <option value="purple">Purple</option>
+                      <option value="orange">Orange</option>
+                      <option value="gray">Gray</option>
+                      <option value="black">Black</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Bottom Left Badge */}
+                <div className="space-y-3">
+                  <h3 className="text-sm font-medium text-gray-900">BL (Bottom Left)</h3>
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      placeholder="Badge text (optional)"
+                      value={badgeBL.text}
+                      onChange={e => setBadgeBL(prev => ({ ...prev, text: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    />
+                    <select
+                      value={badgeBL.color}
+                      onChange={e => setBadgeBL(prev => ({ ...prev, color: e.target.value as any }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    >
+                      <option value="red">Red</option>
+                      <option value="blue">Blue</option>
+                      <option value="green">Green</option>
+                      <option value="yellow">Yellow</option>
+                      <option value="purple">Purple</option>
+                      <option value="orange">Orange</option>
+                      <option value="gray">Gray</option>
+                      <option value="black">Black</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Bottom Right Badge */}
+                <div className="space-y-3">
+                  <h3 className="text-sm font-medium text-gray-900">BR (Bottom Right)</h3>
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      placeholder="Badge text (optional)"
+                      value={badgeBR.text}
+                      onChange={e => setBadgeBR(prev => ({ ...prev, text: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    />
+                    <select
+                      value={badgeBR.color}
+                      onChange={e => setBadgeBR(prev => ({ ...prev, color: e.target.value as any }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    >
+                      <option value="red">Red</option>
+                      <option value="blue">Blue</option>
+                      <option value="green">Green</option>
+                      <option value="yellow">Yellow</option>
+                      <option value="purple">Purple</option>
+                      <option value="orange">Orange</option>
+                      <option value="gray">Gray</option>
+                      <option value="black">Black</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* SEO */}
             <div className="bg-white rounded-lg shadow p-6 space-y-6">
               <h2 className="text-lg font-medium text-gray-900">SEO</h2>
@@ -555,7 +693,10 @@ export default function NewProductPage() {
             {/* Categories */}
             <div className="bg-white rounded-lg shadow p-6 space-y-4">
               <h2 className="text-lg font-medium text-gray-900">Categories</h2>
-              <div className="space-y-1">
+              {loadingCats ? (
+                <div className="text-sm text-gray-500">Loading categories...</div>
+              ) : (
+                <div className="space-y-1">
                 {(byParent[''] || []).map(top => (
                   <div key={top._id} className="">
                     <label className="flex items-center space-x-2">
@@ -585,7 +726,8 @@ export default function NewProductPage() {
                 {uncategorized && (
                   <p className="text-xs text-gray-500 mt-2">If none selected, product will default to: {(uncategorized as any).name}</p>
                 )}
-              </div>
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Tags (comma-separated)</label>
                 <input value={tagsInput} onChange={e => setTagsInput(e.target.value)} placeholder="e.g. indica, gassy, kush" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
