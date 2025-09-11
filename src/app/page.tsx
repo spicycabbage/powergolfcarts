@@ -97,6 +97,23 @@ export default function HomePage() {
       {/* Hero Section */}
       <HeroSection />
 
+      {/* Why Choose Us Section */}
+      <WhyChooseUs />
+
+      {/* Featured Products */}
+      <Suspense fallback={<LoadingSpinner />}>
+        <FeaturedProducts />
+      </Suspense>
+
+      {/* Category Grid */}
+      <CategoryGrid />
+      
+      {/* Introduction Section */}
+      <Introduction />
+
+      {/* Recent Blog Posts */}
+      <RecentBlogPosts />
+
       {/* Trust Logos & "As Seen On" Section */}
       <section className="bg-gray-50 pt-8 pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -126,23 +143,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* Featured Products */}
-      <Suspense fallback={<LoadingSpinner />}>
-        <FeaturedProducts />
-      </Suspense>
-
-      {/* Why Choose Us Section */}
-      <WhyChooseUs />
-
-      {/* Category Grid */}
-      <CategoryGrid />
-      
-      {/* Introduction Section */}
-      <Introduction />
-
-      {/* Recent Blog Posts */}
-      <RecentBlogPosts />
 
       {/* Newsletter Signup */}
       <NewsletterSignup />

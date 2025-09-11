@@ -12,6 +12,7 @@ import Category from '@/lib/models/Category'
 import { isUsingDataApi, findOne as dataFindOne, findMany as dataFindMany } from '@/lib/dataApi'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import SortSelect from '@/components/SortSelect'
+import { CategoryInfoSection } from '@/components/CategoryInfoSection'
 
 export const dynamic = 'force-dynamic'
 
@@ -174,6 +175,13 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
             </div>
           )}
         </div>
+
+        {/* Category Information Section - Below Products */}
+        <CategoryInfoSection 
+          categoryName={category?.name || 'Products'} 
+          categorySlug={category?.slug || ''} 
+          productCount={products.length}
+        />
       </div>
     </div>
   )
