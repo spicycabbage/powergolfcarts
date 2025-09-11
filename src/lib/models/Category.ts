@@ -195,7 +195,7 @@ CategorySchema.statics.getBreadcrumbs = async function(categoryId: string) {
   return breadcrumbs
 }
 
-const Category = (models.Category as ICategoryModel) || model<ICategory, ICategoryModel>('Category', CategorySchema)
+const Category = (models.Category as unknown as ICategoryModel) || model<ICategory, ICategoryModel>('Category', CategorySchema)
 
 export default Category
 
