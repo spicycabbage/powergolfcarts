@@ -110,23 +110,22 @@ export default function HomePage() {
       {/* Category Grid */}
       <CategoryGrid />
       
-      <section className="bg-white pt-8 pb-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            Voted One of Canada's Top Online Dispensaries
-          </h2>
-          <p className="text-gray-700 mb-4">
-            Trusted by thousands of customers and featured across major cannabis platforms
-          </p>
-          <p className="text-sm text-gray-600 mb-6">
-            As seen on Cannabis Culture, Weedmaps, The Weed Blog, and Leafly - Canada's most trusted cannabis review platforms
-          </p>
-          <img
-            src="/trust-logos.webp"
-            alt="As seen on platforms like Cannabis Culture, Weedmaps, The Weed Blog, and Leafly"
-            className="h-auto max-h-[120px] object-contain mx-auto mb-6"
-          />
-          <div className="max-w-3xl mx-auto">
+      <section className="bg-white pt-8 pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          Voted One of Canada's Top Online Dispensaries
+        </h2>
+        <p className="text-gray-700 mb-4">
+          Trusted by thousands of customers and featured across major cannabis platforms
+        </p>
+        <p className="text-sm text-gray-600 mb-6">
+          As seen on Cannabis Culture, Weedmaps, The Weed Blog, and Leafly - Canada's most trusted cannabis review platforms
+        </p>
+        <img
+          src="/trust-logos.webp"
+          alt="As seen on platforms like Cannabis Culture, Weedmaps, The Weed Blog, and Leafly"
+          className="h-auto max-h-[120px] object-contain mx-auto mb-6"
+        />
+        <div className="max-w-3xl mx-auto">
             <p className="text-gray-700 text-sm leading-relaxed mb-4">
               Since 2019, Godbud.cc has been recognized as one of Canada's premier online cannabis dispensaries. 
               Our commitment to quality, customer service, and competitive pricing has earned us features on leading 
@@ -147,7 +146,6 @@ export default function HomePage() {
               relief, or simply exploring the world of cannabis. Experience the difference that quality, service, and 
               expertise make when you choose Canada's trusted online cannabis destination.
             </p>
-          </div>
         </div>
       </section>
 
@@ -161,9 +159,8 @@ export default function HomePage() {
       <NewsletterSignup />
       
       {/* Visible SEO Content Section */}
-      <section className="bg-gray-50 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center">
+      <section className="bg-gray-50 py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Canada's Premier Online Cannabis Dispensary</h2>
             <div className="grid md:grid-cols-2 gap-8 text-left">
               <div>
@@ -193,11 +190,10 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-          </div>
         </div>
       </section>
-      </div>
-    )
+    </div>
+  )
 }
 
 

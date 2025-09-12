@@ -12,19 +12,16 @@ export const metadata: Metadata = {
 export default function ProductsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <section className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <h1 className="text-3xl font-bold text-gray-900">All Products</h1>
-          <p className="text-gray-700 mt-0.5">Discover our complete product catalog</p>
-        </div>
-      </section>
+      <header className="bg-white border-b border-gray-200 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <h1 className="text-3xl font-bold text-gray-900">All Products</h1>
+        <p className="text-gray-700 mt-0.5">Discover our complete product catalog</p>
+      </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <ProductList />
 
         {/* Comprehensive Product Information Section - Lazy Loaded */}
-        <div className="mt-16 bg-white rounded-lg p-8 shadow-sm" style={{ contentVisibility: 'auto' }}>
-          <div className="max-w-4xl mx-auto">
+        <section className="mt-16 bg-white rounded-lg p-8 shadow-sm max-w-4xl mx-auto" style={{ contentVisibility: 'auto' }}>
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Complete Cannabis Product Catalog - Buy Weed Online in Canada
             </h2>
@@ -116,8 +113,7 @@ export default function ProductsPage() {
                 </p>
               </div>
             </div>
-          </div>
-        </div>
+        </section>
       </main>
     </div>
   )
