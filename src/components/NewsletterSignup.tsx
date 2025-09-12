@@ -8,6 +8,7 @@ export function NewsletterSignup() {
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => { setMounted(true) }, [])
 
@@ -17,8 +18,11 @@ export function NewsletterSignup() {
     if (!email || isLoading) return
 
     setIsLoading(true)
+    setError('')
 
     try {
+      console.log('Attempting to subscribe:', email) // Debug log
+      
       const response = await fetch('/api/email-subscribers', {
         method: 'POST',
         headers: {
@@ -30,7 +34,9 @@ export function NewsletterSignup() {
         })
       })
 
+      console.log('Response status:', response.status) // Debug log
       const data = await response.json()
+      console.log('Response data:', data) // Debug log
 
       if (data.success) {
         setIsSubscribed(true)
@@ -39,10 +45,11 @@ export function NewsletterSignup() {
         setTimeout(() => setIsSubscribed(false), 5000)
       } else {
         console.error('Subscription error:', data.error)
-        // You could show an error message here
+        setError(data.error || 'Failed to subscribe. Please try again.')
       }
     } catch (error) {
       console.error('Newsletter signup error:', error)
+      setError('Network error. Please check your connection and try again.')
     } finally {
       setIsLoading(false)
     }
@@ -107,6 +114,14 @@ export function NewsletterSignup() {
             <div className="mt-6 inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-lg">
               <Check className="w-5 h-5 mr-2" />
               Successfully subscribed! Check your email for confirmation.
+            </div>
+          )}
+
+          {/* Error Message */}
+          {error && (
+            <div className="mt-6 inline-flex items-center px-4 py-2 bg-red-100 text-red-800 rounded-lg">
+              <span className="text-red-600 mr-2">✕</span>
+              {error}
             </div>
           )}
 

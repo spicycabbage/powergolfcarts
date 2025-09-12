@@ -81,20 +81,18 @@ export default async function CategoriesPage() {
                   <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-200"></div>
                 </div>
 
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
+                <div className="p-6 text-center">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors">
                     {category.name}
                   </h3>
                   {category.description && (
-                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                       {category.description}
                     </p>
                   )}
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">
-                      {category.productCount ?? 0} products
-                    </span>
-                    <ArrowRight className="w-4 h-4 text-primary-600 group-hover:translate-x-1 transition-transform" />
+                  <div className="inline-flex items-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg group-hover:bg-primary-700 transition-colors">
+                    Shop Now
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
                 </Link>

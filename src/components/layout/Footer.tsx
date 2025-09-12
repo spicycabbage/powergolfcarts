@@ -9,6 +9,7 @@ export function Footer() {
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isSubscribed, setIsSubscribed] = useState(false)
+  const [error, setError] = useState('')
   
   useEffect(() => setMounted(true), [])
 
@@ -18,8 +19,11 @@ export function Footer() {
     if (!email || isLoading) return
 
     setIsLoading(true)
+    setError('')
 
     try {
+      console.log('Footer: Attempting to subscribe:', email) // Debug log
+      
       const response = await fetch('/api/email-subscribers', {
         method: 'POST',
         headers: {
@@ -31,7 +35,9 @@ export function Footer() {
         })
       })
 
+      console.log('Footer: Response status:', response.status) // Debug log
       const data = await response.json()
+      console.log('Footer: Response data:', data) // Debug log
 
       if (data.success) {
         setIsSubscribed(true)
@@ -40,9 +46,11 @@ export function Footer() {
         setTimeout(() => setIsSubscribed(false), 3000)
       } else {
         console.error('Subscription error:', data.error)
+        setError(data.error || 'Failed to subscribe. Please try again.')
       }
     } catch (error) {
       console.error('Footer newsletter signup error:', error)
+      setError('Network error. Please check your connection and try again.')
     } finally {
       setIsLoading(false)
     }
@@ -94,6 +102,10 @@ export function Footer() {
                 {isSubscribed ? (
                   <div className="text-green-400 text-sm">
                     ✓ Successfully subscribed!
+                  </div>
+                ) : error ? (
+                  <div className="text-red-400 text-sm">
+                    ✕ {error}
                   </div>
                 ) : (
                   <form
