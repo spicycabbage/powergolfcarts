@@ -67,11 +67,67 @@ export default async function BlogIndex({ searchParams }: { searchParams: Promis
       <section className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            {tag ? `${tagTitle} Posts` : 'Blog'}
+            {tag ? `${tagTitle} Posts` : 'Cannabis Blog'}
           </h1>
           <p className="text-gray-600 mt-2">
-            {tag ? `Posts about ${tag.toLowerCase()}` : 'Read our latest posts and updates.'}
+            {tag ? `Posts about ${tag.toLowerCase()}` : 'Expert insights, tips, and news about cannabis'}
           </p>
+          
+          {/* Dynamic content based on tag */}
+          <div className="mt-6 prose max-w-none text-gray-700">
+            {tag ? (
+              <>
+                <p>
+                  Explore our comprehensive collection of cannabis articles related to <strong>{tagTitle}</strong>. 
+                  At Godbud.cc, we provide in-depth information about cannabis strains, consumption methods, 
+                  effects, and everything you need to know about {tag.toLowerCase()}-related cannabis topics in Canada.
+                </p>
+                <p>
+                  Our expert team regularly publishes detailed articles covering {tag.toLowerCase()} and related cannabis topics, 
+                  including strain genetics, terpene profiles, cannabinoid effects, consumption techniques, dosage guidelines, 
+                  and the latest developments in the Canadian cannabis industry. Whether you're researching {tag.toLowerCase()} 
+                  specifically or exploring related cannabis topics, our blog provides valuable insights to enhance your knowledge.
+                </p>
+                <p>
+                  Browse through our {tag.toLowerCase()}-related articles below to discover detailed information about cannabis 
+                  products, strain reviews, consumption tips, and industry news. Each article about {tag.toLowerCase()} is 
+                  carefully researched and written to provide accurate, helpful information for cannabis enthusiasts across Canada. 
+                  Learn about the specific characteristics, effects, and applications of {tag.toLowerCase()} in the cannabis world.
+                </p>
+                <p>
+                  Understanding {tag.toLowerCase()} is essential for making informed decisions about cannabis products. 
+                  Our articles explore how {tag.toLowerCase()} relates to different cannabis strains, consumption methods, 
+                  and user experiences. From beginner-friendly explanations to advanced topics about {tag.toLowerCase()}, 
+                  we cover all aspects to help you understand this important cannabis topic.
+                </p>
+              </>
+            ) : (
+              <>
+                <p>
+                  Welcome to the Godbud.cc cannabis blog, your trusted source for comprehensive information about 
+                  cannabis products, strains, consumption methods, and industry news in Canada. Our expert team 
+                  provides detailed articles covering everything from beginner guides to advanced cannabis topics.
+                </p>
+                <p>
+                  Discover in-depth strain reviews, learn about different consumption methods, understand terpene 
+                  profiles and cannabinoid effects, and stay updated with the latest developments in the Canadian 
+                  cannabis market. Our blog covers topics including indica vs sativa differences, hybrid strain 
+                  characteristics, edible dosage guidelines, vaporization techniques, and much more.
+                </p>
+                <p>
+                  Whether you're looking for information about specific cannabis strains, want to learn about 
+                  different consumption methods, or need guidance on dosage and effects, our comprehensive blog 
+                  articles provide the knowledge you need to make informed decisions about cannabis products.
+                </p>
+                <p>
+                  Our cannabis blog features expert insights on strain genetics, cultivation techniques, consumption 
+                  safety, legal considerations in Canada, and product reviews. We regularly update our content with 
+                  the latest research, industry trends, and user experiences to ensure you have access to current 
+                  and accurate cannabis information.
+                </p>
+              </>
+            )}
+          </div>
         </div>
       </section>
 
@@ -121,6 +177,52 @@ export default async function BlogIndex({ searchParams }: { searchParams: Promis
             ))}
           </div>
         )}
+
+        {/* Additional content section for SEO */}
+        <div className="mt-12 bg-white rounded-lg shadow p-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            {tag ? `More About ${tagTitle} in Cannabis` : 'Cannabis Education & Resources'}
+          </h2>
+          <div className="prose max-w-none text-gray-700">
+            {tag ? (
+              <>
+                <p>
+                  When exploring {tag.toLowerCase()} in the context of cannabis, it's important to understand how this topic 
+                  relates to the broader cannabis experience. At Godbud.cc, we believe that comprehensive education about 
+                  {tag.toLowerCase()} helps our customers make better-informed decisions about their cannabis purchases and consumption.
+                </p>
+                <p>
+                  The relationship between {tag.toLowerCase()} and cannabis effects, strain characteristics, and consumption methods 
+                  is complex and varies depending on individual factors such as tolerance, body chemistry, and experience level. 
+                  Our detailed articles about {tag.toLowerCase()} explore these nuances to provide you with practical, actionable information.
+                </p>
+                <p>
+                  Whether you're interested in {tag.toLowerCase()} for recreational or therapeutic purposes, understanding the 
+                  science behind cannabis and how {tag.toLowerCase()} fits into the larger picture is essential. Our expert-written 
+                  content covers everything from basic concepts to advanced topics related to {tag.toLowerCase()} and cannabis.
+                </p>
+              </>
+            ) : (
+              <>
+                <p>
+                  Cannabis education is at the heart of what we do at Godbud.cc. Our comprehensive blog covers all aspects of 
+                  cannabis, from strain genetics and terpene profiles to consumption methods and dosage guidelines. We believe 
+                  that informed consumers have better experiences and make safer choices.
+                </p>
+                <p>
+                  Our team of cannabis experts regularly researches and writes about the latest developments in cannabis science, 
+                  industry trends, and product innovations. We cover topics ranging from the basics of cannabis biology to 
+                  advanced discussions about cannabinoid interactions and therapeutic applications.
+                </p>
+                <p>
+                  Explore our extensive library of cannabis articles to deepen your understanding of this fascinating plant. 
+                  Whether you're a newcomer to cannabis or an experienced enthusiast, our blog provides valuable insights to 
+                  enhance your knowledge and improve your cannabis experience.
+                </p>
+              </>
+            )}
+          </div>
+        </div>
 
         {totalPages > 1 && (
           <nav className="mt-8 flex items-center justify-between">
