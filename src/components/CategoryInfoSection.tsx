@@ -95,26 +95,8 @@ const categoryContent: Record<string, {
   }
 }
 
-export function CategoryInfoSection({ categoryName, categorySlug, productCount }: CategoryInfoSectionProps) {
-  // Lazy load this component to improve initial page load
-  const [isVisible, setIsVisible] = useState(false)
-  
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 1000) // Delay 1 second
-    return () => clearTimeout(timer)
-  }, [])
-  
-  // Memoize content generation to avoid recalculation
-  const content = useMemo(() => {
-    return categoryContent[categorySlug.toLowerCase()] || generateDynamicContent(categoryName, categorySlug)
-  }, [categoryName, categorySlug])
-  
-  if (!isVisible) {
-    return <div className="mt-16 h-96" /> // Placeholder to maintain layout
-  }
-  
-  // Enhanced content generation for sub-categories
-  const generateDynamicContent = (categoryName: string, categorySlug: string) => {
+// Enhanced content generation for sub-categories
+const generateDynamicContent = (categoryName: string, categorySlug: string) => {
     const slug = categorySlug.toLowerCase()
     const name = categoryName.toLowerCase()
     
@@ -214,7 +196,25 @@ export function CategoryInfoSection({ categoryName, categorySlug, productCount }
       quality: `All ${name} in our collection are sourced from licensed Canadian producers and undergo rigorous quality testing to ensure safety, potency, and consistency. We carefully curate our selection to offer only the finest cannabis products available.`
     }
   }
+}
+
+export function CategoryInfoSection({ categoryName, categorySlug, productCount }: CategoryInfoSectionProps) {
+  // Lazy load this component to improve initial page load
+  const [isVisible, setIsVisible] = useState(false)
   
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), 1000) // Delay 1 second
+    return () => clearTimeout(timer)
+  }, [])
+  
+  // Memoize content generation to avoid recalculation
+  const content = useMemo(() => {
+    return categoryContent[categorySlug.toLowerCase()] || generateDynamicContent(categoryName, categorySlug)
+  }, [categoryName, categorySlug])
+  
+  if (!isVisible) {
+    return <div className="mt-16 h-96" /> // Placeholder to maintain layout
+  }
 
   return (
     <div className="mt-16 bg-gray-50 rounded-lg p-8">
