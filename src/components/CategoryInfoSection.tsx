@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react'
+
 interface CategoryInfoSectionProps {
   categoryName: string
   categorySlug: string
@@ -92,6 +94,18 @@ const categoryContent: Record<string, {
 }
 
 export function CategoryInfoSection({ categoryName, categorySlug, productCount }: CategoryInfoSectionProps) {
+  // Lazy load this component to improve initial page load
+  const [isVisible, setIsVisible] = useState(false)
+  
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), 1000) // Delay 1 second
+    return () => clearTimeout(timer)
+  }, [])
+  
+  if (!isVisible) {
+    return <div className="mt-16 h-96" /> // Placeholder to maintain layout
+  }
+  
   const content = categoryContent[categorySlug.toLowerCase()] || {
     title: `${categoryName} - Premium Cannabis Products`,
     description: `Browse our selection of high-quality ${categoryName.toLowerCase()} from trusted Canadian suppliers. Each product is carefully selected for quality, potency, and value, ensuring you receive only the best cannabis products available in Canada.`,

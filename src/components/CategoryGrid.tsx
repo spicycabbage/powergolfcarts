@@ -22,6 +22,9 @@ export function CategoryGrid() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
+        // Add a small delay to prioritize above-the-fold content
+        await new Promise(resolve => setTimeout(resolve, 500))
+        
         const response = await fetch('/api/categories?limit=8&featured=true')
         if (response.ok) {
           const data = await response.json()

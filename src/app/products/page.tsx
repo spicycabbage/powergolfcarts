@@ -30,8 +30,8 @@ export default function ProductsPage() {
           <ProductList />
         </main>
 
-        {/* Comprehensive Product Information Section */}
-        <div className="mt-16 bg-white rounded-lg p-8 shadow-sm">
+        {/* Comprehensive Product Information Section - Lazy Loaded */}
+        <div className="mt-16 bg-white rounded-lg p-8 shadow-sm" style={{ contentVisibility: 'auto' }}>
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Complete Cannabis Product Catalog - Buy Weed Online in Canada
