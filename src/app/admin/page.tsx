@@ -72,9 +72,9 @@ export default function AdminDashboard() {
     {
       title: 'Analytics',
       icon: BarChart3,
-      href: '#',
+      href: '/admin/analytics',
       color: 'bg-orange-500',
-      disabled: true
+      disabled: false
     },
     {
       title: 'User Management',
