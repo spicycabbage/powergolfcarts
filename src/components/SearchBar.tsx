@@ -172,32 +172,22 @@ export function SearchBar({ isOpen, onClose }: SearchBarProps) {
                   key={product._id}
                   href={`/products/${product.slug}`}
                   onClick={handleResultClick}
-                  className="block p-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+                  className="flex items-center p-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
                 >
-                  <div className="flex items-center space-x-3">
-                    <div className="flex-shrink-0 w-12 h-12 bg-gray-100 rounded overflow-hidden">
-                      {product.images?.[0] ? (
-                        <img
-                          src={product.images[0]}
-                          alt={product.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gray-200"></div>
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-gray-900 truncate">
-                        {product.name}
-                      </div>
-                      <div className="text-sm text-primary-600 font-semibold">
-                        ${product.price}
-                        {product.originalPrice && product.originalPrice > product.price && (
-                          <span className="ml-2 text-gray-400 line-through text-xs">
-                            ${product.originalPrice}
-                          </span>
-                        )}
-                      </div>
+                  <div className="flex-shrink-0 w-10 h-10 bg-gray-100 rounded overflow-hidden mr-3">
+                    {product.images?.[0] ? (
+                      <img
+                        src={product.images[0]}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-200"></div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-gray-900 truncate hover:text-primary-600">
+                      {product.name}
                     </div>
                   </div>
                 </Link>
