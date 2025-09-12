@@ -48,6 +48,13 @@ export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true)
   const [groupBy, setGroupBy] = useState<GroupBy>('day')
   const [dateRange, setDateRange] = useState<DateRange>('30d')
+  const [activeTab, setActiveTab] = useState<'sales' | 'orders'>('sales')
+  const [tooltip, setTooltip] = useState<{
+    show: boolean
+    x: number
+    y: number
+    content: string
+  }>({ show: false, x: 0, y: 0, content: '' })
 
   // Auth check
   useEffect(() => {
@@ -114,12 +121,62 @@ export default function AnalyticsPage() {
     }
   }
 
+  const formatAxisLabel = (period: string, index: number) => {
+    const date = new Date(period)
+    switch (groupBy) {
+      case 'day':
+        return {
+          day: date.getDate().toString(),
+          month: date.toLocaleDateString('en-US', { month: 'short' }),
+          showMonth: index === 0 || (index > 0 && new Date(salesData[index - 1].period).getMonth() !== date.getMonth())
+        }
+      case 'week':
+        return {
+          day: `W${Math.ceil(date.getDate() / 7)}`,
+          month: date.toLocaleDateString('en-US', { month: 'short' }),
+          showMonth: index === 0 || index % 4 === 0
+        }
+      case 'month':
+        return {
+          day: date.toLocaleDateString('en-US', { month: 'short' }),
+          month: date.getFullYear().toString(),
+          showMonth: true
+        }
+      default:
+        return { day: period, month: '', showMonth: false }
+    }
+  }
+
   const getMaxSalesValue = () => {
-    return Math.max(...salesData.map(d => Math.max(d.completedSales, d.pendingSales)), 1)
+    const maxValue = Math.max(...salesData.map(d => Math.max(d.completedSales, d.pendingSales)), 1)
+    // Round up to nearest $100, max $1000
+    return Math.min(Math.ceil(maxValue / 100) * 100, 1000)
   }
 
   const getMaxOrdersValue = () => {
-    return Math.max(...salesData.map(d => Math.max(d.completedOrders, d.pendingOrders)), 1)
+    const maxValue = Math.max(...salesData.map(d => Math.max(d.completedOrders, d.pendingOrders)), 1)
+    // Round up to nearest 5, max 50
+    return Math.min(Math.ceil(maxValue / 5) * 5, 50)
+  }
+
+  const getSalesYAxisLabels = () => {
+    const max = getMaxSalesValue()
+    const increment = 100
+    const labels = []
+    for (let i = max; i >= 0; i -= increment) {
+      labels.push(i)
+    }
+    return labels
+  }
+
+  const getOrdersYAxisLabels = () => {
+    const max = getMaxOrdersValue()
+    const increment = 5
+    const labels = []
+    for (let i = max; i >= 0; i -= increment) {
+      labels.push(i)
+    }
+    return labels
   }
 
   if (status === 'loading' || isChecking) {
@@ -276,14 +333,44 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        {/* Sales Chart */}
+        {/* Tabbed Chart Section */}
         <div className="bg-white rounded-lg shadow p-6">
+          {/* Tab Navigation */}
+          <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg">
+            <button
+              onClick={() => setActiveTab('sales')}
+              className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors ${
+                activeTab === 'sales'
+                  ? 'bg-white text-primary-600 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Sales Over Time
+            </button>
+            <button
+              onClick={() => setActiveTab('orders')}
+              className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors ${
+                activeTab === 'orders'
+                  ? 'bg-white text-primary-600 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Orders Over Time
+            </button>
+          </div>
+
+          {/* Chart Content */}
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-900">Sales Over Time</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              {activeTab === 'sales' ? 'Sales Over Time' : 'Orders Over Time'}
+            </h2>
             <p className="text-sm text-gray-500">
-              Sales grouped by {groupBy} for the {dateRange === '7d' ? 'last 7 days' : 
-                                                   dateRange === '30d' ? 'last 30 days' : 
-                                                   dateRange === '90d' ? 'last 90 days' : 'last year'}
+              {activeTab === 'sales' 
+                ? `Sales grouped by ${groupBy} for the ${dateRange === '7d' ? 'last 7 days' : 
+                                                         dateRange === '30d' ? 'last 30 days' : 
+                                                         dateRange === '90d' ? 'last 90 days' : 'last year'}`
+                : `Number of orders by ${groupBy}`
+              }
             </p>
           </div>
 
@@ -303,126 +390,196 @@ export default function AnalyticsPage() {
               </div>
             </div>
           ) : (
-            <div className="h-96">
-              {/* Dual Line Chart */}
+            <div className="h-96 relative">
+              {/* Legend */}
               <div className="mb-4 flex justify-center gap-6">
                 <div className="flex items-center">
-                  <div className="w-4 h-4 bg-green-600 rounded mr-2"></div>
-                  <span className="text-sm text-gray-600">Completed Orders</span>
+                  <div className="w-3 h-3 bg-green-600 rounded-full mr-2"></div>
+                  <span className="text-sm text-gray-600">
+                    {activeTab === 'sales' ? 'Completed Sales' : 'Completed Orders'}
+                  </span>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-4 h-4 bg-orange-600 rounded mr-2"></div>
-                  <span className="text-sm text-gray-600">Pending Orders</span>
+                  <div className="w-3 h-3 bg-orange-600 rounded-full mr-2"></div>
+                  <span className="text-sm text-gray-600">
+                    {activeTab === 'sales' ? 'Pending Sales' : 'Pending Orders'}
+                  </span>
                 </div>
               </div>
-              <div className="h-full flex items-end justify-between gap-2 px-4">
-                {salesData.map((data, index) => {
-                  const completedHeight = (data.completedSales / getMaxSalesValue()) * 100
-                  const pendingHeight = (data.pendingSales / getMaxSalesValue()) * 100
-                  return (
-                    <div key={index} className="flex-1 flex flex-col items-center">
-                      <div className="w-full flex justify-center gap-1 mb-2">
-                        {/* Completed Sales Bar */}
-                        <div className="flex-1 flex flex-col items-center">
-                          <div className="text-xs font-medium text-green-700 mb-1">
-                            {data.completedSales > 0 ? formatCurrency(data.completedSales) : ''}
-                          </div>
-                          <div
-                            className="w-full bg-green-600 rounded-t-sm hover:bg-green-700 transition-colors cursor-pointer"
-                            style={{ height: `${Math.max(completedHeight, 2)}%` }}
-                            title={`${formatPeriod(data.period)} - Completed: ${formatCurrency(data.completedSales)} (${data.completedOrders} orders)`}
-                          />
-                        </div>
-                        {/* Pending Sales Bar */}
-                        <div className="flex-1 flex flex-col items-center">
-                          <div className="text-xs font-medium text-orange-700 mb-1">
-                            {data.pendingSales > 0 ? formatCurrency(data.pendingSales) : ''}
-                          </div>
-                          <div
-                            className="w-full bg-orange-600 rounded-t-sm hover:bg-orange-700 transition-colors cursor-pointer"
-                            style={{ height: `${Math.max(pendingHeight, 2)}%` }}
-                            title={`${formatPeriod(data.period)} - Pending: ${formatCurrency(data.pendingSales)} (${data.pendingOrders} orders)`}
-                          />
-                        </div>
+              
+              {/* Chart Container */}
+              <div className="relative h-80 border-l border-b border-gray-200 ml-12 mb-8">
+                {/* Y-axis labels */}
+                <div className="absolute -left-12 top-0 h-full flex flex-col justify-between text-xs text-gray-500">
+                  {activeTab === 'sales' ? (
+                    getSalesYAxisLabels().map((value, index) => (
+                      <span key={index}>{formatCurrency(value)}</span>
+                    ))
+                  ) : (
+                    getOrdersYAxisLabels().map((value, index) => (
+                      <span key={index}>{value}</span>
+                    ))
+                  )}
+                </div>
+                
+                {/* Grid lines */}
+                <div className="absolute inset-0">
+                  {activeTab === 'sales' ? (
+                    getSalesYAxisLabels().map((value, index) => {
+                      const ratio = value / getMaxSalesValue()
+                      return (
+                        <div
+                          key={index}
+                          className="absolute w-full border-t border-gray-100"
+                          style={{ bottom: `${ratio * 100}%` }}
+                        />
+                      )
+                    })
+                  ) : (
+                    getOrdersYAxisLabels().map((value, index) => {
+                      const ratio = value / getMaxOrdersValue()
+                      return (
+                        <div
+                          key={index}
+                          className="absolute w-full border-t border-gray-100"
+                          style={{ bottom: `${ratio * 100}%` }}
+                        />
+                      )
+                    })
+                  )}
+                </div>
+                
+                {/* Chart SVG */}
+                <svg className="absolute inset-0 w-full h-full overflow-visible">
+                  {/* Completed Line */}
+                  <polyline
+                    fill="none"
+                    stroke="#16a34a"
+                    strokeWidth="2"
+                    points={salesData.map((data, index) => {
+                      const x = (index / (salesData.length - 1)) * 100
+                      const maxValue = activeTab === 'sales' ? getMaxSalesValue() : getMaxOrdersValue()
+                      const value = activeTab === 'sales' ? data.completedSales : data.completedOrders
+                      const y = 100 - (value / maxValue) * 100
+                      return `${x}%,${y}%`
+                    }).join(' ')}
+                  />
+                  
+                  {/* Pending Line */}
+                  <polyline
+                    fill="none"
+                    stroke="#ea580c"
+                    strokeWidth="2"
+                    points={salesData.map((data, index) => {
+                      const x = (index / (salesData.length - 1)) * 100
+                      const maxValue = activeTab === 'sales' ? getMaxSalesValue() : getMaxOrdersValue()
+                      const value = activeTab === 'sales' ? data.pendingSales : data.pendingOrders
+                      const y = 100 - (value / maxValue) * 100
+                      return `${x}%,${y}%`
+                    }).join(' ')}
+                  />
+                  
+                  {/* Data Points */}
+                  {salesData.map((data, index) => {
+                    const x = (index / (salesData.length - 1)) * 100
+                    const maxValue = activeTab === 'sales' ? getMaxSalesValue() : getMaxOrdersValue()
+                    const completedValue = activeTab === 'sales' ? data.completedSales : data.completedOrders
+                    const pendingValue = activeTab === 'sales' ? data.pendingSales : data.pendingOrders
+                    const completedY = 100 - (completedValue / maxValue) * 100
+                    const pendingY = 100 - (pendingValue / maxValue) * 100
+                    
+                    return (
+                      <g key={index}>
+                        {/* Completed Dot */}
+                        <circle
+                          cx={`${x}%`}
+                          cy={`${completedY}%`}
+                          r="4"
+                          fill="#16a34a"
+                          stroke="white"
+                          strokeWidth="2"
+                          className="cursor-pointer hover:r-6 transition-all"
+                          onMouseEnter={(e) => {
+                            const rect = e.currentTarget.getBoundingClientRect()
+                            const content = activeTab === 'sales' 
+                              ? `${formatPeriod(data.period)} - Completed: ${formatCurrency(data.completedSales)} (${data.completedOrders} orders)`
+                              : `${formatPeriod(data.period)} - Completed: ${data.completedOrders} orders`
+                            setTooltip({
+                              show: true,
+                              x: rect.left + rect.width / 2,
+                              y: rect.top - 10,
+                              content
+                            })
+                          }}
+                          onMouseLeave={() => setTooltip({ show: false, x: 0, y: 0, content: '' })}
+                        />
+                        
+                        {/* Pending Dot */}
+                        <circle
+                          cx={`${x}%`}
+                          cy={`${pendingY}%`}
+                          r="4"
+                          fill="#ea580c"
+                          stroke="white"
+                          strokeWidth="2"
+                          className="cursor-pointer hover:r-6 transition-all"
+                          onMouseEnter={(e) => {
+                            const rect = e.currentTarget.getBoundingClientRect()
+                            const content = activeTab === 'sales' 
+                              ? `${formatPeriod(data.period)} - Pending: ${formatCurrency(data.pendingSales)} (${data.pendingOrders} orders)`
+                              : `${formatPeriod(data.period)} - Pending: ${data.pendingOrders} orders`
+                            setTooltip({
+                              show: true,
+                              x: rect.left + rect.width / 2,
+                              y: rect.top - 10,
+                              content
+                            })
+                          }}
+                          onMouseLeave={() => setTooltip({ show: false, x: 0, y: 0, content: '' })}
+                        />
+                      </g>
+                    )
+                  })}
+                </svg>
+                
+                {/* X-axis labels */}
+                <div className="absolute -bottom-6 left-0 right-0">
+                  {salesData.map((data, index) => {
+                    const x = (index / (salesData.length - 1)) * 100
+                    const labelInfo = formatAxisLabel(data.period, index)
+                    return (
+                      <div 
+                        key={index} 
+                        className="absolute text-xs text-gray-500 transform -translate-x-1/2 text-center"
+                        style={{ left: `${x}%` }}
+                      >
+                        <div className="font-medium">{labelInfo.day}</div>
+                        {labelInfo.showMonth && (
+                          <div className="text-gray-400 mt-0.5">{labelInfo.month}</div>
+                        )}
                       </div>
-                      <div className="text-xs text-gray-500 text-center transform -rotate-45 origin-center mt-2">
-                        {formatPeriod(data.period)}
-                      </div>
-                    </div>
-                  )
-                })}
+                    )
+                  })}
+                </div>
               </div>
+            </div>
+          )}
+
+          {/* Custom Tooltip */}
+          {tooltip.show && (
+            <div
+              className="fixed z-50 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg shadow-lg pointer-events-none transform -translate-x-1/2 -translate-y-full"
+              style={{
+                left: tooltip.x,
+                top: tooltip.y,
+              }}
+            >
+              {tooltip.content}
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
             </div>
           )}
         </div>
 
-        {/* Orders Chart */}
-        <div className="bg-white rounded-lg shadow p-6 mt-6">
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-900">Orders Over Time</h2>
-            <p className="text-sm text-gray-500">Number of orders by {groupBy}</p>
-          </div>
-
-          {loading ? (
-            <div className="h-64 flex items-center justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto"></div>
-            </div>
-          ) : salesData.length === 0 ? (
-            <div className="h-64 flex items-center justify-center text-gray-500">
-              No order data available
-            </div>
-          ) : (
-            <div className="h-64">
-              <div className="mb-4 flex justify-center gap-6">
-                <div className="flex items-center">
-                  <div className="w-4 h-4 bg-green-600 rounded mr-2"></div>
-                  <span className="text-sm text-gray-600">Completed Orders</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-4 h-4 bg-orange-600 rounded mr-2"></div>
-                  <span className="text-sm text-gray-600">Pending Orders</span>
-                </div>
-              </div>
-              <div className="h-full flex items-end justify-between gap-2 px-4">
-                {salesData.map((data, index) => {
-                  const completedHeight = (data.completedOrders / getMaxOrdersValue()) * 100
-                  const pendingHeight = (data.pendingOrders / getMaxOrdersValue()) * 100
-                  return (
-                    <div key={index} className="flex-1 flex flex-col items-center">
-                      <div className="w-full flex justify-center gap-1 mb-2">
-                        {/* Completed Orders Bar */}
-                        <div className="flex-1 flex flex-col items-center">
-                          <div className="text-xs font-medium text-green-700 mb-1">
-                            {data.completedOrders > 0 ? data.completedOrders : ''}
-                          </div>
-                          <div
-                            className="w-full bg-green-600 rounded-t-sm hover:bg-green-700 transition-colors cursor-pointer"
-                            style={{ height: `${Math.max(completedHeight, 2)}%` }}
-                            title={`${formatPeriod(data.period)} - Completed: ${data.completedOrders} orders`}
-                          />
-                        </div>
-                        {/* Pending Orders Bar */}
-                        <div className="flex-1 flex flex-col items-center">
-                          <div className="text-xs font-medium text-orange-700 mb-1">
-                            {data.pendingOrders > 0 ? data.pendingOrders : ''}
-                          </div>
-                          <div
-                            className="w-full bg-orange-600 rounded-t-sm hover:bg-orange-700 transition-colors cursor-pointer"
-                            style={{ height: `${Math.max(pendingHeight, 2)}%` }}
-                            title={`${formatPeriod(data.period)} - Pending: ${data.pendingOrders} orders`}
-                          />
-                        </div>
-                      </div>
-                      <div className="text-xs text-gray-500 text-center transform -rotate-45 origin-center mt-2">
-                        {formatPeriod(data.period)}
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   )
