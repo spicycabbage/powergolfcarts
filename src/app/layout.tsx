@@ -52,6 +52,11 @@ export const metadata: Metadata = {
   icons: {
     icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🛒</text></svg>',
   },
+  other: {
+    // Critical resource hints for LCP optimization
+    'preload-hero-mobile': '/god-mobile.webp',
+    'preload-hero-desktop': '/buy-weed-online-canada-godbud.webp',
+  },
 }
 
 export default async function RootLayout({
@@ -61,16 +66,13 @@ export default async function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="preload" as="image" href="/god-mobile.webp" media="(max-width: 768px)" fetchPriority="high" />
+        <link rel="preload" as="image" href="/buy-weed-online-canada-godbud.webp" media="(min-width: 769px)" fetchPriority="high" />
+      </head>
       <body className={inter.className}>
-        {/* Auto warmup: run once per process after server starts */}
-        <script dangerouslySetInnerHTML={{ __html: `
-          (function(){
-            if (typeof window==='undefined') return;
-            if (window.__globalWarmed) return; window.__globalWarmed = true;
-            try { fetch('/api/warmup', { cache: 'no-store' }); } catch(e){}
-          })();
-        `}} />
-        {process.env.NODE_ENV !== 'production' && (
+        {/* Removed scripts to improve LCP and reduce network dependencies */}
+        {false && process.env.NODE_ENV !== 'production' && (
           <script dangerouslySetInnerHTML={{ __html: `
             (function(){
               if (typeof window==='undefined') return;

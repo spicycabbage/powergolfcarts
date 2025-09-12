@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import { Metadata } from 'next'
-import Head from 'next/head'
+// Remove Head import - we'll use Next.js metadata instead
 import { HeroSection } from '@/components/HeroSection'
 import { FeaturedProducts } from '@/components/FeaturedProducts'
 import { CategoryGrid } from '@/components/CategoryGrid'
@@ -15,22 +15,12 @@ export const metadata: Metadata = {
   title: 'Godbud.cc: Buy Weed Online in Canada | Mail Order Marijuana',
   description: "Godbud.cc is Canada's top online dispensary for high-quality cannabis. We offer a wide selection of flowers, edibles, vapes, and concentrates with fast, discreet shipping.",
   keywords: 'buy weed online, mail order marijuana, online dispensary, cannabis, canada, flowers, edibles, concentrates',
-  other: {
-    // Preload critical LCP images for better performance
-    'preload-mobile': '/god-mobile.webp',
-    'preload-desktop': '/buy-weed-online-canada-godbud.webp',
-  }
+  // Remove other metadata - we'll handle preloading differently
 }
 
 export default function HomePage() {
   return (
-    <>
-      <Head>
-        <link rel="preload" as="image" href="/god-mobile.webp" media="(max-width: 768px)" />
-        <link rel="preload" as="image" href="/buy-weed-online-canada-godbud.webp" media="(min-width: 769px)" />
-      </Head>
-      
-      <div className="min-h-screen">
+    <div className="min-h-screen">
         {/* Additional Schema Markup for Homepage */}
       <JsonLd
         data={[
@@ -170,8 +160,7 @@ export default function HomePage() {
       {/* Newsletter Signup */}
       <NewsletterSignup />
       </div>
-    </>
-  )
+    )
 }
 
 

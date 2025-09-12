@@ -14,8 +14,9 @@ export function HeroSection() {
           fill
           className="block md:hidden object-cover"
           priority
-          sizes="100vw"
-          quality={85}
+          sizes="(max-width: 768px) 100vw, 0px"
+          quality={90}
+          fetchPriority="high"
         />
         {/* Desktop Image */}
         <Image
@@ -24,8 +25,9 @@ export function HeroSection() {
           fill
           className="hidden md:block object-cover"
           priority
-          sizes="100vw"
-          quality={85}
+          sizes="(min-width: 769px) 100vw, 0px"
+          quality={90}
+          fetchPriority="high"
         />
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
       </div>
