@@ -136,7 +136,7 @@ export default function NewPost() {
               {coverImage ? (
                 <div>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={coverImage} alt={`Cover image preview for: ${formData.title || 'New blog post'}`} className="w-full h-auto rounded" />
+                  <img src={coverImage} alt={`Cover image preview for: ${title || 'New blog post'}`} className="w-full h-auto rounded" />
                   <div className="mt-2 flex items-center justify-between text-xs text-gray-600">
                     <span className="truncate">{coverImage}</span>
                     <button type="button" className="p-1 text-red-600 hover:bg-red-50 rounded" onClick={()=>setCoverImage('')}>
