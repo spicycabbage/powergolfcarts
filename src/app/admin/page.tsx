@@ -172,20 +172,20 @@ export default function AdminDashboard() {
           <p className="text-lg text-gray-600">Manage your ecommerce store with powerful tools</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {adminTools.map((tool) => {
             const Icon = tool.icon
             if (tool.disabled) {
               return (
                 <div
                   key={tool.title}
-                  className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 opacity-50 cursor-not-allowed text-center"
+                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 opacity-50 cursor-not-allowed text-center"
                   aria-disabled
                 >
-                  <div className="bg-gray-100 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <Icon className="w-6 h-6 text-gray-400" />
+                  <div className="bg-gray-100 w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <Icon className="w-5 h-5 text-gray-400" />
                   </div>
-                  <span className="text-sm font-semibold text-gray-400">{tool.title}</span>
+                  <span className="text-sm font-medium text-gray-400">{tool.title}</span>
                   <p className="text-xs text-gray-300 mt-1">Coming Soon</p>
                 </div>
               )
@@ -195,15 +195,15 @@ export default function AdminDashboard() {
                 key={tool.title}
                 href={tool.href}
                 prefetch
-                className="group block bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-transparent hover:-translate-y-1 text-center"
+                className="group block bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-lg transition-all duration-200 hover:border-transparent hover:-translate-y-1 text-center"
               >
-                <div className={`${tool.color} w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-200`}>
-                  <Icon className="w-6 h-6 text-white" />
+                <div className={`${tool.color} w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-200`}>
+                  <Icon className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-sm font-semibold text-gray-900 group-hover:text-gray-700" style={{ pointerEvents: 'none' }}>
+                <span className="text-sm font-medium text-gray-900 group-hover:text-gray-700" style={{ pointerEvents: 'none' }}>
                   {tool.title}
                 </span>
-                <div className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <div className="mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <span className="text-xs text-gray-500">Click to manage →</span>
                 </div>
               </Link>
