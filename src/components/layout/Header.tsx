@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Search, ShoppingCart, User, Menu, X } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { useAuth } from '@/hooks/useAuth'
+import { SearchBar } from '@/components/SearchBar'
 
 type NavigationItem = {
   name: string
@@ -26,7 +27,6 @@ type NavigationConfig = {
 export function Header({ initialNavigation }: { initialNavigation?: NavigationConfig }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
   const [mounted, setMounted] = useState(false)
   const { cart } = useCart()
   const { user, logout, isLoading } = useAuth()
@@ -88,13 +88,8 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
 
   const cartItemCount = cart.items.reduce((total, item) => total + item.quantity, 0)
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery.trim())}`
-      setIsSearchOpen(false)
-      setSearchQuery('')
-    }
+  const handleSearchToggle = () => {
+    setIsSearchOpen(!isSearchOpen)
   }
 
   return (
@@ -223,35 +218,13 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
             {/* Search */}
             <div className="relative">
               <button
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                onClick={handleSearchToggle}
                 className="p-2 text-gray-600 hover:text-primary-600 transition-colors"
                 aria-label="Search"
               >
                 <Search size={20} />
               </button>
 
-              {isSearchOpen && (
-                <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 p-4 z-50">
-                  <form onSubmit={handleSearch}>
-                    <div className="flex">
-                      <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Search products..."
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                        autoFocus
-                      />
-                      <button
-                        type="submit"
-                        className="px-4 py-2 bg-primary-600 text-white rounded-r-lg hover:bg-primary-700 transition-colors"
-                      >
-                        <Search size={16} />
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              )}
             </div>
 
             {/* Cart */}
@@ -316,6 +289,12 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
           </div>
         </div>
       )}
+
+      {/* Search Bar Modal */}
+      <SearchBar 
+        isOpen={isSearchOpen} 
+        onClose={() => setIsSearchOpen(false)} 
+      />
     </header>
   )
 }
