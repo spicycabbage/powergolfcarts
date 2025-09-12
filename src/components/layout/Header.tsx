@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Search, ShoppingCart, User, Menu, X } from 'lucide-react'
+import { Search, ShoppingCart, User, Menu, X, ChevronDown } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { useAuth } from '@/hooks/useAuth'
 import { SearchBar } from '@/components/SearchBar'
@@ -113,7 +113,7 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
             <div className="flex items-center space-x-4">
               {mounted ? (
                 !isLoading && user ? (
-                  <div className="flex items-center space-x-4">
+                  <div className="hidden md:flex items-center space-x-4">
                     <Link
                       href="/account"
                       className="text-sm text-gray-600 hover:text-primary-600 transition-colors flex items-center"
@@ -167,7 +167,7 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href={logo.href || '/'} className="flex-shrink-0">
+          <Link href={logo.href || '/'} className="flex-shrink-0 cursor-pointer hover:opacity-90 transition-opacity">
             {logo.useImage && logo.image ? (
               <img src={logo.image} alt={logo.text || 'Logo'} className="h-8 max-w-48 object-contain" />
             ) : (
@@ -188,9 +188,17 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
                 >
                   <Link
                     href={link.href}
-                    className="text-gray-700 hover:text-primary-600 transition-colors font-medium"
+                    className="text-gray-700 hover:text-primary-600 transition-colors font-medium flex items-center"
                   >
                     {link.name}
+                    {Array.isArray((link as any).children) && (link as any).children.length > 0 && (
+                      <ChevronDown 
+                        size={16} 
+                        className={`ml-1 transition-transform duration-200 ${
+                          openIndex === i ? 'rotate-180' : ''
+                        }`} 
+                      />
+                    )}
                   </Link>
                   {Array.isArray((link as any).children) && (link as any).children.length > 0 && (
                     <div className={`absolute left-0 top-full z-50 ${openIndex === i ? '' : 'hidden'}`}>
@@ -261,14 +269,32 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
               {primaryNav
                 .filter(l => l.isActive !== false)
                 .map((link) => (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    className="block text-gray-700 hover:text-primary-600 transition-colors font-medium"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {link.name}
-                  </Link>
+                  <div key={link.name}>
+                    <Link
+                      href={link.href}
+                      className="flex items-center justify-between text-gray-700 hover:text-primary-600 transition-colors font-medium"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <span>{link.name}</span>
+                      {Array.isArray((link as any).children) && (link as any).children.length > 0 && (
+                        <ChevronDown size={16} className="text-gray-400" />
+                      )}
+                    </Link>
+                    {Array.isArray((link as any).children) && (link as any).children.length > 0 && (
+                      <div className="ml-4 mt-2 space-y-1">
+                        {(link as any).children.map((child: any) => (
+                          <Link
+                            key={child.name}
+                            href={child.href}
+                            className="block text-sm text-gray-600 hover:text-primary-600 transition-colors"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            {child.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 ))}
             </nav>
 
@@ -284,6 +310,29 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
                     {link.name}
                   </Link>
                 ))}
+                
+                {/* Mobile User Account Options - Only show when user is logged in */}
+                {mounted && !isLoading && user && (
+                  <>
+                    <Link
+                      href="/account"
+                      className="block text-gray-600 hover:text-primary-600 transition-colors flex items-center"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <User size={16} className="mr-2" />
+                      {user.firstName}
+                    </Link>
+                    <button
+                      onClick={() => {
+                        logout()
+                        setIsMenuOpen(false)
+                      }}
+                      className="block w-full text-left text-gray-600 hover:text-primary-600 transition-colors"
+                    >
+                      Logout
+                    </button>
+                  </>
+                )}
               </nav>
             </div>
           </div>
