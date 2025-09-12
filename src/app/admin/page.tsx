@@ -9,7 +9,8 @@ import {
   BarChart3,
   Users,
   Package,
-  Mail
+  Mail,
+  Link2
 } from 'lucide-react'
 import Link from 'next/link'
  
@@ -142,6 +143,12 @@ export default function AdminDashboard() {
       href: '/admin/email-subscribers',
       color: 'bg-pink-500',
       disabled: false
+    },
+    {
+      title: 'Slug Manager',
+      icon: Link2,
+      href: '/admin/slug-manager',
+      color: 'bg-indigo-500'
     }
   ]
 
