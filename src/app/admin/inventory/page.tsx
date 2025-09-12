@@ -87,7 +87,7 @@ export default function AdminInventoryPage() {
           setTotal(pag.total || 0)
         }
       } catch (error) {
-        if (error.name !== 'AbortError') {
+        if (error instanceof Error && error.name !== 'AbortError') {
           console.error('Failed to fetch products:', error)
         }
       } finally {
