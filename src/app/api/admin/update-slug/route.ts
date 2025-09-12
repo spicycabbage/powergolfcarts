@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { authOptions } from '@/lib/auth/options'
 import { connectToDatabase } from '@/lib/mongodb'
 import Product from '@/lib/models/Product'
 import mongoose from 'mongoose'
