@@ -103,7 +103,7 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="text-sm text-gray-600 hover:text-primary-600 transition-colors"
+                  className="text-sm text-gray-700 hover:text-primary-600 transition-colors"
                 >
                   {link.name}
                 </Link>
@@ -123,7 +123,7 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
                     </Link>
                     <button
                       onClick={logout}
-                      className="text-sm text-gray-600 hover:text-primary-600 transition-colors"
+                      className="text-sm text-gray-700 hover:text-primary-600 transition-colors"
                     >
                       Logout
                     </button>
@@ -138,7 +138,7 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
                     <div className="flex items-center space-x-4">
                       <Link
                         href="/auth/login"
-                        className="text-sm text-gray-600 hover:text-primary-600 transition-colors"
+                        className="text-sm text-gray-700 hover:text-primary-600 transition-colors"
                       >
                         Sign In
                       </Link>
@@ -171,7 +171,7 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
             {logo.useImage && logo.image ? (
               <img src={logo.image} alt={logo.text || 'Logo'} className="h-8 max-w-48 object-contain" />
             ) : (
-              <h1 className="text-2xl font-bold text-primary-600">{logo.text || 'E-Commerce'}</h1>
+              <div className="text-2xl font-bold text-primary-600">{logo.text || 'E-Commerce'}</div>
             )}
           </Link>
 

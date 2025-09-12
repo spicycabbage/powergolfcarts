@@ -41,7 +41,7 @@ export default async function CategoriesPage() {
         <section className="bg-white border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
             <h1 className="text-3xl font-bold text-gray-900">Categories</h1>
-            <p className="mt-0.5 text-gray-600">Browse our product categories and find exactly what you need.</p>
+            <p className="mt-0.5 text-gray-700">Browse our product categories and find exactly what you need.</p>
           </div>
         </section>
 
@@ -54,7 +54,7 @@ export default async function CategoriesPage() {
                   <ArrowRight className="w-16 h-16 mx-auto" />
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No Categories Available</h3>
-                <p className="text-gray-600 mb-6">We're working on adding product categories.</p>
+                <p className="text-gray-700 mb-6">We're working on adding product categories.</p>
                 <Link
                   href="/products"
                   className="inline-flex items-center px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
@@ -86,7 +86,7 @@ export default async function CategoriesPage() {
                     {category.name}
                   </h3>
                   {category.description && (
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                    <p className="text-gray-700 text-sm mb-4 line-clamp-2">
                       {category.description}
                     </p>
                   )}
