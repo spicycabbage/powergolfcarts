@@ -145,13 +145,18 @@ export async function POST(request: NextRequest) {
       }
     }
     
+    // Generate unsubscribe token
+    const crypto = require('crypto')
+    const unsubscribeToken = crypto.randomBytes(32).toString('hex')
+    
     // Create new subscriber
     const subscriber = new EmailSubscriber({
       email: email.toLowerCase(),
       source,
       firstName,
       lastName,
-      preferences: preferences || {}
+      preferences: preferences || {},
+      unsubscribeToken
     })
     
     await subscriber.save()
@@ -164,8 +169,24 @@ export async function POST(request: NextRequest) {
     
   } catch (error) {
     console.error('Error creating email subscriber:', error)
+    
+    // More specific error handling
+    let errorMessage = 'Failed to subscribe'
+    
+    if (error instanceof Error) {
+      if (error.message.includes('duplicate key')) {
+        errorMessage = 'Email already exists in our system'
+      } else if (error.message.includes('validation')) {
+        errorMessage = 'Invalid email format'
+      } else if (error.message.includes('unsubscribeToken')) {
+        errorMessage = 'Token generation error'
+      } else {
+        errorMessage = error.message
+      }
+    }
+    
     return NextResponse.json(
-      { success: false, error: 'Failed to subscribe' },
+      { success: false, error: errorMessage, details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     )
   }

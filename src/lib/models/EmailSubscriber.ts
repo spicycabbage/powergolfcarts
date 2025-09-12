@@ -29,7 +29,7 @@ const EmailSubscriberSchema = new Schema<IEmailSubscriber>({
     unique: true,
     lowercase: true,
     trim: true,
-    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email']
+    match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please enter a valid email']
   },
   isActive: {
     type: Boolean,
@@ -101,7 +101,14 @@ EmailSubscriberSchema.index({ unsubscribeToken: 1 })
 // Generate unsubscribe token before saving
 EmailSubscriberSchema.pre('save', function(next) {
   if (!this.unsubscribeToken) {
-    this.unsubscribeToken = require('crypto').randomBytes(32).toString('hex')
+    try {
+      const crypto = require('crypto')
+      this.unsubscribeToken = crypto.randomBytes(32).toString('hex')
+    } catch (error) {
+      console.error('Error generating unsubscribe token:', error)
+      // Fallback to a simple random string
+      this.unsubscribeToken = Math.random().toString(36).substring(2) + Date.now().toString(36)
+    }
   }
   next()
 })

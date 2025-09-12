@@ -8,7 +8,8 @@ import {
   Folder, 
   BarChart3,
   Users,
-  Package
+  Package,
+  Mail
 } from 'lucide-react'
 import Link from 'next/link'
  
@@ -129,6 +130,13 @@ export default function AdminDashboard() {
       icon: Settings,
       href: '/admin/blog',
       color: 'bg-teal-500',
+      disabled: false
+    },
+    {
+      title: 'Email Subscribers',
+      icon: Mail,
+      href: '/admin/email-subscribers',
+      color: 'bg-pink-500',
       disabled: false
     }
   ]

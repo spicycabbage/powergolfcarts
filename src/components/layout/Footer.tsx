@@ -46,6 +46,7 @@ export function Footer() {
         setTimeout(() => setIsSubscribed(false), 3000)
       } else {
         console.error('Subscription error:', data.error)
+        console.error('Error details:', data.details)
         setError(data.error || 'Failed to subscribe. Please try again.')
       }
     } catch (error) {
