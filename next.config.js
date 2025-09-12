@@ -54,6 +54,15 @@ module.exports = (phase) => {
         },
       ]
     },
+    async redirects() {
+      return [
+        {
+          source: '/products/:slug/',
+          destination: '/products/:slug',
+          permanent: true,
+        },
+      ]
+    },
     async rewrites() {
       return [
         {
