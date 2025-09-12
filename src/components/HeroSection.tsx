@@ -12,6 +12,7 @@ export function HeroSection() {
           alt="Buy Weed Online Canada - Godbud"
           className="block md:hidden w-full h-full object-cover"
           loading="eager"
+          fetchPriority="high"
         />
         {/* Desktop Image */}
         <img
@@ -19,6 +20,7 @@ export function HeroSection() {
           alt="Buy Weed Online Canada - Godbud"
           className="hidden md:block w-full h-full object-cover"
           loading="eager"
+          fetchPriority="high"
         />
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
       </div>
