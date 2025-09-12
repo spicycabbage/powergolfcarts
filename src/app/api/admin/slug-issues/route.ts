@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
       
       if (product.slug !== expectedSlug) {
         issues.push({
-          _id: product._id.toString(),
+          _id: String(product._id),
           name: product.name,
           currentSlug: product.slug,
           expectedSlug,
