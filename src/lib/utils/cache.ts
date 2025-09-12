@@ -83,7 +83,9 @@ class MemoryCache {
     const now = Date.now()
     let cleaned = 0
     
-    for (const [key, entry] of this.cache.entries()) {
+    // Convert entries to array to avoid iteration issues
+    const entries = Array.from(this.cache.entries())
+    for (const [key, entry] of entries) {
       if (now - entry.timestamp > entry.ttl) {
         this.cache.delete(key)
         cleaned++
