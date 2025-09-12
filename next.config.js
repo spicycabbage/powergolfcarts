@@ -26,7 +26,7 @@ module.exports = (phase) => {
       deviceSizes: [150, 300, 600, 1200, 1920],
       imageSizes: [16, 32, 48, 64, 96, 128, 256, 300, 384, 400],
       qualities: [75, 85, 90, 95], // Add quality values to fix Next.js 16 warnings
-      minimumCacheTTL: 31536000, // 1 year cache for optimized images
+      minimumCacheTTL: 3600, // 1 hour cache for faster testing (change back to 31536000 later)
       dangerouslyAllowSVG: true,
       contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     },

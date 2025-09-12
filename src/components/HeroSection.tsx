@@ -1,4 +1,5 @@
 import { OptimizedImage } from '@/components/OptimizedImage'
+import Image from 'next/image'
 import Link from 'next/link'
 
 export function HeroSection() {
@@ -7,20 +8,24 @@ export function HeroSection() {
       {/* Background Images - Responsive */}
       <div className="absolute inset-0">
         {/* Mobile Image */}
-        <img
+        <Image
           src="/god-mobile.webp"
           alt="Buy Weed Online Canada - Godbud"
-          className="block md:hidden w-full h-full object-cover"
-          loading="eager"
-          fetchPriority="high"
+          fill
+          className="block md:hidden object-cover"
+          priority
+          sizes="100vw"
+          quality={85}
         />
         {/* Desktop Image */}
-        <img
+        <Image
           src="/buy-weed-online-canada-godbud.webp"
           alt="Buy Weed Online Canada - Godbud"
-          className="hidden md:block w-full h-full object-cover"
-          loading="eager"
-          fetchPriority="high"
+          fill
+          className="hidden md:block object-cover"
+          priority
+          sizes="100vw"
+          quality={85}
         />
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
       </div>
