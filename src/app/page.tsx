@@ -108,7 +108,6 @@ export default function HomePage() {
       {/* Category Grid */}
       <CategoryGrid />
       
-      {/* Trust Logos & "As Seen On" Section */}
       <section className="bg-white pt-8 pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
@@ -120,19 +119,31 @@ export default function HomePage() {
           <p className="text-sm text-gray-500 mb-6">
             As seen on Cannabis Culture, Weedmaps, The Weed Blog, and Leafly - Canada's most trusted cannabis review platforms
           </p>
-          <div className="flex justify-center mb-6">
-            <img
-              src="/trust-logos.webp"
-              alt="As seen on platforms like Cannabis Culture, Weedmaps, The Weed Blog, and Leafly"
-              className="h-auto max-h-[120px] object-contain"
-            />
-          </div>
+          <img
+            src="/trust-logos.webp"
+            alt="As seen on platforms like Cannabis Culture, Weedmaps, The Weed Blog, and Leafly"
+            className="h-auto max-h-[120px] object-contain mx-auto mb-6"
+          />
           <div className="max-w-3xl mx-auto">
-            <p className="text-gray-600 text-sm leading-relaxed">
+            <p className="text-gray-600 text-sm leading-relaxed mb-4">
               Since 2019, Godbud.cc has been recognized as one of Canada's premier online cannabis dispensaries. 
               Our commitment to quality, customer service, and competitive pricing has earned us features on leading 
               cannabis platforms and thousands of positive customer reviews. Join the community of satisfied customers 
               who trust us for their cannabis needs across Canada.
+            </p>
+            <p className="text-gray-600 text-sm leading-relaxed mb-4">
+              We understand that choosing the right cannabis products can be overwhelming, which is why our expert team 
+              carefully curates every item in our catalog. From premium BC flowers and artisanal concentrates to precisely 
+              dosed edibles and convenient vape cartridges, we ensure that every product meets our strict quality standards. 
+              Our partnerships with licensed Canadian producers guarantee that you receive authentic, lab-tested cannabis 
+              products that are safe, potent, and consistent.
+            </p>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              Shopping with Godbud.cc means accessing Canada's most comprehensive cannabis selection with the convenience 
+              of online ordering and discreet home delivery. Our knowledgeable customer service team is always available 
+              to help you find the perfect products for your needs, whether you're seeking relaxation, creativity, pain 
+              relief, or simply exploring the world of cannabis. Experience the difference that quality, service, and 
+              expertise make when you choose Canada's trusted online cannabis destination.
             </p>
           </div>
         </div>
