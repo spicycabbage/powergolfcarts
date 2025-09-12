@@ -196,7 +196,6 @@ const generateDynamicContent = (categoryName: string, categorySlug: string) => {
       quality: `All ${name} in our collection are sourced from licensed Canadian producers and undergo rigorous quality testing to ensure safety, potency, and consistency. We carefully curate our selection to offer only the finest cannabis products available.`
     }
   }
-}
 
 export function CategoryInfoSection({ categoryName, categorySlug, productCount }: CategoryInfoSectionProps) {
   // Lazy load this component to improve initial page load
