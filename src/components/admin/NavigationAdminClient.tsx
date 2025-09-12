@@ -894,7 +894,7 @@ export default function NavigationAdminClient({ session }: NavigationAdminClient
                             </button>
                           </div>
                           <div className="space-y-2">
-                            {item.children.map((child, childIndex) => (
+                            {item.children?.map((child, childIndex) => (
                               <div key={childIndex} className="flex items-center space-x-4 pl-6">
                                 <div className="flex-1">
                                   <input
