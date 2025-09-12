@@ -61,6 +61,11 @@ module.exports = (phase) => {
           destination: '/products/:slug',
           permanent: true,
         },
+        {
+          source: '/(.*)//',
+          destination: '/$1/',
+          permanent: true,
+        },
       ]
     },
     async rewrites() {

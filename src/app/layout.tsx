@@ -113,14 +113,19 @@ export default async function RootLayout({
               '@context': 'https://schema.org',
               '@type': 'WebSite',
               '@id': 'https://www.godbud.cc/#website',
-              name: 'Godbud.cc',
+              name: 'Godbud.cc - Buy Weed Online in Canada',
+              alternateName: 'Godbud.cc',
               url: 'https://www.godbud.cc',
+              description: 'Premium cannabis products delivered across Canada',
               publisher: {
                 '@id': 'https://www.godbud.cc/#organization'
               },
               potentialAction: {
                 '@type': 'SearchAction',
-                target: 'https://www.godbud.cc/categories?search={search_term_string}',
+                target: {
+                  '@type': 'EntryPoint',
+                  urlTemplate: 'https://www.godbud.cc/categories?search={search_term_string}'
+                },
                 'query-input': 'required name=search_term_string'
               }
             }
