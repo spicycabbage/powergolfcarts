@@ -159,6 +159,43 @@ export default function HomePage() {
 
       {/* Newsletter Signup */}
       <NewsletterSignup />
+      
+      {/* Visible SEO Content Section */}
+      <section className="bg-gray-50 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Canada's Premier Online Cannabis Dispensary</h2>
+            <div className="grid md:grid-cols-2 gap-8 text-left">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Premium Cannabis Products</h3>
+                <p className="text-gray-700 mb-4">
+                  Our extensive selection includes premium cannabis flowers, precisely dosed edibles, high-potency concentrates, 
+                  convenient vape products, and therapeutic CBD items. Every product is sourced from licensed Canadian producers 
+                  and lab-tested for quality, potency, and safety.
+                </p>
+                <p className="text-gray-700">
+                  From classic strains like OG Kush and Blue Dream to exclusive varieties, our flower selection caters to all 
+                  preferences. Our edibles range from delicious gummies to artisanal chocolates, while our concentrate collection 
+                  features shatter, wax, live resin, and rosin for experienced users.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Trusted Service Since 2019</h3>
+                <p className="text-gray-700 mb-4">
+                  With thousands of satisfied customers across Canada, we've built our reputation on quality products, 
+                  competitive pricing, and exceptional customer service. Our knowledgeable team is always available to 
+                  help you find the perfect cannabis products for your needs.
+                </p>
+                <p className="text-gray-700">
+                  We offer fast, discreet shipping nationwide with secure packaging and reliable delivery. Whether you're 
+                  seeking relaxation, creativity, pain relief, or exploring cannabis for the first time, we provide the 
+                  products and guidance you need for a positive experience.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
       </div>
     )
 }

@@ -197,6 +197,7 @@ export default async function BlogIndex({ searchParams }: { searchParams: Promis
         <div>
           <BlogSidebar activeTag={tag} />
         </div>
+        
       </div>
     </div>
   )

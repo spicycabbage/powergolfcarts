@@ -117,6 +117,7 @@ export default async function CategoriesPage() {
             Browse All Products
           </Link>
         </div>
+        
       </div>
     )
   }
