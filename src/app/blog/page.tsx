@@ -72,62 +72,6 @@ export default async function BlogIndex({ searchParams }: { searchParams: Promis
           <p className="text-gray-600 mt-2">
             {tag ? `Posts about ${tag.toLowerCase()}` : 'Expert insights, tips, and news about cannabis'}
           </p>
-          
-          {/* Dynamic content based on tag */}
-          <div className="mt-6 prose max-w-none text-gray-700">
-            {tag ? (
-              <>
-                <p>
-                  Explore our comprehensive collection of cannabis articles related to <strong>{tagTitle}</strong>. 
-                  At Godbud.cc, we provide in-depth information about cannabis strains, consumption methods, 
-                  effects, and everything you need to know about {tag.toLowerCase()}-related cannabis topics in Canada.
-                </p>
-                <p>
-                  Our expert team regularly publishes detailed articles covering {tag.toLowerCase()} and related cannabis topics, 
-                  including strain genetics, terpene profiles, cannabinoid effects, consumption techniques, dosage guidelines, 
-                  and the latest developments in the Canadian cannabis industry. Whether you're researching {tag.toLowerCase()} 
-                  specifically or exploring related cannabis topics, our blog provides valuable insights to enhance your knowledge.
-                </p>
-                <p>
-                  Browse through our {tag.toLowerCase()}-related articles below to discover detailed information about cannabis 
-                  products, strain reviews, consumption tips, and industry news. Each article about {tag.toLowerCase()} is 
-                  carefully researched and written to provide accurate, helpful information for cannabis enthusiasts across Canada. 
-                  Learn about the specific characteristics, effects, and applications of {tag.toLowerCase()} in the cannabis world.
-                </p>
-                <p>
-                  Understanding {tag.toLowerCase()} is essential for making informed decisions about cannabis products. 
-                  Our articles explore how {tag.toLowerCase()} relates to different cannabis strains, consumption methods, 
-                  and user experiences. From beginner-friendly explanations to advanced topics about {tag.toLowerCase()}, 
-                  we cover all aspects to help you understand this important cannabis topic.
-                </p>
-              </>
-            ) : (
-              <>
-                <p>
-                  Welcome to the Godbud.cc cannabis blog, your trusted source for comprehensive information about 
-                  cannabis products, strains, consumption methods, and industry news in Canada. Our expert team 
-                  provides detailed articles covering everything from beginner guides to advanced cannabis topics.
-                </p>
-                <p>
-                  Discover in-depth strain reviews, learn about different consumption methods, understand terpene 
-                  profiles and cannabinoid effects, and stay updated with the latest developments in the Canadian 
-                  cannabis market. Our blog covers topics including indica vs sativa differences, hybrid strain 
-                  characteristics, edible dosage guidelines, vaporization techniques, and much more.
-                </p>
-                <p>
-                  Whether you're looking for information about specific cannabis strains, want to learn about 
-                  different consumption methods, or need guidance on dosage and effects, our comprehensive blog 
-                  articles provide the knowledge you need to make informed decisions about cannabis products.
-                </p>
-                <p>
-                  Our cannabis blog features expert insights on strain genetics, cultivation techniques, consumption 
-                  safety, legal considerations in Canada, and product reviews. We regularly update our content with 
-                  the latest research, industry trends, and user experiences to ensure you have access to current 
-                  and accurate cannabis information.
-                </p>
-              </>
-            )}
-          </div>
         </div>
       </section>
 
@@ -178,46 +122,64 @@ export default async function BlogIndex({ searchParams }: { searchParams: Promis
           </div>
         )}
 
-        {/* Additional content section for SEO */}
-        <div className="mt-12 bg-white rounded-lg shadow p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            {tag ? `More About ${tagTitle} in Cannabis` : 'Cannabis Education & Resources'}
+        {/* Comprehensive content section for better text-to-HTML ratio */}
+        <div className="mt-12 bg-white rounded-lg shadow p-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            {tag ? `Complete Guide to ${tagTitle} in Cannabis` : 'Complete Cannabis Education Guide'}
           </h2>
-          <div className="prose max-w-none text-gray-700">
+          <div className="prose max-w-none text-gray-700 space-y-4">
             {tag ? (
               <>
                 <p>
-                  When exploring {tag.toLowerCase()} in the context of cannabis, it's important to understand how this topic 
-                  relates to the broader cannabis experience. At Godbud.cc, we believe that comprehensive education about 
-                  {tag.toLowerCase()} helps our customers make better-informed decisions about their cannabis purchases and consumption.
+                  Understanding {tag.toLowerCase()} in cannabis requires comprehensive knowledge of how different strains, consumption methods, and individual factors interact to create unique experiences. At Godbud.cc, we've compiled extensive research and expert insights to help Canadian cannabis consumers make informed decisions about {tag.toLowerCase()}-related products and consumption practices.
                 </p>
                 <p>
-                  The relationship between {tag.toLowerCase()} and cannabis effects, strain characteristics, and consumption methods 
-                  is complex and varies depending on individual factors such as tolerance, body chemistry, and experience level. 
-                  Our detailed articles about {tag.toLowerCase()} explore these nuances to provide you with practical, actionable information.
+                  The science behind {tag.toLowerCase()} and cannabis involves complex interactions between cannabinoids like THC and CBD, terpenes that provide aroma and flavor profiles, and individual factors such as tolerance, body weight, metabolism, and previous cannabis experience. Our detailed articles explore how {tag.toLowerCase()} manifests differently across indica, sativa, and hybrid strains, providing practical guidance for both recreational and medical cannabis users.
                 </p>
                 <p>
-                  Whether you're interested in {tag.toLowerCase()} for recreational or therapeutic purposes, understanding the 
-                  science behind cannabis and how {tag.toLowerCase()} fits into the larger picture is essential. Our expert-written 
-                  content covers everything from basic concepts to advanced topics related to {tag.toLowerCase()} and cannabis.
+                  Cannabis strains associated with {tag.toLowerCase()} often feature specific terpene profiles that contribute to their effects. For example, strains high in limonene may promote uplifting effects, while those rich in myrcene tend to be more relaxing. Understanding these relationships helps consumers select products that align with their desired {tag.toLowerCase()} experience, whether they're seeking daytime functionality or evening relaxation.
+                </p>
+                <p>
+                  Consumption methods significantly impact how {tag.toLowerCase()} effects manifest. Smoking and vaporizing provide rapid onset but shorter duration, making them ideal for immediate {tag.toLowerCase()} needs. Edibles offer longer-lasting effects but require patience due to delayed onset. Tinctures and oils provide middle-ground options with moderate onset times and duration, perfect for consistent {tag.toLowerCase()} maintenance throughout the day.
+                </p>
+                <p>
+                  Dosage considerations for {tag.toLowerCase()}-focused cannabis use vary dramatically between individuals and consumption methods. New users should start with minimal doses (2.5-5mg THC for edibles, single small inhalations for smoking) and gradually increase until desired {tag.toLowerCase()} effects are achieved. Experienced users may require higher doses but should always consider tolerance breaks to maintain effectiveness and reduce potential side effects.
+                </p>
+                <p>
+                  Legal cannabis products in Canada undergo rigorous testing for potency, pesticides, heavy metals, and microbials, ensuring safe consumption for {tag.toLowerCase()} purposes. Licensed producers must provide detailed cannabinoid and terpene profiles, helping consumers make informed choices about products that support their {tag.toLowerCase()} goals while maintaining safety and quality standards.
+                </p>
+                <p>
+                  The Canadian cannabis market offers diverse product categories for {tag.toLowerCase()} applications, including dried flower, pre-rolls, concentrates, edibles, beverages, topicals, and accessories. Each category provides unique advantages: flower offers full-spectrum effects, concentrates provide potent experiences, edibles deliver long-lasting relief, and topicals offer localized benefits without psychoactive effects.
+                </p>
+                <p>
+                  Storage and handling practices significantly impact cannabis quality and {tag.toLowerCase()} effectiveness. Proper storage in cool, dark, dry environments preserves cannabinoid potency and terpene profiles. Glass containers with airtight seals prevent degradation, while avoiding plastic containers prevents static buildup and terpene absorption. Fresh cannabis provides optimal {tag.toLowerCase()} experiences compared to degraded products.
                 </p>
               </>
             ) : (
               <>
                 <p>
-                  Cannabis education is at the heart of what we do at Godbud.cc. Our comprehensive blog covers all aspects of 
-                  cannabis, from strain genetics and terpene profiles to consumption methods and dosage guidelines. We believe 
-                  that informed consumers have better experiences and make safer choices.
+                  Cannabis education encompasses understanding the complex relationships between plant genetics, cannabinoid profiles, terpene compositions, and individual physiological factors that determine user experiences. At Godbud.cc, we provide comprehensive information about cannabis science, consumption methods, strain characteristics, and safety considerations to help Canadian consumers make informed decisions about their cannabis journey.
                 </p>
                 <p>
-                  Our team of cannabis experts regularly researches and writes about the latest developments in cannabis science, 
-                  industry trends, and product innovations. We cover topics ranging from the basics of cannabis biology to 
-                  advanced discussions about cannabinoid interactions and therapeutic applications.
+                  The cannabis plant contains over 100 cannabinoids and 200 terpenes that work together through the entourage effect to create unique therapeutic and recreational experiences. THC (tetrahydrocannabinol) provides psychoactive effects, while CBD (cannabidiol) offers therapeutic benefits without intoxication. Minor cannabinoids like CBG, CBN, and CBC contribute additional effects, creating the complex profiles that distinguish different strains and products.
                 </p>
                 <p>
-                  Explore our extensive library of cannabis articles to deepen your understanding of this fascinating plant. 
-                  Whether you're a newcomer to cannabis or an experienced enthusiast, our blog provides valuable insights to 
-                  enhance your knowledge and improve your cannabis experience.
+                  Indica, sativa, and hybrid classifications provide general guidance about potential effects, but modern cannabis breeding has created diverse strains that don't always conform to traditional categories. Indica strains typically offer relaxing, body-focused effects ideal for evening use, while sativa strains tend to provide energizing, cerebral experiences suitable for daytime activities. Hybrid strains combine characteristics from both categories, offering balanced effects.
+                </p>
+                <p>
+                  Terpenes significantly influence cannabis effects and flavors, with each compound contributing unique characteristics. Myrcene promotes relaxation and sedation, limonene provides mood elevation and stress relief, pinene enhances alertness and memory retention, linalool offers calming and anti-anxiety effects, and caryophyllene provides anti-inflammatory benefits. Understanding terpene profiles helps consumers select strains that match their desired outcomes.
+                </p>
+                <p>
+                  Consumption methods dramatically affect onset time, duration, and intensity of cannabis effects. Inhalation methods (smoking, vaporizing) provide rapid onset within minutes but shorter duration of 1-3 hours. Oral consumption (edibles, beverages) requires 30-120 minutes for onset but provides effects lasting 4-8 hours. Sublingual administration offers middle-ground timing with 15-45 minute onset and 2-4 hour duration.
+                </p>
+                <p>
+                  Dosage guidelines vary significantly based on individual tolerance, body weight, metabolism, and desired effects. New users should follow the "start low, go slow" principle, beginning with 2.5-5mg THC for edibles or single small inhalations for smoking. Experienced users may require higher doses but should consider tolerance breaks to maintain effectiveness and prevent dependence or adverse effects.
+                </p>
+                <p>
+                  Canada's legal cannabis framework ensures product safety through mandatory testing, standardized packaging, and licensed production facilities. All legal cannabis products undergo testing for potency, pesticides, heavy metals, microbials, and residual solvents. Licensed producers must provide accurate labeling with cannabinoid content, allowing consumers to make informed purchasing decisions based on their needs and preferences.
+                </p>
+                <p>
+                  The Canadian cannabis market offers diverse product categories including dried flower, pre-rolls, concentrates (shatter, wax, live resin), edibles (gummies, chocolates, beverages), oils and tinctures, topicals, and accessories. Each category serves different consumer needs: flower provides traditional experiences, concentrates offer potency, edibles deliver convenience, oils enable precise dosing, and topicals provide localized relief without psychoactive effects.
                 </p>
               </>
             )}
