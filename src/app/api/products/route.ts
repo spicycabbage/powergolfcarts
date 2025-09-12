@@ -12,6 +12,7 @@ import {
   parseRequestBody
 } from '@/utils/apiResponse'
 import { isUsingDataApi, findMany as dataFindMany, count as dataCount, insertOne as dataInsertOne, findOne as dataFindOne } from '@/lib/dataApi'
+import { addProductVirtuals } from '@/lib/utils/product'
 
 // GET /api/products - Get all products with filtering and pagination
 export async function GET(request: NextRequest) {
@@ -155,20 +156,8 @@ export async function GET(request: NextRequest) {
       total = cnt
     }
 
-    // Add virtual fields
-    const productsWithVirtuals = products.map(product => ({
-      ...product,
-      discountPercentage: product.originalPrice
-        ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-        : 0,
-      stockStatus: !product.inventory.trackInventory
-        ? 'in_stock'
-        : product.inventory.quantity === 0
-        ? 'out_of_stock'
-        : product.inventory.quantity <= product.inventory.lowStockThreshold
-        ? 'low_stock'
-        : 'in_stock'
-    }))
+    // Add virtual fields using utility functions
+    const productsWithVirtuals = products.map(addProductVirtuals)
 
     return createSuccessResponse(productsWithVirtuals, undefined, {
       page,

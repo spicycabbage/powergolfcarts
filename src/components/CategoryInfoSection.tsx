@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 
 interface CategoryInfoSectionProps {
   categoryName: string
@@ -103,6 +103,11 @@ export function CategoryInfoSection({ categoryName, categorySlug, productCount }
     const timer = setTimeout(() => setIsVisible(true), 1000) // Delay 1 second
     return () => clearTimeout(timer)
   }, [])
+  
+  // Memoize content generation to avoid recalculation
+  const content = useMemo(() => {
+    return categoryContent[categorySlug.toLowerCase()] || generateDynamicContent(categoryName, categorySlug)
+  }, [categoryName, categorySlug])
   
   if (!isVisible) {
     return <div className="mt-16 h-96" /> // Placeholder to maintain layout
@@ -210,7 +215,6 @@ export function CategoryInfoSection({ categoryName, categorySlug, productCount }
     }
   }
   
-  const content = categoryContent[categorySlug.toLowerCase()] || generateDynamicContent(categoryName, categorySlug)
 
   return (
     <div className="mt-16 bg-gray-50 rounded-lg p-8">

@@ -54,26 +54,51 @@ export default function AdminInventoryPage() {
 
   useEffect(() => {
     let mounted = true
+    const controller = new AbortController()
+    
     ;(async () => {
       try {
-        const fields = [
-          '_id','name','price','originalPrice','images','inventory','isFeatured','createdAt','category','categories','variants','isActive'
-        ].join(',')
-        const url = `/api/products?page=${page}&limit=${limit}&sortBy=${sortBy}&sortOrder=${sortOrder}${selectedCategory ? `&category=${encodeURIComponent(selectedCategory)}` : ''}${debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : ''}&fields=${encodeURIComponent(fields)}&populate=false${showHidden ? '&includeInactive=true' : ''}`
-        const res = await fetch(url, { cache: 'no-store' })
-        if (!res.ok) return
-        const json = await res.json().catch(() => ({} as any))
-        if (mounted) {
-          setRecentProducts(Array.isArray(json?.data) ? json.data : [])
-          const pag = json?.pagination || {}
+        const fields = '_id,name,price,originalPrice,images,inventory,isFeatured,createdAt,category,categories,variants,isActive'
+        const params = new URLSearchParams({
+          page: page.toString(),
+          limit: limit.toString(),
+          sortBy,
+          sortOrder,
+          fields,
+          populate: 'false'
+        })
+        
+        if (selectedCategory) params.append('category', selectedCategory)
+        if (debouncedSearch) params.append('search', debouncedSearch)
+        if (showHidden) params.append('includeInactive', 'true')
+        
+        const res = await fetch(`/api/products?${params}`, { 
+          cache: 'no-store',
+          signal: controller.signal
+        })
+        
+        if (!res.ok || !mounted) return
+        
+        const json = await res.json()
+        if (mounted && json.success) {
+          setRecentProducts(json.data || [])
+          const pag = json.pagination || {}
           setTotalPages(pag.totalPages || 1)
           setTotal(pag.total || 0)
+        }
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          console.error('Failed to fetch products:', error)
         }
       } finally {
         if (mounted) setLoadingProducts(false)
       }
     })()
-    return () => { mounted = false }
+    
+    return () => { 
+      mounted = false
+      controller.abort()
+    }
   }, [page, limit, sortBy, sortOrder, selectedCategory, debouncedSearch, showHidden])
 
   useEffect(() => {
