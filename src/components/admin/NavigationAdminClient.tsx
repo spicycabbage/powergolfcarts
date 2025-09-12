@@ -305,18 +305,19 @@ export default function NavigationAdminClient({ session }: NavigationAdminClient
     setConfig({ ...config, primaryNav: [] })
   }
 
-  const replacePrimaryNavWithCategories = async () => {
+  const addCategoriestoNavigation = async () => {
     if (!config) return
-    if (!confirm('Replace primary navigation with top-level categories (and their children)?')) return
+    
+    // Give user options
+    const action = confirm('Choose action:\n\nOK = Add categories to existing navigation\nCancel = Replace all navigation with categories')
+    
     try {
       const res = await fetch('/api/categories?active=true&limit=1000', { cache: 'no-store' })
       if (!res.ok) throw new Error('Failed to fetch categories')
       const json = await res.json()
       const categories: any[] = Array.isArray(json.data) ? json.data : []
 
-      // Fetch full tree for top-level categories
-      // For now, categories API returns flat; we'll build top-level by missing parent
-      // Admin GET uses populated parent; here we only have lean
+      // Build category navigation items
       const topLevel = categories.filter((c: any) => !c.parent)
       const byParent: Record<string, any[]> = {}
       for (const c of categories) {
@@ -326,7 +327,7 @@ export default function NavigationAdminClient({ session }: NavigationAdminClient
         byParent[p].push(c)
       }
 
-      const newPrimary = topLevel.map((cat: any) => ({
+      const categoryNavItems = topLevel.map((cat: any) => ({
         name: cat.name,
         href: `/categories/${cat.slug}`,
         isActive: true,
@@ -337,10 +338,76 @@ export default function NavigationAdminClient({ session }: NavigationAdminClient
         }))
       }))
 
-      setConfig({ ...config, primaryNav: newPrimary })
+      if (action) {
+        // Add to existing navigation
+        setConfig({ ...config, primaryNav: [...config.primaryNav, ...categoryNavItems] })
+        alert(`Added ${categoryNavItems.length} categories to navigation`)
+      } else {
+        // Replace all navigation
+        setConfig({ ...config, primaryNav: categoryNavItems })
+        alert(`Replaced navigation with ${categoryNavItems.length} categories`)
+      }
     } catch (e) {
       alert('Failed to build navigation from categories')
     }
+  }
+
+  const addPrimaryNavItem = () => {
+    if (!config) return
+    setConfig({
+      ...config,
+      primaryNav: [
+        ...config.primaryNav,
+        { name: 'New Category', href: '/categories/new-category', isActive: true }
+      ]
+    })
+  }
+
+  const addSubcategoryToItem = (parentIndex: number) => {
+    if (!config) return
+    const newPrimaryNav = [...config.primaryNav]
+    const parentItem = newPrimaryNav[parentIndex]
+    
+    // Initialize children array if it doesn't exist
+    if (!parentItem.children) {
+      parentItem.children = []
+    }
+    
+    // Add new subcategory
+    parentItem.children.push({
+      name: 'New Subcategory',
+      href: '/categories/parent/new-subcategory',
+      isActive: true
+    })
+    
+    setConfig({ ...config, primaryNav: newPrimaryNav })
+  }
+
+  const removeSubcategoryFromItem = (parentIndex: number, childIndex: number) => {
+    if (!config) return
+    const newPrimaryNav = [...config.primaryNav]
+    const parentItem = newPrimaryNav[parentIndex]
+    
+    if (parentItem.children) {
+      parentItem.children = parentItem.children.filter((_, i) => i !== childIndex)
+    }
+    
+    setConfig({ ...config, primaryNav: newPrimaryNav })
+  }
+
+  const updateSubcategory = (parentIndex: number, childIndex: number, field: keyof NavigationItem, value: any) => {
+    if (!config) return
+    const newPrimaryNav = [...config.primaryNav]
+    const parentItem = newPrimaryNav[parentIndex]
+    
+    if (parentItem.children && parentItem.children[childIndex]) {
+      parentItem.children[childIndex] = { 
+        ...parentItem.children[childIndex], 
+        [field]: value 
+      }
+    }
+    
+    setConfig({ ...config, primaryNav: newPrimaryNav })
   }
 
   const addSecondaryNavItem = () => {
@@ -694,10 +761,18 @@ export default function NavigationAdminClient({ session }: NavigationAdminClient
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={replacePrimaryNavWithCategories}
+                  onClick={addPrimaryNavItem}
+                  className="flex items-center px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Item
+                </button>
+                <button
+                  type="button"
+                  onClick={addCategoriestoNavigation}
                   className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
-                  Replace with Categories
+                  Add Categories
                 </button>
                 <button
                   type="button"
@@ -742,6 +817,15 @@ export default function NavigationAdminClient({ session }: NavigationAdminClient
                     <div className="flex items-center">
                       <button
                         type="button"
+                        onClick={() => addSubcategoryToItem(index)}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                        aria-label="Add subcategory"
+                        title="Add Subcategory"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => movePrimaryNavItem(index, -1)}
                         className="p-2 text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-lg"
                         aria-label="Move up"
@@ -775,30 +859,40 @@ export default function NavigationAdminClient({ session }: NavigationAdminClient
                   </div>
 
                   {/* Below-row expand toggle and Subcategories */}
-                  {item.children && item.children.length > 0 && (
-                    <div className="border-t border-gray-100 bg-gray-50">
-                      <div className="px-4 py-2">
-                        <button
-                          type="button"
-                          onClick={() => toggleExpanded(index)}
-                          className="inline-flex items-center text-sm text-gray-700 hover:text-gray-900"
-                          aria-label={expandedItems.has(index) ? 'Collapse subcategories' : 'Expand subcategories'}
-                          aria-expanded={expandedItems.has(index)}
-                        >
-                          {expandedItems.has(index) ? (
-                            <>
-                              <ChevronDown className="w-4 h-4 mr-2" /> Hide subcategories
-                            </>
-                          ) : (
-                            <>
-                              <ChevronRight className="w-4 h-4 mr-2" /> Show subcategories
-                            </>
-                          )}
-                        </button>
-                      </div>
+                  <div className="border-t border-gray-100 bg-gray-50">
+                    <div className="px-4 py-2">
+                      <button
+                        type="button"
+                        onClick={() => toggleExpanded(index)}
+                        className="inline-flex items-center text-sm text-gray-700 hover:text-gray-900"
+                        aria-label={expandedItems.has(index) ? 'Collapse subcategories' : 'Expand subcategories'}
+                        aria-expanded={expandedItems.has(index)}
+                      >
+                        {expandedItems.has(index) ? (
+                          <>
+                            <ChevronDown className="w-4 h-4 mr-2" /> Hide subcategories
+                          </>
+                        ) : (
+                          <>
+                            <ChevronRight className="w-4 h-4 mr-2" /> 
+                            {item.children && item.children.length > 0 ? 'Show subcategories' : 'Add subcategories'}
+                          </>
+                        )}
+                      </button>
+                    </div>
                       {expandedItems.has(index) && (
                         <div className="border-t border-gray-200 bg-gray-50 p-4">
-                          <h4 className="text-sm font-medium text-gray-700 mb-3">Subcategories</h4>
+                          <div className="flex items-center justify-between mb-3">
+                            <h4 className="text-sm font-medium text-gray-700">Subcategories</h4>
+                            <button
+                              type="button"
+                              onClick={() => addSubcategoryToItem(index)}
+                              className="flex items-center px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
+                            >
+                              <Plus className="w-3 h-3 mr-1" />
+                              Add Subcategory
+                            </button>
+                          </div>
                           <div className="space-y-2">
                             {item.children.map((child, childIndex) => (
                               <div key={childIndex} className="flex items-center space-x-4 pl-6">
@@ -806,18 +900,18 @@ export default function NavigationAdminClient({ session }: NavigationAdminClient
                                   <input
                                     type="text"
                                     value={child.name}
+                                    onChange={(e) => updateSubcategory(index, childIndex, 'name', e.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
                                     placeholder="Subcategory name"
-                                    readOnly
                                   />
                                 </div>
                                 <div className="flex-1">
                                   <input
                                     type="text"
                                     value={child.href}
+                                    onChange={(e) => updateSubcategory(index, childIndex, 'href', e.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
                                     placeholder="Link URL"
-                                    readOnly
                                   />
                                 </div>
                                 <div className="flex items-center">
@@ -854,18 +948,27 @@ export default function NavigationAdminClient({ session }: NavigationAdminClient
                                     <ArrowDown className="w-4 h-4" />
                                   </button>
                                 </div>
-                                <span className={`px-2 py-1 text-xs rounded-full ${
-                                  child.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                                }`}>
-                                  {child.isActive ? 'Active' : 'Inactive'}
-                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => updateSubcategory(index, childIndex, 'isActive', !child.isActive)}
+                                  className={`p-1 rounded ${child.isActive ? 'text-green-600' : 'text-gray-400'}`}
+                                >
+                                  {child.isActive ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => removeSubcategoryFromItem(index, childIndex)}
+                                  className="p-1 text-red-600 hover:bg-red-50 rounded"
+                                  aria-label="Remove subcategory"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
                               </div>
                             ))}
                           </div>
                         </div>
                       )}
-                    </div>
-                  )}
+                  </div>
                 </div>
               ))}
             </div>

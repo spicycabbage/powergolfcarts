@@ -79,9 +79,9 @@ export default function AdminDashboard() {
     {
       title: 'User Management',
       icon: Users,
-      href: '#',
+      href: '/admin/users',
       color: 'bg-red-500',
-      disabled: true
+      disabled: false
     },
     {
       title: 'Shipping',

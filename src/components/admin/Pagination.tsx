@@ -126,7 +126,7 @@ export default function Pagination({ page, totalPages, total, limit = 20, onChan
       <select 
         value={limit}
         onChange={(e) => onLimitChange?.(parseInt(e.target.value))}
-        className="px-1 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+        className="px-3 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 min-w-[60px]"
       >
         <option value={10}>10</option>
         <option value={20}>20</option>
