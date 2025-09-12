@@ -40,10 +40,14 @@ export default function AdminDashboard() {
 
   if (status === 'loading' || isChecking) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading admin panel...</p>
+          <div className="relative">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 mx-auto"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-600 mx-auto absolute top-0 left-1/2 transform -translate-x-1/2"></div>
+          </div>
+          <p className="mt-6 text-lg font-medium text-gray-700">Loading admin panel...</p>
+          <p className="mt-2 text-sm text-gray-500">Preparing your dashboard</p>
         </div>
       </div>
     )
@@ -142,39 +146,47 @@ export default function AdminDashboard() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <Settings className="w-6 h-6 text-primary-600 mr-3" />
-              <h1 className="text-xl font-semibold text-gray-900">Admin Dashboard</h1>
+              <div className="bg-white/20 p-2 rounded-lg mr-3">
+                <Settings className="w-6 h-6 text-white" />
+              </div>
+              <h1 className="text-xl font-semibold text-white">Admin Dashboard</h1>
             </div>
-            <div className="text-sm text-gray-600">
-              Welcome, {session?.user?.name || 'Admin'}
+            <div className="bg-white/10 px-4 py-2 rounded-full">
+              <span className="text-sm text-white">
+                Welcome, <span className="font-medium">{session?.user?.name || 'Admin'}</span>
+              </span>
             </div>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Admin Tools</h2>
-          <p className="text-gray-600">Manage your ecommerce store settings and content</p>
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-3">Admin Tools</h2>
+          <p className="text-lg text-gray-600">Manage your ecommerce store with powerful tools</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {adminTools.map((tool) => {
             const Icon = tool.icon
             if (tool.disabled) {
               return (
                 <div
                   key={tool.title}
-                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 opacity-50 cursor-not-allowed text-center"
+                  className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 opacity-50 cursor-not-allowed text-center"
                   aria-disabled
                 >
-                  <span className="text-base font-semibold text-gray-700">{tool.title}</span>
+                  <div className="bg-gray-100 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <Icon className="w-6 h-6 text-gray-400" />
+                  </div>
+                  <span className="text-sm font-semibold text-gray-400">{tool.title}</span>
+                  <p className="text-xs text-gray-300 mt-1">Coming Soon</p>
                 </div>
               )
             }
@@ -183,9 +195,17 @@ export default function AdminDashboard() {
                 key={tool.title}
                 href={tool.href}
                 prefetch
-                className="block bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all hover:border-primary-300 hover:bg-gray-50 text-center"
+                className="group block bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-transparent hover:-translate-y-1 text-center"
               >
-                <span className="text-base font-semibold text-gray-900" style={{ pointerEvents: 'none' }}>{tool.title}</span>
+                <div className={`${tool.color} w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-200`}>
+                  <Icon className="w-6 h-6 text-white" />
+                </div>
+                <span className="text-sm font-semibold text-gray-900 group-hover:text-gray-700" style={{ pointerEvents: 'none' }}>
+                  {tool.title}
+                </span>
+                <div className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <span className="text-xs text-gray-500">Click to manage →</span>
+                </div>
               </Link>
             )
           })}
