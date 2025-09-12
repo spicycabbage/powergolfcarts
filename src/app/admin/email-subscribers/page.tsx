@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Mail, Users, TrendingUp, Search, Filter, Download, Plus, Edit, Trash2 } from 'lucide-react'
+import BackToAdmin from '@/components/admin/BackToAdmin'
 
 interface EmailSubscriber {
   _id: string
@@ -132,11 +133,18 @@ export default function EmailSubscribersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <h1 className="text-xl font-semibold text-gray-900">Email Subscribers</h1>
+          <BackToAdmin label="Back to Admin" href="/admin" />
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto p-6">
+        {/* Description */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Email Subscribers</h1>
           <p className="text-gray-600">Manage your email marketing list and send campaigns</p>
         </div>
 
