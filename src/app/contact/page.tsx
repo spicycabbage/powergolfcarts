@@ -43,11 +43,11 @@ export default async function ContactPage() {
       return (
         <div className="min-h-screen bg-gray-50">
           <section className="bg-white border-b">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
               <h1 className="text-3xl font-bold text-gray-900">{page.title}</h1>
             </div>
           </section>
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
             <div className="bg-white rounded-lg shadow-sm p-8">
               <div className="prose max-w-none text-gray-800 mb-8" dangerouslySetInnerHTML={{ __html: page.content || '' }} />
               <ContactForm />
@@ -61,11 +61,11 @@ export default async function ContactPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <section className="bg-white border-b">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <h1 className="text-3xl font-bold text-gray-900">Contact</h1>
         </div>
       </section>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-white rounded-lg shadow-sm m-4">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-3 bg-white rounded-lg shadow-sm m-4">
           <div className="prose max-w-none text-gray-800 mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Get in Touch with Godbud.cc</h2>
             

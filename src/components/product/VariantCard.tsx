@@ -127,7 +127,7 @@ export default function VariantCard({ product, priority = false }: { product: Ca
 
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 group product-card clickable">
-      <Link href={`/products/${product.slug}`} className="block relative h-48 sm:h-56 overflow-hidden cursor-pointer">
+      <Link href={`/products/${product.slug}`} className="block relative aspect-square overflow-hidden cursor-pointer">
             <OptimizedImage
               src={imageSrc}
               alt={product.name}

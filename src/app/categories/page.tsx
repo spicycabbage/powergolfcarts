@@ -39,14 +39,14 @@ export default async function CategoriesPage() {
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
         <section className="bg-white border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
             <h1 className="text-3xl font-bold text-gray-900">Categories</h1>
-            <p className="mt-2 text-gray-600">Browse our product categories and find exactly what you need.</p>
+            <p className="mt-0.5 text-gray-600">Browse our product categories and find exactly what you need.</p>
           </div>
         </section>
 
         {/* Categories Grid */}
-        <section className="py-8">
+        <section className="py-4">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {categories.length === 0 ? (
               <div className="text-center py-12">
