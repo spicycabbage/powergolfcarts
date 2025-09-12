@@ -108,19 +108,109 @@ export function CategoryInfoSection({ categoryName, categorySlug, productCount }
     return <div className="mt-16 h-96" /> // Placeholder to maintain layout
   }
   
-  const content = categoryContent[categorySlug.toLowerCase()] || {
-    title: `${categoryName} - Premium Cannabis Products`,
-    description: `Browse our selection of high-quality ${categoryName.toLowerCase()} from trusted Canadian suppliers. Each product is carefully selected for quality, potency, and value, ensuring you receive only the best cannabis products available in Canada.`,
-    benefits: [
-      'High-quality Canadian products',
-      'Lab-tested for safety and potency',
-      'Competitive pricing',
-      'Fast, discreet shipping',
-      'Excellent customer service'
-    ],
-    usage: 'Please consume responsibly and in accordance with local laws. Start with small amounts to gauge effects and store products safely away from children and pets.',
-    quality: 'All our products are sourced from licensed Canadian producers and undergo rigorous quality testing to ensure safety, potency, and consistency.'
+  // Enhanced content generation for sub-categories
+  const generateDynamicContent = (categoryName: string, categorySlug: string) => {
+    const slug = categorySlug.toLowerCase()
+    const name = categoryName.toLowerCase()
+    
+    // Check for specific sub-category patterns
+    if (slug.includes('indica')) {
+      return {
+        title: `${categoryName} - Premium Indica Cannabis Strains`,
+        description: `Discover our exceptional collection of ${name} indica strains, known for their relaxing, body-focused effects. These indica-dominant varieties are perfect for evening use, stress relief, and promoting restful sleep. Our ${name} selection features potent, high-quality strains that deliver the classic indica experience of deep relaxation and physical comfort.`,
+        benefits: [
+          'Relaxing, body-focused effects',
+          'Perfect for evening and nighttime use',
+          'May help with sleep and stress relief',
+          'High-quality indica genetics',
+          'Lab-tested for potency and purity'
+        ],
+        usage: `${categoryName} indica strains are best consumed in the evening due to their sedating effects. Start with small amounts to gauge tolerance, especially with high-THC varieties. These strains are ideal for relaxation, pain relief, and promoting sleep.`,
+        quality: `Our ${name} indica collection features premium strains from licensed Canadian growers, each carefully selected for their authentic indica characteristics, potency, and therapeutic potential.`
+      }
+    }
+    
+    if (slug.includes('sativa')) {
+      return {
+        title: `${categoryName} - Energizing Sativa Cannabis Strains`,
+        description: `Explore our vibrant collection of ${name} sativa strains, celebrated for their uplifting, cerebral effects and energizing properties. These sativa-dominant varieties are perfect for daytime use, creative activities, and social situations. Our ${name} selection offers premium strains that deliver the classic sativa experience of mental clarity and euphoric energy.`,
+        benefits: [
+          'Uplifting, cerebral effects',
+          'Perfect for daytime and social use',
+          'May enhance creativity and focus',
+          'Energizing and mood-lifting',
+          'Premium sativa genetics'
+        ],
+        usage: `${categoryName} sativa strains are ideal for daytime consumption due to their energizing effects. Start with moderate doses to enjoy the uplifting benefits without overwhelming stimulation. Great for creative projects, social activities, and active pursuits.`,
+        quality: `Our ${name} sativa collection features exceptional strains from trusted Canadian producers, selected for their authentic sativa characteristics, potency, and ability to deliver energizing, uplifting effects.`
+      }
+    }
+    
+    if (slug.includes('hybrid')) {
+      return {
+        title: `${categoryName} - Balanced Hybrid Cannabis Strains`,
+        description: `Experience the best of both worlds with our ${name} hybrid collection, featuring strains that combine indica and sativa characteristics for balanced, versatile effects. These carefully bred hybrids offer the perfect middle ground, providing both mental stimulation and physical relaxation. Our ${name} selection includes both indica-dominant and sativa-dominant hybrids to suit any preference.`,
+        benefits: [
+          'Balanced indica and sativa effects',
+          'Versatile for any time of day',
+          'Combines mental and physical benefits',
+          'Wide variety of effect profiles',
+          'Premium hybrid genetics'
+        ],
+        usage: `${categoryName} hybrid strains offer flexibility in consumption timing and effects. Start with small amounts to understand the specific balance of each strain. Effects can range from energizing to relaxing depending on the hybrid's dominant characteristics.`,
+        quality: `Our ${name} hybrid collection features expertly bred strains from licensed Canadian producers, each selected for their unique balance of effects, potency, and consistent quality.`
+      }
+    }
+    
+    if (slug.includes('gummies') || slug.includes('gummy')) {
+      return {
+        title: `${categoryName} - Delicious Cannabis Gummies`,
+        description: `Enjoy our premium selection of ${name}, offering a tasty and convenient way to consume cannabis. These precisely dosed gummies provide consistent effects with delicious flavors, making them perfect for both beginners and experienced users. Our ${name} collection features various potencies and flavor profiles to suit every preference.`,
+        benefits: [
+          'Precise, consistent dosing',
+          'Delicious flavors and textures',
+          'Discreet and portable',
+          'Long-lasting effects (4-8 hours)',
+          'No smoking or vaporizing required'
+        ],
+        usage: `Start with one ${name.slice(0, -1)} (typically 2.5-10mg THC) and wait at least 2 hours before consuming more. Effects can take 30 minutes to 2 hours to onset and typically last 4-8 hours. Store in a cool, dry place away from children.`,
+        quality: `Our ${name} are made by licensed Canadian producers using high-quality ingredients and precise extraction methods. Each batch is lab-tested for accurate dosing and contaminant-free formulation.`
+      }
+    }
+    
+    if (slug.includes('chocolate')) {
+      return {
+        title: `${categoryName} - Premium Cannabis Chocolates`,
+        description: `Indulge in our luxurious ${name} collection, combining the rich taste of premium chocolate with precisely dosed cannabis. These artisanal treats offer a sophisticated way to consume cannabis, with smooth, long-lasting effects. Our ${name} selection features various cocoa percentages and potencies for the perfect cannabis chocolate experience.`,
+        benefits: [
+          'Premium chocolate quality',
+          'Precise cannabis dosing',
+          'Luxurious taste experience',
+          'Long-lasting effects',
+          'Elegant, discreet consumption'
+        ],
+        usage: `Consume ${name} slowly, starting with small pieces to gauge effects. Allow 1-2 hours for full onset. Store in a cool, dry place to maintain chocolate quality and potency. Keep away from heat and direct sunlight.`,
+        quality: `Our ${name} are crafted by expert chocolatiers and licensed cannabis producers, using premium cocoa and high-quality cannabis extracts. Each product is tested for potency and purity.`
+      }
+    }
+    
+    // Default dynamic content for any other sub-category
+    return {
+      title: `${categoryName} - Premium Cannabis Products in Canada`,
+      description: `Discover our exceptional ${name} collection, featuring high-quality cannabis products carefully selected for their potency, purity, and value. Our ${name} selection represents the finest offerings from trusted Canadian producers, ensuring you receive premium cannabis products that meet the highest standards of quality and consistency.`,
+      benefits: [
+        `Premium quality ${name}`,
+        'Lab-tested for safety and potency',
+        'Sourced from licensed Canadian producers',
+        'Competitive pricing and value',
+        'Fast, discreet shipping across Canada'
+      ],
+      usage: `Our ${name} are designed for responsible adult consumption. Start with recommended doses and consume in accordance with local laws. Store products safely away from children and pets in a cool, dry place.`,
+      quality: `All ${name} in our collection are sourced from licensed Canadian producers and undergo rigorous quality testing to ensure safety, potency, and consistency. We carefully curate our selection to offer only the finest cannabis products available.`
+    }
   }
+  
+  const content = categoryContent[categorySlug.toLowerCase()] || generateDynamicContent(categoryName, categorySlug)
 
   return (
     <div className="mt-16 bg-gray-50 rounded-lg p-8">
