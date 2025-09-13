@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import BackToAdmin from '@/components/admin/BackToAdmin'
+import { BackButton } from '@/components/admin/BackButton'
 
 export default function PaymentOptionsAdminPage() {
   const [loading, setLoading] = useState(true)
@@ -54,7 +54,7 @@ export default function PaymentOptionsAdminPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Payment Options</h1>
-          <BackToAdmin label="Back to Admin" href="/admin" />
+          <BackButton />
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-6">

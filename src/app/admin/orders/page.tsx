@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { formatDateMMMDDYYYY } from '@/utils/dates'
-import BackToAdmin from '@/components/admin/BackToAdmin'
+import { BackButton } from '@/components/admin/BackButton'
 import Pagination from '@/components/admin/Pagination'
 
 export default function AdminOrdersList() {
@@ -57,7 +57,7 @@ export default function AdminOrdersList() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
-          <BackToAdmin label="Back to Admin" href="/admin" />
+          <BackButton />
         </div>
 
         <div className="mb-4 flex items-center justify-between">

@@ -15,7 +15,7 @@ import {
   FolderOpen
 } from 'lucide-react'
 import SeoFields from '@/components/seo/SeoFields'
-import BackToAdmin from '@/components/admin/BackToAdmin'
+import { BackButton } from '@/components/admin/BackButton'
 import Button from '@/components/ui/Button'
 
 interface Category {
@@ -401,7 +401,7 @@ export default function CategoriesAdmin() {
               <h1 className="text-xl font-semibold text-gray-900">Category Management</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <BackToAdmin label="Back to Admin" href="/admin" />
+              <BackButton />
             </div>
           </div>
         </div>

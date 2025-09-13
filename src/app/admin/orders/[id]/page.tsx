@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'next/navigation'
 import toast from 'react-hot-toast'
-import BackToAdmin from '@/components/admin/BackToAdmin'
+import { BackButton } from '@/components/admin/BackButton'
 import { formatDateMMMDDYYYY } from '@/utils/dates'
 
 export default function AdminOrderDetail() {
@@ -79,7 +79,7 @@ export default function AdminOrderDetail() {
                 <h1 className="text-xl font-semibold text-gray-900">Order {order?.invoiceNumber ?? (order?.orderNumber || id)}</h1>
                 <span className={`px-2 py-1 rounded text-xs font-medium ${statusBadge}`}>{String(order?.status || '').toUpperCase()}</span>
               </div>
-              <BackToAdmin label="Back to Orders" href="/admin/orders" />
+              <BackButton />
             </div>
             <div className="flex items-center gap-3 text-sm text-gray-600">
               <span className="font-medium text-gray-800">{order?.user?.email || '-'}</span>

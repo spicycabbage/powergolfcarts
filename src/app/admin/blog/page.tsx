@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import BackToAdmin from '@/components/admin/BackToAdmin'
+import { BackButton } from '@/components/admin/BackButton'
 import Pagination from '@/components/admin/Pagination'
 
 export default function AdminBlogList() {
@@ -71,7 +71,7 @@ export default function AdminBlogList() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <h1 className="text-xl font-semibold text-gray-900">Blog Posts</h1>
           <div className="flex items-center space-x-3">
-            <BackToAdmin label="Back to Admin" href="/admin" />
+            <BackButton />
             <Link href="/admin/blog/new" className="px-3 py-1 bg-primary-600 text-white rounded-lg">New Post</Link>
           </div>
         </div>
