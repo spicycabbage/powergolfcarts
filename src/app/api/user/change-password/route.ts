@@ -83,7 +83,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Hash the new password
-    const hashedPassword = await bcrypt.hash(newPassword, 12)
+    const hashedPassword = await bcrypt.hash(newPassword, 8)
 
     // Update password
     user.password = hashedPassword
