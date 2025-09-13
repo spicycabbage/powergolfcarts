@@ -121,17 +121,17 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">Shopping Cart</h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-sm">
               {/* Cart Status Header */}
-              <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+              <div className="px-4 sm:px-6 py-4 bg-gray-50 border-b border-gray-200">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-medium text-gray-900">
+                  <h3 className="text-base sm:text-lg font-medium text-gray-900">
                     Cart Items ({cart.items.length})
                   </h3>
                   <button
@@ -150,8 +150,100 @@ export default function CartPage() {
 
                 const variantKey = (item as any)?.variant?._id || (item as any)?.variant?.value || 'default'
                 return (
-                  <div key={`${item.product._id}-${variantKey}`} className={`p-6 ${index !== cart.items.length - 1 ? 'border-b border-gray-200' : ''}`}>
-                    <div className="flex items-center space-x-4">
+                  <div key={`${item.product._id}-${variantKey}`} className={`p-3 sm:p-6 ${index !== cart.items.length - 1 ? 'border-b border-gray-200' : ''}`}>
+                    {/* Mobile Layout */}
+                    <div className="block sm:hidden">
+                      <div className="flex space-x-3">
+                        {/* Left: Small Product Image */}
+                        <div className="flex-shrink-0 w-[50px] h-[50px]">
+                          <Link href={`/products/${item.product.slug}`} className="block w-full h-full">
+                            <Image
+                              src={imageSrc}
+                              alt={item.product.name}
+                              width={50}
+                              height={50}
+                              className="rounded object-cover w-full h-full"
+                            />
+                          </Link>
+                        </div>
+
+                        {/* Right: Product Name and Variant */}
+                        <div className="flex-1 min-w-0">
+                          <Link href={`/products/${item.product.slug}`} className="block">
+                            <h3 className="text-sm font-medium text-gray-900 hover:text-primary-600 transition-colors line-clamp-2">
+                              {item.product.name}
+                            </h3>
+                          </Link>
+                          {item.variant && (
+                            <p className="text-xs text-gray-600 mt-1">
+                              {item.variant.name}: {item.variant.value}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Bottom Row: Price, Quantity, Total */}
+                      <div className="flex items-center justify-between mt-3">
+                        {/* Per Unit Price */}
+                        <div className="text-sm font-semibold text-gray-900">
+                          ${item.product.price.toFixed(2)}
+                        </div>
+
+                        {/* Quantity Controls */}
+                        <div className="flex items-center border border-gray-300 rounded">
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              handleQuantityChange(item.product._id, item.quantity - 1, item.variant)
+                            }}
+                            disabled={item.quantity <= 1 || isUpdating === item.product._id}
+                            className="p-1 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                            type="button"
+                          >
+                            <Minus className="w-3 h-3 pointer-events-none" />
+                          </button>
+                          <span className="px-2 py-1 text-gray-900 font-medium min-w-[1.5rem] text-center text-xs">
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              handleQuantityChange(item.product._id, item.quantity + 1, item.variant)
+                            }}
+                            disabled={isUpdating === item.product._id}
+                            className="p-1 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                            type="button"
+                          >
+                            <Plus className="w-3 h-3 pointer-events-none" />
+                          </button>
+                        </div>
+
+                        {/* Total Price */}
+                        <div className="text-sm font-semibold text-gray-900">
+                          ${(item.product.price * item.quantity).toFixed(2)}
+                        </div>
+
+                        {/* Remove Button */}
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            handleRemoveItem(item.product._id, item.variant)
+                          }}
+                          disabled={isUpdating === item.product._id}
+                          className="p-1 text-red-600 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          type="button"
+                          title="Remove item"
+                        >
+                          <Trash2 className="w-3 h-3 pointer-events-none" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Desktop Layout */}
+                    <div className="hidden sm:flex items-center space-x-4">
                       {/* Product Image */}
                       <div className="flex-shrink-0 w-[100px] h-[100px]">
                         <Link href={`/products/${item.product.slug}`} className="block w-full h-full">
@@ -260,8 +352,8 @@ export default function CartPage() {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-sm p-6 sticky top-8">
-              <h3 className="text-lg font-medium text-gray-900 mb-6">Order Summary</h3>
+            <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 sticky top-8">
+              <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-4 sm:mb-6">Order Summary</h3>
 
               <div className="space-y-4">
                 <div className="flex justify-between text-sm">
@@ -277,23 +369,20 @@ export default function CartPage() {
                   ) : (
                     <div className="space-y-2">
                       {shippingOptions.map((opt) => (
-                        <label key={opt.key} className="flex items-center w-full cursor-pointer">
-                          <span className="flex items-center">
+                        <label key={opt.key} className="flex items-center justify-between w-full cursor-pointer">
+                          <div className="flex items-center min-w-0 flex-1">
                             <input
                               type="radio"
                               name="shippingMethod"
-                              className="mr-2"
+                              className="mr-2 flex-shrink-0"
                               checked={selectedShippingKey === opt.key}
                               onChange={() => setSelectedShippingKey(opt.key)}
                             />
-                            <span className="text-sm text-gray-800">{opt.label}</span>
-                            {selectedShippingKey !== opt.key && (
-                              <span className="ml-2 text-sm text-gray-500">{opt.price === 0 ? 'Free' : `$${opt.price.toFixed(2)}`}</span>
-                            )}
+                            <span className="text-sm text-gray-800 truncate">{opt.label}</span>
+                          </div>
+                          <span className="ml-2 text-sm text-gray-900 flex-shrink-0">
+                            {opt.price === 0 ? 'Free' : `$${opt.price.toFixed(2)}`}
                           </span>
-                          {selectedShippingKey === opt.key && (
-                            <span className="ml-auto text-sm text-gray-900">{opt.price === 0 ? 'Free' : `$${opt.price.toFixed(2)}`}</span>
-                          )}
                         </label>
                       ))}
                     </div>
