@@ -33,6 +33,13 @@ export interface IOrder {
   subtotal: number
   tax: number
   shipping: number
+  coupon?: {
+    code: string
+    name: string
+    type: 'percentage' | 'fixed'
+    value: number
+    discount: number
+  }
   total: number
   status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded' | 'completed'
   paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded'
@@ -115,6 +122,14 @@ const PaymentMethodSchema = new Schema<IPaymentMethod>({
   }
 })
 
+const CouponSchema = new Schema({
+  code: { type: String, required: true },
+  name: { type: String, required: true },
+  type: { type: String, enum: ['percentage', 'fixed'], required: true },
+  value: { type: Number, required: true },
+  discount: { type: Number, required: true, min: 0 }
+}, { _id: false })
+
 const AddressSchema = new Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
@@ -153,6 +168,7 @@ const OrderSchema = new Schema<IOrder>({
     default: 0,
     min: [0, 'Shipping cannot be negative']
   },
+  coupon: CouponSchema,
   total: {
     type: Number,
     required: true,

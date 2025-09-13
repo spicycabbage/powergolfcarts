@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Trash2, Eye, EyeOff, Search, Filter } from 'lucide-react'
-import BackToAdmin from '@/components/admin/BackToAdmin'
+import { BackButton } from '@/components/admin/BackButton'
 import Pagination from '@/components/admin/Pagination'
 
 interface UserData {
@@ -203,7 +203,7 @@ export default function UserManagementPage() {
               <Eye className="w-6 h-6 text-primary-600 mr-3" />
               <h1 className="text-xl font-semibold text-gray-900">User Management</h1>
             </div>
-            <BackToAdmin label="Back to Admin" href="/admin" />
+            <BackButton />
           </div>
         </div>
       </div>

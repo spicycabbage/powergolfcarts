@@ -10,7 +10,9 @@ import {
   Users,
   Package,
   Mail,
-  Link2
+  Link2,
+  Percent,
+  Star
 } from 'lucide-react'
 import Link from 'next/link'
  
@@ -56,12 +58,6 @@ export default function AdminDashboard() {
 
   const adminTools = [
     {
-      title: 'Navigation Management',
-      icon: Settings,
-      href: '/admin/navigation',
-      color: 'bg-blue-500'
-    },
-    {
       title: 'Category Management',
       icon: Folder,
       href: '/admin/categories',
@@ -79,6 +75,20 @@ export default function AdminDashboard() {
       icon: BarChart3,
       href: '/admin/analytics',
       color: 'bg-orange-500',
+      disabled: false
+    },
+    {
+      title: 'Coupons',
+      icon: Percent,
+      href: '/admin/coupons',
+      color: 'bg-green-600',
+      disabled: false
+    },
+    {
+      title: 'Loyalty Points',
+      icon: Star,
+      href: '/admin/loyalty',
+      color: 'bg-yellow-500',
       disabled: false
     },
     {

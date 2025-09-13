@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { BackButton } from '@/components/admin/BackButton'
 import { BarChart3, TrendingUp, DollarSign, ShoppingCart, Calendar, Filter } from 'lucide-react'
-import BackToAdmin from '@/components/admin/BackToAdmin'
 
 interface SalesData {
   period: string
@@ -200,7 +200,7 @@ export default function AnalyticsPage() {
               <BarChart3 className="w-6 h-6 text-primary-600 mr-3" />
               <h1 className="text-xl font-semibold text-gray-900">Sales Analytics</h1>
             </div>
-            <BackToAdmin label="Back to Admin" href="/admin" />
+            <BackButton />
           </div>
         </div>
       </div>
