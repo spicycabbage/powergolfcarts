@@ -204,6 +204,7 @@ export default function CartPage() {
                             disabled={item.quantity <= 1 || isUpdating === item.product._id}
                             className="p-1 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
                             type="button"
+                            aria-label={`Decrease quantity of ${item.product.name}`}
                           >
                             <Minus className="w-3 h-3 pointer-events-none" />
                           </button>
@@ -219,6 +220,7 @@ export default function CartPage() {
                             disabled={isUpdating === item.product._id}
                             className="p-1 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
                             type="button"
+                            aria-label={`Increase quantity of ${item.product.name}`}
                           >
                             <Plus className="w-3 h-3 pointer-events-none" />
                           </button>
@@ -239,7 +241,7 @@ export default function CartPage() {
                           disabled={isUpdating === item.product._id}
                           className="p-1 text-red-600 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
                           type="button"
-                          title="Remove item"
+                          aria-label={`Remove ${item.product.name} from cart`}
                         >
                           <Trash2 className="w-3 h-3 pointer-events-none" />
                         </button>
@@ -303,6 +305,7 @@ export default function CartPage() {
                                 disabled={item.quantity <= 1 || isUpdating === item.product._id}
                                 className="p-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
                                 type="button"
+                                aria-label={`Decrease quantity of ${item.product.name}`}
                               >
                                 <Minus className="w-4 h-4 pointer-events-none" />
                               </button>
@@ -318,6 +321,7 @@ export default function CartPage() {
                                 disabled={isUpdating === item.product._id}
                                 className="p-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
                                 type="button"
+                                aria-label={`Increase quantity of ${item.product.name}`}
                               >
                                 <Plus className="w-4 h-4 pointer-events-none" />
                               </button>
@@ -333,7 +337,7 @@ export default function CartPage() {
                               disabled={isUpdating === item.product._id}
                               className="p-2 text-red-600 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
                               type="button"
-                              title="Remove item"
+                              aria-label={`Remove ${item.product.name} from cart`}
                             >
                               <Trash2 className="w-5 h-5 pointer-events-none" />
                             </button>

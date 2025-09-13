@@ -174,19 +174,28 @@ export function SimpleHeader() {
             </button>
 
             {/* Cart */}
-            <Link href="/cart" className="relative p-2 text-gray-600 hover:text-primary-600">
+            <Link 
+              href="/cart" 
+              className="relative p-2 text-gray-600 hover:text-primary-600"
+              aria-label={`Shopping cart with ${cartItemCount} items`}
+            >
               <ShoppingCart size={20} />
               {cartItemCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {cartItemCount}
                 </span>
               )}
+              <span className="sr-only">
+                {cartItemCount === 0 ? 'Shopping cart is empty' : `${cartItemCount} items in cart`}
+              </span>
             </Link>
 
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="md:hidden p-2 text-gray-600 hover:text-primary-600"
+              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isMenuOpen}
             >
               {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
