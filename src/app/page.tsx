@@ -46,7 +46,7 @@ export default function HomePage() {
             '@id': 'https://www.godbud.cc/#productcategories',
             name: 'Cannabis Product Categories',
             description: 'Browse our selection of premium cannabis products',
-            numberOfItems: 6,
+            numberOfItems: 5,
             itemListElement: [
               {
                 '@type': 'ListItem',
@@ -69,20 +69,14 @@ export default function HomePage() {
               {
                 '@type': 'ListItem',
                 position: 4,
-                name: 'Vapes',
-                url: 'https://www.godbud.cc/categories/vapes'
+                name: 'Hash',
+                url: 'https://www.godbud.cc/categories/hash'
               },
               {
                 '@type': 'ListItem',
                 position: 5,
-                name: 'Pre-Rolls',
-                url: 'https://www.godbud.cc/categories/pre-rolls'
-              },
-              {
-                '@type': 'ListItem',
-                position: 6,
-                name: 'Accessories',
-                url: 'https://www.godbud.cc/categories/accessories'
+                name: 'CBD',
+                url: 'https://www.godbud.cc/categories/cbd'
               }
             ]
           }
