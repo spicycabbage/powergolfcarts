@@ -211,23 +211,16 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Bottom Footer */}
       <div className="border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm">
-              © {currentYear} Godbud.cc. All rights reserved.
-            </p>
-            <div className="flex items-center space-x-6 mt-4 md:mt-0">
-              <div className="flex items-center">
-                <img 
-                  src="/trust-badges.webp" 
-                  alt="Accepted payment methods: Norton Secured, SSL Certificate, PayPal, Credit Cards, Bitcoin"
-                  className="h-8 w-auto"
-                />
-              </div>
-            </div>
-          </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-gray-400 text-sm">
+            © {currentYear} Godbud.cc. All rights reserved.
+          </p>
+          <img 
+            src="/trust-badges.webp" 
+            alt="Accepted payment methods: Norton Secured, SSL Certificate, PayPal, Credit Cards, Bitcoin"
+            className="h-8 w-auto mt-4 md:mt-0"
+          />
         </div>
       </div>
     </footer>

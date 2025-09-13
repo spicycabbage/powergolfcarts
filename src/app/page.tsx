@@ -158,7 +158,6 @@ export default function HomePage() {
       {/* Newsletter Signup */}
       <NewsletterSignup />
       
-      {/* Visible SEO Content Section */}
       <section className="bg-gray-50 py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Canada's Premier Online Cannabis Dispensary</h2>

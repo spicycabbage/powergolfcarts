@@ -1,6 +1,4 @@
-'use client'
-
-import { useState, useEffect, useMemo } from 'react'
+// Server-side component for better SEO
 
 interface CategoryInfoSectionProps {
   categoryName: string
@@ -198,25 +196,11 @@ const generateDynamicContent = (categoryName: string, categorySlug: string) => {
   }
 
 export function CategoryInfoSection({ categoryName, categorySlug, productCount }: CategoryInfoSectionProps) {
-  // Lazy load this component to improve initial page load
-  const [isVisible, setIsVisible] = useState(false)
-  
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 1000) // Delay 1 second
-    return () => clearTimeout(timer)
-  }, [])
-  
-  // Memoize content generation to avoid recalculation
-  const content = useMemo(() => {
-    return categoryContent[categorySlug.toLowerCase()] || generateDynamicContent(categoryName, categorySlug)
-  }, [categoryName, categorySlug])
-  
-  if (!isVisible) {
-    return <div className="mt-16 h-96" /> // Placeholder to maintain layout
-  }
+  // Server-side content generation for better SEO
+  const content = categoryContent[categorySlug.toLowerCase()] || generateDynamicContent(categoryName, categorySlug)
 
   return (
-    <div className="mt-16 bg-gray-50 rounded-lg p-8">
+    <section className="mt-16 bg-gray-50 rounded-lg p-8">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">{content.title}</h2>
         
@@ -248,15 +232,13 @@ export function CategoryInfoSection({ categoryName, categorySlug, productCount }
           </div>
           
           {productCount > 0 && (
-            <div className="mt-6 text-center">
-              <p className="text-gray-600">
-                Currently featuring <strong>{productCount}</strong> premium {categoryName.toLowerCase()} products. 
-                All items are in stock and ready for fast shipping across Canada.
-              </p>
-            </div>
+            <p className="mt-6 text-center text-gray-600">
+              Currently featuring <strong>{productCount}</strong> premium {categoryName.toLowerCase()} products. 
+              All items are in stock and ready for fast shipping across Canada.
+            </p>
           )}
         </div>
       </div>
-    </div>
+    </section>
   )
 }

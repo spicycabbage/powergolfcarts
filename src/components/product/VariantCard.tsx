@@ -126,8 +126,8 @@ export default function VariantCard({ product, priority = false }: { product: Ca
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 group product-card clickable">
-      <Link href={`/products/${product.slug}`} className="block relative aspect-square overflow-hidden cursor-pointer">
+    <div className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 group">
+      <Link href={`/products/${product.slug}`} className="block relative aspect-square overflow-hidden">
             <OptimizedImage
               src={imageSrc}
               alt={product.name}
@@ -138,7 +138,6 @@ export default function VariantCard({ product, priority = false }: { product: Ca
               priority={priority}
             />
             
-            {/* Product Badges */}
             {product.badges?.topLeft && (
               <ProductBadge 
                 text={product.badges.topLeft.text} 
@@ -168,15 +167,14 @@ export default function VariantCard({ product, priority = false }: { product: Ca
               />
             )}
       </Link>
-      <div className="p-4 text-center">
-        <Link href={`/products/${product.slug}`} className="cursor-pointer">
-          <h3 className="font-medium text-gray-900 mb-1 line-clamp-2 group-hover:text-primary-600 transition-colors">
+      <div className="p-4">
+        <Link href={`/products/${product.slug}`}>
+          <h3 className="font-medium text-gray-900 mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors text-center">
             {product.name}
           </h3>
         </Link>
 
-        {/* Product Rating */}
-        <div className="mb-2 flex justify-center">
+        <div className="mb-3 flex justify-center">
           <ProductRating 
             averageRating={product.averageRating || 0}
             reviewCount={product.reviewCount || 0}
@@ -185,8 +183,8 @@ export default function VariantCard({ product, priority = false }: { product: Ca
         </div>
 
         {Array.isArray(product.variants) && product.variants.length > 0 ? (
-          <div className="mb-3">
-            <div className="text-xs text-gray-700 mb-1">Select Option</div>
+          <div className="mb-3 text-center">
+            <p className="text-xs text-gray-700 mb-2">Select Option</p>
             <div className="grid grid-cols-2 gap-2">
               {product.variants.map((v, idx) => {
                 const isSelected = String(selectedVariantId) === String((v as any)._id)
@@ -203,31 +201,28 @@ export default function VariantCard({ product, priority = false }: { product: Ca
                     type="button"
                     onClick={() => setSelectedVariantId(String(v._id || String(idx)))}
                     disabled={disabled}
-                    className={`text-xs rounded-lg border px-2 py-2 text-left transition-colors ${isSelected ? 'border-primary-600 bg-primary-50 text-primary-700' : 'border-gray-300 hover:border-gray-400'} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`text-xs rounded-lg border px-2 py-2 transition-colors ${isSelected ? 'border-primary-600 bg-primary-50 text-primary-700' : 'border-gray-300 hover:border-gray-400'} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <div className="flex items-center justify-between">
                       <span className="truncate">{label}</span>
                       <span className="font-medium">{Number.isFinite(priceNum) ? `$${priceNum.toFixed(2)}` : '—'}</span>
                     </div>
-                    {disabled && <div className="text-[10px] text-red-600 mt-1">Out of stock</div>}
+                    {disabled && <span className="text-[10px] text-red-600">Out of stock</span>}
                   </button>
                 )
               })}
             </div>
           </div>
         ) : (
-          // Show main product price when no variants
-          <div className="mb-3">
-            <div className="flex items-center space-x-2">
-              <span className="text-lg font-bold text-gray-900">
-                ${Number(product.price || 0).toFixed(2)}
+          <div className="mb-3 text-center">
+            <span className="text-lg font-bold text-gray-900">
+              ${Number(product.price || 0).toFixed(2)}
+            </span>
+            {product.originalPrice && product.originalPrice > (product.price || 0) && (
+              <span className="text-sm text-gray-500 line-through ml-2">
+                ${Number(product.originalPrice).toFixed(2)}
               </span>
-              {product.originalPrice && product.originalPrice > (product.price || 0) && (
-                <span className="text-sm text-gray-500 line-through">
-                  ${Number(product.originalPrice).toFixed(2)}
-                </span>
-              )}
-            </div>
+            )}
           </div>
         )}
 

@@ -12,10 +12,10 @@ export const metadata: Metadata = {
 export default function ProductsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+      <div className="bg-white border-b border-gray-200 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <h1 className="text-3xl font-bold text-gray-900">All Products</h1>
         <p className="text-gray-700 mt-0.5">Discover our complete product catalog</p>
-      </header>
+      </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <ProductList />

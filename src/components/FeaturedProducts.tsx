@@ -29,25 +29,23 @@ export function FeaturedProducts() {
 
   if (loading) {
     return (
-      <div className="py-12 text-center">
+      <section className="py-12 text-center">
         <LoadingSpinner />
-      </div>
+      </section>
     )
   }
 
   if (products.length === 0) {
-    return null // Don't render the section if there are no featured products
+    return null
   }
 
   return (
     <section className="bg-gray-50 py-8 sm:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold text-gray-900">Featured Products</h2>
-          <p className="mt-4 text-lg text-gray-600">
-            Handpicked selections you're sure to love.
-          </p>
-        </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Products</h2>
+        <p className="text-lg text-gray-600 mb-10">
+          Handpicked selections you're sure to love.
+        </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {products.map((product) => (
             <VariantCard key={product._id} product={product} />

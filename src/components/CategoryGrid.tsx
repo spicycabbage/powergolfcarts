@@ -99,10 +99,9 @@ export function CategoryGrid() {
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     quality={85}
                   />
-                  <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-200"></div>
                 </div>
 
-                <div className="p-4 text-center">
+                <div className="p-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
                     {category.name}
                   </h3>
@@ -111,32 +110,24 @@ export function CategoryGrid() {
                       {category.description}
                     </p>
                   )}
-                  <div className="mt-4">
-                    <span className="inline-block bg-primary-600 text-white py-2 px-4 rounded-lg font-medium group-hover:bg-primary-700 transition-colors">
-                      Shop Now →
-                    </span>
-                  </div>
+                  <span className="inline-block bg-primary-600 text-white py-2 px-4 rounded-lg font-medium group-hover:bg-primary-700 transition-colors mt-2">
+                    Shop Now →
+                  </span>
                 </div>
               </Link>
             ))}
           </div>
           
-          {/* Show message if no categories */}
           {categories.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500">No categories available. Add categories in the admin panel to display them here.</p>
-            </div>
+            <p className="text-gray-500 py-12">No categories available. Add categories in the admin panel to display them here.</p>
           )}
 
-        {/* Browse All Categories */}
-        <div className="text-center mt-12">
-          <Link
-            href="/categories"
-            className="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            View All Categories
-          </Link>
-        </div>
+        <Link
+          href="/categories"
+          className="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors mt-12"
+        >
+          View All Categories
+        </Link>
       </div>
     </section>
   )

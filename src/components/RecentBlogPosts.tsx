@@ -49,31 +49,29 @@ export function RecentBlogPosts() {
   }
 
   return (
-    <div className="bg-white py-8 sm:py-12">
+    <section className="bg-white py-8 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-3xl font-bold text-gray-900">From the Blog</h2>
-        <p className="mt-4 text-lg text-gray-600 mb-10">
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">From the Blog</h2>
+        <p className="text-lg text-gray-600 mb-10">
           Check out our latest articles, guides, and news.
         </p>
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (
             <Link key={post._id} href={`/blog/${post.slug}`} className="group block">
-              <div className="overflow-hidden rounded-lg">
-                <OptimizedImage
-                  src={post.coverImage || '/placeholder-image.jpg'}
-                  alt={post.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                  width={400}
-                  height={225}
-                />
-              </div>
+              <OptimizedImage
+                src={post.coverImage || '/placeholder-image.jpg'}
+                alt={post.title}
+                className="w-full h-48 object-cover rounded-lg group-hover:scale-105 transition-transform duration-200"
+                width={400}
+                height={225}
+              />
               <h3 className="mt-5 text-lg font-medium text-gray-900 group-hover:text-primary-600">{post.title}</h3>
               <p className="mt-2 text-base text-gray-600 line-clamp-3">{post.excerpt}</p>
-              <p className="mt-4 text-sm font-semibold text-primary-600 group-hover:underline">Read more →</p>
+              <span className="mt-4 text-sm font-semibold text-primary-600 group-hover:underline">Read more →</span>
             </Link>
           ))}
         </div>
       </div>
-    </div>
+    </section>
   )
 }

@@ -25,21 +25,18 @@ const features = [
 
 export function WhyChooseUs() {
   return (
-    <div className="bg-gray-900 py-8 sm:py-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-2xl font-bold text-white text-center mb-8">Why Choose Godbud.cc</h2>
+    <section className="bg-gray-900 py-8 sm:py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {features.map((feature) => (
-            <div key={feature.name} className="text-center text-white">
-              <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary-500 text-white mx-auto mb-4">
-                <feature.icon className="h-8 w-8" aria-hidden="true" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3">{feature.name}</h3>
-              <p className="text-gray-300 leading-relaxed text-sm">{feature.description}</p>
+            <div key={feature.name} className="text-white">
+              <feature.icon className="h-12 w-12 mx-auto mb-4 text-primary-400" aria-hidden="true" />
+              <h2 className="text-lg font-bold mb-2">{feature.name}</h2>
+              <p className="text-gray-300 text-sm leading-relaxed">{feature.description}</p>
             </div>
           ))}
         </div>
       </div>
-    </div>
+    </section>
   )
 }

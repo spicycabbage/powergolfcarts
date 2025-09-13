@@ -122,7 +122,6 @@ export default async function BlogIndex({ searchParams }: { searchParams: Promis
           </div>
         )}
 
-        {/* Comprehensive content section for better text-to-HTML ratio */}
         <div className="mt-12 bg-white rounded-lg shadow p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
             {tag ? `Complete Guide to ${tagTitle} in Cannabis` : 'Complete Cannabis Education Guide'}

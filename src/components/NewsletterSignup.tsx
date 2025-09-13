@@ -60,12 +60,8 @@ export function NewsletterSignup() {
     <section className="py-16 bg-primary-600">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="bg-white rounded-2xl p-8 lg:p-12 shadow-xl">
-          {/* Icon */}
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-6">
-            <Mail className="w-8 h-8 text-primary-600" />
-          </div>
+          <Mail className="w-16 h-16 text-primary-600 mx-auto mb-6" />
 
-          {/* Content */}
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Stay in the Loop
           </h2>

@@ -3,18 +3,16 @@ import Link from 'next/link'
 export function Introduction() {
   return (
     <section className="bg-white py-8 sm:py-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Canada's Trusted Mail Order Marijuana Dispensary
-          </h2>
-          <p className="text-gray-600 leading-relaxed mb-6">
-            Godbud.cc's mission is to provide Canadians with a safe, reliable, and secure platform to buy weed online at affordable prices. Working directly with a strong network of cannabis suppliers, we ensure that any product you order — from our wide selection of flowers to our marijuana edibles, concentrates, vapes, and CBD products — is of top quality.
-          </p>
-          <p className="text-gray-600 leading-relaxed mb-8">
-            We pride ourselves on building long-lasting relationships with our customers. If you're looking for a trusted online dispensary to purchase high-quality cannabis, look no further and join our community today.
-          </p>
-        </div>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          Canada's Trusted Mail Order Marijuana Dispensary
+        </h2>
+        <p className="text-gray-600 leading-relaxed mb-6">
+          Godbud.cc's mission is to provide Canadians with a safe, reliable, and secure platform to buy weed online at affordable prices. Working directly with a strong network of cannabis suppliers, we ensure that any product you order — from our wide selection of flowers to our marijuana edibles, concentrates, vapes, and CBD products — is of top quality.
+        </p>
+        <p className="text-gray-600 leading-relaxed mb-8">
+          We pride ourselves on building long-lasting relationships with our customers. If you're looking for a trusted online dispensary to purchase high-quality cannabis, look no further and join our community today.
+        </p>
 
         {/* Additional Content Sections */}
         <div className="grid md:grid-cols-2 gap-8 text-left">
@@ -39,9 +37,9 @@ export function Introduction() {
           </div>
         </div>
 
-        <div className="mt-8 p-6 bg-gray-50 rounded-lg">
-          <h3 className="text-xl font-semibold text-gray-900 mb-3 text-center">Why Choose Mail Order Marijuana?</h3>
-          <p className="text-gray-600 leading-relaxed text-center">
+        <div className="mt-8 p-6 bg-gray-50 rounded-lg text-center">
+          <h3 className="text-xl font-semibold text-gray-900 mb-3">Why Choose Mail Order Marijuana?</h3>
+          <p className="text-gray-600 leading-relaxed">
             Mail order marijuana offers unparalleled convenience, privacy, and selection compared to traditional dispensaries. Shop from the comfort of your home, access detailed product information and reviews, enjoy competitive pricing, and receive your cannabis products directly at your door. Our online platform is available 24/7, allowing you to browse and order whenever it's convenient for you.
           </p>
         </div>
