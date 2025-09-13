@@ -1,13 +1,19 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 
 export function BackButton() {
   const router = useRouter()
+  const pathname = usePathname()
 
   const handleBack = () => {
-    router.back()
+    // If we're in an admin page, go back to admin dashboard
+    if (pathname.startsWith('/admin/')) {
+      router.push('/admin')
+    } else {
+      router.back()
+    }
   }
 
   return (
