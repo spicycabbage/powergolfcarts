@@ -2,8 +2,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { ShoppingBag } from 'lucide-react'
 import BreadcrumbsJsonLd from '@/components/seo/BreadcrumbsJsonLd'
-import VariantCard from '@/components/product/VariantCard'
-import { serializeProductForClient } from '@/lib/serializers'
+import { LazyProductGrid } from '@/components/LazyProductGrid'
 import { getSiteConfig } from '@/lib/config'
 import { notFound } from 'next/navigation'
 import { connectToDatabase } from '@/lib/mongodb'
@@ -148,20 +147,16 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
               <SortSelect value={sortParam} />
             </div>
             <span className="text-sm text-gray-600">
-              Showing {products.length} product{products.length !== 1 ? 's' : ''}
+              {products.length} product{products.length !== 1 ? 's' : ''} total
             </span>
           </div>
 
           {products.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-8">
-              {products.map((product, index) => (
-                <VariantCard 
-                  key={String(product._id)} 
-                  product={serializeProductForClient(product) as any}
-                  priority={index < 4}
-                />
-              ))}
-            </div>
+            <LazyProductGrid 
+              products={products}
+              initialCount={8}
+              loadIncrement={8}
+            />
           ) : (
             <div className="text-center py-12">
               <div className="text-gray-400 mb-4">
