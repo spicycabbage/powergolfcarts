@@ -16,7 +16,19 @@ export function SimpleHeader() {
   const { user, logout } = useAuth()
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 100)
+    let lastScrollY = window.scrollY
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      // Add hysteresis to prevent flickering
+      if (currentScrollY > lastScrollY) {
+        // Scrolling down
+        if (currentScrollY > 120) setIsScrolled(true)
+      } else {
+        // Scrolling up
+        if (currentScrollY < 80) setIsScrolled(false)
+      }
+      lastScrollY = currentScrollY
+    }
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
@@ -24,14 +36,14 @@ export function SimpleHeader() {
   const cartItemCount = cart.items.reduce((total, item) => total + item.quantity, 0)
 
   return (
-    <header className={`bg-white sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'shadow-lg' : 'shadow-sm border-b border-gray-200'}`}>
+    <header className={`bg-black sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'shadow-lg' : 'shadow-sm'}`}>
       {/* Announcement Bar */}
       <div className={`bg-primary-600 text-white text-center text-sm transition-all duration-300 ${isScrolled ? 'h-0 overflow-hidden' : 'py-2'}`}>
         <p>Free shipping for orders over $175</p>
       </div>
       
       {/* Secondary Navigation */}
-      <div className={`bg-gray-50 border-b text-sm transition-all duration-300 ${isScrolled ? 'h-0 overflow-hidden' : 'py-2'}`}>
+      <div className={`bg-gray-50 border-b border-gray-200 text-sm transition-all duration-300 ${isScrolled ? 'h-0 overflow-hidden' : 'py-2'}`}>
         <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
           <nav className="hidden md:flex space-x-6">
             <Link href="/about" className="text-gray-700 hover:text-primary-600">About Us</Link>
@@ -57,7 +69,7 @@ export function SimpleHeader() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="text-2xl font-bold text-primary-600">
+          <Link href="/" className="text-2xl font-bold text-yellow-500">
             Godbud.cc
           </Link>
 
@@ -71,7 +83,7 @@ export function SimpleHeader() {
             >
               <Link
                 href="/categories/flowers"
-                className="text-gray-700 hover:text-primary-600 transition-colors font-medium flex items-center"
+                className="text-white hover:text-primary-600 transition-colors font-medium flex items-center"
               >
                 Flowers
                 <ChevronDown 
@@ -103,7 +115,7 @@ export function SimpleHeader() {
             >
               <Link
                 href="/categories/concentrates"
-                className="text-gray-700 hover:text-primary-600 transition-colors font-medium flex items-center"
+                className="text-white hover:text-primary-600 transition-colors font-medium flex items-center"
               >
                 Concentrates
                 <ChevronDown 
@@ -134,7 +146,7 @@ export function SimpleHeader() {
             >
               <Link
                 href="/categories/edibles"
-                className="text-gray-700 hover:text-primary-600 transition-colors font-medium flex items-center"
+                className="text-white hover:text-primary-600 transition-colors font-medium flex items-center"
               >
                 Edibles
                 <ChevronDown 
@@ -156,10 +168,10 @@ export function SimpleHeader() {
             </div>
 
             {/* Hash - No Dropdown */}
-            <Link href="/categories/hash" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">Hash</Link>
+            <Link href="/categories/hash" className="text-white hover:text-primary-600 transition-colors font-medium">Hash</Link>
 
             {/* CBD - No Dropdown */}
-            <Link href="/categories/cbd" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">CBD</Link>
+            <Link href="/categories/cbd" className="text-white hover:text-primary-600 transition-colors font-medium">CBD</Link>
           </nav>
 
           {/* Right Side */}
@@ -167,7 +179,7 @@ export function SimpleHeader() {
             {/* Search */}
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="p-2 text-gray-600 hover:text-primary-600"
+              className="p-2 text-white hover:text-primary-600"
               aria-label="Search"
             >
               <Search size={20} />
@@ -176,7 +188,7 @@ export function SimpleHeader() {
             {/* Cart */}
             <Link 
               href="/cart" 
-              className="relative p-2 text-gray-600 hover:text-primary-600"
+              className="relative p-2 text-white hover:text-primary-600"
               aria-label={`Shopping cart with ${cartItemCount} items`}
             >
               <ShoppingCart size={20} />
@@ -193,7 +205,7 @@ export function SimpleHeader() {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 text-gray-600 hover:text-primary-600"
+              className="md:hidden p-2 text-white hover:text-primary-600"
               aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={isMenuOpen}
             >
@@ -205,51 +217,51 @@ export function SimpleHeader() {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200">
+        <div className="md:hidden bg-black border-t border-gray-700">
           <div className="px-4 py-4 space-y-4">
             {/* Flowers */}
             <div>
-              <Link href="/categories/flowers" className="block text-gray-700 hover:text-primary-600 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Flowers</Link>
+              <Link href="/categories/flowers" className="block text-white hover:text-primary-600 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Flowers</Link>
               <div className="ml-4 space-y-1">
-                <Link href="/categories/indica" className="block text-sm text-gray-600 hover:text-primary-600" onClick={() => setIsMenuOpen(false)}>Indica</Link>
-                <Link href="/categories/sativa" className="block text-sm text-gray-600 hover:text-primary-600" onClick={() => setIsMenuOpen(false)}>Sativa</Link>
-                <Link href="/categories/hybrid" className="block text-sm text-gray-600 hover:text-primary-600" onClick={() => setIsMenuOpen(false)}>Hybrid</Link>
-                <Link href="/categories/aaa" className="block text-sm text-gray-600 hover:text-primary-600" onClick={() => setIsMenuOpen(false)}>AAA</Link>
+                <Link href="/categories/indica" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Indica</Link>
+                <Link href="/categories/sativa" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Sativa</Link>
+                <Link href="/categories/hybrid" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Hybrid</Link>
+                <Link href="/categories/aaa" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>AAA</Link>
               </div>
             </div>
 
             {/* Concentrates */}
             <div>
-              <Link href="/categories/concentrates" className="block text-gray-700 hover:text-primary-600 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Concentrates</Link>
+              <Link href="/categories/concentrates" className="block text-white hover:text-primary-600 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Concentrates</Link>
               <div className="ml-4 space-y-1">
-                <Link href="/categories/shatter" className="block text-sm text-gray-600 hover:text-primary-600" onClick={() => setIsMenuOpen(false)}>Shatter</Link>
-                <Link href="/categories/wax" className="block text-sm text-gray-600 hover:text-primary-600" onClick={() => setIsMenuOpen(false)}>Wax</Link>
-                <Link href="/categories/live-resin" className="block text-sm text-gray-600 hover:text-primary-600" onClick={() => setIsMenuOpen(false)}>Live Resin</Link>
+                <Link href="/categories/shatter" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Shatter</Link>
+                <Link href="/categories/wax" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Wax</Link>
+                <Link href="/categories/live-resin" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Live Resin</Link>
               </div>
             </div>
 
             {/* Edibles */}
             <div>
-              <Link href="/categories/edibles" className="block text-gray-700 hover:text-primary-600 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Edibles</Link>
+              <Link href="/categories/edibles" className="block text-white hover:text-primary-600 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Edibles</Link>
               <div className="ml-4 space-y-1">
-                <Link href="/categories/gummies" className="block text-sm text-gray-600 hover:text-primary-600" onClick={() => setIsMenuOpen(false)}>Gummies</Link>
+                <Link href="/categories/gummies" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Gummies</Link>
               </div>
             </div>
 
             {/* Hash & CBD */}
-            <Link href="/categories/hash" className="block text-gray-700 hover:text-primary-600 font-medium" onClick={() => setIsMenuOpen(false)}>Hash</Link>
-            <Link href="/categories/cbd" className="block text-gray-700 hover:text-primary-600 font-medium" onClick={() => setIsMenuOpen(false)}>CBD</Link>
+            <Link href="/categories/hash" className="block text-white hover:text-primary-600 font-medium" onClick={() => setIsMenuOpen(false)}>Hash</Link>
+            <Link href="/categories/cbd" className="block text-white hover:text-primary-600 font-medium" onClick={() => setIsMenuOpen(false)}>CBD</Link>
             
-            <div className="border-t border-gray-200 pt-4">
+            <div className="border-t border-gray-700 pt-4">
               {user ? (
                 <>
-                  <Link href="/account" className="block text-gray-700 hover:text-primary-600 mb-2" onClick={() => setIsMenuOpen(false)}>My Account</Link>
-                  <button onClick={() => { logout(); setIsMenuOpen(false); }} className="block text-gray-700 hover:text-primary-600">Logout</button>
+                  <Link href="/account" className="block text-white hover:text-primary-600 mb-2" onClick={() => setIsMenuOpen(false)}>My Account</Link>
+                  <button onClick={() => { logout(); setIsMenuOpen(false); }} className="block text-white hover:text-primary-600">Logout</button>
                 </>
               ) : (
                 <>
-                  <Link href="/auth/login" className="block text-gray-700 hover:text-primary-600 mb-2" onClick={() => setIsMenuOpen(false)}>Sign In</Link>
-                  <Link href="/auth/register" className="block text-primary-600 hover:text-primary-700 font-medium" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
+                  <Link href="/auth/login" className="block text-white hover:text-primary-600 mb-2" onClick={() => setIsMenuOpen(false)}>Sign In</Link>
+                  <Link href="/auth/register" className="block text-white hover:text-primary-600 font-medium" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
                 </>
               )}
             </div>

@@ -93,7 +93,7 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
   }
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40" itemScope itemType="https://schema.org/WebSite">
+    <header className="bg-black shadow-sm border-b border-gray-800 sticky top-0 z-40" itemScope itemType="https://schema.org/WebSite">
       {/* Secondary Navigation */}
       <div className="bg-gray-50 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -171,7 +171,7 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
             {logo.useImage && logo.image ? (
               <img src={logo.image} alt={logo.text || 'Logo'} className="h-8 max-w-48 object-contain" />
             ) : (
-              <div className="text-2xl font-bold text-primary-600">{logo.text || 'E-Commerce'}</div>
+              <div className="text-2xl font-bold text-white">{logo.text || 'E-Commerce'}</div>
             )}
           </Link>
 
@@ -188,7 +188,7 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
                 >
                   <Link
                     href={link.href}
-                    className="text-gray-700 hover:text-primary-600 transition-colors font-medium flex items-center"
+                    className="text-white hover:text-gray-300 transition-colors font-medium flex items-center"
                   >
                     {link.name}
                     {Array.isArray((link as any).children) && (link as any).children.length > 0 && (
@@ -227,7 +227,7 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
             <div className="relative">
               <button
                 onClick={handleSearchToggle}
-                className="p-2 text-gray-600 hover:text-primary-600 transition-colors"
+                className="p-2 text-white hover:text-gray-300 transition-colors"
                 aria-label="Search"
               >
                 <Search size={20} />
@@ -238,7 +238,7 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
             {/* Cart */}
             <Link
               href="/cart"
-              className="relative p-2 text-gray-600 hover:text-primary-600 transition-colors"
+              className="relative p-2 text-white hover:text-gray-300 transition-colors"
               aria-label={`Shopping cart with ${cartItemCount} items`}
             >
               <ShoppingCart size={20} />
@@ -252,7 +252,7 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-2 text-gray-600 hover:text-primary-600 transition-colors"
+              className="lg:hidden p-2 text-white hover:text-gray-300 transition-colors"
               aria-label="Toggle menu"
             >
               {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -263,7 +263,7 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="lg:hidden bg-white border-t border-gray-200">
+        <div className="lg:hidden bg-black border-t border-gray-700">
           <div className="px-4 py-4 space-y-4">
             <nav className="space-y-2">
               {primaryNav
@@ -272,12 +272,12 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
                   <div key={link.name}>
                     <Link
                       href={link.href}
-                      className="flex items-center justify-between text-gray-700 hover:text-primary-600 transition-colors font-medium"
+                      className="flex items-center justify-between text-white hover:text-gray-300 transition-colors font-medium"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       <span>{link.name}</span>
                       {Array.isArray((link as any).children) && (link as any).children.length > 0 && (
-                        <ChevronDown size={16} className="text-gray-400" />
+                        <ChevronDown size={16} className="text-gray-300" />
                       )}
                     </Link>
                     {Array.isArray((link as any).children) && (link as any).children.length > 0 && (
@@ -286,7 +286,7 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
                           <Link
                             key={child.name}
                             href={child.href}
-                            className="block text-sm text-gray-600 hover:text-primary-600 transition-colors"
+                            className="block text-sm text-gray-300 hover:text-white transition-colors"
                             onClick={() => setIsMenuOpen(false)}
                           >
                             {child.name}
@@ -298,13 +298,13 @@ export function Header({ initialNavigation }: { initialNavigation?: NavigationCo
                 ))}
             </nav>
 
-            <div className="border-t border-gray-200 pt-4">
+            <div className="border-t border-gray-700 pt-4">
               <nav className="space-y-2">
                 {secondaryNav.filter(l => l.isActive !== false).map((link) => (
                   <Link
                     key={link.name}
                     href={link.href}
-                    className="block text-gray-600 hover:text-primary-600 transition-colors"
+                    className="block text-gray-300 hover:text-white transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {link.name}
