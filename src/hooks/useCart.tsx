@@ -124,6 +124,13 @@ export const useCartStore = create<CartStore>()(
             ...cartTotals
           }
         })
+
+        // Add success toast for adding items
+        if (existingItemIndex >= 0) {
+          toast.success('Cart updated')
+        } else {
+          toast.success('Added to cart')
+        }
       },
 
       removeItem: (productId: string, variant) => {
