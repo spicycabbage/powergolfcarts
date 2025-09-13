@@ -57,19 +57,14 @@ export default function AdminDashboard() {
   }
 
   const adminTools = [
+    // First row - primary tools
     {
-      title: 'Category Management',
-      icon: Folder,
-      href: '/admin/categories',
-      color: 'bg-green-500'
+      title: 'View Orders',
+      icon: Package,
+      href: '/admin/orders',
+      color: 'bg-emerald-600',
+      disabled: false
     },
-    {
-      title: 'Inventory Management',
-      icon: Settings,
-      href: '/admin/inventory',
-      color: 'bg-gray-500'
-    },
-    // Removed Product Import per request
     {
       title: 'Analytics',
       icon: BarChart3,
@@ -77,6 +72,48 @@ export default function AdminDashboard() {
       color: 'bg-orange-500',
       disabled: false
     },
+    {
+      title: 'User Management',
+      icon: Users,
+      href: '/admin/users',
+      color: 'bg-red-500',
+      disabled: false
+    },
+    {
+      title: 'Inventory Management',
+      icon: Settings,
+      href: '/admin/inventory',
+      color: 'bg-gray-500'
+    },
+    // Second row - secondary tools
+    {
+      title: 'Create Product',
+      icon: Package,
+      href: '/admin/products/new',
+      color: 'bg-indigo-500',
+      disabled: false
+    },
+    {
+      title: 'Category Management',
+      icon: Folder,
+      href: '/admin/categories',
+      color: 'bg-green-500'
+    },
+    {
+      title: 'Reviews Moderation',
+      icon: Users,
+      href: '/admin/reviews',
+      color: 'bg-purple-500',
+      disabled: false
+    },
+    {
+      title: 'Blog',
+      icon: Settings,
+      href: '/admin/blog',
+      color: 'bg-teal-500',
+      disabled: false
+    },
+    // Third row - other tools
     {
       title: 'Coupons',
       icon: Percent,
@@ -89,13 +126,6 @@ export default function AdminDashboard() {
       icon: Star,
       href: '/admin/loyalty',
       color: 'bg-yellow-500',
-      disabled: false
-    },
-    {
-      title: 'User Management',
-      icon: Users,
-      href: '/admin/users',
-      color: 'bg-red-500',
       disabled: false
     },
     {
@@ -113,38 +143,10 @@ export default function AdminDashboard() {
       disabled: false
     },
     {
-      title: 'View Orders',
-      icon: Settings,
-      href: '/admin/orders',
-      color: 'bg-emerald-600',
-      disabled: false
-    },
-    {
-      title: 'Create Product',
-      icon: Package,
-      href: '/admin/products/new',
-      color: 'bg-indigo-500',
-      disabled: false
-    },
-    {
-      title: 'Reviews Moderation',
-      icon: Users,
-      href: '/admin/reviews',
-      color: 'bg-purple-500',
-      disabled: false
-    },
-    {
       title: 'Pages',
       icon: Settings,
       href: '/admin/pages',
       color: 'bg-purple-500',
-      disabled: false
-    },
-    {
-      title: 'Blog',
-      icon: Settings,
-      href: '/admin/blog',
-      color: 'bg-teal-500',
       disabled: false
     },
     {
