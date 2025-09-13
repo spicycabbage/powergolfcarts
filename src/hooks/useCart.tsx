@@ -152,6 +152,9 @@ export const useCartStore = create<CartStore>()(
             ...cartTotals
           }
         })
+
+        // Add toast notification for feedback
+        toast.success('Item removed from cart')
       },
 
       updateQuantity: (productId: string, quantity: number, variant) => {

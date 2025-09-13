@@ -27,7 +27,10 @@ export default function CartPage() {
     setIsUpdating(productId)
     try {
       removeItem(productId, variant)
-    } finally {
+      // Force re-render by updating state
+      setTimeout(() => setIsUpdating(null), 100)
+    } catch (error) {
+      console.error('Error removing item:', error)
       setIsUpdating(null)
     }
   }
@@ -149,8 +152,9 @@ export default function CartPage() {
                   : '/placeholder.jpg'
 
                 const variantKey = (item as any)?.variant?._id || (item as any)?.variant?.value || 'default'
+                const uniqueKey = `${item.product._id}-${variantKey}-${index}-${cart.items.length}`
                 return (
-                  <div key={`${item.product._id}-${variantKey}`} className={`p-3 sm:p-6 ${index !== cart.items.length - 1 ? 'border-b border-gray-200' : ''}`}>
+                  <div key={uniqueKey} className={`p-3 sm:p-6 ${index !== cart.items.length - 1 ? 'border-b border-gray-200' : ''}`}>
                     {/* Mobile Layout */}
                     <div className="block sm:hidden">
                       <div className="flex space-x-3">
