@@ -73,6 +73,8 @@ export interface IOrder {
   trackingCarrier?: string
   tracking?: { carrier: string; number: string; createdAt?: Date }[]
   notes?: string
+  loyaltyPoints?: number
+  loyaltyPointsAwarded?: boolean
   createdAt?: Date
   updatedAt?: Date
 }
@@ -194,7 +196,9 @@ const OrderSchema = new Schema<IOrder>({
   notes: {
     type: String,
     maxlength: [1000, 'Notes cannot exceed 1000 characters']
-  }
+  },
+  loyaltyPoints: { type: Number, default: 0, min: 0 },
+  loyaltyPointsAwarded: { type: Boolean, default: false }
 }, {
   timestamps: true,
   toJSON: { virtuals: true },

@@ -15,6 +15,7 @@ import {
   TrendingUp,
   Users
 } from 'lucide-react'
+import AdjustPoints from './AdjustPoints'
 
 export default function LoyaltyPointsPage() {
   const { data: session, status } = useSession()
@@ -45,6 +46,43 @@ export default function LoyaltyPointsPage() {
     )
   }
 
+  const [tab, setTab] = useState<'settings'|'customers'>('settings')
+  const [pointsPerDollar, setPointsPerDollar] = useState<number>(1)
+  const [saving, setSaving] = useState(false)
+  const [users, setUsers] = useState<any[]>([])
+  const [q, setQ] = useState('')
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const r = await fetch('/api/admin/loyalty/config', { cache: 'no-store' })
+        const j = await r.json()
+        if (j?.success) setPointsPerDollar(Number(j.data?.pointsPerDollar ?? 1))
+      } catch {}
+    })()
+  }, [])
+
+  const saveConfig = async () => {
+    setSaving(true)
+    try {
+      const r = await fetch('/api/admin/loyalty/config', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pointsPerDollar }) })
+      const j = await r.json()
+      if (!j?.success) alert(j?.error || 'Failed to save')
+    } catch { alert('Failed to save') } finally { setSaving(false) }
+  }
+
+  const loadUsers = async () => {
+    try {
+      const params = new URLSearchParams({ page: String(page), limit: '20', ...(q ? { q } : {}) })
+      const r = await fetch(`/api/admin/loyalty/users?${params.toString()}`, { cache: 'no-store' })
+      const j = await r.json()
+      if (j?.success) { setUsers(j.data || []); setTotalPages(j.pagination?.totalPages || 1) }
+    } catch {}
+  }
+  useEffect(() => { if (tab === 'customers') void loadUsers() }, [tab, page, q])
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -61,16 +99,12 @@ export default function LoyaltyPointsPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Action Bar */}
-        <div className="flex items-center justify-between mb-6">
-          <p className="text-gray-600">Manage customer loyalty points and rewards program</p>
-          <button
-            disabled
-            className="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Create Reward (Coming Soon)
-          </button>
+        {/* Tabs */}
+        <div className="mb-6">
+          <div className="inline-flex rounded-lg border overflow-hidden">
+            <button onClick={()=>setTab('settings')} className={`px-4 py-2 text-sm ${tab==='settings'?'bg-primary-600 text-white':'bg-white text-gray-700'}`}>Settings</button>
+            <button onClick={()=>setTab('customers')} className={`px-4 py-2 text-sm ${tab==='customers'?'bg-primary-600 text-white':'bg-white text-gray-700'}`}>Customers</button>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -112,38 +146,60 @@ export default function LoyaltyPointsPage() {
           </div>
         </div>
 
-        {/* Placeholder Content */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-          <div className="text-center">
-            <Star className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Loyalty Points System</h3>
-            <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              The loyalty points management system is coming soon. This will allow you to:
-            </p>
-            <div className="text-left max-w-md mx-auto space-y-2 text-gray-600">
-              <div className="flex items-center">
-                <div className="w-2 h-2 bg-primary-600 rounded-full mr-3"></div>
-                Set point earning rules for purchases
-              </div>
-              <div className="flex items-center">
-                <div className="w-2 h-2 bg-primary-600 rounded-full mr-3"></div>
-                Create reward tiers and benefits
-              </div>
-              <div className="flex items-center">
-                <div className="w-2 h-2 bg-primary-600 rounded-full mr-3"></div>
-                Track customer point balances
-              </div>
-              <div className="flex items-center">
-                <div className="w-2 h-2 bg-primary-600 rounded-full mr-3"></div>
-                Manage point redemptions
-              </div>
-              <div className="flex items-center">
-                <div className="w-2 h-2 bg-primary-600 rounded-full mr-3"></div>
-                Generate loyalty program reports
+        {/* Content */}
+        {tab==='settings' ? (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 max-w-xl">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Earning Settings</h3>
+            <label className="block text-sm text-gray-700 mb-1">Points per $1 spent</label>
+            <div className="flex items-center gap-2">
+              <input type="number" min={0} step={0.1} value={pointsPerDollar} onChange={(e)=>setPointsPerDollar(Number(e.target.value))} className="px-3 py-2 border rounded-lg w-40" />
+              <button onClick={saveConfig} disabled={saving} className="px-4 py-2 rounded bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50">Save</button>
+            </div>
+            <p className="mt-2 text-xs text-gray-500">Only awarded once when an order is first marked as Completed.</p>
+          </div>
+        ) : (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input value={q} onChange={(e)=>{setQ(e.target.value); setPage(1)}} placeholder="Search by email" className="pl-10 pr-3 py-2 border rounded-lg w-64" />
               </div>
             </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-2 text-left">Email</th>
+                    <th className="px-4 py-2 text-left">Name</th>
+                    <th className="px-4 py-2 text-right">Points</th>
+                    <th className="px-4 py-2 text-right">Adjust</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map(u => (
+                    <tr key={u._id} className="border-t">
+                      <td className="px-4 py-2">{u.email}</td>
+                      <td className="px-4 py-2">{u.firstName} {u.lastName}</td>
+                      <td className="px-4 py-2 text-right">{Number(u.loyaltyPoints||0).toLocaleString()}</td>
+                      <td className="px-4 py-2 text-right">
+                        <AdjustPoints userId={u._id} onDone={loadUsers} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {totalPages > 1 && (
+                <div className="mt-4 flex items-center justify-between">
+                  <div className="text-xs text-gray-600">Page {page} of {totalPages}</div>
+                  <div className="flex gap-2">
+                    <button className="px-3 py-1 border rounded" disabled={page===1} onClick={()=>setPage(p=>Math.max(1,p-1))}>Prev</button>
+                    <button className="px-3 py-1 border rounded" disabled={page===totalPages} onClick={()=>setPage(p=>Math.min(totalPages,p+1))}>Next</button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )

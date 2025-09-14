@@ -6,6 +6,8 @@ import { sendEmail } from '@/lib/email'
 import { buildOrderCompleteEmail } from '@/lib/emailTemplates'
 import Order from '@/lib/models/Order'
 import Product from '@/lib/models/Product'
+import User from '@/lib/models/User'
+import LoyaltyConfig from '@/lib/models/LoyaltyConfig'
 
 export async function GET(
   request: NextRequest,
@@ -130,7 +132,7 @@ export async function PUT(
     }
     await order.save()
 
-    // If status changed to completed, send customer email with tracking and order details
+    // If status changed to completed, send email and award loyalty points (first time only)
     if (nextStatus === 'completed' && oldStatus !== 'completed') {
       try {
         // Re-load with details for email
@@ -175,6 +177,34 @@ export async function PUT(
 
           const html = buildOrderCompleteEmail({ ...fresh, tracking: trackings.map(t => ({ carrier: t.carrier, number: t.number })) })
           sendEmail(to, `Your Order #${invoice} is Complete`, html).catch(err => console.error('sendEmail error:', err))
+        }
+        // Award loyalty points
+        try {
+          const doc: any = await Order.findById(id)
+          if (doc && !doc.loyaltyPointsAwarded) {
+            const cfg = await LoyaltyConfig.findOne().lean()
+            const rate = cfg?.pointsPerDollar ?? 1
+            const base = Number(doc.subtotal || 0)
+            const discount = Number(doc?.coupon?.discount || 0)
+            const spend = Math.max(0, base - discount)
+            const points = Math.floor(spend * Number(rate))
+            if (points > 0 && doc.user) {
+              const user = await User.findById(doc.user)
+              if (user) {
+                user.loyaltyPoints = Math.max(0, Number(user.loyaltyPoints || 0) + points) as any
+                await user.save()
+                doc.loyaltyPoints = points as any
+              } else {
+                doc.loyaltyPoints = 0 as any
+              }
+            } else {
+              doc.loyaltyPoints = 0 as any
+            }
+            doc.loyaltyPointsAwarded = true as any
+            await doc.save()
+          }
+        } catch (e) {
+          console.error('Loyalty award error:', e)
         }
       } catch (err) {
         console.error('Complete order email error:', err)

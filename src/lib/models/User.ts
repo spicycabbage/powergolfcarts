@@ -26,6 +26,7 @@ export interface IUser extends Document {
   wishlist: Schema.Types.ObjectId[]
   role: 'customer' | 'admin'
   isActive: boolean
+  loyaltyPoints?: number
   emailVerified: boolean
   lastLogin?: Date
   createdAt: Date
@@ -134,6 +135,11 @@ const UserSchema = new Schema<IUser>({
   isActive: {
     type: Boolean,
     default: true
+  },
+  loyaltyPoints: {
+    type: Number,
+    default: 0,
+    min: [0, 'Loyalty points cannot be negative']
   },
   emailVerified: {
     type: Boolean,
