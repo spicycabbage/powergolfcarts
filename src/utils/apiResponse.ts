@@ -19,9 +19,12 @@ export function createSuccessResponse<T>(
   pagination?: ApiResponse['pagination'],
   status?: number
 ): NextResponse<ApiResponse<T>> {
+  // Serialize data to handle MongoDB ObjectIds
+  const serializedData = JSON.parse(JSON.stringify(data))
+  
   return NextResponse.json({
     success: true,
-    data,
+    data: serializedData,
     message,
     pagination
   }, { status: status || 200 })

@@ -86,10 +86,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
   } else {
     await connectToDatabase()
     await import('@/lib/models/Category')
-    product = await Product.findOne({ slug, isActive: true })
+    const rawProduct = await Product.findOne({ slug, isActive: true })
       .select('name slug shortDescription description images price originalPrice inventory averageRating reviewCount category tags variants.name variants.value variants.price variants.originalPrice variants.inventory variants.sku')
       .populate('category', 'name slug')
       .lean()
+    
+    // Serialize product to remove MongoDB ObjectIds
+    product = rawProduct ? serializeProductForClient(rawProduct) : null
   }
 
   if (!product) {
@@ -112,7 +115,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       limit: 8,
     })
   } else {
-    related = await Product.find({
+    const rawRelated = await Product.find({
       isActive: true,
       slug: { $ne: slug },
       $or: [
@@ -122,6 +125,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
     }).select('name slug price originalPrice images')
       .limit(8)
       .lean()
+    
+    // Serialize related products to remove MongoDB ObjectIds
+    related = rawRelated.map(serializeProductForClient)
   }
 
   const categorySlug = (product as any).category?.slug

@@ -4,7 +4,54 @@ import { authOptions } from '@/lib/auth/options'
 import { connectToDatabase } from '@/lib/mongodb'
 import Order from '@/lib/models/Order'
 import Product from '@/lib/models/Product'
+import Coupon from '@/lib/models/Coupon'
 import nodemailer from 'nodemailer'
+
+// GET /api/orders - Get user's orders
+export async function GET(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions)
+    
+    if (!session?.user?.id) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { searchParams } = new URL(request.url)
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '10')
+    const skip = (page - 1) * limit
+
+    await connectToDatabase()
+
+    // Get total count for pagination
+    const total = await Order.countDocuments({ user: session.user.id })
+    const totalPages = Math.ceil(total / limit)
+
+    const orders = await Order.find({ user: session.user.id })
+      .populate('items.product', 'name slug images')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean()
+
+    return NextResponse.json({
+      success: true,
+      data: orders,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages
+      }
+    })
+  } catch (error) {
+    console.error('Error fetching user orders:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch orders' },
+      { status: 500 }
+    )
+  }
+}
 
 async function sendEmail(to: string, subject: string, html: string) {
   if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
@@ -28,7 +75,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json()
-    const { items, subtotal, shipping, total, shippingAddress } = body || {}
+    const { items, subtotal, couponDiscount, appliedCoupon, shipping, total, shippingAddress } = body || {}
     if (!Array.isArray(items) || typeof subtotal !== 'number' || typeof shipping !== 'number' || typeof total !== 'number') {
       return NextResponse.json({ success: false, error: 'Invalid payload' }, { status: 400 })
     }
@@ -52,11 +99,33 @@ export async function POST(req: NextRequest) {
     const lastNum = last && Number.isFinite(Number(last.invoiceNumber)) ? Number(last.invoiceNumber) : undefined
     const nextInvoice = typeof lastNum === 'number' ? Math.max(seedInvoice, lastNum + 1) : seedInvoice
 
+    // Handle coupon usage tracking
+    if (appliedCoupon && appliedCoupon.code) {
+      try {
+        const coupon = await Coupon.findOne({ code: appliedCoupon.code.toUpperCase() })
+        if (coupon) {
+          // Increment usage count
+          coupon.usageCount = (coupon.usageCount || 0) + 1
+          await coupon.save()
+        }
+      } catch (couponError) {
+        console.error('Error updating coupon usage:', couponError)
+        // Don't fail the order if coupon update fails
+      }
+    }
+
     const order = await Order.create({
       user: session.user.id,
       items: orderItems,
       invoiceNumber: nextInvoice,
       subtotal,
+      coupon: appliedCoupon ? {
+        code: appliedCoupon.code,
+        name: appliedCoupon.name,
+        type: appliedCoupon.type,
+        value: appliedCoupon.value,
+        discount: appliedCoupon.discount
+      } : undefined,
       tax: 0,
       shipping,
       total,
@@ -133,7 +202,11 @@ export async function POST(req: NextRequest) {
         <p>${shippingAddress?.address1 || ''}${shippingAddress?.address2 ? ', ' + shippingAddress.address2 : ''}</p>
         <p>${shippingAddress?.city || ''}, ${shippingAddress?.state || ''} ${shippingAddress?.postalCode || ''}</p>
         <p>${shippingAddress?.country || ''}</p>
-        <p>Total: $${total.toFixed(2)}</p>
+        <h3>Order Summary</h3>
+        <p>Subtotal: $${subtotal.toFixed(2)}</p>
+        ${appliedCoupon ? `<p style="color: green;">Discount (${appliedCoupon.code}): -$${appliedCoupon.discount.toFixed(2)}</p>` : ''}
+        <p>Shipping: $${shipping.toFixed(2)}</p>
+        <p><strong>Total: $${total.toFixed(2)}</strong></p>
         <h3>Items</h3>
         <ul>
           ${items.map((it: any) => `<li>${it.name} x ${it.quantity} — $${(Number(it.price||0)*Number(it.quantity||1)).toFixed(2)}</li>`).join('')}

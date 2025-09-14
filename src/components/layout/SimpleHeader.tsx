@@ -129,9 +129,8 @@ export function SimpleHeader() {
                 <div className="absolute left-0 top-full z-50">
                   <div className="pt-2 bg-transparent">
                     <div className="bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[200px]">
-                      <Link href="/categories/shatter" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Shatter</Link>
-                      <Link href="/categories/wax" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Wax</Link>
-                      <Link href="/categories/live-resin" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Live Resin</Link>
+                      <Link href="/categories/shatters" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Shatters</Link>
+                      <Link href="/categories/diamonds" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Diamonds</Link>
                     </div>
                   </div>
                 </div>
@@ -234,9 +233,8 @@ export function SimpleHeader() {
             <div>
               <Link href="/categories/concentrates" className="block text-white hover:text-primary-600 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Concentrates</Link>
               <div className="ml-4 space-y-1">
-                <Link href="/categories/shatter" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Shatter</Link>
-                <Link href="/categories/wax" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Wax</Link>
-                <Link href="/categories/live-resin" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Live Resin</Link>
+                <Link href="/categories/shatters" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Shatters</Link>
+                <Link href="/categories/diamonds" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Diamonds</Link>
               </div>
             </div>
 

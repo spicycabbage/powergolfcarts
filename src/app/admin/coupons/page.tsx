@@ -116,11 +116,18 @@ export default function CouponsPage() {
         method: 'DELETE'
       })
 
+      const data = await response.json()
+
       if (response.ok) {
+        alert('Coupon deleted successfully')
         fetchCoupons()
+      } else {
+        alert(data.message || data.error || 'Failed to delete coupon')
+        console.error('Delete failed:', data)
       }
     } catch (error) {
       console.error('Error deleting coupon:', error)
+      alert('Failed to delete coupon. Please try again.')
     }
   }
 

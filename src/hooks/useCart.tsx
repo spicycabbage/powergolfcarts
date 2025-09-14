@@ -72,11 +72,10 @@ export const useCartStore = create<CartStore>()(
         const { cart } = get()
         const existingItemIndex = cart.items.findIndex(
           item => {
-            // Handle undefined/null variant matching more robustly
-            const itemVariant = item.variant ?? null
-            const searchVariant = variant ?? null
-            const variantMatch = itemVariant === searchVariant ||
-                                (itemVariant == null && searchVariant == null)
+            // Compare variant IDs instead of object references
+            const itemVariantId = item.variant?._id ?? null
+            const searchVariantId = variant?._id ?? null
+            const variantMatch = itemVariantId === searchVariantId
             return item.product._id === product._id && variantMatch
           }
         )
@@ -138,11 +137,10 @@ export const useCartStore = create<CartStore>()(
 
         const newItems = cart.items.filter(
           item => {
-            // Handle undefined/null variant matching more robustly
-            const itemVariant = item.variant ?? null
-            const searchVariant = variant ?? null
-            const variantMatch = itemVariant === searchVariant ||
-                                (itemVariant == null && searchVariant == null)
+            // Compare variant IDs instead of object references
+            const itemVariantId = item.variant?._id ?? null
+            const searchVariantId = variant?._id ?? null
+            const variantMatch = itemVariantId === searchVariantId
             return !(item.product._id === productId && variantMatch)
           }
         )
@@ -172,11 +170,10 @@ export const useCartStore = create<CartStore>()(
 
         const { cart } = get()
         const newItems = cart.items.map(item => {
-          // Handle undefined/null variant matching more robustly
-          const itemVariant = item.variant ?? null
-          const searchVariant = variant ?? null
-          const variantMatch = itemVariant === searchVariant ||
-                              (itemVariant == null && searchVariant == null)
+          // Compare variant IDs instead of object references
+          const itemVariantId = item.variant?._id ?? null
+          const searchVariantId = variant?._id ?? null
+          const variantMatch = itemVariantId === searchVariantId
           if (item.product._id === productId && variantMatch) {
             // Cap quantity to available stock
             const maxStock = searchVariant && typeof (searchVariant as any)?.inventory === 'number'

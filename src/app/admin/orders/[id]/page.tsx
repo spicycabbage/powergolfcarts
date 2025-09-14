@@ -124,6 +124,12 @@ export default function AdminOrderDetail() {
                   </ul>
                   <div className="mt-4 border-t pt-3 text-sm">
                     <div className="flex items-center justify-between"><span className="text-gray-600">Subtotal:</span><span>${Number(order.subtotal||0).toFixed(2)}</span></div>
+                    {order.coupon && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-green-600">Discount ({order.coupon.code}):</span>
+                        <span className="text-green-600">-${Number(order.coupon.discount||0).toFixed(2)}</span>
+                      </div>
+                    )}
                     <div className="flex items-center justify-between"><span className="text-gray-600">Shipping:</span><span>${Number(order.shipping||0).toFixed(2)}</span></div>
                     <div className="mt-2 flex items-center justify-between font-semibold"><span>Total:</span><span>${Number(order.total||0).toFixed(2)}</span></div>
                   </div>
@@ -138,6 +144,22 @@ export default function AdminOrderDetail() {
                     <div>Status: <span className={`px-2 py-0.5 rounded text-xs ${statusBadge}`}>{String(order?.status || '').toUpperCase()}</span></div>
                   </div>
                 </div>
+                
+                {order.coupon && (
+                  <div className="bg-white rounded-lg shadow-sm p-6 text-sm">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-2">Applied Coupon</h3>
+                    <div className="text-gray-700 space-y-1">
+                      <div className="font-medium text-green-600">{order.coupon.code}</div>
+                      <div className="text-xs text-gray-500">{order.coupon.name}</div>
+                      <div className="text-xs">
+                        {order.coupon.type === 'percentage' 
+                          ? `${order.coupon.value}% discount` 
+                          : `$${order.coupon.value} discount`}
+                      </div>
+                      <div className="font-medium text-green-600">Saved: $${Number(order.coupon.discount||0).toFixed(2)}</div>
+                    </div>
+                  </div>
+                )}
                 <div className="bg-white rounded-lg shadow-sm p-6 text-sm">
                   <h3 className="text-sm font-semibold text-gray-900 mb-2">Tracking</h3>
                   {!editingTracking ? (

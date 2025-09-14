@@ -4,13 +4,19 @@ import { useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from '@/hooks/useCart'
-import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft } from 'lucide-react'
+import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft, Tag, X } from 'lucide-react'
 
 export default function CartPage() {
   const { cart, updateQuantity, removeItem, clearCart } = useCart()
   const [isUpdating, setIsUpdating] = useState<string | null>(null)
   const [shippingConfig, setShippingConfig] = useState<{ methods: Array<{ name: string, price: number, freeThreshold?: number, sortOrder?: number, isActive?: boolean }> } | null>(null)
   const [selectedShippingKey, setSelectedShippingKey] = useState<string>('')
+  
+  // Coupon state
+  const [couponCode, setCouponCode] = useState('')
+  const [appliedCoupon, setAppliedCoupon] = useState<any>(null)
+  const [couponError, setCouponError] = useState('')
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false)
 
   const handleQuantityChange = async (productId: string, newQuantity: number, variant?: any) => {
     if (newQuantity < 1) return
@@ -35,7 +41,57 @@ export default function CartPage() {
     }
   }
 
-  const subtotal = cart.items.reduce((total, item) => total + (item.product.price * item.quantity), 0)
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return
+    
+    setIsApplyingCoupon(true)
+    setCouponError('')
+    
+    try {
+      const response = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          code: couponCode.trim().toUpperCase(),
+          cartItems: cart.items.map(item => ({
+            product: item.product,
+            quantity: item.quantity,
+            price: (item as any)?.variant?.price ?? item.product.price
+          }))
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        setAppliedCoupon(data.data)
+        setCouponCode('')
+        setCouponError('')
+      } else {
+        setCouponError(data.error || 'Invalid coupon code')
+        setAppliedCoupon(null)
+      }
+    } catch (error) {
+      console.error('Error applying coupon:', error)
+      setCouponError('Failed to apply coupon. Please try again.')
+      setAppliedCoupon(null)
+    } finally {
+      setIsApplyingCoupon(false)
+    }
+  }
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null)
+    setCouponCode('')
+    setCouponError('')
+  }
+
+  const subtotal = cart.items.reduce((total, item) => {
+    const unit = (item as any)?.variant?.price ?? item.product.price
+    return total + (unit * item.quantity)
+  }, 0)
   const tax = 0
 
   useEffect(() => {
@@ -86,7 +142,12 @@ export default function CartPage() {
 
   const selectedShipping = useMemo(() => shippingOptions.find(o => o.key === selectedShippingKey) || shippingOptions[0], [shippingOptions, selectedShippingKey])
   const computedShippingCost = selectedShipping ? selectedShipping.price : 0
-  const displayTotal = subtotal + computedShippingCost
+  
+  // Calculate coupon discount - use the discount calculated by the API
+  const couponDiscount = appliedCoupon?.discount || 0
+  
+  const discountedSubtotal = subtotal - couponDiscount
+  const displayTotal = discountedSubtotal + computedShippingCost
 
   // Persist selected shipping for checkout page to consume
   useEffect(() => {
@@ -96,6 +157,17 @@ export default function CartPage() {
       sessionStorage.setItem('checkout_selected_shipping', JSON.stringify(payload))
     } catch {}
   }, [selectedShipping])
+
+  // Persist applied coupon for checkout page to consume
+  useEffect(() => {
+    try {
+      if (appliedCoupon) {
+        sessionStorage.setItem('checkout_applied_coupon', JSON.stringify(appliedCoupon))
+      } else {
+        sessionStorage.removeItem('checkout_applied_coupon')
+      }
+    } catch {}
+  }, [appliedCoupon])
 
   if (cart.items.length === 0) {
     return (
@@ -190,7 +262,7 @@ export default function CartPage() {
                       <div className="flex items-center justify-between mt-3">
                         {/* Per Unit Price */}
                         <div className="text-sm font-semibold text-gray-900">
-                          ${item.product.price.toFixed(2)}
+                          ${(((item as any)?.variant?.price ?? item.product.price)).toFixed(2)}
                         </div>
 
                         {/* Quantity Controls */}
@@ -228,7 +300,7 @@ export default function CartPage() {
 
                         {/* Total Price */}
                         <div className="text-sm font-semibold text-gray-900">
-                          ${(item.product.price * item.quantity).toFixed(2)}
+                          ${((((item as any)?.variant?.price ?? item.product.price) * item.quantity)).toFixed(2)}
                         </div>
 
                         {/* Remove Button */}
@@ -287,7 +359,7 @@ export default function CartPage() {
                             
                             <div className="flex items-center mt-3 space-x-4">
                               <span className="text-lg font-semibold text-gray-900">
-                                ${item.product.price.toFixed(2)}
+                                ${(((item as any)?.variant?.price ?? item.product.price)).toFixed(2)}
                               </span>
                             </div>
                           </div>
@@ -345,7 +417,7 @@ export default function CartPage() {
                             {/* Item Total */}
                             <div className="text-right min-w-[80px]">
                               <p className="text-lg font-semibold text-gray-900">
-                                ${(item.product.price * item.quantity).toFixed(2)}
+                                ${((((item as any)?.variant?.price ?? item.product.price) * item.quantity)).toFixed(2)}
                               </p>
                             </div>
                           </div>
@@ -396,6 +468,66 @@ export default function CartPage() {
                     </div>
                   )}
                 </div>
+
+                {/* Coupon Section */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">Coupon Code</h4>
+                  
+                  {appliedCoupon ? (
+                    <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="flex items-center">
+                        <Tag className="w-4 h-4 text-green-600 mr-2" />
+                        <div>
+                          <p className="text-sm font-medium text-green-800">{appliedCoupon.code}</p>
+                          <p className="text-xs text-green-600">
+                            {appliedCoupon.type === 'percentage' 
+                              ? `${appliedCoupon.value}% off` 
+                              : `$${appliedCoupon.value} off`}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={handleRemoveCoupon}
+                        className="text-green-600 hover:text-green-800 p-1"
+                        aria-label="Remove coupon"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <div className="flex">
+                        <input
+                          type="text"
+                          value={couponCode}
+                          onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                          onKeyPress={(e) => e.key === 'Enter' && handleApplyCoupon()}
+                          placeholder="Enter coupon code"
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          disabled={isApplyingCoupon}
+                        />
+                        <button
+                          onClick={handleApplyCoupon}
+                          disabled={!couponCode.trim() || isApplyingCoupon}
+                          className="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-r-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isApplyingCoupon ? 'Applying...' : 'Apply'}
+                        </button>
+                      </div>
+                      {couponError && (
+                        <p className="text-sm text-red-600">{couponError}</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Show discount in summary */}
+                {appliedCoupon && couponDiscount > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-green-600">Discount ({appliedCoupon.code})</span>
+                    <span className="text-green-600">-${couponDiscount.toFixed(2)}</span>
+                  </div>
+                )}
                 
                 {/* Tax row removed: prices include tax */}
                 

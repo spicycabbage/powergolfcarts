@@ -20,12 +20,14 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
     createdAt: initialOrder.createdAt,
     email: initialOrder?.user?.email,
   } : null)
-  const [summary, setSummary] = useState<{ itemCount: number, subtotal: number, shipping: number, total: number }>({
+  const [summary, setSummary] = useState<{ itemCount: number, subtotal: number, couponDiscount?: number, shipping: number, total: number }>({
     itemCount: Array.isArray(initialOrder?.items) ? initialOrder.items.reduce((s: number, it: any) => s + Number(it?.quantity || 0), 0) : 0,
     subtotal: Number(initialOrder?.subtotal || 0),
+    couponDiscount: Number(initialOrder?.coupon?.discount || 0),
     shipping: Number(initialOrder?.shipping || 0),
     total: Number(initialOrder?.total || 0),
   })
+  const [appliedCoupon, setAppliedCoupon] = useState<any>(initialOrder?.coupon || null)
 
   useEffect(() => { setHydrated(true) }, [])
 
@@ -59,9 +61,11 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
           setSummary({
             itemCount: Array.isArray(order.items) ? order.items.reduce((s: number, it: any) => s + Number(it?.quantity || 0), 0) : 0,
             subtotal: Number(order.subtotal || 0),
+            couponDiscount: Number(order.coupon?.discount || 0),
             shipping: Number(order.shipping || 0),
             total: Number(order.total || 0),
           })
+          setAppliedCoupon(order.coupon || null)
           setShipping(order.shippingAddress || null)
           setOrderMeta({ id: String(order.invoiceNumber || order._id), createdAt: order.createdAt, email: (order as any)?.user?.email })
         }
@@ -92,7 +96,14 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
       const saved = sessionStorage.getItem('checkout_order_summary')
       if (saved) {
         const parsed = JSON.parse(saved)
-        setSummary({ itemCount: Number(parsed?.itemCount || 0), subtotal: Number(parsed?.subtotal || 0), shipping: Number(parsed?.shipping || 0), total: Number(parsed?.total || 0) })
+        setSummary({ 
+          itemCount: Number(parsed?.itemCount || 0), 
+          subtotal: Number(parsed?.subtotal || 0), 
+          couponDiscount: Number(parsed?.couponDiscount || 0),
+          shipping: Number(parsed?.shipping || 0), 
+          total: Number(parsed?.total || 0) 
+        })
+        setAppliedCoupon(parsed?.appliedCoupon || null)
       } else {
         setSummary({ itemCount: cart.items.reduce((s, it) => s + it.quantity, 0), subtotal: cart.subtotal, shipping: 0, total: cart.subtotal })
       }
@@ -113,7 +124,15 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
     if (!shipping || !Array.isArray(items) || items.length === 0) return
     ;(async () => {
       try {
-        const payload = { items, subtotal, shipping: shippingCost, total, shippingAddress: shipping }
+        const payload = { 
+          items, 
+          subtotal, 
+          couponDiscount: summary.couponDiscount || 0,
+          appliedCoupon,
+          shipping: shippingCost, 
+          total, 
+          shippingAddress: shipping 
+        }
         const res = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
         const json = await res.json().catch(() => ({} as any))
         if (json?.success && json?.data?.id) {
@@ -185,6 +204,9 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
 
           <div className="space-y-3 text-sm">
             <div className="border-t-2 border-gray-800 pt-3 flex justify-between"><span className="text-gray-600">Subtotal</span><span className="text-gray-900">${subtotal.toFixed(2)}</span></div>
+            {appliedCoupon && summary.couponDiscount && summary.couponDiscount > 0 && (
+              <div className="flex justify-between"><span className="text-green-600">Discount ({appliedCoupon.code})</span><span className="text-green-600">-${summary.couponDiscount.toFixed(2)}</span></div>
+            )}
             <div className="flex justify-between"><span className="text-gray-600">Shipping</span><span className="text-gray-900">{shippingCost === 0 ? 'Free' : `$${shippingCost.toFixed(2)}`}</span></div>
             <div className="border-t-2 border-gray-800 pt-3 flex justify-between text-base font-semibold"><span className="text-gray-900">Total</span><span className="text-gray-900">${total.toFixed(2)}</span></div>
           </div>

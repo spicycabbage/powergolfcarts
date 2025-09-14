@@ -103,6 +103,7 @@ export default function AdminOrdersList() {
                   <th className="px-4 py-3">Status</th>
                   <th className="px-4 py-3">Customer</th>
                   <th className="px-4 py-3">Items</th>
+                  <th className="px-4 py-3">Coupon</th>
                   <th className="px-4 py-3">Shipment Tracking</th>
                   <th className="px-4 py-3">Total</th>
                   
@@ -130,6 +131,16 @@ export default function AdminOrdersList() {
                     <td className="px-4 py-3">{o.status}</td>
                     <td className="px-4 py-3">{o.shippingAddress ? `${o.shippingAddress.firstName} ${o.shippingAddress.lastName}` : ''}</td>
                     <td className="px-4 py-3">{o.itemCount ?? 0}</td>
+                    <td className="px-4 py-3">
+                      {o.coupon ? (
+                        <div className="text-xs">
+                          <div className="text-green-600 font-medium">{o.coupon.code}</div>
+                          <div className="text-gray-500">-${o.coupon.discount.toFixed(2)}</div>
+                        </div>
+                      ) : (
+                        <span className="text-gray-400">—</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3">
                       {editingId === String(o._id) ? (
                         <div className="flex items-center gap-2">

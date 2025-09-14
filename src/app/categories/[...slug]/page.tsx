@@ -12,6 +12,7 @@ import { isUsingDataApi, findOne as dataFindOne, findMany as dataFindMany } from
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import SortSelect from '@/components/SortSelect'
 import { CategoryInfoSection } from '@/components/CategoryInfoSection'
+import { serializeArrayForClient } from '@/lib/utils/serialize'
 
 export const dynamic = 'force-dynamic'
 
@@ -112,12 +113,15 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
     ]
   }
 
-  const products = await Product.find(query)
+  const rawProducts = await Product.find(query)
     .select('name slug price originalPrice images averageRating reviewCount inventory variants.name variants.value variants.price variants.originalPrice variants.inventory variants.sku badges')
     .sort(sortBy as any)
     .limit(100) // Limit to prevent mobile timeouts
     .lean()
     .maxTimeMS(10000) // 10 second timeout
+
+  // Serialize products to remove MongoDB ObjectIds and toJSON methods
+  const products = serializeArrayForClient(rawProducts)
 
   const { name, description } = category;
 

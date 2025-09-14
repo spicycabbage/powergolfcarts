@@ -28,6 +28,7 @@ export default function CheckoutPage() {
   const [shippingConfig, setShippingConfig] = useState<{
     methods: Array<{ name: string, price: number, freeThreshold?: number, sortOrder?: number, isActive?: boolean }>
   } | null>(null)
+  const [appliedCoupon, setAppliedCoupon] = useState<any>(null)
 
   const emailOk = /^\S+@\S+\.\S+$/.test(shipping.email)
   const requiredOk = shipping.firstName && shipping.lastName && emailOk && shipping.address1 && shipping.city && shipping.state && shipping.postalCode && shipping.country
@@ -81,6 +82,14 @@ export default function CheckoutPage() {
       const orderSummary = {
         itemCount,
         subtotal: displaySubtotal,
+        couponDiscount,
+        appliedCoupon: appliedCoupon ? {
+          code: appliedCoupon.code,
+          name: appliedCoupon.name,
+          type: appliedCoupon.type,
+          value: appliedCoupon.value,
+          discount: appliedCoupon.discount
+        } : null,
         shipping: computedShippingCost,
         total: displayTotal,
       }
@@ -131,6 +140,14 @@ export default function CheckoutPage() {
         }
       } catch {}
     })()
+
+    // Load applied coupon from session storage
+    try {
+      const savedCoupon = sessionStorage.getItem('checkout_applied_coupon')
+      if (savedCoupon) {
+        setAppliedCoupon(JSON.parse(savedCoupon))
+      }
+    } catch {}
   }, [])
 
   // Auto-fill from existing default shipping address and session email
@@ -184,9 +201,14 @@ export default function CheckoutPage() {
     }
     return isFinite(min) ? min : 0
   }, [shippingConfig, cart.subtotal])
+  
+  // Calculate coupon discount
+  const couponDiscount = appliedCoupon?.discount || 0
+  const discountedSubtotal = cart.subtotal - couponDiscount
+  
   const displaySubtotal = cart.subtotal
   const displayTax = 0
-  const displayTotal = displaySubtotal + computedShippingCost
+  const displayTotal = discountedSubtotal + computedShippingCost
 
   function buildSelectedShippingPayload() {
     const payload = { name: 'Shipping', price: computedShippingCost }
@@ -345,6 +367,15 @@ export default function CheckoutPage() {
                     <span className="text-gray-600">Subtotal <span className="text-gray-500">({itemCount} {itemCount === 1 ? 'item' : 'items'})</span></span>
                     <span className="text-gray-900">${displaySubtotal.toFixed(2)}</span>
                   </div>
+                  
+                  {/* Show applied coupon discount */}
+                  {appliedCoupon && couponDiscount > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-green-600">Discount ({appliedCoupon.code})</span>
+                      <span className="text-green-600">-${couponDiscount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Shipping</span>
                     <span className="text-gray-900">{computedShippingCost === 0 ? 'Free' : `$${computedShippingCost.toFixed(2)}`}</span>

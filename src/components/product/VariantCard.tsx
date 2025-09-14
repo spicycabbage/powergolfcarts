@@ -49,11 +49,13 @@ export default function VariantCard({ product, priority = false }: { product: Ca
   const { addItem } = useCart()
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null)
 
+  // Auto-select first variant if none selected
+  const effectiveVariantId = selectedVariantId || (Array.isArray(product.variants) && product.variants.length > 0 ? String(product.variants[0]._id) : null)
 
   const selectedVariant = useMemo(() => {
     if (!Array.isArray(product.variants) || product.variants.length === 0) return null
-    return (product.variants as any[]).find(v => String(v?._id) === String(selectedVariantId)) || null
-  }, [product, selectedVariantId])
+    return (product.variants as any[]).find(v => String(v?._id) === String(effectiveVariantId)) || null
+  }, [product, effectiveVariantId])
 
   const imageSrc = useMemo(() => {
     const img = (product as any).images?.[0]
@@ -71,12 +73,26 @@ export default function VariantCard({ product, priority = false }: { product: Ca
   }, [product.variants, product.inventory, selectedVariant])
 
   const onAdd = () => {
+    console.log('🔍 VARIANT DEBUG:')
+    console.log('Selected Variant:', selectedVariant)
+    console.log('Variant price:', selectedVariant?.price)
+    console.log('Variant originalPrice:', selectedVariant?.originalPrice)
+    console.log('Product price:', product.price)
+    
+    const effectivePrice = selectedVariant?.originalPrice && Number(selectedVariant.originalPrice) > 0
+      ? selectedVariant.originalPrice
+      : (selectedVariant?.price && Number(selectedVariant.price) > 0
+          ? selectedVariant.price
+          : product.price)
+    
+    console.log('Effective price chosen:', effectivePrice)
+    
     const variantPayload = selectedVariant
       ? {
           _id: String(selectedVariant._id || ''),
           name: String(selectedVariant.name || ''),
           value: String(selectedVariant.value || ''),
-          price: selectedVariant.price,
+          price: effectivePrice,
           originalPrice: selectedVariant.originalPrice,
           sku: String(selectedVariant.sku || ''),
           inventory: Number(selectedVariant.inventory || 0),
@@ -187,19 +203,19 @@ export default function VariantCard({ product, priority = false }: { product: Ca
             <p className="text-xs text-gray-700 mb-2">Select Option</p>
             <div className="grid grid-cols-2 gap-2">
               {product.variants.map((v, idx) => {
-                const isSelected = String(selectedVariantId) === String((v as any)._id)
+                const isSelected = String(effectiveVariantId) === String((v as any)._id)
                 const disabled = Number((v as any).inventory || 0) <= 0
-                const priceNum = (v as any).price != null
-                  ? Number((v as any).price)
-                  : ((v as any).originalPrice != null
-                      ? Number((v as any).originalPrice)
+                const priceNum = (v as any).originalPrice != null && Number((v as any).originalPrice) > 0
+                  ? Number((v as any).originalPrice)
+                  : ((v as any).price != null && Number((v as any).price) > 0
+                      ? Number((v as any).price)
                       : (product.price != null ? Number(product.price) : NaN))
                 const label = String(v.value || '').trim()
                 return (
                   <button
                     key={String(v._id || idx)}
                     type="button"
-                    onClick={() => setSelectedVariantId(String(v._id || String(idx)))}
+                    onClick={() => setSelectedVariantId(String(v._id))}
                     disabled={disabled}
                     className={`text-xs rounded-lg border px-2 py-2 transition-colors ${isSelected ? 'border-primary-600 bg-primary-50 text-primary-700' : 'border-gray-300 hover:border-gray-400'} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
@@ -216,27 +232,31 @@ export default function VariantCard({ product, priority = false }: { product: Ca
         ) : (
           <div className="mb-3 text-center">
             <span className="text-lg font-bold text-gray-900">
-              ${Number(product.price || 0).toFixed(2)}
+              {product.originalPrice && product.originalPrice > (product.price || 0) ? (
+                <>
+                  <span className="line-through text-gray-500 mr-2">${product.originalPrice.toFixed(2)}</span>
+                  <span className="text-red-600">${(product.price || 0).toFixed(2)}</span>
+                </>
+              ) : (
+                <span>${(product.price || 0).toFixed(2)}</span>
+              )}
             </span>
-            {product.originalPrice && product.originalPrice > (product.price || 0) && (
-              <span className="text-sm text-gray-500 line-through ml-2">
-                ${Number(product.originalPrice).toFixed(2)}
-              </span>
-            )}
           </div>
         )}
 
         <button
           onClick={onAdd}
           disabled={!canAdd}
-          className="w-full bg-primary-600 text-white py-2.5 px-4 rounded-lg font-medium hover:bg-primary-700 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+          className={`w-full py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
+            canAdd
+              ? 'bg-primary-600 text-white hover:bg-primary-700'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          }`}
         >
-          <ShoppingCart className="w-5 h-5 mr-2" />
-          Add to Cart
+          <ShoppingCart size={16} />
+          {canAdd ? 'Add to Cart' : 'Out of Stock'}
         </button>
       </div>
     </div>
   )
 }
-
-
