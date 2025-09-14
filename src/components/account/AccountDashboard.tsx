@@ -7,12 +7,13 @@ import OrderDetails from './OrderDetails'
 import AccountDetails from './AccountDetails'
 import AddressManagement from './AddressManagement'
 import PasswordChange from './PasswordChange'
+import LoyaltyPoints from './LoyaltyPoints'
 
 interface AccountDashboardProps {
   session: Session
 }
 
-type TabType = 'orders' | 'account' | 'addresses' | 'password'
+type TabType = 'orders' | 'account' | 'addresses' | 'password' | 'loyalty'
 
 export default function AccountDashboard({ session }: AccountDashboardProps) {
   const [activeTab, setActiveTab] = useState<TabType>('orders')
@@ -22,6 +23,7 @@ export default function AccountDashboard({ session }: AccountDashboardProps) {
     { id: 'account' as TabType, name: 'Account Details', icon: '👤' },
     { id: 'addresses' as TabType, name: 'Change Addresses', icon: '📍' },
     { id: 'password' as TabType, name: 'Change Password', icon: '🔐' },
+    { id: 'loyalty' as TabType, name: 'Loyalty Points', icon: '⭐' },
   ]
 
   const handleLogout = async () => {
@@ -81,6 +83,7 @@ export default function AccountDashboard({ session }: AccountDashboardProps) {
             {activeTab === 'account' && <AccountDetails session={session} />}
             {activeTab === 'addresses' && <AddressManagement userId={session.user?.id} />}
             {activeTab === 'password' && <PasswordChange />}
+            {activeTab === 'loyalty' && <LoyaltyPoints userId={session.user?.id} />}
           </div>
         </div>
       </div>

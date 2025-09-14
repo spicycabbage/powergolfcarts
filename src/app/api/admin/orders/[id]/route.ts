@@ -183,7 +183,7 @@ export async function PUT(
           const doc: any = await Order.findById(id)
           if (doc && !doc.loyaltyPointsAwarded) {
             const cfg = await LoyaltyConfig.findOne().lean()
-            const rate = cfg?.pointsPerDollar ?? 1
+            const rate = Number((cfg as any)?.pointsPerDollar ?? 1)
             const base = Number(doc.subtotal || 0)
             const discount = Number(doc?.coupon?.discount || 0)
             const spend = Math.max(0, base - discount)

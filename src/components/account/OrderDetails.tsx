@@ -63,11 +63,12 @@ export default function OrderDetails({ userId }: OrderDetailsProps) {
   }
 
   const formatDate = (date: string | Date) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
+    const d = new Date(date)
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
+    const mm = months[d.getMonth()] || ''
+    const dd = d.getDate()
+    const yyyy = d.getFullYear()
+    return `${mm} ${dd}, ${yyyy}`
   }
 
   const formatCurrency = (amount: number) => {
@@ -311,89 +312,58 @@ export default function OrderDetails({ userId }: OrderDetailsProps) {
           </div>
         ) : (
           <div className="bg-white shadow overflow-hidden sm:rounded-md">
-            <ul className="divide-y divide-gray-200">
-              {orders.map((order) => {
-                const getOrderStatus = () => {
-                  if (order.status === 'cancelled') {
-                    return { text: 'Cancelled', color: 'text-red-600' }
-                  }
-                  
-                  // Check for tracking information
-                  const hasTracking = order.trackingNumber || 
-                    (Array.isArray((order as any).tracking) && (order as any).tracking.length > 0)
-                  
-                  if (hasTracking) {
-                    const trackingNumber = order.trackingNumber || 
-                      (Array.isArray((order as any).tracking) && (order as any).tracking.length > 0 
-                        ? (order as any).tracking[0].number 
-                        : '')
-                    const carrier = order.trackingCarrier || 
-                      (Array.isArray((order as any).tracking) && (order as any).tracking.length > 0 
-                        ? (order as any).tracking[0].carrier 
-                        : '')
-                    const trackingUrl = buildTrackingUrl(carrier, trackingNumber)
-                    return { 
-                      text: trackingNumber, 
-                      color: 'text-blue-600 font-mono hover:text-blue-700 underline cursor-pointer',
-                      url: trackingUrl
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-2 text-left">Order</th>
+                    <th className="px-4 py-2 text-left">Date</th>
+                    <th className="px-4 py-2 text-left">Coupon Used</th>
+                    <th className="px-4 py-2 text-right">Money Saved</th>
+                    <th className="px-4 py-2 text-right">Order Value</th>
+                    <th className="px-4 py-2 text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {orders.map((order) => {
+                    const coupon = (order as any)?.coupon
+                    const couponCode = coupon?.code || '—'
+                    const saved = Number(coupon?.discount || 0)
+                    const value = computeEffectiveTotal(order)
+                    const idText = (order as any).invoiceNumber || order._id?.toString().slice(-8).toUpperCase()
+                    const dateText = formatDate(order.createdAt || new Date())
+
+                    const hasTracking = order.trackingNumber || (Array.isArray((order as any).tracking) && (order as any).tracking.length > 0)
+                    let statusNode: JSX.Element
+                    if (order.status === 'cancelled') {
+                      statusNode = <span className="text-red-600">Cancelled</span>
+                    } else if (hasTracking) {
+                      const trackingNumber = order.trackingNumber || ((order as any).tracking?.[0]?.number || '')
+                      const carrier = order.trackingCarrier || ((order as any).tracking?.[0]?.carrier || '')
+                      const url = buildTrackingUrl(carrier, trackingNumber)
+                      statusNode = url ? (
+                        <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline font-mono" onClick={(e)=>e.stopPropagation()}>{trackingNumber}</a>
+                      ) : (
+                        <span className="font-mono text-blue-600">{trackingNumber}</span>
+                      )
+                    } else {
+                      statusNode = <span className="text-yellow-600">Pending</span>
                     }
-                  }
-                  
-                  return { text: 'Pending', color: 'text-yellow-600' }
-                }
 
-                const orderStatus = getOrderStatus()
-
-                return (
-                  <li key={order._id}>
-                    <div className="px-4 py-4 sm:px-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1 min-w-0">
-                          <button
-                            onClick={() => setSelectedOrder(order)}
-                            className="text-sm font-medium text-blue-600 hover:text-blue-700 underline truncate text-left"
-                          >
-                            Order #{(order as any).invoiceNumber || order._id?.toString().slice(-8).toUpperCase()}
-                          </button>
-                          <p className="text-sm text-gray-500">
-                            {formatDate(order.createdAt || new Date())}
-                          </p>
-                        </div>
-                        <div className="flex items-center space-x-4">
-                          <div className="text-right">
-                            <p className="text-sm font-medium text-gray-900">
-                              {formatCurrency(computeEffectiveTotal(order))}
-                            </p>
-                            {(order as any).coupon && (
-                              <p className="text-xs text-green-600">
-                                Saved {formatCurrency((order as any).coupon.discount)}
-                              </p>
-                            )}
-                          </div>
-                          <div className="text-right min-w-0">
-                            {(orderStatus as any).url ? (
-                              <a
-                                href={(orderStatus as any).url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={`text-sm font-medium ${orderStatus.color} truncate block`}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                {orderStatus.text}
-                              </a>
-                            ) : (
-                              <p className={`text-sm font-medium ${orderStatus.color} truncate`}>
-                                {orderStatus.text}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                )
-              })}
-            </ul>
+                    return (
+                      <tr key={order._id} className="hover:bg-gray-50 cursor-pointer" onClick={()=>setSelectedOrder(order)}>
+                        <td className="px-4 py-2 text-blue-600 underline">#{idText}</td>
+                        <td className="px-4 py-2">{dateText}</td>
+                        <td className="px-4 py-2">{couponCode}</td>
+                        <td className="px-4 py-2 text-right text-green-600">{formatCurrency(saved)}</td>
+                        <td className="px-4 py-2 text-right font-medium">{formatCurrency(value)}</td>
+                        <td className="px-4 py-2 text-right">{statusNode}</td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 
