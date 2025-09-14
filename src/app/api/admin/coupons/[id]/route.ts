@@ -8,7 +8,7 @@ import { createSuccessResponse, createErrorResponse } from '@/utils/apiResponse'
 // GET /api/admin/coupons/[id] - Get single coupon
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -18,8 +18,9 @@ export async function GET(
     }
 
     await connectToDatabase()
+    const { id } = await params
 
-    const coupon = await Coupon.findById(params.id)
+    const coupon = await Coupon.findById(id)
       .populate('createdBy', 'firstName lastName')
       .lean()
 
@@ -37,7 +38,7 @@ export async function GET(
 // PATCH /api/admin/coupons/[id] - Update coupon
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -48,8 +49,9 @@ export async function PATCH(
 
     const body = await request.json()
     await connectToDatabase()
+    const { id } = await params
 
-    const coupon = await Coupon.findById(params.id)
+    const coupon = await Coupon.findById(id)
     if (!coupon) {
       return createErrorResponse('Coupon not found', 404)
     }
@@ -63,7 +65,7 @@ export async function PATCH(
 
     await coupon.save()
 
-    const updatedCoupon = await Coupon.findById(params.id)
+    const updatedCoupon = await Coupon.findById(id)
       .populate('createdBy', 'firstName lastName')
       .lean()
 
@@ -77,7 +79,7 @@ export async function PATCH(
 // DELETE /api/admin/coupons/[id] - Delete coupon
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -87,8 +89,9 @@ export async function DELETE(
     }
 
     await connectToDatabase()
+    const { id } = await params
 
-    const coupon = await Coupon.findById(params.id)
+    const coupon = await Coupon.findById(id)
     if (!coupon) {
       return createErrorResponse('Coupon not found', 404)
     }
@@ -98,7 +101,7 @@ export async function DELETE(
       return createErrorResponse('Cannot delete coupon that has been used', 400)
     }
 
-    await Coupon.findByIdAndDelete(params.id)
+    await Coupon.findByIdAndDelete(id)
 
     return createSuccessResponse({ message: 'Coupon deleted successfully' })
   } catch (error) {
