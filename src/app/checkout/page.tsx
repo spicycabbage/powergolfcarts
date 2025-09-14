@@ -33,6 +33,25 @@ export default function CheckoutPage() {
   const emailOk = /^\S+@\S+\.\S+$/.test(shipping.email)
   const requiredOk = shipping.firstName && shipping.lastName && emailOk && shipping.address1 && shipping.city && shipping.state && shipping.postalCode && shipping.country
 
+  // Prefill email ASAP from session or prior checkout state
+  useEffect(() => {
+    // Session email wins if present
+    if (session?.user?.email) {
+      setShipping(s => ({ ...s, email: s.email || session.user.email! }))
+      return
+    }
+    // Fallback to saved checkout shipping (if returning to checkout)
+    try {
+      const saved = sessionStorage.getItem('checkout_shipping')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (parsed?.email) {
+          setShipping(s => ({ ...s, email: s.email || parsed.email }))
+        }
+      }
+    } catch {}
+  }, [session])
+
   const handleCheckout = async () => {
     setLoading(true)
     setError(null)

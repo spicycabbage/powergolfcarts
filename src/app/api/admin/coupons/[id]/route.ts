@@ -47,22 +47,53 @@ export async function PATCH(
       return createErrorResponse('Unauthorized', 401)
     }
 
-    const body = await request.json()
+    const raw = await request.json()
     await connectToDatabase()
     const { id } = await params
 
-    // Use atomic update to satisfy TS and ensure validation
-    const updatedCoupon = await Coupon.findByIdAndUpdate(
-      id,
-      { $set: body },
-      { new: true, runValidators: true }
-    )
-      .populate('createdBy', 'firstName lastName')
-      .lean()
+    // Load document and update explicitly to leverage doc validators
+    const coupon = await Coupon.findById(id)
+    if (!coupon) {
+      return createErrorResponse('Coupon not found', 404)
+    }
 
-    return createSuccessResponse(updatedCoupon)
+    // Ensure code uniqueness when changed
+    if (raw.code != null) {
+      const newCode = String(raw.code).toUpperCase()
+      const exists = await Coupon.findOne({ code: newCode, _id: { $ne: id } }).select('_id')
+      if (exists) {
+        return createErrorResponse('Coupon code already exists', 400)
+      }
+      coupon.code = newCode as any
+      coupon.name = (raw.name != null ? String(raw.name) : coupon.code) as any
+    } else if (raw.name != null) {
+      coupon.name = String(raw.name) as any
+    }
+
+    if (raw.description != null) coupon.description = String(raw.description) as any
+    if (raw.type != null) coupon.type = String(raw.type) as any
+    if (raw.value != null) coupon.value = Number(raw.value) as any
+    if (raw.minimumOrderAmount != null) coupon.minimumOrderAmount = Number(raw.minimumOrderAmount) as any
+    if (raw.maximumDiscountAmount != null) coupon.maximumDiscountAmount = Number(raw.maximumDiscountAmount) as any
+    if (raw.usageLimit != null) coupon.usageLimit = Number(raw.usageLimit) as any
+    if (raw.userUsageLimit != null) coupon.userUsageLimit = Number(raw.userUsageLimit) as any
+    if (raw.validFrom != null) coupon.validFrom = new Date(raw.validFrom) as any
+    if (raw.validUntil != null) coupon.validUntil = new Date(raw.validUntil) as any
+    if (raw.isActive != null) coupon.isActive = Boolean(raw.isActive) as any
+    if (Array.isArray(raw.applicableCategories)) coupon.applicableCategories = raw.applicableCategories as any
+    if (Array.isArray(raw.excludedCategories)) coupon.excludedCategories = raw.excludedCategories as any
+    if (Array.isArray(raw.applicableProducts)) coupon.applicableProducts = raw.applicableProducts as any
+    if (Array.isArray(raw.excludedProducts)) coupon.excludedProducts = raw.excludedProducts as any
+
+    await coupon.save()
+    const updatedCoupon = await Coupon.findById(id).populate('createdBy', 'firstName lastName').lean()
+    return createSuccessResponse(updatedCoupon as any)
   } catch (error) {
     console.error('Error updating coupon:', error)
+    if ((error as any)?.name === 'ValidationError') {
+      const msgs = Object.values((error as any).errors || {}).map((e: any) => e?.message).filter(Boolean)
+      return createErrorResponse(msgs.join(', ') || 'Validation error', 400)
+    }
     return createErrorResponse('Failed to update coupon', 500)
   }
 }
