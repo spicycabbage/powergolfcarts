@@ -79,9 +79,10 @@ export async function POST(request: NextRequest) {
           const product = await Product.findById(item.product._id || item.product)
             .populate('categories')
             .lean()
-          
+
           if (product) {
-            const productCategories = [product.category, ...(product.categories || [])]
+            const p: any = product as any
+            const productCategories = [p.category, ...(p.categories || [])].filter(Boolean)
             itemApplicable = coupon.applicableCategories.some((catId: any) =>
               productCategories.some((pCat: any) => String(pCat) === String(catId))
             )
@@ -103,9 +104,10 @@ export async function POST(request: NextRequest) {
             const product = await Product.findById(item.product._id || item.product)
               .populate('categories')
               .lean()
-            
+
             if (product) {
-              const productCategories = [product.category, ...(product.categories || [])]
+              const p: any = product as any
+              const productCategories = [p.category, ...(p.categories || [])].filter(Boolean)
               const isExcluded = coupon.excludedCategories.some((catId: any) =>
                 productCategories.some((pCat: any) => String(pCat) === String(catId))
               )
