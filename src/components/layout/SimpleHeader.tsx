@@ -218,15 +218,7 @@ export function SimpleHeader() {
       {/* Mobile Navigation */}
       {isMenuOpen && (
         <div className="md:hidden bg-black border-t border-gray-700">
-          <div className="px-4 py-4 space-y-4">
-            {/* Info links (moved from secondary nav for mobile) */}
-            <div className="grid grid-cols-2 gap-2">
-              <Link href="/about" className="block text-white/80 hover:text-white" onClick={() => setIsMenuOpen(false)}>About Us</Link>
-              <Link href="/faq" className="block text-white/80 hover:text-white" onClick={() => setIsMenuOpen(false)}>FAQ</Link>
-              <Link href="/blog" className="block text-white/80 hover:text-white" onClick={() => setIsMenuOpen(false)}>Blog</Link>
-              <Link href="/contact" className="block text-white/80 hover:text-white" onClick={() => setIsMenuOpen(false)}>Contact Us</Link>
-            </div>
-
+          <div className="px-4 py-4 space-y-4 max-h-[calc(100vh-64px)] overflow-y-auto">
             {/* Flowers */}
             <div>
               <Link href="/categories/flowers" className="block text-white hover:text-primary-600 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Flowers</Link>
@@ -258,6 +250,14 @@ export function SimpleHeader() {
             {/* Hash & CBD */}
             <Link href="/categories/hash" className="block text-white hover:text-primary-600 font-medium" onClick={() => setIsMenuOpen(false)}>Hash</Link>
             <Link href="/categories/cbd" className="block text-white hover:text-primary-600 font-medium" onClick={() => setIsMenuOpen(false)}>CBD</Link>
+
+            {/* Info links under categories for mobile (ordered, large touch targets) */}
+            <div className="pt-2 border-t border-gray-700 space-y-1">
+              <Link href="/contact" className="block text-white/90 hover:text-white py-3" onClick={() => setIsMenuOpen(false)}>Contact Us</Link>
+              <Link href="/about" className="block text-white/90 hover:text-white py-3" onClick={() => setIsMenuOpen(false)}>About Us</Link>
+              <Link href="/faq" className="block text-white/90 hover:text-white py-3" onClick={() => setIsMenuOpen(false)}>FAQ</Link>
+              <Link href="/blog" className="block text-white/90 hover:text-white py-3" onClick={() => setIsMenuOpen(false)}>Blog</Link>
+            </div>
             
             <div className="border-t border-gray-700 pt-4">
               {user ? (
@@ -265,12 +265,7 @@ export function SimpleHeader() {
                   <Link href="/account" className="block text-white hover:text-primary-600 mb-2" onClick={() => setIsMenuOpen(false)}>My Account</Link>
                   <button onClick={() => { logout(); setIsMenuOpen(false); }} className="block text-white hover:text-primary-600">Logout</button>
                 </>
-              ) : (
-                <>
-                  <Link href="/auth/login" className="block text-white hover:text-primary-600 mb-2" onClick={() => setIsMenuOpen(false)}>Sign In</Link>
-                  <Link href="/auth/register" className="block text-white hover:text-primary-600 font-medium" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
-                </>
-              )}
+              ) : null}
             </div>
           </div>
         </div>
