@@ -227,15 +227,17 @@ OrderSchema.virtual('totalItems').get(function() {
   return this.items.reduce((total, item) => total + item.quantity, 0)
 })
 
-// Pre-save middleware to calculate totals
+// Pre-save middleware to calculate totals (always compute to maintain consistency)
 OrderSchema.pre('save', function(next) {
-  if (this.isModified('items') || this.isModified('tax') || this.isModified('shipping')) {
-    // Recalculate subtotal from items
-    this.subtotal = this.items.reduce((total, item) => total + item.total, 0)
-
-    // Recalculate total
-    this.total = this.subtotal + this.tax + this.shipping
-  }
+  try {
+    const items = Array.isArray(this.items) ? this.items : []
+    const subtotal = items.reduce((total: number, item: any) => total + Number(item?.total || 0), 0)
+    const tax = Number((this as any).tax || 0)
+    const shipping = Number((this as any).shipping || 0)
+    const discount = Number(((this as any)?.coupon?.discount) || 0)
+    ;(this as any).subtotal = subtotal
+    ;(this as any).total = Math.max(0, subtotal + tax + shipping - discount)
+  } catch {}
   next()
 })
 

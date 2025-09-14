@@ -140,7 +140,7 @@ export async function POST(req: NextRequest) {
       } : undefined,
       tax: 0,
       shipping,
-      total,
+      total: Math.max(0, Number(subtotal || 0) + Number(0) + Number(shipping || 0) - Number(appliedCoupon?.discount || 0)),
       status: 'pending',
       shippingAddress: {
         firstName: shippingAddress?.firstName || '',

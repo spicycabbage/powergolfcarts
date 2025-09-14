@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     await connectToDatabase()
     const total = await Order.countDocuments({})
     const data = await Order.find({})
-      .select('invoiceNumber createdAt total status shippingAddress items tracking trackingNumber trackingCarrier')
+      .select('invoiceNumber createdAt total status shippingAddress items tracking trackingNumber trackingCarrier coupon')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -37,6 +37,7 @@ export async function GET(request: NextRequest) {
       tracking: o.tracking || [],
       trackingNumber: o.trackingNumber,
       trackingCarrier: o.trackingCarrier,
+      coupon: o.coupon ? { code: o.coupon.code, discount: Number(o.coupon.discount || 0) } : undefined,
     }))
 
     return NextResponse.json({ success: true, data: lightweight, pagination: { page, limit, total, totalPages: Math.ceil(total/limit) } })

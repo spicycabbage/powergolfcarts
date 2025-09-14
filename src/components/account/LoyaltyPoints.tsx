@@ -10,7 +10,7 @@ export default function LoyaltyPoints({ userId }: { userId?: string }) {
   useEffect(() => {
     ;(async () => {
       try {
-        // fetch user profile lightweight endpoint; fallback to orders list to infer
+        // fetch user profile lightweight endpoint (no cache)
         const u = await fetch('/api/user/me', { cache: 'no-store' }).then(r=>r.ok?r.json():null).catch(()=>null)
         if (u && u.success) setPoints(Number(u.data?.loyaltyPoints ?? 0))
       } catch {}

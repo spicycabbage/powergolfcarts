@@ -21,6 +21,13 @@ export default function LoyaltyPointsPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
+  const [tab, setTab] = useState<'settings'|'customers'>('settings')
+  const [pointsPerDollar, setPointsPerDollar] = useState<number>(1)
+  const [saving, setSaving] = useState(false)
+  const [users, setUsers] = useState<any[]>([])
+  const [q, setQ] = useState('')
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
 
   useEffect(() => {
     if (status === 'loading') return
@@ -38,21 +45,7 @@ export default function LoyaltyPointsPage() {
     setIsLoading(false)
   }, [session, status, router])
 
-  if (status === 'loading' || isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-      </div>
-    )
-  }
-
-  const [tab, setTab] = useState<'settings'|'customers'>('settings')
-  const [pointsPerDollar, setPointsPerDollar] = useState<number>(1)
-  const [saving, setSaving] = useState(false)
-  const [users, setUsers] = useState<any[]>([])
-  const [q, setQ] = useState('')
-  const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
+  // Removed early return to keep hooks order consistent
 
   useEffect(() => {
     ;(async () => {
@@ -85,6 +78,12 @@ export default function LoyaltyPointsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {(status === 'loading' || isLoading) ? (
+        <div className="flex items-center justify-center py-16">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        </div>
+      ) : (
+      <>
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -178,8 +177,16 @@ export default function LoyaltyPointsPage() {
                 <tbody>
                   {users.map(u => (
                     <tr key={u._id} className="border-t">
-                      <td className="px-4 py-2">{u.email}</td>
-                      <td className="px-4 py-2">{u.firstName} {u.lastName}</td>
+                      <td className="px-4 py-2">
+                        <button onClick={async()=>{ window.open(`/admin/loyalty/users/${u._id}`, '_blank', 'noopener,noreferrer') }} className="text-blue-600 hover:text-blue-700 underline">
+                          {u.email}
+                        </button>
+                      </td>
+                      <td className="px-4 py-2">
+                        <button onClick={async()=>{ window.open(`/admin/loyalty/users/${u._id}`, '_blank', 'noopener,noreferrer') }} className="text-blue-600 hover:text-blue-700 underline">
+                          {u.firstName} {u.lastName}
+                        </button>
+                      </td>
                       <td className="px-4 py-2 text-right">{Number(u.loyaltyPoints||0).toLocaleString()}</td>
                       <td className="px-4 py-2 text-right">
                         <AdjustPoints userId={u._id} onDone={loadUsers} />
@@ -201,6 +208,8 @@ export default function LoyaltyPointsPage() {
           </div>
         )}
       </div>
+      </>
+      )}
     </div>
   )
 }

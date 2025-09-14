@@ -19,7 +19,7 @@ export default function OrderDetails({ userId }: OrderDetailsProps) {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await fetch(`/api/orders?page=${currentPage}&limit=10`)
+        const response = await fetch(`/api/orders?page=${currentPage}&limit=10`, { cache: 'no-store' })
         if (!response.ok) {
           // Don't throw error, just set empty orders
           setOrders([])
@@ -132,8 +132,8 @@ export default function OrderDetails({ userId }: OrderDetailsProps) {
 
   // If an order is selected, show detailed view
   if (selectedOrder) {
-    return (
-      <div className="space-y-6">
+  return (
+    <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-medium text-gray-900">Order Details</h2>
           <button
@@ -145,53 +145,53 @@ export default function OrderDetails({ userId }: OrderDetailsProps) {
           >
             ← Back to Orders
           </button>
-        </div>
+          </div>
 
         <div className="bg-gray-50 rounded-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-sm font-medium text-gray-900">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-900">
                 Order #{(selectedOrder as any).invoiceNumber || selectedOrder._id?.toString().slice(-8).toUpperCase()}
-              </h3>
-              <p className="text-sm text-gray-500">
+                    </h3>
+                    <p className="text-sm text-gray-500">
                 {formatDate(selectedOrder.createdAt || new Date())}
-              </p>
-            </div>
-            <div className="flex items-center space-x-4">
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-4">
               <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(selectedOrder.status)}`}>
                 {selectedOrder.status.charAt(0).toUpperCase() + selectedOrder.status.slice(1)}
-              </span>
-              <span className="text-lg font-semibold text-gray-900">
+                    </span>
+                    <span className="text-lg font-semibold text-gray-900">
                 {formatCurrency(computeEffectiveTotal(selectedOrder))}
-              </span>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-200 pt-4">
-            <h4 className="text-sm font-medium text-gray-900 mb-2">Items</h4>
-            <div className="space-y-2">
-              {selectedOrder.items.map((item, index) => (
-                <div key={index} className="flex items-center justify-between text-sm">
-                  <div className="flex items-center">
-                    <span className="text-gray-600">
-                      {item.quantity}x
                     </span>
-                    <span className="ml-2 text-gray-900">
-                      {(item.product as any)?.name || `Product #${item.product.toString().slice(-6)}`}
-                    </span>
-                    {item.variant && (
-                      <span className="ml-2 text-gray-500">
-                        ({item.variant.name}: {item.variant.value})
-                      </span>
-                    )}
                   </div>
-                  <span className="text-gray-900 font-medium">
-                    {formatCurrency(item.total)}
-                  </span>
                 </div>
-              ))}
-            </div>
-          </div>
+
+                <div className="border-t border-gray-200 pt-4">
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">Items</h4>
+                  <div className="space-y-2">
+              {selectedOrder.items.map((item, index) => (
+                      <div key={index} className="flex items-center justify-between text-sm">
+                        <div className="flex items-center">
+                          <span className="text-gray-600">
+                            {item.quantity}x
+                          </span>
+                          <span className="ml-2 text-gray-900">
+                      {(item.product as any)?.name || `Product #${item.product.toString().slice(-6)}`}
+                          </span>
+                          {item.variant && (
+                            <span className="ml-2 text-gray-500">
+                              ({item.variant.name}: {item.variant.value})
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-gray-900 font-medium">
+                          {formatCurrency(item.total)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
           {/* Order Summary */}
           <div className="border-t border-gray-200 pt-4 mt-4">
@@ -218,31 +218,31 @@ export default function OrderDetails({ userId }: OrderDetailsProps) {
             </div>
           </div>
 
-          <div className="border-t border-gray-200 pt-4 mt-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h4 className="text-sm font-medium text-gray-900 mb-2">Shipping Address</h4>
-                <div className="text-sm text-gray-600">
+                <div className="border-t border-gray-200 pt-4 mt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-900 mb-2">Shipping Address</h4>
+                      <div className="text-sm text-gray-600">
                   <p>{selectedOrder.shippingAddress.firstName} {selectedOrder.shippingAddress.lastName}</p>
                   <p>{selectedOrder.shippingAddress.address1}</p>
                   {selectedOrder.shippingAddress.address2 && <p>{selectedOrder.shippingAddress.address2}</p>}
                   <p>{selectedOrder.shippingAddress.city}, {selectedOrder.shippingAddress.state} {selectedOrder.shippingAddress.postalCode}</p>
                   <p>{selectedOrder.shippingAddress.country}</p>
                   {selectedOrder.shippingAddress.phone && <p>{selectedOrder.shippingAddress.phone}</p>}
-                </div>
-              </div>
-              <div>
+                      </div>
+                    </div>
+                    <div>
                 <h4 className="text-sm font-medium text-gray-900 mb-2">Payment & Tracking</h4>
-                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                   selectedOrder.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' :
                   selectedOrder.paymentStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                   selectedOrder.paymentStatus === 'failed' ? 'bg-red-100 text-red-800' :
-                  'bg-gray-100 text-gray-800'
-                }`}>
+                        'bg-gray-100 text-gray-800'
+                      }`}>
                   {selectedOrder.paymentStatus.charAt(0).toUpperCase() + selectedOrder.paymentStatus.slice(1)}
-                </span>
+                      </span>
                 {(selectedOrder.trackingNumber || (Array.isArray((selectedOrder as any).tracking) && (selectedOrder as any).tracking.length > 0)) && (
-                  <div className="mt-2">
+                        <div className="mt-2">
                     <p className="text-sm text-gray-600 font-medium mb-1">Tracking:</p>
                     {selectedOrder.trackingNumber && (
                       <div className="text-sm">
@@ -287,12 +287,12 @@ export default function OrderDetails({ userId }: OrderDetailsProps) {
                         })}
                       </div>
                     )}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
       </div>
     )
   }
@@ -333,11 +333,18 @@ export default function OrderDetails({ userId }: OrderDetailsProps) {
                     const idText = (order as any).invoiceNumber || order._id?.toString().slice(-8).toUpperCase()
                     const dateText = formatDate(order.createdAt || new Date())
 
+                    const s = String(order.status || '').toLowerCase()
                     const hasTracking = order.trackingNumber || (Array.isArray((order as any).tracking) && (order as any).tracking.length > 0)
                     let statusNode: JSX.Element
-                    if (order.status === 'cancelled') {
+                    if (s === 'cancelled') {
                       statusNode = <span className="text-red-600">Cancelled</span>
-                    } else if (hasTracking) {
+                    } else if (s === 'completed') {
+                      statusNode = <span className="text-green-600">Completed</span>
+                    } else if (s === 'delivered') {
+                      statusNode = <span className="text-green-600">Delivered</span>
+                    } else if (s === 'processing' || s === 'confirmed') {
+                      statusNode = <span className="text-blue-600">Processing</span>
+                    } else if (s === 'shipped' || hasTracking) {
                       const trackingNumber = order.trackingNumber || ((order as any).tracking?.[0]?.number || '')
                       const carrier = order.trackingCarrier || ((order as any).tracking?.[0]?.carrier || '')
                       const url = buildTrackingUrl(carrier, trackingNumber)

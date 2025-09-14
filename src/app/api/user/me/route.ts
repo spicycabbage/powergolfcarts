@@ -9,9 +9,26 @@ export async function GET() {
     const session: any = await getServerSession(authOptions as any)
     if (!session || !session.user?.id) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     await connectToDatabase()
-    const user = await User.findById(session.user.id).select('email firstName lastName loyaltyPoints').lean()
-    if (!user) return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 })
-    return NextResponse.json({ success: true, data: user })
+    const userDoc: any = await User.findById(session.user.id).select('email firstName lastName loyaltyPoints')
+    if (!userDoc) return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 })
+    let points = Number(userDoc.loyaltyPoints || 0)
+    if (!Number.isFinite(points) || points < 0) points = 0
+    // Reconcile from orders if points look out of date
+    if (points === 0) {
+      const { default: Order } = await import('@/lib/models/Order')
+      const agg = await Order.aggregate([
+        { $match: { user: userDoc._id, loyaltyPointsAwarded: true } },
+        { $group: { _id: null, total: { $sum: { $ifNull: ['$loyaltyPoints', 0] } } } }
+      ])
+      const computed = Number(agg?.[0]?.total || 0)
+      if (computed > 0) {
+        userDoc.loyaltyPoints = computed
+        await userDoc.save()
+        points = computed
+      }
+    }
+    const payload = { email: userDoc.email, firstName: userDoc.firstName, lastName: userDoc.lastName, loyaltyPoints: points }
+    return NextResponse.json({ success: true, data: payload })
   } catch (e) {
     return NextResponse.json({ success: false, error: 'Failed to load user' }, { status: 500 })
   }
