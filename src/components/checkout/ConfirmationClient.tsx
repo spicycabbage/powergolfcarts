@@ -67,7 +67,10 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
         const order = json?.data
         if (order) {
           setItems(Array.isArray(order.items) ? order.items.map((it: any) => ({
-            name: it?.product?.name || 'Item', price: Number(it?.price || it?.product?.price || 0), quantity: Number(it?.quantity || 1), variant: it?.variant,
+            name: it?.product?.name || 'Item',
+            price: Number(it?.price ?? it?.product?.price ?? 0),
+            quantity: Number(it?.quantity || 1),
+            variant: it?.variant,
           })) : [])
           setSummary({
             itemCount: Array.isArray(order.items) ? order.items.reduce((s: number, it: any) => s + Number(it?.quantity || 0), 0) : 0,
@@ -116,7 +119,14 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
         })
         setAppliedCoupon(parsed?.appliedCoupon || null)
       } else {
-        setSummary({ itemCount: cart.items.reduce((s, it) => s + it.quantity, 0), subtotal: cart.subtotal, shipping: 0, total: cart.subtotal })
+        const items = cart.items.map((it) => ({
+          name: it.product.name,
+          price: Number(((it as any)?.variant?.price != null ? (it as any).variant.price : it.product.price) || 0),
+          quantity: it.quantity,
+          variant: it.variant,
+        }))
+        setItems(items)
+        setSummary({ itemCount: items.reduce((s, it) => s + Number(it.quantity||0), 0), subtotal: items.reduce((s, it) => s + Number(it.price||0) * Number(it.quantity||1), 0), shipping: 0, total: items.reduce((s, it) => s + Number(it.price||0) * Number(it.quantity||1), 0) })
       }
     } catch {
       setSummary({ itemCount: cart.items.reduce((s, it) => s + it.quantity, 0), subtotal: cart.subtotal, shipping: 0, total: cart.subtotal })

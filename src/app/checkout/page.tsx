@@ -97,7 +97,7 @@ export default function CheckoutPage() {
         productId: it.product._id,
         name: it.product.name,
         slug: it.product.slug,
-        price: Number(it.product.price || 0),
+        price: Number(((it as any)?.variant?.price != null ? (it as any).variant.price : it.product.price) || 0),
         quantity: it.quantity,
         image: Array.isArray(it.product.images) && it.product.images.length > 0 ? (typeof it.product.images[0] === 'string' ? it.product.images[0] : (it.product.images[0]?.url || '')) : '',
         variant: it.variant ? { name: it.variant.name, value: it.variant.value, sku: it.variant.sku } : undefined,
