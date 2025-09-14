@@ -104,6 +104,11 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
   const shippingCost = summary.shipping
   const total = summary.total
 
+  const effectiveCoupon = appliedCoupon || initialOrder?.coupon || null
+  const effectiveDiscount = Number(
+    (summary.couponDiscount != null ? summary.couponDiscount : (effectiveCoupon?.discount ?? 0)) || 0
+  )
+
   useEffect(() => {
     if (initialOrder) return
     try {
@@ -225,8 +230,8 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
 
           <div className="space-y-3 text-sm">
             <div className="border-t-2 border-gray-800 pt-3 flex justify-between"><span className="text-gray-600">Subtotal</span><span className="text-gray-900">${subtotal.toFixed(2)}</span></div>
-            {appliedCoupon && summary.couponDiscount && summary.couponDiscount > 0 && (
-              <div className="flex justify-between"><span className="text-green-600">Discount ({appliedCoupon.code})</span><span className="text-green-600">-${summary.couponDiscount.toFixed(2)}</span></div>
+            {effectiveCoupon?.code && (
+              <div className="flex justify-between"><span className="text-green-600">Discount ({effectiveCoupon.code})</span><span className="text-green-600">-${effectiveDiscount.toFixed(2)}</span></div>
             )}
             <div className="flex justify-between"><span className="text-gray-600">Shipping</span><span className="text-gray-900">{shippingCost === 0 ? 'Free' : `$${shippingCost.toFixed(2)}`}</span></div>
             <div className="border-t-2 border-gray-800 pt-3 flex justify-between text-base font-semibold"><span className="text-gray-900">Total</span><span className="text-gray-900">${total.toFixed(2)}</span></div>
