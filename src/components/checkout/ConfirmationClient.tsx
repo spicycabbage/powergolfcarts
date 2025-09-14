@@ -192,10 +192,10 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Order Confirmation</h1>
+      <div className="max-w-3xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-10">
+        <h1 className="text-3xl font-bold text-gray-900 mb-4 sm:mb-6">Order Confirmation</h1>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 sm:mb-6">
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 p-6 text-sm">
             <div className="sm:col-span-3">
               <div className="text-gray-500">Order number</div>

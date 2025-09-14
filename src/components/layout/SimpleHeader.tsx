@@ -45,7 +45,8 @@ export function SimpleHeader() {
       {/* Secondary Navigation */}
       <div className={`bg-gray-50 border-b border-gray-200 text-sm transition-all duration-300 ${isScrolled ? 'h-0 overflow-hidden' : 'py-2'}`}>
         <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
-          <nav className="flex flex-wrap gap-4 md:space-x-6">
+          {/* Informational links (desktop only); moved to hamburger on mobile */}
+          <nav className="hidden md:flex space-x-6">
             <Link href="/about" className="text-gray-700 hover:text-primary-600">About Us</Link>
             <Link href="/faq" className="text-gray-700 hover:text-primary-600">FAQ</Link>
             <Link href="/blog" className="text-gray-700 hover:text-primary-600">Blog</Link>
@@ -53,12 +54,12 @@ export function SimpleHeader() {
           </nav>
           <div className="flex items-center space-x-4">
             {user ? (
-              <div className="hidden md:flex items-center space-x-4">
+              <div className="flex items-center space-x-4">
                 <Link href="/account" className="text-gray-600 hover:text-primary-600">My Account</Link>
                 <button onClick={logout} className="text-gray-700 hover:text-primary-600">Logout</button>
               </div>
             ) : (
-              <div className="hidden md:flex items-center space-x-4">
+              <div className="flex items-center space-x-4">
                 <Link href="/auth/login" className="text-gray-700 hover:text-primary-600">Sign In</Link>
                 <Link href="/auth/register" className="text-primary-600 hover:text-primary-700 font-medium">Sign Up</Link>
               </div>
@@ -218,6 +219,14 @@ export function SimpleHeader() {
       {isMenuOpen && (
         <div className="md:hidden bg-black border-t border-gray-700">
           <div className="px-4 py-4 space-y-4">
+            {/* Info links (moved from secondary nav for mobile) */}
+            <div className="grid grid-cols-2 gap-2">
+              <Link href="/about" className="block text-white/80 hover:text-white" onClick={() => setIsMenuOpen(false)}>About Us</Link>
+              <Link href="/faq" className="block text-white/80 hover:text-white" onClick={() => setIsMenuOpen(false)}>FAQ</Link>
+              <Link href="/blog" className="block text-white/80 hover:text-white" onClick={() => setIsMenuOpen(false)}>Blog</Link>
+              <Link href="/contact" className="block text-white/80 hover:text-white" onClick={() => setIsMenuOpen(false)}>Contact Us</Link>
+            </div>
+
             {/* Flowers */}
             <div>
               <Link href="/categories/flowers" className="block text-white hover:text-primary-600 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Flowers</Link>
