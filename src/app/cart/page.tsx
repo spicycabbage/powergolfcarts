@@ -508,23 +508,30 @@ export default function CartPage() {
                     <p className="text-sm text-gray-600">No shipping methods available.</p>
                   ) : (
                     <div className="space-y-2">
-                      {shippingOptions.map((opt) => (
-                        <label key={opt.key} className="flex items-center justify-between w-full cursor-pointer">
-                          <div className="flex items-center min-w-0 flex-1">
-                            <input
-                              type="radio"
-                              name="shippingMethod"
-                              className="mr-2 flex-shrink-0"
-                              checked={selectedShippingKey === opt.key}
-                              onChange={() => setSelectedShippingKey(opt.key)}
-                            />
-                            <span className="text-sm text-gray-800 truncate">{opt.label}</span>
-                          </div>
-                          <span className="ml-2 text-sm text-gray-900 flex-shrink-0">
-                            {opt.price === 0 ? 'Free' : `$${opt.price.toFixed(2)}`}
-                          </span>
-                        </label>
-                      ))}
+                      {shippingOptions.map((opt) => {
+                        const isSelected = selectedShippingKey === opt.key
+                        const priceText = opt.price === 0 ? 'Free' : `$${opt.price.toFixed(2)}`
+                        return (
+                          <label key={opt.key} className="flex items-center justify-between w-full cursor-pointer">
+                            <div className="flex items-center min-w-0 flex-1">
+                              <input
+                                type="radio"
+                                name="shippingMethod"
+                                className="mr-2 flex-shrink-0"
+                                checked={isSelected}
+                                onChange={() => setSelectedShippingKey(opt.key)}
+                              />
+                              <span className="text-sm text-gray-800 truncate">{opt.label}</span>
+                              {!isSelected && (
+                                <span className="ml-2 text-xs text-gray-500">{priceText}</span>
+                              )}
+                            </div>
+                            {isSelected && (
+                              <span className="ml-2 text-sm text-gray-900 flex-shrink-0">{priceText}</span>
+                            )}
+                          </label>
+                        )
+                      })}
                     </div>
                   )}
                 </div>

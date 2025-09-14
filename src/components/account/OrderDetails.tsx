@@ -77,6 +77,13 @@ export default function OrderDetails({ userId }: OrderDetailsProps) {
     }).format(amount)
   }
 
+  const computeEffectiveTotal = (order: any) => {
+    const sub = Number(order?.subtotal || 0)
+    const ship = Number(order?.shipping || 0)
+    const disc = Number((order as any)?.coupon?.discount || 0)
+    return Math.max(0, sub - disc + ship)
+  }
+
   const buildTrackingUrl = (carrier?: string, trackingNumber?: string) => {
     if (!carrier || !trackingNumber) return null
     
@@ -154,7 +161,7 @@ export default function OrderDetails({ userId }: OrderDetailsProps) {
                 {selectedOrder.status.charAt(0).toUpperCase() + selectedOrder.status.slice(1)}
               </span>
               <span className="text-lg font-semibold text-gray-900">
-                {formatCurrency(selectedOrder.total)}
+                {formatCurrency(computeEffectiveTotal(selectedOrder))}
               </span>
             </div>
           </div>
@@ -205,7 +212,7 @@ export default function OrderDetails({ userId }: OrderDetailsProps) {
               </div>
               <div className="flex justify-between font-medium border-t border-gray-200 pt-1">
                 <span className="text-gray-900">Total:</span>
-                <span className="text-gray-900">{formatCurrency(selectedOrder.total)}</span>
+                <span className="text-gray-900">{formatCurrency(computeEffectiveTotal(selectedOrder))}</span>
               </div>
             </div>
           </div>
@@ -355,7 +362,7 @@ export default function OrderDetails({ userId }: OrderDetailsProps) {
                         <div className="flex items-center space-x-4">
                           <div className="text-right">
                             <p className="text-sm font-medium text-gray-900">
-                              {formatCurrency(order.total)}
+                              {formatCurrency(computeEffectiveTotal(order))}
                             </p>
                             {(order as any).coupon && (
                               <p className="text-xs text-green-600">
