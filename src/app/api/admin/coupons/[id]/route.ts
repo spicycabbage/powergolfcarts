@@ -51,21 +51,12 @@ export async function PATCH(
     await connectToDatabase()
     const { id } = await params
 
-    const coupon = await Coupon.findById(id)
-    if (!coupon) {
-      return createErrorResponse('Coupon not found', 404)
-    }
-
-    // Update coupon fields
-    Object.keys(body).forEach(key => {
-      if (body[key] !== undefined) {
-        coupon[key] = body[key]
-      }
-    })
-
-    await coupon.save()
-
-    const updatedCoupon = await Coupon.findById(id)
+    // Use atomic update to satisfy TS and ensure validation
+    const updatedCoupon = await Coupon.findByIdAndUpdate(
+      id,
+      { $set: body },
+      { new: true, runValidators: true }
+    )
       .populate('createdBy', 'firstName lastName')
       .lean()
 
