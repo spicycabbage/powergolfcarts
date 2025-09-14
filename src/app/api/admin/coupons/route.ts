@@ -100,9 +100,10 @@ export async function POST(request: NextRequest) {
       applicableProducts,
       excludedProducts
     } = body
+    const effectiveName = name || code
 
     // Validate required fields
-    if (!code || !name || !type || value === undefined || !validFrom || !validUntil) {
+    if (!code || !type || value === undefined || !validFrom || !validUntil) {
       return NextResponse.json(
         { success: false, error: 'Missing required fields' },
         { status: 400 }
@@ -131,14 +132,14 @@ export async function POST(request: NextRequest) {
 
     const coupon = new Coupon({
       code: code.toUpperCase(),
-      name,
+      name: effectiveName,
       description,
       type,
-      value,
-      minimumOrderAmount,
-      maximumDiscountAmount,
-      usageLimit,
-      userUsageLimit,
+      value: Number(value),
+      minimumOrderAmount: minimumOrderAmount != null ? Number(minimumOrderAmount) : undefined,
+      maximumDiscountAmount: maximumDiscountAmount != null ? Number(maximumDiscountAmount) : undefined,
+      usageLimit: usageLimit != null ? Number(usageLimit) : undefined,
+      userUsageLimit: userUsageLimit != null ? Number(userUsageLimit) : undefined,
       validFrom: fromDate,
       validUntil: untilDate,
       isActive: isActive !== false,

@@ -31,6 +31,17 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
 
   useEffect(() => { setHydrated(true) }, [])
 
+  const formatPSTDate = (iso?: string) => {
+    if (!iso) return '—'
+    const d = new Date(iso)
+    const dtf = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/Los_Angeles',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+    })
+    const parts = dtf.formatToParts(d).reduce((acc: any, p) => { acc[p.type] = p.value; return acc }, {})
+    return `${parts.year}-${parts.month}-${parts.day}`
+  }
+
   // Load payment if not provided
   useEffect(() => {
     if (initialPayment) return
@@ -159,7 +170,7 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
             </div>
             <div className="sm:col-span-3">
               <div className="text-gray-500">Date</div>
-              <div className="font-medium text-gray-900">{new Date().toLocaleDateString()}</div>
+              <div className="font-medium text-gray-900">{formatPSTDate(orderMeta?.createdAt || initialOrder?.createdAt)}</div>
             </div>
             <div className="sm:col-span-5 min-w-0">
               <div className="text-gray-500">Email</div>
