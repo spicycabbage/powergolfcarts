@@ -27,6 +27,12 @@ export interface IUser extends Document {
   role: 'customer' | 'admin'
   isActive: boolean
   loyaltyPoints?: number
+  loyaltyCoupons?: Array<{
+    code: string
+    value: number
+    createdAt: Date
+    usedAt?: Date
+  }>
   emailVerified: boolean
   lastLogin?: Date
   createdAt: Date
@@ -141,6 +147,12 @@ const UserSchema = new Schema<IUser>({
     default: 0,
     min: [0, 'Loyalty points cannot be negative']
   },
+  loyaltyCoupons: [{
+    code: { type: String, required: true },
+    value: { type: Number, required: true },
+    createdAt: { type: Date, default: Date.now },
+    usedAt: { type: Date }
+  }],
   emailVerified: {
     type: Boolean,
     default: false

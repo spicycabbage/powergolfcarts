@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth/options'
+import User from '@/lib/models/User'
 import { connectToDatabase } from '@/lib/mongodb'
 import Coupon from '@/lib/models/Coupon'
 import Product from '@/lib/models/Product'
@@ -43,6 +44,18 @@ export async function POST(request: NextRequest) {
     }
 
     const coupon = validation.coupon
+
+    // If user has redeemed loyalty coupons, ensure one-time use per account
+    try {
+      if (session?.user?.id) {
+        const user: any = await User.findById(session.user.id).select('loyaltyCoupons')
+        const lc = Array.isArray(user?.loyaltyCoupons) ? user.loyaltyCoupons : []
+        const match = lc.find((c: any) => String(c.code).toUpperCase() === String(coupon.code).toUpperCase())
+        if (match && match.usedAt) {
+          return NextResponse.json({ success: false, error: 'This loyalty coupon has already been used' }, { status: 400 })
+        }
+      }
+    } catch {}
 
     // Calculate applicable amount based on coupon restrictions
     let applicableAmount = 0

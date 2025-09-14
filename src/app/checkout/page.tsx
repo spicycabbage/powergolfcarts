@@ -160,13 +160,7 @@ export default function CheckoutPage() {
       } catch {}
     })()
 
-    // Load applied coupon from session storage
-    try {
-      const savedCoupon = sessionStorage.getItem('checkout_applied_coupon')
-      if (savedCoupon) {
-        setAppliedCoupon(JSON.parse(savedCoupon))
-      }
-    } catch {}
+    // Auto-apply removed; do not preload from session storage
   }, [])
 
   // Auto-fill from existing default shipping address and session email
@@ -239,6 +233,12 @@ export default function CheckoutPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 className="text-3xl font-bold text-gray-900 mb-6">Checkout</h1>
+        {!session?.user && (
+          <div className="mb-6 p-4 rounded border border-blue-200 bg-blue-50 text-sm text-blue-900">
+            <span className="mr-2">You are currently checking out as a guest.  No loyalty points will be awarded.</span>
+            <Link href={`/auth/login?callbackUrl=${encodeURIComponent('/checkout')}`} className="underline font-medium">Click here to login.</Link>
+          </div>
+        )}
 
         {itemCount === 0 ? (
           <div className="bg-white p-6 rounded-lg border">

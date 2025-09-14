@@ -141,7 +141,7 @@ export async function PUT(
           .populate({ path: 'items.product', select: 'name' })
           .lean()
 
-        const to = String(fresh?.user?.email || '')
+        const to = String(fresh?.user?.email || fresh?.contactEmail || fresh?.shippingAddress?.email || '')
         if (to) {
           const firstName = String(fresh?.user?.firstName || '').trim() || 'Customer'
           const invoice = fresh?.invoiceNumber ?? fresh?._id
@@ -208,6 +208,33 @@ export async function PUT(
         }
       } catch (err) {
         console.error('Complete order email error:', err)
+      }
+    }
+
+    // If status changed to cancelled, notify customer
+    if (nextStatus === 'cancelled' && oldStatus !== 'cancelled') {
+      try {
+        const fresh: any = await Order.findById(id)
+          .populate({ path: 'user', select: 'email firstName lastName' })
+          .lean()
+        const to = String(fresh?.user?.email || fresh?.contactEmail || fresh?.shippingAddress?.email || '')
+        if (to) {
+          const invoice = fresh?.invoiceNumber ?? fresh?._id
+          const html = `
+            <div>
+              <h2>Order Cancelled</h2>
+              <p>Your order <strong>#${invoice}</strong> has been cancelled.</p>
+              <p>We have not received a payment for this order so we assume it's no longer wanted. If you still wish to keep this order, please respond to this email. Thanks.</p>
+              <div style="margin-top:16px;color:#6b7280;font-size:12px;">
+                Thank you for shopping at <a href="https://www.godbud.cc">www.godbud.cc</a><br/>
+                Member of the Canada Kush network.
+              </div>
+            </div>
+          `
+          await sendEmail(to, `Order #${invoice} Cancelled`, html)
+        }
+      } catch (err) {
+        console.error('Cancel order email error:', err)
       }
     }
 

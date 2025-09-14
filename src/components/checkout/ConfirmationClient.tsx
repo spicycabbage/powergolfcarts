@@ -20,6 +20,7 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
     createdAt: initialOrder.createdAt,
     email: initialOrder?.user?.email,
   } : null)
+  const [displayEmail, setDisplayEmail] = useState<string>(initialOrder?.user?.email || orderMeta?.email || '')
   const [summary, setSummary] = useState<{ itemCount: number, subtotal: number, couponDiscount?: number, shipping: number, total: number }>({
     itemCount: Array.isArray(initialOrder?.items) ? initialOrder.items.reduce((s: number, it: any) => s + Number(it?.quantity || 0), 0) : 0,
     subtotal: Number(initialOrder?.subtotal || 0),
@@ -30,6 +31,18 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
   const [appliedCoupon, setAppliedCoupon] = useState<any>(initialOrder?.coupon || null)
 
   useEffect(() => { setHydrated(true) }, [])
+
+  // Resolve email client-side without rendering-time window access
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem('checkout_shipping')
+      const emailFromStorage = saved ? JSON.parse(saved)?.email : ''
+      const next = emailFromStorage || orderMeta?.email || ''
+      setDisplayEmail(next)
+    } catch {
+      setDisplayEmail(orderMeta?.email || '')
+    }
+  }, [orderMeta?.email])
 
   const formatPSTDate = (iso?: string) => {
     if (!iso) return '—'
@@ -157,7 +170,8 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
           appliedCoupon,
           shipping: shippingCost, 
           total, 
-          shippingAddress: shipping 
+          shippingAddress: shipping,
+          customerEmail: (shipping as any)?.email || orderMeta?.email || ''
         }
         const res = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
         const json = await res.json().catch(() => ({} as any))
@@ -165,6 +179,10 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
           const url = new URL(window.location.href)
           url.searchParams.set('order', json.data.id)
           window.history.replaceState(null, '', url.toString())
+          // Immediately show the real invoice number in UI
+          if (json.data.invoiceNumber) {
+            setOrderMeta({ id: String(json.data.invoiceNumber), createdAt: new Date().toISOString(), email: (shipping as any)?.email })
+          }
         }
         if (cart.items.length > 0) clearCart()
       } catch {}
@@ -181,7 +199,7 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 p-6 text-sm">
             <div className="sm:col-span-3">
               <div className="text-gray-500">Order number</div>
-              <div className="font-medium text-gray-900 break-all">{orderMeta?.id || searchParams.get('order') || '–'}</div>
+              <div className="font-medium text-gray-900 break-all">{orderMeta?.id || initialOrder?.invoiceNumber || searchParams.get('order') || '–'}</div>
             </div>
             <div className="sm:col-span-3">
               <div className="text-gray-500">Date</div>
@@ -189,7 +207,7 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
             </div>
             <div className="sm:col-span-5 min-w-0">
               <div className="text-gray-500">Email</div>
-              <div className="font-medium text-gray-900 break-all">{typeof window !== 'undefined' ? (JSON.parse(sessionStorage.getItem('checkout_shipping')||'{}')?.email || orderMeta?.email || '—') : '—'}</div>
+              <div className="font-medium text-gray-900 break-all">{displayEmail || '—'}</div>
             </div>
             <div className="sm:col-span-1 text-right">
               <div className="text-gray-500">Total</div>
@@ -232,6 +250,9 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
             <div className="border-t-2 border-gray-800 pt-3 flex justify-between"><span className="text-gray-600">Subtotal</span><span className="text-gray-900">${subtotal.toFixed(2)}</span></div>
             {effectiveCoupon?.code && (
               <div className="flex justify-between"><span className="text-green-600">Discount ({effectiveCoupon.code})</span><span className="text-green-600">-${effectiveDiscount.toFixed(2)}</span></div>
+            )}
+            {(summary as any)?.storeCreditUsed > 0 && (
+              <div className="flex justify-between"><span className="text-blue-600">Store Credit</span><span className="text-blue-600">-${Number((summary as any).storeCreditUsed).toFixed(2)}</span></div>
             )}
             <div className="flex justify-between"><span className="text-gray-600">Shipping</span><span className="text-gray-900">{shippingCost === 0 ? 'Free' : `$${shippingCost.toFixed(2)}`}</span></div>
             <div className="border-t-2 border-gray-800 pt-3 flex justify-between text-base font-semibold"><span className="text-gray-900">Total</span><span className="text-gray-900">${total.toFixed(2)}</span></div>

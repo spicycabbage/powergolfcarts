@@ -58,7 +58,14 @@ export default function LoyaltyUserOrdersPage() {
                     <td className="px-3 py-2 text-right">${Number(o.subtotal||0).toFixed(2)}</td>
                     <td className="px-3 py-2 text-right">-${Number(o?.coupon?.discount||0).toFixed(2)}</td>
                     <td className="px-3 py-2 text-right">${Number(o.shipping||0).toFixed(2)}</td>
-                    <td className="px-3 py-2 text-right">${Number(o.total||0).toFixed(2)}</td>
+                    <td className="px-3 py-2 text-right">{
+                      (()=>{
+                        const subtotal = Number(o.subtotal||0)
+                        const shipping = Number(o.shipping||0)
+                        const discount = Number(o?.coupon?.discount||0)
+                        return `$${Math.max(0, subtotal + shipping - discount).toFixed(2)}`
+                      })()
+                    }</td>
                     <td className="px-3 py-2 text-right">{Number(o.loyaltyPoints||0)}</td>
                     <td className="px-3 py-2">{String(o.status||'').toUpperCase()}</td>
                   </tr>

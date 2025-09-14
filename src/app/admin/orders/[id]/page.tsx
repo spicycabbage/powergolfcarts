@@ -82,7 +82,7 @@ export default function AdminOrderDetail() {
               <BackButton />
             </div>
             <div className="flex items-center gap-3 text-sm text-gray-600">
-              <span className="font-medium text-gray-800">{order?.user?.email || '-'}</span>
+              <span className="font-medium text-gray-800">{order?.user?.email || order?.contactEmail || order?.shippingAddress?.email || '-'}</span>
               <span>•</span>
               <span>{order?.createdAt ? new Date(order.createdAt).toLocaleString() : ''}</span>
             </div>

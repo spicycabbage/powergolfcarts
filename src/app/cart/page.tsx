@@ -8,6 +8,7 @@ import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft, Tag, X } from 'lucide-reac
 
 export default function CartPage() {
   const { cart, updateQuantity, removeItem, clearCart } = useCart()
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
   const [isUpdating, setIsUpdating] = useState<string | null>(null)
   const [shippingConfig, setShippingConfig] = useState<{ methods: Array<{ name: string, price: number, freeThreshold?: number, sortOrder?: number, isActive?: boolean }> } | null>(null)
   const [selectedShippingKey, setSelectedShippingKey] = useState<string>('')
@@ -17,6 +18,7 @@ export default function CartPage() {
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null)
   const [couponError, setCouponError] = useState('')
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false)
+  // store credit removed (reverted to coupon flow)
 
   const handleQuantityChange = async (productId: string, newQuantity: number, variant?: any) => {
     if (newQuantity < 1) return
@@ -114,6 +116,23 @@ export default function CartPage() {
     })()
   }, [])
 
+  // Detect login state (client-side) to gate coupon UI
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const res = await fetch('/api/user/me', { cache: 'no-store' })
+        const j = await res.json().catch(() => null)
+        setIsLoggedIn(Boolean(j && j.success))
+      } catch {
+        setIsLoggedIn(false)
+      }
+    })()
+  }, [])
+
+  
+
+  // Auto-apply removed per request: do not read or set from session storage
+
   const shippingOptions = useMemo(() => {
     const keyFromName = (n: string) => n.toLowerCase().trim().replace(/\s+/g, '-')
     const methods = (shippingConfig?.methods || [])
@@ -145,7 +164,6 @@ export default function CartPage() {
   
   // Calculate coupon discount - use the discount calculated by the API
   const couponDiscount = appliedCoupon?.discount || 0
-  
   const discountedSubtotal = subtotal - couponDiscount
   const displayTotal = discountedSubtotal + computedShippingCost
 
@@ -441,7 +459,8 @@ export default function CartPage() {
                   <span className="text-gray-900">${subtotal.toFixed(2)}</span>
                 </div>
 
-                {/* Coupon Section */}
+                {/* Coupon Section (hidden for guests) */}
+                {isLoggedIn && (
                 <div>
                   <h4 className="text-sm font-medium text-gray-900 mb-2">Coupon Code</h4>
                   
@@ -492,6 +511,7 @@ export default function CartPage() {
                     </div>
                   )}
                 </div>
+                )}
 
                 {/* Show discount in summary */}
                 {appliedCoupon && couponDiscount > 0 && (
@@ -500,6 +520,7 @@ export default function CartPage() {
                     <span className="text-green-600">-${couponDiscount.toFixed(2)}</span>
                   </div>
                 )}
+                
                 
                 {/* Shipping Method Selection (moved below discount) */}
                 <div>

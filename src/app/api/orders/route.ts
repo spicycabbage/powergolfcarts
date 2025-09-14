@@ -5,7 +5,8 @@ import { connectToDatabase } from '@/lib/mongodb'
 import Order from '@/lib/models/Order'
 import Product from '@/lib/models/Product'
 import Coupon from '@/lib/models/Coupon'
-import nodemailer from 'nodemailer'
+import { sendEmail } from '@/lib/email'
+import { buildOrderPlacedEmail } from '@/lib/emailTemplates'
 
 // GET /api/orders - Get user's orders
 export async function GET(request: NextRequest) {
@@ -53,29 +54,14 @@ export async function GET(request: NextRequest) {
   }
 }
 
-async function sendEmail(to: string, subject: string, html: string) {
-  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    console.warn('Email not configured; skipping email send')
-    return
-  }
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: false,
-    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
-  })
-  await transporter.sendMail({ from: process.env.SMTP_FROM || process.env.SMTP_USER, to, subject, html })
-}
+// use shared sendEmail from lib/email
 
 export async function POST(req: NextRequest) {
   try {
     const session: any = await getServerSession(authOptions as any)
-    if (!session || !session.user || !session.user.id) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
-    }
 
     const body = await req.json()
-    const { items, subtotal, couponDiscount, appliedCoupon, shipping, total, shippingAddress } = body || {}
+    const { items, subtotal, couponDiscount, appliedCoupon, shipping, total, shippingAddress, storeCreditUsed, customerEmail } = body || {}
     if (!Array.isArray(items) || typeof subtotal !== 'number' || typeof shipping !== 'number' || typeof total !== 'number') {
       return NextResponse.json({ success: false, error: 'Invalid payload' }, { status: 400 })
     }
@@ -108,7 +94,7 @@ export async function POST(req: NextRequest) {
           if (coupon.userUsageLimit && session.user.id) {
             const usedByUser = await Order.countDocuments({
               user: session.user.id,
-              'coupon.code': coupon.code,
+              'coupon.code': { $regex: `^${coupon.code}$`, $options: 'i' },
               status: { $ne: 'cancelled' }
             })
             if (usedByUser >= coupon.userUsageLimit) {
@@ -127,12 +113,12 @@ export async function POST(req: NextRequest) {
     }
 
     const order = await Order.create({
-      user: session.user.id,
+      user: session?.user?.id || undefined,
       items: orderItems,
       invoiceNumber: nextInvoice,
       subtotal,
       coupon: appliedCoupon ? {
-        code: appliedCoupon.code,
+        code: String(appliedCoupon.code || '').toUpperCase(),
         name: appliedCoupon.name,
         type: appliedCoupon.type,
         value: appliedCoupon.value,
@@ -140,7 +126,7 @@ export async function POST(req: NextRequest) {
       } : undefined,
       tax: 0,
       shipping,
-      total: Math.max(0, Number(subtotal || 0) + Number(0) + Number(shipping || 0) - Number(appliedCoupon?.discount || 0)),
+      total: Math.max(0, Number(subtotal || 0) + Number(0) + Number(shipping || 0) - Number(appliedCoupon?.discount || 0) - Number(storeCreditUsed || 0)),
       status: 'pending',
       shippingAddress: {
         firstName: shippingAddress?.firstName || '',
@@ -153,6 +139,7 @@ export async function POST(req: NextRequest) {
         postalCode: shippingAddress?.postalCode || '',
         country: shippingAddress?.country || '',
         phone: shippingAddress?.phone || '',
+        email: shippingAddress?.email || customerEmail || session?.user?.email || '',
       },
       billingAddress: {
         firstName: shippingAddress?.firstName || '',
@@ -167,7 +154,39 @@ export async function POST(req: NextRequest) {
         phone: shippingAddress?.phone || '',
       },
       paymentMethod: { type: 'bank_transfer' },
+      contactEmail: (shippingAddress?.email || customerEmail || session?.user?.email || ''),
     })
+
+    // If a loyalty coupon code was used, mark it as used on the user
+    try {
+      if (appliedCoupon?.code && session?.user?.id) {
+        const user: any = await (await import('@/lib/models/User')).default.findById(session.user.id)
+        if (user && Array.isArray(user.loyaltyCoupons)) {
+          const idx = user.loyaltyCoupons.findIndex((c: any) => String(c.code).toUpperCase() === String(appliedCoupon.code).toUpperCase())
+          if (idx >= 0 && !user.loyaltyCoupons[idx].usedAt) {
+            user.loyaltyCoupons[idx].usedAt = new Date() as any
+            await user.save()
+          }
+        }
+      }
+    } catch (markErr) {
+      console.error('Mark loyalty coupon used error:', markErr)
+    }
+
+    // Deduct store credit from user
+    try {
+      const scUsed = Number(storeCreditUsed || 0)
+      if (scUsed > 0) {
+        const userModel = (await import('@/lib/models/User')).default
+        const userDoc: any = await userModel.findById(session.user.id)
+        if (userDoc) {
+          userDoc.storeCredit = Math.max(0, Number(userDoc.storeCredit || 0) - scUsed) as any
+          await userDoc.save()
+        }
+      }
+    } catch (e) {
+      console.error('Store credit deduction error:', e)
+    }
 
     // Decrement inventory for each item (variant-aware)
     try {
@@ -205,33 +224,23 @@ export async function POST(req: NextRequest) {
     }
 
     const orderId = String(order._id)
-    const orderHtml = `
-      <div>
-        <h2>Order Confirmation</h2>
-        <p>Invoice #: ${nextInvoice}</p>
-        <h3>Ship To</h3>
-        <p>${shippingAddress?.firstName || ''} ${shippingAddress?.lastName || ''}</p>
-        <p>${shippingAddress?.address1 || ''}${shippingAddress?.address2 ? ', ' + shippingAddress.address2 : ''}</p>
-        <p>${shippingAddress?.city || ''}, ${shippingAddress?.state || ''} ${shippingAddress?.postalCode || ''}</p>
-        <p>${shippingAddress?.country || ''}</p>
-        <h3>Order Summary</h3>
-        <p>Subtotal: $${subtotal.toFixed(2)}</p>
-        ${appliedCoupon ? `<p style="color: green;">Discount (${appliedCoupon.code}): -$${appliedCoupon.discount.toFixed(2)}</p>` : ''}
-        <p>Shipping: $${shipping.toFixed(2)}</p>
-        <p><strong>Total: $${total.toFixed(2)}</strong></p>
-        <h3>Items</h3>
-        <ul>
-          ${items.map((it: any) => `<li>${it.name} x ${it.quantity} — $${(Number(it.price||0)*Number(it.quantity||1)).toFixed(2)}</li>`).join('')}
-        </ul>
-      </div>
-    `
-    // Customer email
-    if (session.user.email) {
-      await sendEmail(session.user.email, 'Your Order Confirmation', orderHtml)
+    const itemsForTemplate = orderItems.map((o:any)=>({ name: o.name || '', quantity: o.quantity, total: Number(o.total||0), product: { name: o.name || '' }, variant: o.variant }))
+    const orderHtml = buildOrderPlacedEmail({
+      invoiceNumber: nextInvoice,
+      items: itemsForTemplate,
+      subtotal,
+      shipping,
+      total,
+      shippingAddress
+    })
+    // Customer email (guest or logged-in)
+    const emailTo = (session?.user?.email as string) || (shippingAddress as any)?.email || String(customerEmail || '')
+    if (emailTo) {
+      await sendEmail(emailTo, `Order Confirmation #${nextInvoice}`, orderHtml)
     }
     // Admin email
     if (process.env.ORDERS_ADMIN_EMAIL) {
-      await sendEmail(process.env.ORDERS_ADMIN_EMAIL, 'New Order Received', orderHtml)
+      await sendEmail(process.env.ORDERS_ADMIN_EMAIL, `New Order #${nextInvoice} Received`, orderHtml)
     }
 
     return NextResponse.json({ success: true, data: { id: orderId, invoiceNumber: nextInvoice } })

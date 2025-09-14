@@ -102,10 +102,11 @@ export default function AdminOrdersList() {
                   <th className="px-4 py-3">Date</th>
                   <th className="px-4 py-3">Status</th>
                   <th className="px-4 py-3">Customer</th>
+                  <th className="px-4 py-3">Email</th>
                   <th className="px-4 py-3">Items</th>
                   <th className="px-4 py-3">Coupon</th>
-                  <th className="px-4 py-3">Shipment Tracking</th>
                   <th className="px-4 py-3">Total</th>
+                  <th className="px-4 py-3">Shipment Tracking</th>
                   
                 </tr>
               </thead>
@@ -130,6 +131,7 @@ export default function AdminOrdersList() {
                     <td className="px-4 py-3">{formatDateMMMDDYYYY(o.createdAt)}</td>
                     <td className="px-4 py-3">{o.status}</td>
                     <td className="px-4 py-3">{o.shippingAddress ? `${o.shippingAddress.firstName} ${o.shippingAddress.lastName}` : ''}</td>
+                    <td className="px-4 py-3">{o.contactEmail || o.shippingAddress?.email || '—'}</td>
                     <td className="px-4 py-3">{o.itemCount ?? 0}</td>
                     <td className="px-4 py-3">
                       {o.coupon ? (
@@ -141,6 +143,14 @@ export default function AdminOrdersList() {
                         <span className="text-gray-400">—</span>
                       )}
                     </td>
+                    <td className="px-4 py-3">{
+                      (()=>{
+                        const subtotal = Number(o.subtotal||0)
+                        const shipping = Number(o.shipping||0)
+                        const discount = Number(o?.coupon?.discount||0)
+                        return `$${Math.max(0, subtotal + shipping - discount).toFixed(2)}`
+                      })()
+                    }</td>
                     <td className="px-4 py-3">
                       {editingId === String(o._id) ? (
                         <div className="flex items-center gap-2">
@@ -178,7 +188,6 @@ export default function AdminOrdersList() {
                         })()
                       )}
                     </td>
-                    <td className="px-4 py-3">${Number(o.total||0).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>

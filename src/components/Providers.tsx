@@ -2,6 +2,7 @@
 
 import { ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Toaster as HotToaster } from 'react-hot-toast'
 
 interface ProvidersProps {
   children: ReactNode
@@ -26,6 +27,7 @@ export function Providers({ children }: ProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
       {children}
+      <HotToaster position="top-right" toastOptions={{ duration: 2500 }} />
     </QueryClientProvider>
   )
 }

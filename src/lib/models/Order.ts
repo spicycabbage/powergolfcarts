@@ -27,9 +27,10 @@ export interface IPaymentMethod {
 
 export interface IOrder {
   _id?: string
-  user: Schema.Types.ObjectId
+  user?: Schema.Types.ObjectId
   items: IOrderItem[]
   invoiceNumber?: number
+  contactEmail?: string
   subtotal: number
   tax: number
   shipping: number
@@ -142,19 +143,20 @@ const AddressSchema = new Schema({
   state: { type: String, required: true },
   postalCode: { type: String, required: true },
   country: { type: String, required: true },
-  phone: String
+  phone: String,
+  email: String
 })
 
 const OrderSchema = new Schema<IOrder>({
   user: {
     type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: [true, 'User is required']
+    ref: 'User'
   },
   invoiceNumber: {
     type: Number
   },
   items: [OrderItemSchema],
+  contactEmail: String,
   subtotal: {
     type: Number,
     required: true,

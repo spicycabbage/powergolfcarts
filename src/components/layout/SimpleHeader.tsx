@@ -45,7 +45,7 @@ export function SimpleHeader() {
       {/* Secondary Navigation */}
       <div className={`bg-gray-50 border-b border-gray-200 text-sm transition-all duration-300 ${isScrolled ? 'h-0 overflow-hidden' : 'py-2'}`}>
         <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
-          <nav className="hidden md:flex space-x-6">
+          <nav className="flex flex-wrap gap-4 md:space-x-6">
             <Link href="/about" className="text-gray-700 hover:text-primary-600">About Us</Link>
             <Link href="/faq" className="text-gray-700 hover:text-primary-600">FAQ</Link>
             <Link href="/blog" className="text-gray-700 hover:text-primary-600">Blog</Link>

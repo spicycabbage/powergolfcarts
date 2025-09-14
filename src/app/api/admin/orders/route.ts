@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     await connectToDatabase()
     const total = await Order.countDocuments({})
     const data = await Order.find({})
-      .select('invoiceNumber createdAt total status shippingAddress items tracking trackingNumber trackingCarrier coupon')
+      .select('invoiceNumber createdAt subtotal shipping total status shippingAddress items tracking trackingNumber trackingCarrier coupon contactEmail')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -30,13 +30,16 @@ export async function GET(request: NextRequest) {
       _id: o._id,
       invoiceNumber: o.invoiceNumber,
       createdAt: o.createdAt,
-      shippingAddress: o.shippingAddress ? { firstName: o.shippingAddress.firstName, lastName: o.shippingAddress.lastName } : undefined,
+      shippingAddress: o.shippingAddress ? { firstName: o.shippingAddress.firstName, lastName: o.shippingAddress.lastName, email: o.shippingAddress.email } : undefined,
+      contactEmail: o.contactEmail || o.shippingAddress?.email,
       itemCount: Array.isArray(o.items) ? o.items.reduce((s: number, it: any) => s + Number(it?.quantity || 0), 0) : 0,
       total: o.total,
       status: o.status,
       tracking: o.tracking || [],
       trackingNumber: o.trackingNumber,
       trackingCarrier: o.trackingCarrier,
+      subtotal: o.subtotal,
+      shipping: o.shipping,
       coupon: o.coupon ? { code: o.coupon.code, discount: Number(o.coupon.discount || 0) } : undefined,
     }))
 

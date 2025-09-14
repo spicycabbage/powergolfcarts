@@ -52,6 +52,7 @@ export default function OrderDetails({ userId }: OrderDetailsProps) {
   const getStatusColor = (status: string) => {
     const colors = {
       pending: 'bg-yellow-100 text-yellow-800',
+      completed: 'bg-green-100 text-green-800',
       confirmed: 'bg-blue-100 text-blue-800',
       processing: 'bg-purple-100 text-purple-800',
       shipped: 'bg-indigo-100 text-indigo-800',
@@ -215,8 +216,8 @@ export default function OrderDetails({ userId }: OrderDetailsProps) {
                 <span className="text-gray-900">Total:</span>
                 <span className="text-gray-900">{formatCurrency(computeEffectiveTotal(selectedOrder))}</span>
               </div>
-            </div>
-          </div>
+                  </div>
+                </div>
 
                 <div className="border-t border-gray-200 pt-4 mt-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -232,48 +233,24 @@ export default function OrderDetails({ userId }: OrderDetailsProps) {
                       </div>
                     </div>
                     <div>
-                <h4 className="text-sm font-medium text-gray-900 mb-2">Payment & Tracking</h4>
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                  selectedOrder.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' :
-                  selectedOrder.paymentStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                  selectedOrder.paymentStatus === 'failed' ? 'bg-red-100 text-red-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                  {selectedOrder.paymentStatus.charAt(0).toUpperCase() + selectedOrder.paymentStatus.slice(1)}
+                      <h4 className="text-sm font-medium text-gray-900 mb-2">Order Status & Tracking</h4>
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(selectedOrder.status)}`}>
+                        {selectedOrder.status.charAt(0).toUpperCase() + selectedOrder.status.slice(1)}
                       </span>
-                {(selectedOrder.trackingNumber || (Array.isArray((selectedOrder as any).tracking) && (selectedOrder as any).tracking.length > 0)) && (
-                        <div className="mt-2">
+                {((Array.isArray((selectedOrder as any).tracking) && (selectedOrder as any).tracking.length > 0) || selectedOrder.trackingNumber) && (
+                  <div className="mt-2">
                     <p className="text-sm text-gray-600 font-medium mb-1">Tracking:</p>
-                    {selectedOrder.trackingNumber && (
-                      <div className="text-sm">
-                        {(() => {
-                          const url = buildTrackingUrl(selectedOrder.trackingCarrier, selectedOrder.trackingNumber)
-                          return url ? (
-                            <a 
-                              href={url} 
-                              target="_blank" 
-                              rel="noopener noreferrer" 
-                              className="text-blue-600 hover:text-blue-700 underline font-mono"
-                            >
-                              {selectedOrder.trackingNumber}
-                            </a>
-                          ) : (
-                            <span className="font-mono">{selectedOrder.trackingNumber}</span>
-                          )
-                        })()}
-                      </div>
-                    )}
-                    {Array.isArray((selectedOrder as any).tracking) && (selectedOrder as any).tracking.length > 0 && (
+                    {Array.isArray((selectedOrder as any).tracking) && (selectedOrder as any).tracking.length > 0 ? (
                       <div className="space-y-1">
                         {(selectedOrder as any).tracking.map((track: any, idx: number) => {
                           const url = buildTrackingUrl(track.carrier, track.number)
                           return (
                             <div key={idx} className="text-sm">
                               {url ? (
-                                <a 
-                                  href={url} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer" 
+                                <a
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
                                   className="text-blue-600 hover:text-blue-700 underline font-mono"
                                 >
                                   {track.number}
@@ -286,9 +263,27 @@ export default function OrderDetails({ userId }: OrderDetailsProps) {
                           )
                         })}
                       </div>
+                    ) : (
+                      <div className="text-sm">
+                        {(() => {
+                          const url = buildTrackingUrl(selectedOrder.trackingCarrier, selectedOrder.trackingNumber)
+                          return url ? (
+                            <a
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-700 underline font-mono"
+                            >
+                              {selectedOrder.trackingNumber}
+                            </a>
+                          ) : (
+                            <span className="font-mono">{selectedOrder.trackingNumber}</span>
+                          )
+                        })()}
+                      </div>
                     )}
-                        </div>
-                      )}
+                  </div>
+                )}
                     </div>
                   </div>
                 </div>
