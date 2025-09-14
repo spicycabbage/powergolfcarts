@@ -28,8 +28,8 @@ export async function POST(request: NextRequest) {
 
     await connectToDatabase()
 
-    // Validate coupon
-    const validation = await Coupon.validateCoupon(
+    // Validate coupon (cast model to access typed static)
+    const validation = await (Coupon as any).validateCoupon(
       code,
       session?.user?.id || '',
       cartItems

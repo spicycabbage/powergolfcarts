@@ -1,4 +1,4 @@
-import { Schema, model, models } from 'mongoose'
+import { Schema, model, models, Model } from 'mongoose'
 
 export interface ICoupon {
   _id?: string
@@ -24,7 +24,15 @@ export interface ICoupon {
   updatedAt?: Date
 }
 
-const CouponSchema = new Schema<ICoupon>({
+interface CouponModel extends Model<ICoupon> {
+  validateCoupon(
+    code: string,
+    userId: string,
+    cartItems: any[]
+  ): Promise<{ valid: boolean; error?: string; coupon?: any }>
+}
+
+const CouponSchema = new Schema<ICoupon, CouponModel>({
   code: {
     type: String,
     required: [true, 'Coupon code is required'],
@@ -212,6 +220,6 @@ CouponSchema.statics.validateCoupon = async function(
   return { valid: true, coupon }
 }
 
-const Coupon = models.Coupon || model<ICoupon>('Coupon', CouponSchema)
+const Coupon = (models.Coupon as unknown as CouponModel) || model<ICoupon, CouponModel>('Coupon', CouponSchema)
 
 export default Coupon
