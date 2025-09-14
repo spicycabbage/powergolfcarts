@@ -8,6 +8,30 @@ import Link from 'next/link'
 export default function NewCouponPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const TZ = 'America/Los_Angeles'
+  const formatDateTimeLocalInTZ = (date: Date, timeZone: string) => {
+    const dtf = new Intl.DateTimeFormat('en-CA', {
+      timeZone,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', hour12: false,
+    })
+    const parts = dtf.formatToParts(date).reduce((acc: any, p) => {
+      acc[p.type] = p.value
+      return acc
+    }, {})
+    return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`
+  }
+  const parseDateTimeLocalInTZToDate = (input: string, timeZone: string) => {
+    const [datePart, timePart] = input.split('T')
+    const [y, m, d] = datePart.split('-').map(Number)
+    const [hh, mm] = timePart.split(':').map(Number)
+    const utcMillis = Date.UTC(y, (m - 1), d, hh, mm)
+    const ref = new Date(utcMillis)
+    const tzDate = new Date(ref.toLocaleString('en-US', { timeZone }))
+    const utcDate = new Date(ref.toLocaleString('en-US', { timeZone: 'UTC' }))
+    const offset = tzDate.getTime() - utcDate.getTime()
+    return new Date(utcMillis - offset)
+  }
   const [formData, setFormData] = useState({
     code: '',
     type: 'percentage' as 'percentage' | 'fixed',
@@ -16,8 +40,8 @@ export default function NewCouponPage() {
     minimumOrderAmount: '',
     usageLimit: '',
     userUsageLimit: '',
-    validFrom: new Date().toISOString().slice(0, 16), // Current date/time
-    validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16), // 30 days from now
+    validFrom: formatDateTimeLocalInTZ(new Date(), TZ), // Current PST datetime
+    validUntil: formatDateTimeLocalInTZ(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), TZ), // +30d PST
     isActive: true
   })
 
@@ -38,8 +62,8 @@ export default function NewCouponPage() {
           minimumOrderAmount: formData.minimumOrderAmount ? parseFloat(formData.minimumOrderAmount) : undefined,
           usageLimit: formData.usageLimit ? parseInt(formData.usageLimit) : undefined,
           userUsageLimit: formData.userUsageLimit ? parseInt(formData.userUsageLimit) : undefined,
-          validFrom: new Date(formData.validFrom),
-          validUntil: new Date(formData.validUntil)
+          validFrom: parseDateTimeLocalInTZToDate(formData.validFrom, TZ),
+          validUntil: parseDateTimeLocalInTZToDate(formData.validUntil, TZ)
         }),
       })
 

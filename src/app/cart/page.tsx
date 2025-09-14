@@ -441,34 +441,6 @@ export default function CartPage() {
                   <span className="text-gray-900">${subtotal.toFixed(2)}</span>
                 </div>
 
-                {/* Shipping Method Selection (below Subtotal) */}
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">Shipping</h4>
-                  {shippingOptions.length === 0 ? (
-                    <p className="text-sm text-gray-600">No shipping methods available.</p>
-                  ) : (
-                    <div className="space-y-2">
-                      {shippingOptions.map((opt) => (
-                        <label key={opt.key} className="flex items-center justify-between w-full cursor-pointer">
-                          <div className="flex items-center min-w-0 flex-1">
-                            <input
-                              type="radio"
-                              name="shippingMethod"
-                              className="mr-2 flex-shrink-0"
-                              checked={selectedShippingKey === opt.key}
-                              onChange={() => setSelectedShippingKey(opt.key)}
-                            />
-                            <span className="text-sm text-gray-800 truncate">{opt.label}</span>
-                          </div>
-                          <span className="ml-2 text-sm text-gray-900 flex-shrink-0">
-                            {opt.price === 0 ? 'Free' : `$${opt.price.toFixed(2)}`}
-                          </span>
-                        </label>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
                 {/* Coupon Section */}
                 <div>
                   <h4 className="text-sm font-medium text-gray-900 mb-2">Coupon Code</h4>
@@ -528,6 +500,34 @@ export default function CartPage() {
                     <span className="text-green-600">-${couponDiscount.toFixed(2)}</span>
                   </div>
                 )}
+                
+                {/* Shipping Method Selection (moved below discount) */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">Shipping</h4>
+                  {shippingOptions.length === 0 ? (
+                    <p className="text-sm text-gray-600">No shipping methods available.</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {shippingOptions.map((opt) => (
+                        <label key={opt.key} className="flex items-center justify-between w-full cursor-pointer">
+                          <div className="flex items-center min-w-0 flex-1">
+                            <input
+                              type="radio"
+                              name="shippingMethod"
+                              className="mr-2 flex-shrink-0"
+                              checked={selectedShippingKey === opt.key}
+                              onChange={() => setSelectedShippingKey(opt.key)}
+                            />
+                            <span className="text-sm text-gray-800 truncate">{opt.label}</span>
+                          </div>
+                          <span className="ml-2 text-sm text-gray-900 flex-shrink-0">
+                            {opt.price === 0 ? 'Free' : `$${opt.price.toFixed(2)}`}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 
                 {/* Tax row removed: prices include tax */}
                 

@@ -203,17 +203,15 @@ CouponSchema.statics.validateCoupon = async function(
   
   // Check user usage limit
   if (coupon.userUsageLimit && userId) {
-    const Order = models.Order
-    if (Order) {
-      const userUsageCount = await Order.countDocuments({
-        user: userId,
-        'coupon.code': coupon.code,
-        status: { $ne: 'cancelled' }
-      })
-      
-      if (userUsageCount >= coupon.userUsageLimit) {
-        return { valid: false, error: 'You have reached the usage limit for this coupon' }
-      }
+    // Dynamically import Order model to avoid model-not-compiled issues
+    const { default: Order } = await import('@/lib/models/Order')
+    const userUsageCount = await Order.countDocuments({
+      user: userId,
+      'coupon.code': coupon.code,
+      status: { $ne: 'cancelled' }
+    })
+    if (userUsageCount >= coupon.userUsageLimit) {
+      return { valid: false, error: 'You have reached the usage limit for this coupon' }
     }
   }
   

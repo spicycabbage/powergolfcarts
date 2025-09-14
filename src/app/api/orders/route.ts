@@ -99,12 +99,24 @@ export async function POST(req: NextRequest) {
     const lastNum = last && Number.isFinite(Number(last.invoiceNumber)) ? Number(last.invoiceNumber) : undefined
     const nextInvoice = typeof lastNum === 'number' ? Math.max(seedInvoice, lastNum + 1) : seedInvoice
 
-    // Handle coupon usage tracking
+    // Handle coupon usage tracking and enforce per-user limit server-side
     if (appliedCoupon && appliedCoupon.code) {
       try {
         const coupon = await Coupon.findOne({ code: appliedCoupon.code.toUpperCase() })
         if (coupon) {
-          // Increment usage count
+          // Enforce per-user usage limit
+          if (coupon.userUsageLimit && session.user.id) {
+            const usedByUser = await Order.countDocuments({
+              user: session.user.id,
+              'coupon.code': coupon.code,
+              status: { $ne: 'cancelled' }
+            })
+            if (usedByUser >= coupon.userUsageLimit) {
+              return NextResponse.json({ success: false, error: 'Coupon usage limit reached for this user' }, { status: 400 })
+            }
+          }
+
+          // Increment total usage count (best-effort)
           coupon.usageCount = (coupon.usageCount || 0) + 1
           await coupon.save()
         }

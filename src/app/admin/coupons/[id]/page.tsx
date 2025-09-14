@@ -36,6 +36,7 @@ export default function EditCouponPage() {
   const [loading, setLoading] = useState(false)
   const [fetchLoading, setFetchLoading] = useState(true)
   const [coupon, setCoupon] = useState<CouponData | null>(null)
+  const TZ = 'America/Los_Angeles'
   const [formData, setFormData] = useState({
     code: '',
     type: 'percentage' as 'percentage' | 'fixed',
@@ -66,9 +67,30 @@ export default function EditCouponPage() {
         const couponData = data.data
         setCoupon(couponData)
         
-        // Convert dates to datetime-local format
-        const validFrom = new Date(couponData.validFrom).toISOString().slice(0, 16)
-        const validUntil = new Date(couponData.validUntil).toISOString().slice(0, 16)
+        // Convert dates to datetime-local format in PST
+        const formatDateTimeLocalInTZ = (date: Date | string, timeZone: string) => {
+          const d = new Date(date)
+          const dtf = new Intl.DateTimeFormat('en-CA', {
+            timeZone,
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit', hour12: false,
+          })
+          const parts = dtf.formatToParts(d).reduce((acc: any, p) => { acc[p.type] = p.value; return acc }, {})
+          return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`
+        }
+        const parseDateTimeLocalInTZToDate = (input: string, timeZone: string) => {
+          const [datePart, timePart] = input.split('T')
+          const [y, m, day] = datePart.split('-').map(Number)
+          const [hh, mm] = timePart.split(':').map(Number)
+          const utcMillis = Date.UTC(y, (m - 1), day, hh, mm)
+          const ref = new Date(utcMillis)
+          const tzDate = new Date(ref.toLocaleString('en-US', { timeZone }))
+          const utcDate = new Date(ref.toLocaleString('en-US', { timeZone: 'UTC' }))
+          const offset = tzDate.getTime() - utcDate.getTime()
+          return new Date(utcMillis - offset)
+        }
+        const validFrom = formatDateTimeLocalInTZ(couponData.validFrom, TZ)
+        const validUntil = formatDateTimeLocalInTZ(couponData.validUntil, TZ)
         
         setFormData({
           code: couponData.code,
@@ -114,8 +136,8 @@ export default function EditCouponPage() {
           maximumDiscountAmount: formData.maximumDiscountAmount ? parseFloat(formData.maximumDiscountAmount) : undefined,
           usageLimit: formData.usageLimit ? parseInt(formData.usageLimit) : undefined,
           userUsageLimit: formData.userUsageLimit ? parseInt(formData.userUsageLimit) : undefined,
-          validFrom: new Date(formData.validFrom),
-          validUntil: new Date(formData.validUntil)
+          validFrom: parseDateTimeLocalInTZToDate(formData.validFrom, TZ),
+          validUntil: parseDateTimeLocalInTZToDate(formData.validUntil, TZ)
         }),
       })
 
