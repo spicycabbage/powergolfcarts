@@ -176,8 +176,8 @@ export const useCartStore = create<CartStore>()(
           const variantMatch = itemVariantId === searchVariantId
           if (item.product._id === productId && variantMatch) {
             // Cap quantity to available stock
-            const maxStock = searchVariant && typeof (searchVariant as any)?.inventory === 'number'
-              ? Number((searchVariant as any).inventory)
+            const maxStock = variant && typeof (variant as any)?.inventory === 'number'
+              ? Number((variant as any).inventory)
               : Number((item.product as any)?.inventory?.quantity || 0)
             const nextQty = Math.min(quantity, Math.max(0, maxStock))
             if (quantity > nextQty) {
