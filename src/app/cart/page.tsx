@@ -12,6 +12,7 @@ export default function CartPage() {
   const [isUpdating, setIsUpdating] = useState<string | null>(null)
   const [shippingConfig, setShippingConfig] = useState<{ methods: Array<{ name: string, price: number, freeThreshold?: number, sortOrder?: number, isActive?: boolean }> } | null>(null)
   const [selectedShippingKey, setSelectedShippingKey] = useState<string>('')
+  const [metaLoading, setMetaLoading] = useState<boolean>(true)
   
   // Coupon state
   const [couponCode, setCouponCode] = useState('')
@@ -99,9 +100,16 @@ export default function CartPage() {
   useEffect(() => {
     ;(async () => {
       try {
-        const res = await fetch('/api/shipping', { cache: 'no-store' })
-        const json = await res.json().catch(() => ({} as any))
-        const data = json?.data
+        const [shippingRes, meRes] = await Promise.all([
+          fetch('/api/shipping', { cache: 'no-store' }).then(r => r.json()).catch(() => ({} as any)),
+          fetch('/api/user/me', { cache: 'no-store' }).then(r => r.json()).catch(() => null),
+        ])
+
+        // Set login state
+        setIsLoggedIn(Boolean(meRes && (meRes as any).success))
+
+        // Set shipping config
+        const data = (shippingRes as any)?.data
         const activeMethods = (Array.isArray(data?.methods) ? data.methods : []).filter((m: any) => m?.isActive !== false)
         setShippingConfig({
           methods: activeMethods.map((m: any) => ({
@@ -112,19 +120,10 @@ export default function CartPage() {
             isActive: m.isActive !== false,
           }))
         })
-      } catch {}
-    })()
-  }, [])
-
-  // Detect login state (client-side) to gate coupon UI
-  useEffect(() => {
-    ;(async () => {
-      try {
-        const res = await fetch('/api/user/me', { cache: 'no-store' })
-        const j = await res.json().catch(() => null)
-        setIsLoggedIn(Boolean(j && j.success))
       } catch {
         setIsLoggedIn(false)
+      } finally {
+        setMetaLoading(false)
       }
     })()
   }, [])
@@ -459,8 +458,13 @@ export default function CartPage() {
                   <span className="text-gray-900">${subtotal.toFixed(2)}</span>
                 </div>
 
-                {/* Coupon Section (hidden for guests) */}
-                {isLoggedIn && (
+                {/* Coupon Section (hidden for guests). Show placeholder until meta loaded */}
+                {metaLoading ? (
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-900 mb-2">Coupon Code</h4>
+                    <div className="h-9 bg-gray-200 rounded animate-pulse" />
+                  </div>
+                ) : isLoggedIn ? (
                 <div>
                   <h4 className="text-sm font-medium text-gray-900 mb-2">Coupon Code</h4>
                   
@@ -511,7 +515,7 @@ export default function CartPage() {
                     </div>
                   )}
                 </div>
-                )}
+                ) : null}
 
                 {/* Show discount in summary */}
                 {appliedCoupon && couponDiscount > 0 && (
@@ -525,7 +529,12 @@ export default function CartPage() {
                 {/* Shipping Method Selection (moved below discount) */}
                 <div>
                   <h4 className="text-sm font-medium text-gray-900 mb-2">Shipping</h4>
-                  {shippingOptions.length === 0 ? (
+                  {metaLoading ? (
+                    <div className="space-y-2">
+                      <div className="h-5 bg-gray-200 rounded animate-pulse" />
+                      <div className="h-5 bg-gray-200 rounded animate-pulse" />
+                    </div>
+                  ) : shippingOptions.length === 0 ? (
                     <p className="text-sm text-gray-600">No shipping methods available.</p>
                   ) : (
                     <div className="space-y-2">
