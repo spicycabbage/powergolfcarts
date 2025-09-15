@@ -191,7 +191,7 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
           <div className="p-4 space-y-2 text-sm sm:hidden">
             <div className="flex items-center justify-between">
               <span className="text-gray-500">Order #</span>
-              <span className="font-medium text-gray-900">{orderMeta?.id || initialOrder?.invoiceNumber || searchParams.get('order') || '–'}</span>
+              <span className="font-medium text-gray-900">{orderMeta?.id || initialOrder?.invoiceNumber || searchParams.get('order') || 'fetching...'}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-500">Total</span>
@@ -202,7 +202,7 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
           <div className="hidden sm:grid grid-cols-1 sm:grid-cols-12 gap-4 p-6 text-sm">
             <div className="sm:col-span-8">
               <div className="text-gray-500">Order number</div>
-              <div className="font-medium text-gray-900 break-all">{orderMeta?.id || initialOrder?.invoiceNumber || searchParams.get('order') || '–'}</div>
+              <div className="font-medium text-gray-900 break-all">{orderMeta?.id || initialOrder?.invoiceNumber || searchParams.get('order') || 'fetching...'}</div>
             </div>
             <div className="sm:col-span-4 text-right">
               <div className="text-gray-500">Total</div>

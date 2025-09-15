@@ -36,7 +36,7 @@ export default async function OrderConfirmationPage({ searchParams }: { searchPa
           <div className="p-4 sm:p-6 text-sm grid grid-cols-1 sm:grid-cols-12 gap-4">
             <div className="sm:col-span-8">
               <div className="text-gray-500">Order number</div>
-              <div className="font-medium text-gray-900 break-all">{String(initialInvoice || orderId || '–')}</div>
+              <div className="font-medium text-gray-900 break-all">{String(initialInvoice || orderId || 'fetching...')}</div>
             </div>
           </div>
         </div>
