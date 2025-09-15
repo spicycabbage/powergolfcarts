@@ -211,8 +211,6 @@ const OrderSchema = new Schema<IOrder>({
 
 // Indexes for performance
 OrderSchema.index({ invoiceNumber: 1 }, { unique: true, sparse: true })
-// Prevent duplicate creates on rapid clicks
-OrderSchema.index({ idempotencyKey: 1 }, { unique: true, sparse: true })
 OrderSchema.index({ user: 1 })
 OrderSchema.index({ status: 1 })
 OrderSchema.index({ paymentStatus: 1 })

@@ -3,11 +3,15 @@
 import { useRouter, usePathname } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 
-export function BackButton() {
+export function BackButton({ to }: { to?: string }) {
   const router = useRouter()
   const pathname = usePathname()
 
   const handleBack = () => {
+    if (to) {
+      router.push(to)
+      return
+    }
     // If we're in an admin page, go back to admin dashboard
     if (pathname.startsWith('/admin/')) {
       router.push('/admin')

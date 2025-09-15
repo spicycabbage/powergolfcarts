@@ -79,7 +79,7 @@ export default function AdminOrderDetail() {
                 <h1 className="text-xl font-semibold text-gray-900">Order {order?.invoiceNumber ?? (order?.orderNumber || id)}</h1>
                 <span className={`px-2 py-1 rounded text-xs font-medium ${statusBadge}`}>{String(order?.status || '').toUpperCase()}</span>
               </div>
-              <BackButton />
+              <BackButton to="/admin/orders" />
             </div>
             <div className="flex items-center gap-3 text-sm text-gray-600">
               <span className="font-medium text-gray-800">{order?.user?.email || order?.contactEmail || order?.shippingAddress?.email || '-'}</span>
