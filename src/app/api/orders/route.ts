@@ -169,11 +169,12 @@ export async function POST(req: NextRequest) {
     // If a loyalty coupon code was used, mark it as used on the user
     try {
       if (appliedCoupon?.code && session?.user?.id) {
-        const user: any = await (await import('@/lib/models/User')).default.findById(session.user.id)
+        const User = (await import('@/lib/models/User')).default
+        const user: any = await User.findById(session.user.id)
         if (user && Array.isArray(user.loyaltyCoupons)) {
           const idx = user.loyaltyCoupons.findIndex((c: any) => String(c.code).toUpperCase() === String(appliedCoupon.code).toUpperCase())
           if (idx >= 0 && !user.loyaltyCoupons[idx].usedAt) {
-            user.loyaltyCoupons[idx].usedAt = new Date() as any
+            user.loyaltyCoupons[idx].usedAt = new Date()
             await user.save()
           }
         }

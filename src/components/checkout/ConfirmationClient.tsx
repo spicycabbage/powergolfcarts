@@ -185,6 +185,15 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
           }
         }
         if (cart.items.length > 0) clearCart()
+        // Clear all checkout data from session storage after successful order creation
+        try {
+          sessionStorage.removeItem('checkout_idem')
+          sessionStorage.removeItem('checkout_items')
+          sessionStorage.removeItem('checkout_shipping')
+          sessionStorage.removeItem('checkout_selected_shipping')
+          sessionStorage.removeItem('checkout_order_summary')
+          sessionStorage.removeItem('checkout_applied_coupon')
+        } catch {}
       } catch {}
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps

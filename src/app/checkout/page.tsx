@@ -30,6 +30,16 @@ export default function CheckoutPage() {
   } | null>(null)
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null)
 
+  // Load applied coupon from sessionStorage
+  useEffect(() => {
+    try {
+      const savedCoupon = sessionStorage.getItem('checkout_applied_coupon')
+      if (savedCoupon) {
+        setAppliedCoupon(JSON.parse(savedCoupon))
+      }
+    } catch {}
+  }, [])
+
   const emailOk = /^\S+@\S+\.\S+$/.test(shipping.email)
   const requiredOk = shipping.firstName && shipping.lastName && emailOk && shipping.address1 && shipping.city && shipping.state && shipping.postalCode && shipping.country
 
@@ -125,6 +135,9 @@ export default function CheckoutPage() {
       sessionStorage.setItem('checkout_selected_shipping', JSON.stringify(selectedShippingPayload))
       sessionStorage.setItem('checkout_order_summary', JSON.stringify(orderSummary))
       sessionStorage.setItem('checkout_items', JSON.stringify(itemsForCheckout))
+      // Clear any previous order data to ensure a fresh order is created
+      sessionStorage.removeItem('lastInvoice')
+      sessionStorage.removeItem('checkout_idem') // Clear idempotency key to ensure new order
       router.push('/checkout/confirmation')
     } catch (e: any) {
       setError(e?.message || 'Checkout failed')
