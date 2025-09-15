@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useCart } from '@/hooks/useCart'
 import { useSearchParams } from 'next/navigation'
 
-export default function ConfirmationClient({ order: initialOrder, payment: initialPayment }: { order?: any, payment?: any }) {
+export default function ConfirmationClient({ order: initialOrder, payment: initialPayment, initialInvoice }: { order?: any, payment?: any, initialInvoice?: number }) {
   const { cart, clearCart } = useCart()
   const [shipping, setShipping] = useState<any>(initialOrder?.shippingAddress || null)
   const [payment, setPayment] = useState<any>(initialPayment || null)
@@ -19,7 +19,7 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
     id: String(initialOrder.invoiceNumber || initialOrder._id),
     createdAt: initialOrder.createdAt,
     email: initialOrder?.user?.email,
-  } : null)
+  } : (initialInvoice ? { id: String(initialInvoice) } : null))
   const [summary, setSummary] = useState<{ itemCount: number, subtotal: number, couponDiscount?: number, shipping: number, total: number }>({
     itemCount: Array.isArray(initialOrder?.items) ? initialOrder.items.reduce((s: number, it: any) => s + Number(it?.quantity || 0), 0) : 0,
     subtotal: Number(initialOrder?.subtotal || 0),
@@ -30,6 +30,14 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
   const [appliedCoupon, setAppliedCoupon] = useState<any>(initialOrder?.coupon || null)
 
   useEffect(() => { setHydrated(true) }, [])
+  // Prime from sessionStorage on first paint
+  useEffect(() => {
+    try {
+      const iv = sessionStorage.getItem('lastInvoice')
+      if (iv && !orderMeta?.id) setOrderMeta(prev => ({ ...(prev || {}), id: iv }))
+    } catch {}
+  }, [])
+
 
 
   // Date removed from header on request; no date formatting needed
@@ -158,9 +166,11 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
           const url = new URL(window.location.href)
           url.searchParams.set('order', json.data.id)
           window.history.replaceState(null, '', url.toString())
-          // Immediately show the real invoice number in UI
+          // Immediately show the real invoice number in UI and persist for refreshes
           if (json.data.invoiceNumber) {
-            setOrderMeta({ id: String(json.data.invoiceNumber), createdAt: new Date().toISOString(), email: (shipping as any)?.email })
+            const inv = String(json.data.invoiceNumber)
+            setOrderMeta({ id: inv, createdAt: new Date().toISOString(), email: (shipping as any)?.email })
+            try { sessionStorage.setItem('lastInvoice', inv) } catch {}
           }
         }
         if (cart.items.length > 0) clearCart()

@@ -13,18 +13,17 @@ export default async function OrderConfirmationPage({ searchParams }: { searchPa
   const origin = `${proto}://${host}`
 
   const fetches: Promise<any>[] = []
-  if (orderId) {
-    fetches.push(fetch(`${origin}/api/orders/${orderId}`, { cache: 'no-store', headers: { cookie: h.get('cookie') ?? '' } }).then(r => r.json()).catch(() => ({} as any)))
-  } else {
-    fetches.push(Promise.resolve({}))
-  }
+  const metaPromise = orderId
+    ? fetch(`${origin}/api/orders/${orderId}?meta=1`, { cache: 'no-store' }).then(r => r.json()).catch(() => ({} as any))
+    : Promise.resolve({})
+  fetches.push(metaPromise)
   fetches.push(fetch(`${origin}/api/payment`, { cache: 'no-store' }).then(r => r.json()).catch(() => ({} as any)))
 
-  const [orderJson, paymentJson] = await Promise.all(fetches)
-  const order = orderJson?.data || null
+  const [metaJson, paymentJson] = await Promise.all(fetches)
+  const initialInvoice = metaJson?.data?.invoiceNumber ?? null
   const payment = paymentJson?.success === false ? null : (paymentJson?.data || null)
 
-  return <ConfirmationClient order={order} payment={payment} />
+  return <ConfirmationClient payment={payment} initialInvoice={initialInvoice} />
 }
 
 
