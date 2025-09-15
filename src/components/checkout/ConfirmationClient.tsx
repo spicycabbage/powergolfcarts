@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useCart } from '@/hooks/useCart'
 import { useSearchParams } from 'next/navigation'
@@ -20,7 +20,6 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
     createdAt: initialOrder.createdAt,
     email: initialOrder?.user?.email,
   } : null)
-  const [displayEmail, setDisplayEmail] = useState<string>(initialOrder?.user?.email || orderMeta?.email || '')
   const [summary, setSummary] = useState<{ itemCount: number, subtotal: number, couponDiscount?: number, shipping: number, total: number }>({
     itemCount: Array.isArray(initialOrder?.items) ? initialOrder.items.reduce((s: number, it: any) => s + Number(it?.quantity || 0), 0) : 0,
     subtotal: Number(initialOrder?.subtotal || 0),
@@ -32,28 +31,8 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
 
   useEffect(() => { setHydrated(true) }, [])
 
-  // Resolve email client-side without rendering-time window access
-  useEffect(() => {
-    try {
-      const saved = sessionStorage.getItem('checkout_shipping')
-      const emailFromStorage = saved ? JSON.parse(saved)?.email : ''
-      const next = emailFromStorage || orderMeta?.email || ''
-      setDisplayEmail(next)
-    } catch {
-      setDisplayEmail(orderMeta?.email || '')
-    }
-  }, [orderMeta?.email])
 
-  const formatPSTDate = (iso?: string) => {
-    if (!iso) return '—'
-    const d = new Date(iso)
-    const dtf = new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'America/Los_Angeles',
-      year: 'numeric', month: '2-digit', day: '2-digit',
-    })
-    const parts = dtf.formatToParts(d).reduce((acc: any, p) => { acc[p.type] = p.value; return acc }, {})
-    return `${parts.year}-${parts.month}-${parts.day}`
-  }
+  // Date removed from header on request; no date formatting needed
 
   // Load payment if not provided
   useEffect(() => {
@@ -196,20 +175,24 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
         <h1 className="text-3xl font-bold text-gray-900 mb-4 sm:mb-6">Order Confirmation</h1>
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 sm:mb-6">
-          <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 p-6 text-sm">
-            <div className="sm:col-span-3">
+          {/* Mobile: label left, value right (only Order # and Total) */}
+          <div className="p-4 space-y-2 text-sm sm:hidden">
+            <div className="flex items-center justify-between">
+              <span className="text-gray-500">Order #</span>
+              <span className="font-medium text-gray-900">{orderMeta?.id || initialOrder?.invoiceNumber || searchParams.get('order') || '–'}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-500">Total</span>
+              <span className="font-medium text-gray-900">{`$${total.toFixed(2)}`}</span>
+            </div>
+          </div>
+          {/* Desktop: show Order # and Total only */}
+          <div className="hidden sm:grid grid-cols-1 sm:grid-cols-12 gap-4 p-6 text-sm">
+            <div className="sm:col-span-8">
               <div className="text-gray-500">Order number</div>
               <div className="font-medium text-gray-900 break-all">{orderMeta?.id || initialOrder?.invoiceNumber || searchParams.get('order') || '–'}</div>
             </div>
-            <div className="sm:col-span-3">
-              <div className="text-gray-500">Date</div>
-              <div className="font-medium text-gray-900">{formatPSTDate(orderMeta?.createdAt || initialOrder?.createdAt)}</div>
-            </div>
-            <div className="sm:col-span-5 min-w-0">
-              <div className="text-gray-500">Email</div>
-              <div className="font-medium text-gray-900 break-all">{displayEmail || '—'}</div>
-            </div>
-            <div className="sm:col-span-1 text-right">
+            <div className="sm:col-span-4 text-right">
               <div className="text-gray-500">Total</div>
               <div className="font-medium text-gray-900">{`$${total.toFixed(2)}`}</div>
             </div>
