@@ -9,7 +9,7 @@ import { useSession } from 'next-auth/react'
 
 export default function CheckoutPage() {
   const router = useRouter()
-  const { cart } = useCart()
+  const { cart, clearCart } = useCart()
   const { data: session } = useSession()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -125,7 +125,34 @@ export default function CheckoutPage() {
       sessionStorage.setItem('checkout_selected_shipping', JSON.stringify(selectedShippingPayload))
       sessionStorage.setItem('checkout_order_summary', JSON.stringify(orderSummary))
       sessionStorage.setItem('checkout_items', JSON.stringify(itemsForCheckout))
-      router.push('/checkout/confirmation')
+
+      // Create order before navigation for instant confirmation load
+      const payload = {
+        items: itemsForCheckout.map((it: any) => ({
+          productId: it.productId,
+          variant: it.variant,
+          quantity: it.quantity,
+          price: it.price,
+        })),
+        subtotal: displaySubtotal,
+        couponDiscount,
+        appliedCoupon: orderSummary.appliedCoupon,
+        shipping: computedShippingCost,
+        total: displayTotal,
+        shippingAddress: shipping,
+        customerEmail: shipping.email || ''
+      }
+      const res = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+      const json = await res.json().catch(() => ({} as any))
+      if (!json?.success || !json?.data?.id) {
+        throw new Error(json?.error || 'Failed to create order')
+      }
+      try { if (json?.data?.invoiceNumber) sessionStorage.setItem('lastInvoice', String(json.data.invoiceNumber)) } catch {}
+      if (cart.items.length > 0) clearCart()
+      const next = new URL('/checkout/confirmation', window.location.origin)
+      next.searchParams.set('order', String(json.data.id))
+      if (json?.data?.invoiceNumber) next.searchParams.set('invoice', String(json.data.invoiceNumber))
+      router.push(next.toString())
     } catch (e: any) {
       setError(e?.message || 'Checkout failed')
     } finally {
