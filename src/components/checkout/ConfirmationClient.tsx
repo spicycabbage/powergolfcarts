@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useCart } from '@/hooks/useCart'
 import { useSearchParams } from 'next/navigation'
 
-export default function ConfirmationClient({ order: initialOrder, payment: initialPayment, initialInvoice }: { order?: any, payment?: any, initialInvoice?: number }) {
+export default function ConfirmationClient({ order: initialOrder, payment: initialPayment, initialInvoice, ssrHeader }: { order?: any, payment?: any, initialInvoice?: number, ssrHeader?: boolean }) {
   const { cart, clearCart } = useCart()
   const [shipping, setShipping] = useState<any>(initialOrder?.shippingAddress || null)
   const [payment, setPayment] = useState<any>(initialPayment || null)
@@ -165,6 +165,7 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
         if (json?.success && json?.data?.id) {
           const url = new URL(window.location.href)
           url.searchParams.set('order', json.data.id)
+          if (json.data.invoiceNumber) url.searchParams.set('invoice', String(json.data.invoiceNumber))
           window.history.replaceState(null, '', url.toString())
           // Immediately show the real invoice number in UI and persist for refreshes
           if (json.data.invoiceNumber) {
@@ -184,6 +185,7 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
       <div className="max-w-3xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-10">
         <h1 className="text-3xl font-bold text-gray-900 mb-4 sm:mb-6">Order Confirmation</h1>
 
+        {!ssrHeader && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 sm:mb-6">
           {/* Mobile: label left, value right (only Order # and Total) */}
           <div className="p-4 space-y-2 text-sm sm:hidden">
@@ -208,6 +210,7 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
             </div>
           </div>
         </div>
+        )}
 
         {paymentLoaded && payment?.etransfer?.enabled !== false && (
           <div className="rounded-lg p-0 mb-6 border-2 border-green-700 overflow-hidden">
