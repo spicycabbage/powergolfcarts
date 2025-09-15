@@ -5,6 +5,18 @@ module.exports = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  safelist: [
+    // General typography and code blocks
+    { pattern: /^(prose)(-|$)/ },
+    { pattern: /^(hljs)(-|$)/ },
+    // Toast/notifications or 3rd-party utility prefixes
+    { pattern: /^(toast|react-hot-toast)(-|$)/ },
+    // Carousel/libs common prefixes
+    { pattern: /^(swiper|slick|slick-.*)$/ },
+    // Defensive keep for state-variant utilities that may be built dynamically
+    { pattern: /^data-\[.*\]:.+$/ },
+    { pattern: /^aria-\[.*\]:.+$/ },
+  ],
   theme: {
     extend: {
       colors: {
