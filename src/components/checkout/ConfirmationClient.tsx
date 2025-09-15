@@ -185,7 +185,6 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
       <div className="max-w-3xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-10">
         <h1 className="text-3xl font-bold text-gray-900 mb-4 sm:mb-6">Order Confirmation</h1>
 
-        {!ssrHeader && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 sm:mb-6">
           {/* Mobile: label left, value right (only Order # and Total) */}
           <div className="p-4 space-y-2 text-sm sm:hidden">
@@ -210,7 +209,6 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
             </div>
           </div>
         </div>
-        )}
 
         {paymentLoaded && payment?.etransfer?.enabled !== false && (
           <div className="rounded-lg p-0 mb-6 border-2 border-green-700 overflow-hidden">
