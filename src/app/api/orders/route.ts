@@ -70,9 +70,9 @@ export async function POST(req: NextRequest) {
 
     // Idempotency: if key provided and already used, return existing order info
     if (idempotencyKey) {
-      const existing = await Order.findOne({ idempotencyKey }).select('_id invoiceNumber').lean()
+      const existing: any = await Order.findOne({ idempotencyKey }).select('_id invoiceNumber').lean()
       if (existing) {
-        return NextResponse.json({ success: true, data: { id: String(existing._id), invoiceNumber: existing.invoiceNumber } })
+        return NextResponse.json({ success: true, data: { id: String((existing as any)?._id), invoiceNumber: (existing as any)?.invoiceNumber } })
       }
     }
 
