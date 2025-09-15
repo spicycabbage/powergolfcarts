@@ -82,12 +82,17 @@ export default function HomePage() {
           }
         ]}
       />
-      {/* Warm backend on first visit to reduce cold-start latency */}
+      {/* Warm backend after initial paint (idle) to avoid blocking mobile LCP */}
       <script dangerouslySetInnerHTML={{ __html: `
         (function(){
           if (typeof window==='undefined') return;
           if (window.__warmed) return; window.__warmed = true;
-          try { fetch('/api/warmup', { cache: 'no-store' }); } catch(e){}
+          var warm = function(){ try { fetch('/api/warmup',{ cache:'no-store' }); } catch(e){} };
+          if ('requestIdleCallback' in window) {
+            requestIdleCallback(warm, { timeout: 5000 });
+          } else {
+            window.addEventListener('load', function(){ setTimeout(warm, 1200); }, { once: true });
+          }
         })();
       `}} />
       {/* Hero Section */}
