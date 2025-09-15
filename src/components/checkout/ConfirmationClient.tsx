@@ -150,6 +150,15 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
     if (!shipping || !Array.isArray(items) || items.length === 0) return
     ;(async () => {
       try {
+        // Persist/generate idempotency key for this browser session
+        let idem = ''
+        try {
+          idem = sessionStorage.getItem('checkout_idem') || ''
+        } catch {}
+        if (!idem) {
+          idem = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
+          try { sessionStorage.setItem('checkout_idem', idem) } catch {}
+        }
         const payload = { 
           items, 
           subtotal, 
@@ -158,7 +167,8 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
           shipping: shippingCost, 
           total, 
           shippingAddress: shipping,
-          customerEmail: (shipping as any)?.email || orderMeta?.email || ''
+          customerEmail: (shipping as any)?.email || orderMeta?.email || '',
+          idempotencyKey: idem
         }
         const res = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
         const json = await res.json().catch(() => ({} as any))

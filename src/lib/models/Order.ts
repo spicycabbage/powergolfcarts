@@ -76,6 +76,7 @@ export interface IOrder {
   notes?: string
   loyaltyPoints?: number
   loyaltyPointsAwarded?: boolean
+  idempotencyKey?: string
   createdAt?: Date
   updatedAt?: Date
 }
@@ -200,7 +201,8 @@ const OrderSchema = new Schema<IOrder>({
     maxlength: [1000, 'Notes cannot exceed 1000 characters']
   },
   loyaltyPoints: { type: Number, default: 0, min: 0 },
-  loyaltyPointsAwarded: { type: Boolean, default: false }
+  loyaltyPointsAwarded: { type: Boolean, default: false },
+  idempotencyKey: { type: String, index: true, unique: true, sparse: true }
 }, {
   timestamps: true,
   toJSON: { virtuals: true },
@@ -209,6 +211,8 @@ const OrderSchema = new Schema<IOrder>({
 
 // Indexes for performance
 OrderSchema.index({ invoiceNumber: 1 }, { unique: true, sparse: true })
+// Prevent duplicate creates on rapid clicks
+OrderSchema.index({ idempotencyKey: 1 }, { unique: true, sparse: true })
 OrderSchema.index({ user: 1 })
 OrderSchema.index({ status: 1 })
 OrderSchema.index({ paymentStatus: 1 })

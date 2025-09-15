@@ -61,12 +61,20 @@ export async function POST(req: NextRequest) {
     const session: any = await getServerSession(authOptions as any)
 
     const body = await req.json()
-    const { items, subtotal, couponDiscount, appliedCoupon, shipping, total, shippingAddress, storeCreditUsed, customerEmail } = body || {}
+    const { items, subtotal, couponDiscount, appliedCoupon, shipping, total, shippingAddress, storeCreditUsed, customerEmail, idempotencyKey } = body || {}
     if (!Array.isArray(items) || typeof subtotal !== 'number' || typeof shipping !== 'number' || typeof total !== 'number') {
       return NextResponse.json({ success: false, error: 'Invalid payload' }, { status: 400 })
     }
 
     await connectToDatabase()
+
+    // Idempotency: if key provided and already used, return existing order info
+    if (idempotencyKey) {
+      const existing = await Order.findOne({ idempotencyKey }).select('_id invoiceNumber').lean()
+      if (existing) {
+        return NextResponse.json({ success: true, data: { id: String(existing._id), invoiceNumber: existing.invoiceNumber } })
+      }
+    }
 
     const orderItems = items.map((it: any) => ({
       product: it.productId,
@@ -116,6 +124,7 @@ export async function POST(req: NextRequest) {
       user: session?.user?.id || undefined,
       items: orderItems,
       invoiceNumber: nextInvoice,
+      idempotencyKey: idempotencyKey || undefined,
       subtotal,
       coupon: appliedCoupon ? {
         code: String(appliedCoupon.code || '').toUpperCase(),
