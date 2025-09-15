@@ -28,23 +28,7 @@ export default async function OrderConfirmationPage({ searchParams }: { searchPa
   const initialInvoice = (invoiceFromUrl ?? metaJson?.data?.invoiceNumber ?? null) as any
   const payment = paymentJson?.success === false ? null : (paymentJson?.data || null)
 
-  return (
-    <>
-      {/* Server-rendered minimal header for instant Order # display */}
-      <div className="max-w-3xl mx-auto px-3 sm:px-6 lg:px-8 pt-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 sm:mb-6">
-          <div className="p-4 sm:p-6 text-sm grid grid-cols-1 sm:grid-cols-12 gap-4">
-            <div className="sm:col-span-8">
-              <div className="text-gray-500">Order number</div>
-              <div className="font-medium text-gray-900 break-all">{String(initialInvoice || orderId || 'fetching...')}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <ConfirmationClient payment={payment} initialInvoice={initialInvoice ? Number(initialInvoice) : undefined} ssrHeader />
-    </>
-  )
+  return <ConfirmationClient payment={payment} initialInvoice={initialInvoice ? Number(initialInvoice) : undefined} />
 }
 
 

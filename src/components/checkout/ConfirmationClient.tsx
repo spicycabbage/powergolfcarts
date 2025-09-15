@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useCart } from '@/hooks/useCart'
 import { useSearchParams } from 'next/navigation'
 
-export default function ConfirmationClient({ order: initialOrder, payment: initialPayment, initialInvoice, ssrHeader }: { order?: any, payment?: any, initialInvoice?: number, ssrHeader?: boolean }) {
+export default function ConfirmationClient({ order: initialOrder, payment: initialPayment, initialInvoice }: { order?: any, payment?: any, initialInvoice?: number }) {
   const { cart, clearCart } = useCart()
   const [shipping, setShipping] = useState<any>(initialOrder?.shippingAddress || null)
   const [payment, setPayment] = useState<any>(initialPayment || null)
