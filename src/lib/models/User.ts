@@ -35,6 +35,8 @@ export interface IUser extends Document {
   }>
   emailVerified: boolean
   lastLogin?: Date
+  resetPasswordToken?: string
+  resetPasswordExpires?: Date
   createdAt: Date
   updatedAt: Date
 }
@@ -158,6 +160,12 @@ const UserSchema = new Schema<IUser>({
     default: false
   },
   lastLogin: {
+    type: Date
+  },
+  resetPasswordToken: {
+    type: String
+  },
+  resetPasswordExpires: {
     type: Date
   }
 }, {
