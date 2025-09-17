@@ -135,9 +135,13 @@ export async function PUT(
       ...body,
       updatedAt: new Date()
     }
-    // Guard: ensure description fields are strings
-    if (typeof updateData.description !== 'string') updateData.description = String(updateData.description || '')
-    if (typeof updateData.shortDescription !== 'string') updateData.shortDescription = String(updateData.shortDescription || '')
+    // Guard: ensure description fields are strings ONLY if they're being updated
+    if (updateData.description !== undefined && typeof updateData.description !== 'string') {
+      updateData.description = String(updateData.description || '')
+    }
+    if (updateData.shortDescription !== undefined && typeof updateData.shortDescription !== 'string') {
+      updateData.shortDescription = String(updateData.shortDescription || '')
+    }
     // Ensure we don't unset price/originalPrice unless we have derived values
     if (salesPrice !== undefined) updateData.price = salesPrice
     else delete updateData.price
