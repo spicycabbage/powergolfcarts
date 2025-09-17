@@ -98,7 +98,7 @@ export default function ResetPasswordForm() {
       if (response.ok) {
         toast.success('Password reset successfully!')
         setTimeout(() => {
-          router.push('/auth/signin?message=Password reset successfully. You can now sign in with your new password.')
+          router.push('/auth/logon?message=Password reset successfully. You can now sign in with your new password.')
         }, 2000)
       } else {
         toast.error(data.error || 'Failed to reset password')
@@ -254,7 +254,7 @@ export default function ResetPasswordForm() {
 
         <div className="text-center">
           <Link
-            href="/auth/signin"
+            href="/auth/logon"
             className="text-sm text-green-600 hover:text-green-500 font-medium"
           >
             Back to Sign In

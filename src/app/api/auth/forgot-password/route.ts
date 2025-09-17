@@ -6,7 +6,9 @@ import crypto from 'crypto'
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('🔍 Forgot password API called')
     const { email } = await request.json()
+    console.log('📧 Email received:', email)
 
     if (!email) {
       return NextResponse.json(
@@ -24,13 +26,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    console.log('🔌 Connecting to database...')
     await connectToDatabase()
+    console.log('✅ Database connected')
 
     // Find user by email
+    console.log('👤 Looking for user with email:', email.toLowerCase().trim())
     const user = await User.findOne({ 
       email: email.toLowerCase().trim(),
       isActive: true 
     })
+    console.log('👤 User found:', !!user)
 
     // Always return success to prevent email enumeration attacks
     // But only send email if user exists
@@ -47,7 +53,9 @@ export async function POST(request: NextRequest) {
       try {
         // Send reset email
         await sendPasswordResetEmail(user.email, resetToken, user.firstName)
-        console.log(`Password reset email sent to: ${user.email}`)
+        console.log(`Password reset email would be sent to: ${user.email}`)
+        console.log(`Reset token: ${resetToken}`)
+        console.log(`Reset URL: ${process.env.NEXTAUTH_URL}/reset-password?token=${resetToken}`)
       } catch (emailError) {
         console.error('Failed to send reset email:', emailError)
         
