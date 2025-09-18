@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth/options'
 import fs from 'fs'
 import path from 'path'
+import { put } from '@vercel/blob'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,14 +30,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File too large (max 4MB)' }, { status: 413 })
     }
 
-    const arrayBuffer = await file.arrayBuffer()
-    const buffer = Buffer.from(arrayBuffer)
-
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'products')
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true })
-    }
-
     const originalName = (file as any).name || 'product'
     const extFromName = path.extname(originalName)
     const extFromType = file.type?.split('/')[1] ? `.${file.type.split('/')[1]}` : ''
@@ -50,10 +43,33 @@ export async function POST(request: NextRequest) {
       .replace(/^-|-$/g, '') // Remove leading/trailing hyphens
     
     const filename = `${baseName}-${Date.now()}${ext}`
-    const filepath = path.join(uploadsDir, filename)
-    fs.writeFileSync(filepath, buffer)
 
-    const publicUrl = `/uploads/products/${filename}`
+    // Check if we're in production (Vercel) or development
+    const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL
+
+    let publicUrl: string
+
+    if (isProduction) {
+      // Use Vercel Blob storage for production
+      const blob = await put(filename, file, {
+        access: 'public',
+        addRandomSuffix: false,
+      })
+      publicUrl = blob.url
+    } else {
+      // Use local file system for development
+      const arrayBuffer = await file.arrayBuffer()
+      const buffer = Buffer.from(arrayBuffer)
+      
+      const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'products')
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true })
+      }
+      
+      const filepath = path.join(uploadsDir, filename)
+      fs.writeFileSync(filepath, buffer)
+      publicUrl = `/uploads/products/${filename}`
+    }
 
     return NextResponse.json({ url: publicUrl })
   } catch (error) {

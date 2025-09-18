@@ -230,29 +230,50 @@ export default function NewProductPage() {
   const removeImageField = (idx: number) => setImages(prev => prev.filter((_, i) => i !== idx))
 
   const handleImageFile = async (file: File) => {
-    if (!file) return
+    console.log('handleImageFile called with:', file)
+    if (!file) {
+      console.log('No file provided')
+      return
+    }
     if (!file.type.startsWith('image/')) {
+      console.log('Invalid file type:', file.type)
       alert('Please select an image file')
       return
     }
     if (file.size > 4 * 1024 * 1024) {
+      console.log('File too large:', file.size)
       alert('Image must be less than 4MB')
       return
     }
+    
+    console.log('Starting upload for:', file.name, 'Size:', file.size, 'Type:', file.type)
+    
     const form = new FormData()
     form.append('file', file)
-    const res = await fetch('/api/admin/products/upload', {
-      method: 'POST',
-      body: form,
-      credentials: 'include',
-    })
-    if (!res.ok) {
-      const text = await res.text()
-      alert(text || 'Upload failed')
-      return
+    
+    try {
+      const res = await fetch('/api/admin/products/upload', {
+        method: 'POST',
+        body: form,
+        credentials: 'include',
+      })
+      
+      console.log('Upload response status:', res.status)
+      
+      if (!res.ok) {
+        const text = await res.text()
+        console.error('Upload failed with response:', text)
+        alert(`Upload failed: ${text || 'Unknown error'}`)
+        return
+      }
+      
+      const data = await res.json()
+      console.log('Upload successful, received data:', data)
+      setImages(prev => [...prev, data.url as string])
+    } catch (error) {
+      console.error('Upload error:', error)
+      alert(`Upload error: ${error}`)
     }
-    const data = await res.json()
-    setImages(prev => [...prev, data.url as string])
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
