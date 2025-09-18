@@ -323,14 +323,12 @@ export default function NewProductPage() {
           description: seo.description?.trim() || shortDescription.trim() || description.trim(),
           keywords: Array.isArray(seo.keywords) ? seo.keywords.filter(Boolean) : [],
         },
-        ...(badgeTL.text.trim() || badgeTR.text.trim() || badgeBL.text.trim() || badgeBR.text.trim() ? {
-          badges: {
-            ...(badgeTL.text.trim() ? { topLeft: { text: badgeTL.text.trim(), color: badgeTL.color } } : {}),
-            ...(badgeTR.text.trim() ? { topRight: { text: badgeTR.text.trim(), color: badgeTR.color } } : {}),
-            ...(badgeBL.text.trim() ? { bottomLeft: { text: badgeBL.text.trim(), color: badgeBL.color } } : {}),
-            ...(badgeBR.text.trim() ? { bottomRight: { text: badgeBR.text.trim(), color: badgeBR.color } } : {}),
-          }
-        } : {}),
+        badges: {
+          ...(badgeTL.text.trim() ? { topLeft: { text: badgeTL.text.trim(), color: badgeTL.color } } : {}),
+          ...(badgeTR.text.trim() ? { topRight: { text: badgeTR.text.trim(), color: badgeTR.color } } : {}),
+          ...(badgeBL.text.trim() ? { bottomLeft: { text: badgeBL.text.trim(), color: badgeBL.color } } : {}),
+          ...(badgeBR.text.trim() ? { bottomRight: { text: badgeBR.text.trim(), color: badgeBR.color } } : {}),
+        },
         variants: [],
         isActive,
         isFeatured,
