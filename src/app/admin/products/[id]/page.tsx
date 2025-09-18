@@ -289,10 +289,19 @@ export default function EditProductPage() {
     if (!canSave) return
     setSaving(true)
     try {
+      // Check if this is a flower product to add "strain" to alt tags
+      const isFlowerProduct = categories.some(cat => 
+        ['flowers', 'indica', 'sativa', 'hybrid'].includes(cat.name?.toLowerCase())
+      )
+      
+      const altText = isFlowerProduct && !name.toLowerCase().includes('strain') 
+        ? `${name} strain` 
+        : name
+      
       const imageObjects = images
         .map(u => u.trim())
         .filter(Boolean)
-        .map((url, idx) => ({ url, alt: name, width: 800, height: 800, isPrimary: idx === 0 }))
+        .map((url, idx) => ({ url, alt: altText, width: 800, height: 800, isPrimary: idx === 0 }))
 
       const primaryCategoryId = extraCategoryIds[0] || (uncategorized ? (uncategorized as any)._id : undefined)
 
