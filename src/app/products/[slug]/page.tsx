@@ -139,7 +139,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const baseUrl = domain.startsWith('http') ? domain : `https://${domain}`
   const crumbs = [
     { name: 'Home', item: `${baseUrl}/` },
-    { name: 'Categories', item: `${baseUrl}/categories` },
     ...(categorySlug ? [{ name: categoryName, item: `${baseUrl}${categoryPath}` }] as any : []),
     { name: (product as any).name, item: `${baseUrl}/products/${(product as any).slug}` },
   ]
@@ -248,8 +247,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <nav className="flex items-center space-x-2 text-sm text-gray-600">
             <Link href="/" className="hover:text-primary-600">Home</Link>
-            <span>/</span>
-            <Link href="/categories" className="hover:text-primary-600">Categories</Link>
             <span>/</span>
             <Link href={categorySlug ? `/categories/${categorySlug}` : '/categories'} className="hover:text-primary-600">
               {categoryName || 'Categories'}

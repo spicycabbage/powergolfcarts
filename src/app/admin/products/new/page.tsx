@@ -659,11 +659,11 @@ export default function NewProductPage() {
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-medium text-gray-900">Images</h2>
                 <label className="inline-flex items-center px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 cursor-pointer">
-                  <input type="file" accept="image/*" className="hidden" onChange={e => {
-                    const f = e.target.files?.[0]
-                    if (f) void handleImageFile(f)
+                  <input type="file" accept="image/*" multiple className="hidden" onChange={e => {
+                    const files = Array.from(e.target.files || [])
+                    files.forEach(f => void handleImageFile(f))
                   }} />
-                  <Plus className="w-4 h-4 mr-2" /> Upload Image
+                  <Plus className="w-4 h-4 mr-2" /> Upload Images
                 </label>
               </div>
               {images.length === 0 ? (

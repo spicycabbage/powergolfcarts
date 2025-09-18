@@ -10,3 +10,5 @@ Disallow: /api/
 Disallow: /checkout/
 Disallow: /account/
 Disallow: /cart/
+Disallow: /forgot-password/
+Disallow: /reset-password/

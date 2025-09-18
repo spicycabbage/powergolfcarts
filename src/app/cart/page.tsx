@@ -213,10 +213,10 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">Shopping Cart</h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-sm">
@@ -246,7 +246,7 @@ export default function CartPage() {
                   <div key={uniqueKey} className={`p-3 sm:p-6 ${index !== cart.items.length - 1 ? 'border-b border-gray-200' : ''}`}>
                     {/* Mobile Layout */}
                     <div className="block sm:hidden">
-                      <div className="flex space-x-3">
+                      <div className="flex space-x-2">
                         {/* Left: Small Product Image */}
                         <div className="flex-shrink-0 w-[50px] h-[50px]">
                           <Link href={`/products/${item.product.slug}`} className="block w-full h-full">

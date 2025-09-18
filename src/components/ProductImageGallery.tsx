@@ -20,7 +20,7 @@ interface ProductImageGalleryProps {
 
 export function ProductImageGallery({ images, productName }: ProductImageGalleryProps) {
   const [selectedImage, setSelectedImage] = useState(0)
-
+  
   if (!images || images.length === 0) {
     return (
       <div className="aspect-square relative overflow-hidden rounded-lg bg-gray-100 flex items-center justify-center">
@@ -57,6 +57,7 @@ export function ProductImageGallery({ images, productName }: ProductImageGallery
       {/* Main Image */}
       <div className="aspect-square relative overflow-hidden rounded-lg bg-gray-100">
         <OptimizedImage
+          key={`main-image-${selectedImage}`}
           src={imageSrc}
           alt={getImageAlt(currentImage, selectedImage)}
           fill
@@ -70,32 +71,39 @@ export function ProductImageGallery({ images, productName }: ProductImageGallery
       {/* Thumbnail Images */}
       {images.length > 1 && (
         <div className="flex space-x-2 overflow-x-auto">
-          {images.map((image, index) => {
-            const thumbSrc = getImageSrc(image)
-            const thumbAlt = getImageAlt(image, index)
+          {images
+            .map((image, index) => ({ image, originalIndex: index }))
+            .filter(({ image }) => {
+              const thumbSrc = getImageSrc(image)
+              return thumbSrc && thumbSrc.trim() !== ''
+            })
+            .map(({ image, originalIndex }) => {
+              const thumbSrc = getImageSrc(image)
+              const thumbAlt = getImageAlt(image, originalIndex)
 
-            // Skip thumbnails with empty sources
-            if (!thumbSrc || thumbSrc.trim() === '') {
-              return null
-            }
-
-            return (
-              <button
-                key={typeof image === 'string' ? index : image._id}
-                onClick={() => setSelectedImage(index)}
-                className={`w-20 h-20 relative rounded-lg overflow-hidden border-2 flex-shrink-0 ${
-                  selectedImage === index ? 'border-primary-600' : 'border-gray-200'
-                }`}
-              >
+              return (
+                <div
+                  key={typeof image === 'string' ? `img-${originalIndex}` : image._id || `img-${originalIndex}`}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setSelectedImage(originalIndex)
+                  }}
+                  className={`w-20 h-20 relative rounded-lg overflow-hidden border-2 flex-shrink-0 cursor-pointer hover:border-primary-400 transition-colors ${
+                    selectedImage === originalIndex ? 'border-primary-600' : 'border-gray-200'
+                  }`}
+                  role="button"
+                  tabIndex={0}
+                >
                 <OptimizedImage
                   src={thumbSrc}
                   alt={thumbAlt}
                   fill
-                  className="object-cover"
+                  className="object-cover pointer-events-none"
                   sizes="80px"
                   quality={75}
                 />
-              </button>
+              </div>
             )
           })}
         </div>
