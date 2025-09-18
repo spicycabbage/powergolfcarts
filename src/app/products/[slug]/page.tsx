@@ -287,7 +287,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <div className="space-y-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">{(product as any).name}</h1>
-              <div className="text-gray-700 prose max-w-none" dangerouslySetInnerHTML={{ __html: (product as any).shortDescription || '' }} />
+              {(product as any).shortDescription && (product as any).shortDescription.trim() && (
+                <div className="text-gray-700 prose max-w-none" dangerouslySetInnerHTML={{ __html: (product as any).shortDescription }} />
+              )}
             </div>
 
             {/* Rating */}
