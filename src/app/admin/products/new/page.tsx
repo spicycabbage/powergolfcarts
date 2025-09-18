@@ -278,8 +278,13 @@ export default function NewProductPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!canSave) return
+    if (!canSave) {
+      console.warn('Cannot save product. Validation errors:', validationErrors)
+      alert('Cannot save product. Please check the validation errors below.')
+      return
+    }
     setSaving(true)
+    console.log('Starting product creation...')
     try {
       // Check if this is a flower product to add "strain" to alt tags
       const isFlowerProduct = categories.some(cat => 
@@ -345,6 +350,8 @@ export default function NewProductPage() {
         }))
       }
 
+      console.log('Product payload:', payload)
+      
       const res = await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -354,14 +361,25 @@ export default function NewProductPage() {
 
       if (!res.ok) {
         const text = await res.text()
-        alert(text || 'Failed to create product')
+        let errorMessage = 'Failed to create product'
+        
+        try {
+          const errorData = JSON.parse(text)
+          errorMessage = errorData.error || errorData.message || text
+        } catch {
+          errorMessage = text || 'Failed to create product'
+        }
+        
+        console.error('Product creation failed:', { status: res.status, error: errorMessage })
+        alert(`Error: ${errorMessage}`)
         return
       }
 
-      alert('Product created')
+      alert('Product created successfully!')
       router.push('/admin')
     } catch (err) {
-      alert('Failed to create product')
+      console.error('Product creation error:', err)
+      alert(`Failed to create product: ${err instanceof Error ? err.message : 'Unknown error'}`)
     } finally {
       setSaving(false)
     }
