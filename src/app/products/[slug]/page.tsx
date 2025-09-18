@@ -287,16 +287,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <div className="space-y-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">{(product as any).name}</h1>
+              
+              {/* Rating */}
+              <div className="mb-4">
+                <ClickableRating 
+                  averageRating={(product as any).averageRating || 0}
+                  reviewCount={(product as any).reviewCount || 0}
+                />
+              </div>
+              
               {(product as any).shortDescription && (product as any).shortDescription.trim() && (
                 <div className="text-gray-700 prose max-w-none" dangerouslySetInnerHTML={{ __html: (product as any).shortDescription }} />
               )}
             </div>
-
-            {/* Rating */}
-            <ClickableRating 
-              averageRating={(product as any).averageRating || 0}
-              reviewCount={(product as any).reviewCount || 0}
-            />
 
             {/* Price */}
             <div className="flex items-center space-x-4">
