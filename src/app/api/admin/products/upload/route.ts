@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth/options'
 import fs from 'fs'
 import path from 'path'
-import { put } from '@vercel/blob'
 
 export const dynamic = 'force-dynamic'
 
