@@ -47,17 +47,20 @@ export async function PUT(req: NextRequest) {
     const body = await req.json()
     const { id, status, title, comment, rating } = body
     const update: any = {}
-    if (status) update.status = status
+    if (status) {
+      if (status === 'approved') update.isApproved = true
+      else if (status === 'rejected') update.isApproved = false
+    }
     if (title != null) update.title = String(title)
     if (comment != null) update.comment = String(comment)
     if (rating != null) update.rating = Number(rating)
     const doc = await Review.findByIdAndUpdate(id, update, { new: true })
     if (!doc) return NextResponse.json({ success: false, error: 'Review not found' }, { status: 404 })
     // If status changed to approved/rejected, recompute product stats
-    if (update.status) {
+    if (update.isApproved !== undefined) {
       const productId = (doc as any).product
       const agg = await Review.aggregate([
-        { $match: { product: productId, reported: false, status: 'approved' } },
+        { $match: { product: productId, isApproved: true } },
         { $group: { _id: null, avg: { $avg: '$rating' }, cnt: { $sum: 1 } } }
       ])
       const avg = agg[0]?.avg || 0
