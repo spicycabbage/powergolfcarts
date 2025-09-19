@@ -18,7 +18,9 @@ export async function GET(req: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '20')
     const q: any = {}
-    if (status !== 'all') q.status = status
+    if (status === 'approved') q.isApproved = true
+    else if (status === 'rejected') q.isApproved = false
+    else if (status === 'pending') q.isApproved = { $exists: false }
     const [items, total] = await Promise.all([
       Review.find(q)
         .populate('user', 'firstName lastName email')
@@ -91,7 +93,7 @@ export async function DELETE(req: NextRequest) {
     const productId = (result as any).product
     if (productId) {
       const agg = await Review.aggregate([
-        { $match: { product: productId, reported: false, status: 'approved' } },
+        { $match: { product: productId, isApproved: true } },
         { $group: { _id: null, avg: { $avg: '$rating' }, cnt: { $sum: 1 } } }
       ])
       const avg = agg[0]?.avg || 0
