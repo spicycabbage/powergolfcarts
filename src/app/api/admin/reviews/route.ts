@@ -21,9 +21,9 @@ export async function GET(req: NextRequest) {
     if (status === 'approved') q.isApproved = true
     else if (status === 'rejected') q.isApproved = false
     else if (status === 'pending') q.isApproved = { $exists: false }
+    // 'all' status shows everything, so no filter needed
     const [items, total] = await Promise.all([
       Review.find(q)
-        .populate('user', 'firstName lastName email')
         .populate('product', 'name slug')
         .sort({ createdAt: -1 })
         .skip((page - 1) * limit)
@@ -52,6 +52,7 @@ export async function PUT(req: NextRequest) {
     if (status) {
       if (status === 'approved') update.isApproved = true
       else if (status === 'rejected') update.isApproved = false
+      // Don't set isApproved for 'pending' - leave it undefined
     }
     if (title != null) update.title = String(title)
     if (comment != null) update.comment = String(comment)

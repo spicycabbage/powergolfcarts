@@ -92,11 +92,11 @@ export default function AdminReviewsPage() {
                 {items.map((r: any) => (
                   <tr key={String(r._id)}>
                     <td className="px-4 py-3"><Link href={`/products/${r.product?.slug}`} className="text-primary-600 hover:underline">{r.product?.name}</Link></td>
-                    <td className="px-4 py-3">{r.user?.firstName || (r.user?.name ? String(r.user.name).split(' ')[0] : 'Anonymous')}</td>
+                    <td className="px-4 py-3">{r.customerName || r.user?.firstName || (r.user?.name ? String(r.user.name).split(' ')[0] : 'Anonymous')}</td>
                     <td className="px-4 py-3">{r.rating}★</td>
                     <td className="px-4 py-3">{r.title}</td>
                     <td className="px-4 py-3 max-w-md truncate" title={r.comment}>{r.comment}</td>
-                    <td className="px-4 py-3">{r.status}</td>
+                    <td className="px-4 py-3">{r.isApproved === true ? 'approved' : r.isApproved === false ? 'rejected' : 'pending'}</td>
                     <td className="px-4 py-3 space-x-2">
                       <button onClick={() => updateReview(r._id, { status: 'approved' })} className="px-3 py-1 border rounded-lg hover:bg-gray-50">Approve</button>
                       <button onClick={() => updateReview(r._id, { status: 'rejected' })} className="px-3 py-1 border rounded-lg hover:bg-gray-50">Reject</button>

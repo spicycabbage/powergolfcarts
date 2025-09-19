@@ -245,7 +245,7 @@ export function SimpleHeader() {
               <Link href="/categories/edibles" className="block text-white hover:text-primary-600 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Edibles</Link>
               <div className="ml-4 space-y-1">
                 <Link href="/categories/gummies" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Gummies</Link>
-                <Link href="/categories/strong-edibles" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Strong Edibles</Link>
+                <Link href="/categories/strong-edible" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Strong Edibles</Link>
               </div>
             </div>
 
