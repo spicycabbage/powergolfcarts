@@ -43,32 +43,18 @@ export async function POST(request: NextRequest) {
     
     const filename = `${baseName}-${Date.now()}${ext}`
 
-    // Check if we're in production (Vercel) or development
-    const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL
-
-    let publicUrl: string
-
-    if (isProduction) {
-      // Use Vercel Blob storage for production
-      const blob = await put(filename, file, {
-        access: 'public',
-        addRandomSuffix: false,
-      })
-      publicUrl = blob.url
-    } else {
-      // Use local file system for development
-      const arrayBuffer = await file.arrayBuffer()
-      const buffer = Buffer.from(arrayBuffer)
-      
-      const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'products')
-      if (!fs.existsSync(uploadsDir)) {
-        fs.mkdirSync(uploadsDir, { recursive: true })
-      }
-      
-      const filepath = path.join(uploadsDir, filename)
-      fs.writeFileSync(filepath, buffer)
-      publicUrl = `/uploads/products/${filename}`
+    // Use local file system for all environments
+    const arrayBuffer = await file.arrayBuffer()
+    const buffer = Buffer.from(arrayBuffer)
+    
+    const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'products')
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true })
     }
+    
+    const filepath = path.join(uploadsDir, filename)
+    fs.writeFileSync(filepath, buffer)
+    const publicUrl = `/uploads/products/${filename}`
 
     return NextResponse.json({ url: publicUrl })
   } catch (error) {
