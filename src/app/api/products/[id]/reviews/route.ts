@@ -4,6 +4,7 @@ import Review from '@/lib/models/Review'
 import Product from '@/lib/models/Product'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth/options'
+import mongoose from 'mongoose'
 
 export async function GET(
   request: NextRequest,
@@ -161,7 +162,7 @@ export async function POST(
 
     // Update product rating stats
     const stats = await Review.aggregate([
-      { $match: { product: id, isApproved: true } },
+      { $match: { product: new mongoose.Types.ObjectId(id), isApproved: true } },
       {
         $group: {
           _id: null,

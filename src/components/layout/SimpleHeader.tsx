@@ -161,6 +161,7 @@ export function SimpleHeader() {
                   <div className="pt-2 bg-transparent">
                     <div className="bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[200px]">
                       <Link href="/categories/gummies" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Gummies</Link>
+                      <Link href="/categories/strong-edibles" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Strong Edibles</Link>
                     </div>
                   </div>
                 </div>
