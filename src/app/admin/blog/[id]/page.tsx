@@ -123,7 +123,7 @@ export default function EditPost() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Excerpt</label>
                 <textarea value={excerpt} onChange={e=>setExcerpt(e.target.value)} rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
               </div>
-              <HtmlEditor key={`post-${id}-${(content||'').length}`} label="Content" value={content} onChange={setContent} rows={20} placeholder="Write post content (HTML supported)" />
+              <HtmlEditor key={`post-${id}`} label="Content" value={content} onChange={setContent} rows={20} placeholder="Write post content (HTML supported)" />
             </div>
             
             <div className="bg-white rounded-lg shadow p-6">
