@@ -223,7 +223,7 @@ export default function NewProductPage() {
       }
     }
     if (shortVisibleLen > 500) return false
-    if (longVisibleLen > 2000) return false
+    if (longVisibleLen > 2500) return false
     return true
   }, [name, description, longVisibleLen, shortVisibleLen, price, originalPrice, quantity, slug, productType, variants])
 
