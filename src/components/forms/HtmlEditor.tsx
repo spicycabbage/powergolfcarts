@@ -43,8 +43,8 @@ export default function HtmlEditor({ label, value, onChange, rows = 12, required
     }
   }
 
-  // Sanitize editor output: remove empty paragraphs, stray &nbsp;, and redundant breaks
-  const sanitizeHtml = (html: string): string => {
+  // Clean editor output: remove empty paragraphs, stray &nbsp;, and redundant breaks
+  const cleanEditorHtml = (html: string): string => {
     try {
       if (!html) return ''
       let out = html
@@ -85,7 +85,7 @@ export default function HtmlEditor({ label, value, onChange, rows = 12, required
       // Set initial HTML (normalized)
       if (typeof value === 'string') {
         suppressChangeRef.current = true
-        const html = sanitizeHtml(extractInnerContent(value))
+        const html = cleanEditorHtml(extractInnerContent(value))
         try { quillRef.current.clipboard.dangerouslyPasteHTML(0, html, 'silent') } catch { quillRef.current.root.innerHTML = html }
         // Allow one microtask for DOM to settle, then re-enable
         setTimeout(() => { suppressChangeRef.current = false }, 0)
@@ -93,7 +93,7 @@ export default function HtmlEditor({ label, value, onChange, rows = 12, required
       quillRef.current.on('text-change', () => {
         if (suppressChangeRef.current) return
         const html: string = quillRef.current.root.innerHTML || ''
-        onChange(sanitizeHtml(html))
+        onChange(cleanEditorHtml(html))
       })
     })()
     return () => { mounted = false }
@@ -107,7 +107,7 @@ export default function HtmlEditor({ label, value, onChange, rows = 12, required
       const currentHtml: string = quillRef.current.root.innerHTML || ''
       if (value !== currentHtml) {
         suppressChangeRef.current = true
-        quillRef.current.root.innerHTML = sanitizeHtml(extractInnerContent(value))
+        quillRef.current.root.innerHTML = cleanEditorHtml(extractInnerContent(value))
         setTimeout(() => { suppressChangeRef.current = false }, 0)
       }
     }
@@ -150,7 +150,7 @@ export default function HtmlEditor({ label, value, onChange, rows = 12, required
       ) : (
         <textarea
           value={value}
-          onChange={e => onChange(sanitizeHtml(e.target.value))}
+          onChange={e => onChange(cleanEditorHtml(e.target.value))}
           rows={rows}
           placeholder={placeholder}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
