@@ -1,39 +1,35 @@
-import DOMPurify from 'dompurify'
-
 /**
  * Sanitize HTML content to prevent XSS attacks
- * Allows safe HTML tags while removing dangerous scripts and attributes
+ * Server-safe implementation that works in both Node.js and browser environments
  */
 export function sanitizeHtml(html: string): string {
   if (!html || typeof html !== 'string') {
     return ''
   }
 
-  // Configure DOMPurify with safe tags and attributes
-  const cleanHtml = DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: [
-      'p', 'br', 'strong', 'b', 'em', 'i', 'u', 'span', 'div',
-      'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-      'ul', 'ol', 'li',
-      'blockquote', 'pre', 'code',
-      'a', 'img'
-    ],
-    ALLOWED_ATTR: [
-      'href', 'target', 'rel', 'title',
-      'src', 'alt', 'width', 'height',
-      'class', 'id'
-    ],
-    ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
-    ADD_ATTR: ['target'],
-    ADD_TAGS: [],
-    FORBID_ATTR: ['style', 'onclick', 'onload', 'onerror', 'onmouseover'],
-    FORBID_TAGS: ['script', 'object', 'embed', 'form', 'input', 'textarea', 'select', 'button'],
-    KEEP_CONTENT: true,
-    RETURN_DOM: false,
-    RETURN_DOM_FRAGMENT: false,
-    RETURN_TRUSTED_TYPE: false
-  })
+  // Use regex-based sanitization for server-side compatibility
+  let cleanHtml = html
 
+  // Remove script tags and their content
+  cleanHtml = cleanHtml.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+  
+  // Remove style tags and their content
+  cleanHtml = cleanHtml.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+  
+  // Remove dangerous tags
+  cleanHtml = cleanHtml.replace(/<(script|object|embed|form|iframe|frame|frameset|applet|meta|link|base)[^>]*>/gi, '')
+  cleanHtml = cleanHtml.replace(/<\/(script|object|embed|form|iframe|frame|frameset|applet|meta|link|base)>/gi, '')
+  
+  // Remove dangerous attributes
+  cleanHtml = cleanHtml.replace(/\s(on\w+|style|formaction|action)\s*=\s*["'][^"']*["']/gi, '')
+  cleanHtml = cleanHtml.replace(/\s(on\w+|style|formaction|action)\s*=\s*[^\s>]*/gi, '')
+  
+  // Remove javascript: and data: protocols
+  cleanHtml = cleanHtml.replace(/href\s*=\s*["']javascript:[^"']*["']/gi, 'href="#"')
+  cleanHtml = cleanHtml.replace(/src\s*=\s*["']javascript:[^"']*["']/gi, 'src=""')
+  cleanHtml = cleanHtml.replace(/href\s*=\s*["']data:[^"']*["']/gi, 'href="#"')
+  cleanHtml = cleanHtml.replace(/src\s*=\s*["']data:[^"']*["']/gi, 'src=""')
+  
   return cleanHtml
 }
 
