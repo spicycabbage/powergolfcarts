@@ -15,6 +15,7 @@ import { isUsingDataApi, findOne as dataFindOne, findMany as dataFindMany } from
 import { ReviewsTabs } from '@/components/ReviewsTabs'
 import LearnMore from '@/components/LearnMore'
 import { serializeProductForClient } from '@/lib/serializers'
+import { sanitizeHtml } from '@/utils/sanitize'
 
 function normalizeContent(html: string): string {
   try {
@@ -297,7 +298,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </div>
               
               {(product as any).shortDescription && (product as any).shortDescription.trim() && (
-                <div className="text-gray-700 prose max-w-none" dangerouslySetInnerHTML={{ __html: (product as any).shortDescription }} />
+                <div className="text-gray-700 prose max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeHtml((product as any).shortDescription) }} />
               )}
             </div>
 

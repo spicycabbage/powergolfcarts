@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useMemo, useState } from 'react'
 import ReviewSchema from './seo/ReviewSchema'
+import { sanitizeHtml } from '@/utils/sanitize'
 
 export function ReviewsTabs({ productId, htmlDescription, productName, productSlug }: { 
   productId: string, 
@@ -105,7 +106,7 @@ export function ReviewsTabs({ productId, htmlDescription, productName, productSl
       {tab === 'description' && (
         <div className="mt-6">
           <div className="prose max-w-none text-gray-700 [ul]:list-disc [ul]:pl-6 [ol]:list-decimal [ol]:pl-6 [li]:my-1"
-               dangerouslySetInnerHTML={{ __html: htmlDescription || '' }} />
+               dangerouslySetInnerHTML={{ __html: sanitizeHtml(htmlDescription || '') }} />
         </div>
       )}
 

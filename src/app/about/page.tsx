@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { connectToDatabase } from '@/lib/mongodb'
 import Page from '@/lib/models/Page'
+import { sanitizeHtml } from '@/utils/sanitize'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -48,7 +49,7 @@ export default async function AboutPage() {
           </section>
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
             <div className="bg-white rounded-lg shadow-sm p-8">
-              <div className="prose max-w-none text-gray-800" dangerouslySetInnerHTML={{ __html: page.content || '' }} />
+              <div className="prose max-w-none text-gray-800" dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content || '') }} />
             </div>
           </div>
         </div>

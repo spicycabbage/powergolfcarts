@@ -123,7 +123,27 @@ export function isValidEmail(email: string): boolean {
 }
 
 export function sanitizeInput(input: string): string {
-  return input.trim().replace(/[<>]/g, '')
+  if (!input || typeof input !== 'string') {
+    return ''
+  }
+
+  return input
+    .trim()
+    // Remove script tags and their content
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    // Remove style tags and their content
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    // Remove dangerous HTML tags
+    .replace(/<(script|object|embed|form|iframe|frame|frameset|applet|meta|link)[^>]*>/gi, '')
+    // Remove javascript: and data: protocols
+    .replace(/javascript:/gi, '')
+    .replace(/data:/gi, '')
+    // Remove event handlers
+    .replace(/on\w+\s*=/gi, '')
+    // Escape remaining HTML characters
+    .replace(/[<>]/g, (match) => {
+      return match === '<' ? '&lt;' : '&gt;'
+    })
 }
 
 
