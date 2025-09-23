@@ -97,7 +97,7 @@ export default function BundlePage() {
       ...product,
       images: product.images.map((img, idx) => ({
         _id: idx.toString(),
-        url: typeof img === 'string' ? img : img?.url || '',
+        url: typeof img === 'string' ? img : (img as any)?.url || '',
         alt: product.name,
         width: 800,
         height: 800,
