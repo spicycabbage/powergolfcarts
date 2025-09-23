@@ -254,7 +254,7 @@ export async function POST(req: NextRequest) {
     const itemsForTemplate = []
     for (const orderItem of orderItems) {
       try {
-        const product = await Product.findById(orderItem.product).select('name slug images').lean()
+        const product = await Product.findById(orderItem.product).select('name slug images').lean() as any
         itemsForTemplate.push({
           name: product?.name || 'Unknown Product',
           quantity: orderItem.quantity,
