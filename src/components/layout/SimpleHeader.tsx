@@ -195,13 +195,31 @@ export function SimpleHeader() {
               {openDropdown === 'bundles' && (
                 <div className="absolute left-0 top-full z-50">
                   <div className="pt-2 bg-transparent">
-                    <div className="bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[200px]">
-                      <Link href="/bundles/flower-28g" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Flower 4x28g</Link>
-                      <Link href="/bundles/hash-28g" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Hash 4x28g</Link>
-                      <Link href="/bundles/shatter-28g" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Shatter 4x28g</Link>
-                      <Link href="/bundles/flower-7g" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Flower 4x7g</Link>
-                      <Link href="/bundles/hash-7g" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Hash 4x7g</Link>
-                      <Link href="/bundles/shatter-7g" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Shatter 4x7g</Link>
+                    <div className="bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[240px]">
+                      <Link href="/bundles/flower-28g" className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">
+                        <span>Flower 4x28g</span>
+                        <span className="text-green-600 font-medium">15% off</span>
+                      </Link>
+                      <Link href="/bundles/hash-28g" className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">
+                        <span>Hash 4x28g</span>
+                        <span className="text-green-600 font-medium">15% off</span>
+                      </Link>
+                      <Link href="/bundles/shatter-28g" className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">
+                        <span>Shatter 4x28g</span>
+                        <span className="text-green-600 font-medium">15% off</span>
+                      </Link>
+                      <Link href="/bundles/flower-7g" className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">
+                        <span>Flower 4x7g</span>
+                        <span className="text-green-600 font-medium">15% off</span>
+                      </Link>
+                      <Link href="/bundles/hash-7g" className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">
+                        <span>Hash 4x7g</span>
+                        <span className="text-green-600 font-medium">15% off</span>
+                      </Link>
+                      <Link href="/bundles/shatter-7g" className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">
+                        <span>Shatter 4x7g</span>
+                        <span className="text-green-600 font-medium">15% off</span>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -291,12 +309,12 @@ export function SimpleHeader() {
             <div>
               <Link href="/bundles" className="block text-white hover:text-primary-600 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Bundles</Link>
               <div className="ml-4 space-y-1">
-                <Link href="/bundles/flower-28g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Flower 4x28g</Link>
-                <Link href="/bundles/hash-28g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Hash 4x28g</Link>
-                <Link href="/bundles/shatter-28g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Shatter 4x28g</Link>
-                <Link href="/bundles/flower-7g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Flower 4x7g</Link>
-                <Link href="/bundles/hash-7g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Hash 4x7g</Link>
-                <Link href="/bundles/shatter-7g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Shatter 4x7g</Link>
+                <Link href="/bundles/flower-28g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Flower 4x28g | 15% off</Link>
+                <Link href="/bundles/hash-28g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Hash 4x28g | 15% off</Link>
+                <Link href="/bundles/shatter-28g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Shatter 4x28g | 15% off</Link>
+                <Link href="/bundles/flower-7g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Flower 4x7g | 15% off</Link>
+                <Link href="/bundles/hash-7g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Hash 4x7g | 15% off</Link>
+                <Link href="/bundles/shatter-7g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Shatter 4x7g | 15% off</Link>
               </div>
             </div>
 
