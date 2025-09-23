@@ -138,7 +138,7 @@ export default function BundlePage() {
       inventory: product.inventory
     }
     
-    addItem(productForCart, 1, variant)
+    addItem(productForCart as Product, 1, variant)
   }
 
   const handleUpdateQuantity = (product: Product, newQuantity: number) => {
