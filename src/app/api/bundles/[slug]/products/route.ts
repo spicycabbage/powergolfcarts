@@ -9,7 +9,6 @@ export async function GET(
 ) {
   try {
     const { slug } = await context.params
-    console.log(`🔄 API CALL: /bundles/${slug}/products at ${new Date().toISOString()}`)
     await connectToDatabase()
 
     // Get bundle configuration
@@ -77,13 +76,12 @@ export async function GET(
     // Process products to extract the correct variant for this bundle
     const processedProducts = products.map(product => {
       // Find the variant that matches the bundle SKU filter
-      const matchingVariant = product.variants?.find(variant => 
+      const matchingVariant = product.variants?.find((variant: any) => 
         variant.sku && variant.sku.match(new RegExp(bundle.skuFilter, 'i'))
       )
 
       if (matchingVariant) {
         const variantId = `${product._id}-${matchingVariant.sku}`
-        console.log(`🔧 API: Generated variantId for ${product.name}: ${variantId}`)
         return {
           _id: product._id,
           name: product.name,

@@ -79,27 +79,13 @@ export const useCartStore = create<CartStore>()(
             const variantMatch = itemVariantId === searchVariantId
             const productMatch = item.product._id === product._id
             
-            console.log('🔍 Cart matching debug:')
-            console.log('  Product ID:', product._id)
-            console.log('  Item Product ID:', item.product._id)
-            console.log('  Product Match:', productMatch)
-            console.log('  Search Variant ID:', searchVariantId)
-            console.log('  Item Variant ID:', itemVariantId)
-            console.log('  Variant Match:', variantMatch)
-            console.log('  Overall Match:', productMatch && variantMatch)
-            console.log('---')
-            
             return productMatch && variantMatch
           }
         )
 
-        console.log('🔍 SEARCH RESULT: existingItemIndex =', existingItemIndex)
-        console.log('🔍 CART ITEMS COUNT:', cart.items.length)
-
         let newItems: CartItem[]
 
         if (existingItemIndex >= 0) {
-          console.log('✅ FOUND EXISTING ITEM - Incrementing quantity')
           // Update existing item quantity with stock cap
           newItems = [...cart.items]
           const currentQty = Number(newItems[existingItemIndex].quantity || 0)
@@ -113,7 +99,6 @@ export const useCartStore = create<CartStore>()(
           }
           newItems[existingItemIndex].quantity = nextQty
         } else {
-          console.log('➕ NO EXISTING ITEM FOUND - Adding new item')
           // Add new item (store compact product to shrink persisted size)
           const maxStock = variant && typeof variant?.inventory === 'number'
             ? Number(variant.inventory)

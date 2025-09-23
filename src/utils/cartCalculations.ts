@@ -17,13 +17,7 @@ export const DEFAULT_SHIPPING_COST = 9.99
 export function calculateCartTotals(items: CartItem[], options?: { freeShippingThreshold?: number, shippingCost?: number }): CartCalculationResult {
   const subtotal = items.reduce((total, item) => {
     const price = item.variant?.price || item.product.price
-    console.log('💰 CART CALC DEBUG:', {
-      productName: item.product.name,
-      variantPrice: item.variant?.price,
-      productPrice: item.product.price,
-      finalPrice: price,
-      quantity: item.quantity
-    })
+    // Calculate item total
     return total + (price * item.quantity)
   }, 0)
 

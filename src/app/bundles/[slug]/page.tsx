@@ -92,7 +92,6 @@ export default function BundlePage() {
   }
 
   const handleAddToCart = (product: Product) => {
-    console.log(`🛒 Adding ${product.name} - Inventory: ${product.inventory}`)
     // Convert to the format expected by the existing cart system
     const productForCart = {
       ...product,
@@ -143,13 +142,11 @@ export default function BundlePage() {
   }
 
   const handleUpdateQuantity = (product: Product, newQuantity: number) => {
-    console.log(`🔄 Updating ${product.name} to quantity: ${newQuantity}`)
     // Find the cart item by both product ID and variant ID
     const variantId = product.variantId
     const cartItem = cart.items.find(item => 
       item.product._id === product._id && item.variant?._id === variantId
     )
-    console.log(`🔍 Found cart item:`, cartItem ? 'YES' : 'NO')
     
     if (cartItem) {
       if (newQuantity === 0) {
@@ -273,20 +270,14 @@ export default function BundlePage() {
                               ) : (
                                 <div className="flex items-center space-x-2">
                                   <button
-                                    onClick={() => {
-                                      console.log('🔴 MINUS BUTTON CLICKED!')
-                                      handleUpdateQuantity(product, quantityInCart - 1)
-                                    }}
+                                    onClick={() => handleUpdateQuantity(product, quantityInCart - 1)}
                                     className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded text-red-600"
                                   >
                                     <Minus size={14} />
                                   </button>
                                   <span className="w-8 text-center font-medium text-sm">{quantityInCart}</span>
                                   <button
-                                    onClick={() => {
-                                      console.log('🟢 PLUS BUTTON CLICKED!')
-                                      handleUpdateQuantity(product, quantityInCart + 1)
-                                    }}
+                                    onClick={() => handleUpdateQuantity(product, quantityInCart + 1)}
                                     className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded text-green-600"
                                     disabled={quantityInCart >= product.inventory}
                                   >
@@ -341,10 +332,7 @@ export default function BundlePage() {
                       <div key={item.product._id} className="flex items-center justify-between text-sm">
                         <span className="text-gray-600 truncate">{item.quantity}x {item.product.name}</span>
                         <button
-                          onClick={() => {
-                            console.log('❌ SIDEBAR REMOVE CLICKED!')
-                            updateQuantity(item.product._id, 0, item.variant)
-                          }}
+                          onClick={() => updateQuantity(item.product._id, 0, item.variant)}
                           className="text-red-600 hover:text-red-700 ml-2"
                         >
                           ×
