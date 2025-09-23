@@ -173,6 +173,40 @@ export function SimpleHeader() {
 
             {/* CBD - No Dropdown */}
             <Link href="/categories/cbd" className="text-white hover:text-primary-600 transition-colors font-medium">CBD</Link>
+
+            {/* Bundles Dropdown */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setOpenDropdown('bundles')}
+              onMouseLeave={() => setOpenDropdown(null)}
+            >
+              <Link
+                href="/bundles"
+                className="text-white hover:text-primary-600 transition-colors font-medium flex items-center"
+              >
+                Bundles
+                <ChevronDown 
+                  size={16} 
+                  className={`ml-1 transition-transform duration-200 ${
+                    openDropdown === 'bundles' ? 'rotate-180' : ''
+                  }`} 
+                />
+              </Link>
+              {openDropdown === 'bundles' && (
+                <div className="absolute left-0 top-full z-50">
+                  <div className="pt-2 bg-transparent">
+                    <div className="bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[200px]">
+                      <Link href="/bundles/flower-28g" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Flower 4x28g</Link>
+                      <Link href="/bundles/hash-28g" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Hash 4x28g</Link>
+                      <Link href="/bundles/shatter-28g" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Shatter 4x28g</Link>
+                      <Link href="/bundles/flower-7g" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Flower 4x7g</Link>
+                      <Link href="/bundles/hash-7g" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Hash 4x7g</Link>
+                      <Link href="/bundles/shatter-7g" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Shatter 4x7g</Link>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </nav>
 
           {/* Right Side */}
@@ -252,6 +286,19 @@ export function SimpleHeader() {
             {/* Hash & CBD */}
             <Link href="/categories/hash" className="block text-white hover:text-primary-600 font-medium" onClick={() => setIsMenuOpen(false)}>Hash</Link>
             <Link href="/categories/cbd" className="block text-white hover:text-primary-600 font-medium" onClick={() => setIsMenuOpen(false)}>CBD</Link>
+
+            {/* Bundles */}
+            <div>
+              <Link href="/bundles" className="block text-white hover:text-primary-600 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Bundles</Link>
+              <div className="ml-4 space-y-1">
+                <Link href="/bundles/flower-28g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Flower 4x28g</Link>
+                <Link href="/bundles/hash-28g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Hash 4x28g</Link>
+                <Link href="/bundles/shatter-28g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Shatter 4x28g</Link>
+                <Link href="/bundles/flower-7g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Flower 4x7g</Link>
+                <Link href="/bundles/hash-7g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Hash 4x7g</Link>
+                <Link href="/bundles/shatter-7g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Shatter 4x7g</Link>
+              </div>
+            </div>
 
             {/* Info links under categories for mobile (ordered, large touch targets) */}
             <div className="pt-2 border-t border-gray-700 space-y-1">

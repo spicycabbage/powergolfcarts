@@ -22,6 +22,7 @@ export const useCartStore = create<CartStore>()(
       cart: {
         items: [],
         subtotal: 0,
+        bundleDiscount: 0,
         tax: 0,
         shipping: 0,
         total: 0
@@ -76,13 +77,29 @@ export const useCartStore = create<CartStore>()(
             const itemVariantId = item.variant?._id ?? null
             const searchVariantId = variant?._id ?? null
             const variantMatch = itemVariantId === searchVariantId
-            return item.product._id === product._id && variantMatch
+            const productMatch = item.product._id === product._id
+            
+            console.log('🔍 Cart matching debug:')
+            console.log('  Product ID:', product._id)
+            console.log('  Item Product ID:', item.product._id)
+            console.log('  Product Match:', productMatch)
+            console.log('  Search Variant ID:', searchVariantId)
+            console.log('  Item Variant ID:', itemVariantId)
+            console.log('  Variant Match:', variantMatch)
+            console.log('  Overall Match:', productMatch && variantMatch)
+            console.log('---')
+            
+            return productMatch && variantMatch
           }
         )
+
+        console.log('🔍 SEARCH RESULT: existingItemIndex =', existingItemIndex)
+        console.log('🔍 CART ITEMS COUNT:', cart.items.length)
 
         let newItems: CartItem[]
 
         if (existingItemIndex >= 0) {
+          console.log('✅ FOUND EXISTING ITEM - Incrementing quantity')
           // Update existing item quantity with stock cap
           newItems = [...cart.items]
           const currentQty = Number(newItems[existingItemIndex].quantity || 0)
@@ -96,6 +113,7 @@ export const useCartStore = create<CartStore>()(
           }
           newItems[existingItemIndex].quantity = nextQty
         } else {
+          console.log('➕ NO EXISTING ITEM FOUND - Adding new item')
           // Add new item (store compact product to shrink persisted size)
           const maxStock = variant && typeof variant?.inventory === 'number'
             ? Number(variant.inventory)
@@ -207,6 +225,7 @@ export const useCartStore = create<CartStore>()(
           cart: {
             items: [],
             subtotal: 0,
+            bundleDiscount: 0,
             tax: 0,
             shipping: 0,
             total: 0
@@ -232,7 +251,7 @@ export const useCartStore = create<CartStore>()(
       migrate: (persistedState: any, version: number) => {
         if (version === 0 || version === 1) {
           // Clear old cart data if version is old
-          return { cart: { items: [], subtotal: 0, tax: 0, shipping: 0, total: 0 } }
+          return { cart: { items: [], subtotal: 0, bundleDiscount: 0, tax: 0, shipping: 0, total: 0 } }
         }
         // Also clear any cart with old variant structure
         if (persistedState?.cart?.items?.length > 0) {
@@ -241,7 +260,7 @@ export const useCartStore = create<CartStore>()(
                    typeof item.variant === 'object' && !item.variant.name
           })
           if (hasOldVariants) {
-            return { cart: { items: [], subtotal: 0, tax: 0, shipping: 0, total: 0 } }
+            return { cart: { items: [], subtotal: 0, bundleDiscount: 0, tax: 0, shipping: 0, total: 0 } }
           }
           // Compact existing products to minimal shape to reduce payload
           try {

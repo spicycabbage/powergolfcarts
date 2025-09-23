@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useCart } from '@/hooks/useCart'
 import { useEffect } from 'react'
 import { useSession } from 'next-auth/react'
+import { calculateCartTotals } from '@/utils/cartCalculations'
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -111,6 +112,7 @@ export default function CheckoutPage() {
       const orderSummary = {
         itemCount,
         subtotal: displaySubtotal,
+        bundleDiscount: displayBundleDiscount,
         couponDiscount,
         appliedCoupon: appliedCoupon ? {
           code: appliedCoupon.code,
@@ -228,11 +230,16 @@ export default function CheckoutPage() {
     return isFinite(min) ? min : 0
   }, [shippingConfig, cart.subtotal])
   
+  // Calculate cart totals including bundle discounts
+  const cartCalculations = useMemo(() => calculateCartTotals(cart.items), [cart.items])
+  
   // Calculate coupon discount
   const couponDiscount = appliedCoupon?.discount || 0
-  const discountedSubtotal = cart.subtotal - couponDiscount
+  const subtotalAfterBundleDiscount = cartCalculations.subtotal - cartCalculations.bundleDiscount
+  const discountedSubtotal = subtotalAfterBundleDiscount - couponDiscount
   
-  const displaySubtotal = cart.subtotal
+  const displaySubtotal = cartCalculations.subtotal
+  const displayBundleDiscount = cartCalculations.bundleDiscount
   const displayTax = 0
   const displayTotal = discountedSubtotal + computedShippingCost
 
@@ -400,10 +407,18 @@ export default function CheckoutPage() {
                     <span className="text-gray-900">${displaySubtotal.toFixed(2)}</span>
                   </div>
                   
+                  {/* Show bundle discount */}
+                  {displayBundleDiscount > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-green-600">Bundle Discount</span>
+                      <span className="text-green-600">-${displayBundleDiscount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  
                   {/* Show applied coupon discount */}
                   {appliedCoupon && couponDiscount > 0 && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-green-600">Discount ({appliedCoupon.code})</span>
+                      <span className="text-green-600">Coupon Discount ({appliedCoupon.code})</span>
                       <span className="text-green-600">-${couponDiscount.toFixed(2)}</span>
                     </div>
                   )}

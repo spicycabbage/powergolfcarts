@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from '@/hooks/useCart'
-import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft, Tag, X } from 'lucide-react'
+import { calculateBundleDiscounts } from '@/utils/bundleCalculations'
+import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft, Tag, X, Package } from 'lucide-react'
 
 export default function CartPage() {
   const { cart, updateQuantity, removeItem, clearCart } = useCart()
@@ -95,6 +96,11 @@ export default function CartPage() {
     const unit = (item as any)?.variant?.price ?? item.product.price
     return total + (unit * item.quantity)
   }, 0)
+  
+  // Calculate bundle discounts
+  const bundleInfo = useMemo(() => calculateBundleDiscounts(cart.items), [cart.items])
+  const bundleDiscount = bundleInfo.totalBundleDiscount
+  
   const tax = 0
 
   useEffect(() => {
@@ -163,7 +169,8 @@ export default function CartPage() {
   
   // Calculate coupon discount - use the discount calculated by the API
   const couponDiscount = appliedCoupon?.discount || 0
-  const discountedSubtotal = subtotal - couponDiscount
+  const totalDiscount = bundleDiscount + couponDiscount
+  const discountedSubtotal = subtotal - totalDiscount
   const displayTotal = discountedSubtotal + computedShippingCost
 
   // Persist selected shipping for checkout page to consume
@@ -373,6 +380,34 @@ export default function CartPage() {
                                 SKU: {item.variant?.sku || item.product.inventory?.sku}
                               </p>
                             )}
+
+                            {/* Bundle indicator */}
+                            {(() => {
+                              // Check both product inventory SKU and variant SKU (variants are more reliable)
+                              const productSku = item.product.inventory?.sku || ''
+                              const variantSku = (item as any).variant?.sku || ''
+                              const sku = variantSku || productSku || ''
+                              const bundleType = bundleInfo.bundleDiscounts.find(bundle => 
+                                sku.includes(bundle.bundleName.includes('Flower') ? 'FLO' : 
+                                            bundle.bundleName.includes('Hash') ? 'HAS' : 
+                                            bundle.bundleName.includes('Shatter') ? 'SHA' : '')
+                              )
+                              if (bundleType) {
+                                return (
+                                  <div className="mt-2">
+                                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                      bundleType.isQualified 
+                                        ? 'bg-green-100 text-green-800' 
+                                        : 'bg-yellow-100 text-yellow-800'
+                                    }`}>
+                                      <Package className="w-3 h-3 mr-1" />
+                                      {bundleType.bundleName} ({bundleType.totalItems}/{bundleType.requiredQuantity})
+                                    </span>
+                                  </div>
+                                )
+                              }
+                              return null
+                            })()}
                             
                             <div className="flex items-center mt-3 space-x-4">
                               <span className="text-lg font-semibold text-gray-900">
@@ -457,6 +492,35 @@ export default function CartPage() {
                   <span className="text-gray-600">Subtotal</span>
                   <span className="text-gray-900">${subtotal.toFixed(2)}</span>
                 </div>
+
+                {/* Bundle Discounts */}
+                {bundleInfo.hasQualifiedBundles && (
+                  <div className="space-y-2">
+                    {bundleInfo.bundleDiscounts.filter(bundle => bundle.isQualified).map((bundle) => (
+                      <div key={bundle.bundleType} className="flex justify-between text-sm">
+                        <span className="text-green-600 flex items-center">
+                          <Package className="w-4 h-4 mr-1" />
+                          {bundle.bundleName} ({bundle.discountPercentage}% off)
+                        </span>
+                        <span className="text-green-600">-${bundle.discountAmount.toFixed(2)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Bundle Warnings */}
+                {bundleInfo.bundleDiscounts.filter(bundle => !bundle.isQualified && bundle.totalItems > 0).length > 0 && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                    <h4 className="text-sm font-medium text-yellow-800 mb-2">Bundle Opportunities</h4>
+                    <div className="space-y-1">
+                      {bundleInfo.bundleDiscounts.filter(bundle => !bundle.isQualified && bundle.totalItems > 0).map((bundle) => (
+                        <p key={bundle.bundleType} className="text-xs text-yellow-700">
+                          Add {bundle.requiredQuantity - bundle.totalItems} more {bundle.bundleName.toLowerCase()} items to get {bundle.discountPercentage}% off
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Coupon Section (hidden for guests). Show placeholder until meta loaded */}
                 {metaLoading ? (

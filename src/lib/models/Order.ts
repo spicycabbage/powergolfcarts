@@ -32,6 +32,7 @@ export interface IOrder {
   invoiceNumber?: number
   contactEmail?: string
   subtotal: number
+  bundleDiscount?: number
   tax: number
   shipping: number
   coupon?: {
@@ -162,6 +163,11 @@ const OrderSchema = new Schema<IOrder>({
     type: Number,
     required: true,
     min: [0, 'Subtotal must be positive']
+  },
+  bundleDiscount: {
+    type: Number,
+    default: 0,
+    min: [0, 'Bundle discount cannot be negative']
   },
   tax: {
     type: Number,

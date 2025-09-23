@@ -129,6 +129,7 @@ export interface CartItem {
 export interface Cart {
   items: CartItem[]
   subtotal: number
+  bundleDiscount: number
   tax: number
   shipping: number
   total: number

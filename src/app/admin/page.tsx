@@ -12,7 +12,8 @@ import {
   Mail,
   Link2,
   Percent,
-  Star
+  Star,
+  Gift
 } from 'lucide-react'
 import Link from 'next/link'
  
@@ -119,6 +120,13 @@ export default function AdminDashboard() {
       icon: Percent,
       href: '/admin/coupons',
       color: 'bg-green-600',
+      disabled: false
+    },
+    {
+      title: 'Bundle Management',
+      icon: Gift,
+      href: '/admin/bundles',
+      color: 'bg-rose-500',
       disabled: false
     },
     {

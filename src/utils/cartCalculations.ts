@@ -1,10 +1,13 @@
 import { CartItem, Product } from '@/types'
+import { calculateBundleDiscounts, BundleCalculationResult } from './bundleCalculations'
 
 export interface CartCalculationResult {
   subtotal: number
+  bundleDiscount: number
   tax: number
   shipping: number
   total: number
+  bundleInfo?: BundleCalculationResult
 }
 
 export const TAX_RATE = 0.08
@@ -24,13 +27,19 @@ export function calculateCartTotals(items: CartItem[], options?: { freeShippingT
     return total + (price * item.quantity)
   }, 0)
 
-  const tax = subtotal * TAX_RATE
+  // Calculate bundle discounts
+  const bundleInfo = calculateBundleDiscounts(items)
+  const bundleDiscount = bundleInfo.totalBundleDiscount
+
+  // Apply bundle discount to subtotal for tax and shipping calculations
+  const discountedSubtotal = subtotal - bundleDiscount
+  const tax = discountedSubtotal * TAX_RATE
   const threshold = options?.freeShippingThreshold ?? DEFAULT_FREE_SHIPPING_THRESHOLD
   const baseShipping = options?.shippingCost ?? DEFAULT_SHIPPING_COST
-  const shipping = subtotal > threshold ? 0 : baseShipping
-  const total = subtotal + tax + shipping
+  const shipping = discountedSubtotal > threshold ? 0 : baseShipping
+  const total = discountedSubtotal + tax + shipping
 
-  return { subtotal, tax, shipping, total }
+  return { subtotal, bundleDiscount, tax, shipping, total, bundleInfo }
 }
 
 export function formatCurrency(amount: number): string {

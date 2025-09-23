@@ -110,6 +110,7 @@ export function buildOrderPlacedEmail(order: any): string {
   const invoice = order?.invoiceNumber ?? order?._id
   const items: any[] = Array.isArray(order?.items) ? order.items : []
   const subtotal = Number(order?.subtotal || 0)
+  const bundleDiscount = Number(order?.bundleDiscount || 0)
   const shipping = Number(order?.shipping || 0)
   const total = Number(order?.total || (subtotal + shipping))
 
@@ -175,6 +176,12 @@ export function buildOrderPlacedEmail(order: any): string {
             <td style="text-align:right;color:#6b7280;padding:4px 8px">Subtotal:</td>
             <td style="text-align:right;padding:4px 8px;width:140px">$${subtotal.toFixed(2)}</td>
           </tr>
+          ${bundleDiscount > 0 ? `
+          <tr>
+            <td style="text-align:right;color:#059669;padding:4px 8px">Bundle Discount:</td>
+            <td style="text-align:right;color:#059669;padding:4px 8px;width:140px">-$${bundleDiscount.toFixed(2)}</td>
+          </tr>
+          ` : ''}
           <tr>
             <td style="text-align:right;color:#6b7280;padding:4px 8px">Shipping:</td>
             <td style="text-align:right;padding:4px 8px;width:140px">$${shipping.toFixed(2)}</td>

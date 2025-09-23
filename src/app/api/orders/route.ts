@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
     const session: any = await getServerSession(authOptions as any)
 
     const body = await req.json()
-    const { items, subtotal, couponDiscount, appliedCoupon, shipping, total, shippingAddress, storeCreditUsed, customerEmail, idempotencyKey } = body || {}
+    const { items, subtotal, bundleDiscount, couponDiscount, appliedCoupon, shipping, total, shippingAddress, storeCreditUsed, customerEmail, idempotencyKey } = body || {}
     if (!Array.isArray(items) || typeof subtotal !== 'number' || typeof shipping !== 'number' || typeof total !== 'number') {
       return NextResponse.json({ success: false, error: 'Invalid payload' }, { status: 400 })
     }
@@ -126,6 +126,7 @@ export async function POST(req: NextRequest) {
       invoiceNumber: nextInvoice,
       idempotencyKey: idempotencyKey || undefined,
       subtotal,
+      bundleDiscount: Number(bundleDiscount || 0),
       coupon: appliedCoupon ? {
         code: String(appliedCoupon.code || '').toUpperCase(),
         name: appliedCoupon.name,
@@ -135,7 +136,7 @@ export async function POST(req: NextRequest) {
       } : undefined,
       tax: 0,
       shipping,
-      total: Math.max(0, Number(subtotal || 0) + Number(0) + Number(shipping || 0) - Number(appliedCoupon?.discount || 0) - Number(storeCreditUsed || 0)),
+      total: Math.max(0, Number(subtotal || 0) + Number(0) + Number(shipping || 0) - Number(bundleDiscount || 0) - Number(appliedCoupon?.discount || 0) - Number(storeCreditUsed || 0)),
       status: 'pending',
       shippingAddress: {
         firstName: shippingAddress?.firstName || '',
@@ -202,9 +203,16 @@ export async function POST(req: NextRequest) {
     try {
       for (const it of orderItems) {
         const product: any = await Product.findById(it.product)
-        if (!product) continue
+        if (!product) {
+          console.log(`⚠️ Product not found for ID: ${it.product}`)
+          continue
+        }
         const qty = Number(it.quantity || 0)
         if (qty <= 0) continue
+
+        console.log(`📦 Processing inventory for: ${product.name}, Qty: ${qty}`)
+        console.log(`🔍 Variant data:`, it.variant)
+        console.log(`📊 Product has ${product.variants?.length || 0} variants`)
 
         if (Array.isArray(product.variants) && product.variants.length > 0 && it.variant) {
           const v = it.variant || {}
@@ -213,18 +221,26 @@ export async function POST(req: NextRequest) {
           if (idx < 0 && v.sku) idx = product.variants.findIndex((pv: any) => String(pv?.sku || '').toLowerCase() === String(v.sku).toLowerCase())
           if (idx < 0 && v.value) idx = product.variants.findIndex((pv: any) => String(pv?.value || '').trim().toLowerCase() === String(v.value).trim().toLowerCase())
           if (idx < 0 && v.name && v.value) idx = product.variants.findIndex((pv: any) => String(pv?.name || '').trim().toLowerCase() === String(v.name).trim().toLowerCase() && String(pv?.value || '').trim().toLowerCase() === String(v.value).trim().toLowerCase())
+          
           if (idx >= 0) {
             const cur = Number(product.variants[idx].inventory || 0)
-            product.variants[idx].inventory = Math.max(0, cur - qty)
+            const newInventory = Math.max(0, cur - qty)
+            console.log(`✅ Found variant at index ${idx}, SKU: ${product.variants[idx].sku}, Current: ${cur}, New: ${newInventory}`)
+            product.variants[idx].inventory = newInventory
             product.markModified('variants')
+          } else {
+            console.log(`❌ No matching variant found for:`, v)
           }
         } else {
+          console.log(`📦 Using product-level inventory`)
           if (!product.inventory) {
             product.inventory = { quantity: 0, lowStockThreshold: 5, sku: '', trackInventory: true } as any
           }
           if (product.inventory.trackInventory !== false) {
             const cur = Number(product.inventory.quantity || 0)
-            product.inventory.quantity = Math.max(0, cur - qty)
+            const newInventory = Math.max(0, cur - qty)
+            console.log(`✅ Product inventory - Current: ${cur}, New: ${newInventory}`)
+            product.inventory.quantity = newInventory
           }
         }
         await product.save()
@@ -234,11 +250,34 @@ export async function POST(req: NextRequest) {
     }
 
     const orderId = String(order._id)
-    const itemsForTemplate = orderItems.map((o:any)=>({ name: o.name || '', quantity: o.quantity, total: Number(o.total||0), product: { name: o.name || '' }, variant: o.variant }))
+    // Get full product details for email template
+    const itemsForTemplate = []
+    for (const orderItem of orderItems) {
+      try {
+        const product = await Product.findById(orderItem.product).select('name slug images').lean()
+        itemsForTemplate.push({
+          name: product?.name || 'Unknown Product',
+          quantity: orderItem.quantity,
+          total: Number(orderItem.total || 0),
+          product: { name: product?.name || 'Unknown Product' },
+          variant: orderItem.variant
+        })
+      } catch (e) {
+        // Fallback if product not found
+        itemsForTemplate.push({
+          name: 'Unknown Product',
+          quantity: orderItem.quantity,
+          total: Number(orderItem.total || 0),
+          product: { name: 'Unknown Product' },
+          variant: orderItem.variant
+        })
+      }
+    }
     const orderHtml = buildOrderPlacedEmail({
       invoiceNumber: nextInvoice,
       items: itemsForTemplate,
       subtotal,
+      bundleDiscount: Number(bundleDiscount || 0),
       shipping,
       total,
       shippingAddress

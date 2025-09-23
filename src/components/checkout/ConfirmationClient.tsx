@@ -20,9 +20,10 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
     createdAt: initialOrder.createdAt,
     email: initialOrder?.user?.email,
   } : (initialInvoice ? { id: String(initialInvoice) } : null))
-  const [summary, setSummary] = useState<{ itemCount: number, subtotal: number, couponDiscount?: number, shipping: number, total: number }>({
+  const [summary, setSummary] = useState<{ itemCount: number, subtotal: number, bundleDiscount?: number, couponDiscount?: number, shipping: number, total: number }>({
     itemCount: Array.isArray(initialOrder?.items) ? initialOrder.items.reduce((s: number, it: any) => s + Number(it?.quantity || 0), 0) : 0,
     subtotal: Number(initialOrder?.subtotal || 0),
+    bundleDiscount: Number(initialOrder?.bundleDiscount || 0),
     couponDiscount: Number(initialOrder?.coupon?.discount || 0),
     shipping: Number(initialOrder?.shipping || 0),
     total: Number(initialOrder?.total || 0),
@@ -75,6 +76,7 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
           setSummary({
             itemCount: Array.isArray(order.items) ? order.items.reduce((s: number, it: any) => s + Number(it?.quantity || 0), 0) : 0,
             subtotal: Number(order.subtotal || 0),
+            bundleDiscount: Number(order.bundleDiscount || 0),
             couponDiscount: Number(order.coupon?.discount || 0),
             shipping: Number(order.shipping || 0),
             total: Number(order.total || 0),
@@ -101,13 +103,16 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
   }, [initialOrder])
 
   const subtotal = summary.subtotal
+  const bundleDiscount = (summary as any)?.bundleDiscount || 0
   const shippingCost = summary.shipping
-  const total = summary.total
 
   const effectiveCoupon = appliedCoupon || initialOrder?.coupon || null
   const effectiveDiscount = Number(
     (summary.couponDiscount != null ? summary.couponDiscount : (effectiveCoupon?.discount ?? 0)) || 0
   )
+  
+  // Calculate correct total: subtotal - bundleDiscount - couponDiscount + shipping
+  const total = Math.max(0, subtotal - bundleDiscount - effectiveDiscount + shippingCost)
 
   useEffect(() => {
     if (initialOrder) return
@@ -118,6 +123,7 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
         setSummary({ 
           itemCount: Number(parsed?.itemCount || 0), 
           subtotal: Number(parsed?.subtotal || 0), 
+          bundleDiscount: Number(parsed?.bundleDiscount || 0),
           couponDiscount: Number(parsed?.couponDiscount || 0),
           shipping: Number(parsed?.shipping || 0), 
           total: Number(parsed?.total || 0) 
@@ -131,10 +137,11 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
           variant: it.variant,
         }))
         setItems(items)
-        setSummary({ itemCount: items.reduce((s, it) => s + Number(it.quantity||0), 0), subtotal: items.reduce((s, it) => s + Number(it.price||0) * Number(it.quantity||1), 0), shipping: 0, total: items.reduce((s, it) => s + Number(it.price||0) * Number(it.quantity||1), 0) })
+        const calculatedSubtotal = items.reduce((s, it) => s + Number(it.price||0) * Number(it.quantity||1), 0)
+        setSummary({ itemCount: items.reduce((s, it) => s + Number(it.quantity||0), 0), subtotal: calculatedSubtotal, bundleDiscount: 0, shipping: 0, total: calculatedSubtotal })
       }
     } catch {
-      setSummary({ itemCount: cart.items.reduce((s, it) => s + it.quantity, 0), subtotal: cart.subtotal, shipping: 0, total: cart.subtotal })
+      setSummary({ itemCount: cart.items.reduce((s, it) => s + it.quantity, 0), subtotal: cart.subtotal, bundleDiscount: 0, shipping: 0, total: cart.subtotal })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialOrder, cart.items, cart.subtotal])
@@ -162,6 +169,7 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
         const payload = { 
           items, 
           subtotal, 
+          bundleDiscount: (summary as any)?.bundleDiscount || 0,
           couponDiscount: summary.couponDiscount || 0,
           appliedCoupon,
           shipping: shippingCost, 
@@ -261,8 +269,11 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
 
           <div className="space-y-3 text-sm">
             <div className="border-t-2 border-gray-800 pt-3 flex justify-between"><span className="text-gray-600">Subtotal</span><span className="text-gray-900">${subtotal.toFixed(2)}</span></div>
+            {(summary as any)?.bundleDiscount > 0 && (
+              <div className="flex justify-between"><span className="text-green-600">Bundle Discount</span><span className="text-green-600">-${Number((summary as any).bundleDiscount).toFixed(2)}</span></div>
+            )}
             {effectiveCoupon?.code && (
-              <div className="flex justify-between"><span className="text-green-600">Discount ({effectiveCoupon.code})</span><span className="text-green-600">-${effectiveDiscount.toFixed(2)}</span></div>
+              <div className="flex justify-between"><span className="text-green-600">Coupon Discount ({effectiveCoupon.code})</span><span className="text-green-600">-${effectiveDiscount.toFixed(2)}</span></div>
             )}
             {(summary as any)?.storeCreditUsed > 0 && (
               <div className="flex justify-between"><span className="text-blue-600">Store Credit</span><span className="text-blue-600">-${Number((summary as any).storeCreditUsed).toFixed(2)}</span></div>
