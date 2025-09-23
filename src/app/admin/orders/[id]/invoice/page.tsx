@@ -35,8 +35,9 @@ export default async function InvoicePage({ params }: { params: Promise<{ id: st
   const invoiceNumber = order?.invoiceNumber ?? (order?.orderNumber || order?._id)
   const items: any[] = Array.isArray(order?.items) ? order.items : []
   const subtotal = Number(order?.subtotal || 0)
+  const bundleDiscount = Number(order?.bundleDiscount || 0)
   const shipping = Number(order?.shipping || 0)
-  const total = Number(order?.total || subtotal + shipping)
+  const total = Math.max(0, subtotal + shipping - bundleDiscount - Number(order?.coupon?.discount || 0))
 
   const fullName = `${order?.shippingAddress?.firstName || ''} ${order?.shippingAddress?.lastName || ''}`.trim()
   const addr1 = order?.shippingAddress?.address1 || ''
@@ -121,6 +122,12 @@ export default async function InvoicePage({ params }: { params: Promise<{ id: st
             <td className="label">Subtotal:</td>
             <td className="value">${subtotal.toFixed(2)}</td>
           </tr>
+          {bundleDiscount > 0 && (
+            <tr>
+              <td className="label" style={{ color: '#059669' }}>Bundle Discount:</td>
+              <td className="value" style={{ color: '#059669' }}>-${bundleDiscount.toFixed(2)}</td>
+            </tr>
+          )}
           <tr>
             <td className="label">Shipping:</td>
             <td className="value">${shipping.toFixed(2)}</td>

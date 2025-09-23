@@ -35,20 +35,27 @@ export function calculateBundleDiscounts(items: CartItem[]): BundleCalculationRe
   const bundleGroups: { [key: string]: CartItem[] } = {}
 
   items.forEach(item => {
-    // Check both product inventory SKU and variant SKU (variants are more reliable)
-    const productSku = item.product.inventory?.sku || ''
-    const variantSku = item.variant?.sku || ''
-    const sku = variantSku || productSku || ''
+    const sku = item.variant?.sku || item.product.inventory?.sku || ''
     
-    // Check which bundle this item belongs to based on SKU
-    for (const [bundleType, config] of Object.entries(BUNDLE_CONFIGS)) {
-      if (sku.includes(config.skuFilter)) {
-        if (!bundleGroups[bundleType]) {
-          bundleGroups[bundleType] = []
-        }
-        bundleGroups[bundleType].push(item)
-        break
-      }
+    // Only match items that contain the EXACT bundle SKU filter
+    if (sku.includes('FLO28G')) {
+      if (!bundleGroups['flower-28g']) bundleGroups['flower-28g'] = []
+      bundleGroups['flower-28g'].push(item)
+    } else if (sku.includes('FLO07G')) {
+      if (!bundleGroups['flower-7g']) bundleGroups['flower-7g'] = []
+      bundleGroups['flower-7g'].push(item)
+    } else if (sku.includes('HAS28G')) {
+      if (!bundleGroups['hash-28g']) bundleGroups['hash-28g'] = []
+      bundleGroups['hash-28g'].push(item)
+    } else if (sku.includes('HAS07G')) {
+      if (!bundleGroups['hash-7g']) bundleGroups['hash-7g'] = []
+      bundleGroups['hash-7g'].push(item)
+    } else if (sku.includes('SHA28G')) {
+      if (!bundleGroups['shatter-28g']) bundleGroups['shatter-28g'] = []
+      bundleGroups['shatter-28g'].push(item)
+    } else if (sku.includes('SHA07G')) {
+      if (!bundleGroups['shatter-7g']) bundleGroups['shatter-7g'] = []
+      bundleGroups['shatter-7g'].push(item)
     }
   })
 

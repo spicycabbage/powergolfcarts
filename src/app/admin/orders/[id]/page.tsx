@@ -124,6 +124,12 @@ export default function AdminOrderDetail() {
                   </ul>
                   <div className="mt-4 border-t pt-3 text-sm">
                     <div className="flex items-center justify-between"><span className="text-gray-600">Subtotal:</span><span>${Number(order.subtotal||0).toFixed(2)}</span></div>
+                    {order.bundleDiscount && Number(order.bundleDiscount) > 0 && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-green-600">Bundle Discount:</span>
+                        <span className="text-green-600">-${Number(order.bundleDiscount).toFixed(2)}</span>
+                      </div>
+                    )}
                     {order.coupon && (
                       <div className="flex items-center justify-between">
                         <span className="text-green-600">Discount ({order.coupon.code}):</span>
@@ -131,7 +137,7 @@ export default function AdminOrderDetail() {
                       </div>
                     )}
                     <div className="flex items-center justify-between"><span className="text-gray-600">Shipping:</span><span>${Number(order.shipping||0).toFixed(2)}</span></div>
-                    <div className="mt-2 flex items-center justify-between font-semibold"><span>Total:</span><span>${Number(order.total||0).toFixed(2)}</span></div>
+                    <div className="mt-2 flex items-center justify-between font-semibold"><span>Total:</span><span>${Math.max(0, Number(order.subtotal||0) + Number(order.shipping||0) - Number(order.bundleDiscount||0) - Number(order.coupon?.discount||0)).toFixed(2)}</span></div>
                   </div>
                 </div>
               </div>

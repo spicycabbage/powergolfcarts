@@ -105,7 +105,8 @@ export async function GET(
         name: bundle.name,
         description: bundle.description,
         requiredQuantity: bundle.requiredQuantity,
-        discountPercentage: bundle.discountPercentage
+        discountPercentage: bundle.discountPercentage,
+        skuFilter: bundle.skuFilter
       }
     })
   } catch (error) {

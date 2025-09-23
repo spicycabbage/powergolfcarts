@@ -26,6 +26,15 @@ export default function LoyaltyUserOrdersPage() {
 
   const fmt = (d: string) => new Date(d).toLocaleDateString('en-CA')
 
+  // STANDARDIZED total calculation - EXACT copy from customer account page
+  const computeEffectiveTotal = (order: any) => {
+    const sub = Number(order?.subtotal || 0)
+    const ship = Number(order?.shipping || 0)
+    const bundleDisc = Number(order?.bundleDiscount || 0)
+    const couponDisc = Number((order as any)?.coupon?.discount || 0)
+    return Math.max(0, sub - bundleDisc - couponDisc + ship)
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-5xl mx-auto px-4">
@@ -58,14 +67,7 @@ export default function LoyaltyUserOrdersPage() {
                     <td className="px-3 py-2 text-right">${Number(o.subtotal||0).toFixed(2)}</td>
                     <td className="px-3 py-2 text-right">-${Number(o?.coupon?.discount||0).toFixed(2)}</td>
                     <td className="px-3 py-2 text-right">${Number(o.shipping||0).toFixed(2)}</td>
-                    <td className="px-3 py-2 text-right">{
-                      (()=>{
-                        const subtotal = Number(o.subtotal||0)
-                        const shipping = Number(o.shipping||0)
-                        const discount = Number(o?.coupon?.discount||0)
-                        return `$${Math.max(0, subtotal + shipping - discount).toFixed(2)}`
-                      })()
-                    }</td>
+                    <td className="px-3 py-2 text-right">${computeEffectiveTotal(o).toFixed(2)}</td>
                     <td className="px-3 py-2 text-right">{Number(o.loyaltyPoints||0)}</td>
                     <td className="px-3 py-2">{String(o.status||'').toUpperCase()}</td>
                   </tr>

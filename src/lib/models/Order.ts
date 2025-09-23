@@ -42,6 +42,7 @@ export interface IOrder {
     value: number
     discount: number
   }
+  storeCreditUsed?: number
   total: number
   status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded' | 'completed'
   paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded'
@@ -168,6 +169,11 @@ const OrderSchema = new Schema<IOrder>({
     type: Number,
     default: 0,
     min: [0, 'Bundle discount cannot be negative']
+  },
+  storeCreditUsed: {
+    type: Number,
+    default: 0,
+    min: [0, 'Store credit used cannot be negative']
   },
   tax: {
     type: Number,

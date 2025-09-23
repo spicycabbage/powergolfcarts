@@ -134,6 +134,7 @@ export async function POST(req: NextRequest) {
         value: appliedCoupon.value,
         discount: appliedCoupon.discount
       } : undefined,
+      storeCreditUsed: Number(storeCreditUsed || 0),
       tax: 0,
       shipping,
       total: Math.max(0, Number(subtotal || 0) + Number(0) + Number(shipping || 0) - Number(bundleDiscount || 0) - Number(appliedCoupon?.discount || 0) - Number(storeCreditUsed || 0)),

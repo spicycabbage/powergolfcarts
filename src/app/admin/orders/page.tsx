@@ -20,6 +20,15 @@ export default function AdminOrdersList() {
   const [trackNumber, setTrackNumber] = useState('')
   const [savingTrack, setSavingTrack] = useState(false)
 
+  // STANDARDIZED total calculation - EXACT copy from customer account page
+  const computeEffectiveTotal = (order: any) => {
+    const sub = Number(order?.subtotal || 0)
+    const ship = Number(order?.shipping || 0)
+    const bundleDisc = Number(order?.bundleDiscount || 0)
+    const couponDisc = Number((order as any)?.coupon?.discount || 0)
+    return Math.max(0, sub - bundleDisc - couponDisc + ship)
+  }
+
   const fetchOrders = async () => {
     setLoading(true)
     setError(null)
@@ -143,14 +152,7 @@ export default function AdminOrdersList() {
                         <span className="text-gray-400">—</span>
                       )}
                     </td>
-                    <td className="px-4 py-3">{
-                      (()=>{
-                        const subtotal = Number(o.subtotal||0)
-                        const shipping = Number(o.shipping||0)
-                        const discount = Number(o?.coupon?.discount||0)
-                        return `$${Math.max(0, subtotal + shipping - discount).toFixed(2)}`
-                      })()
-                    }</td>
+                    <td className="px-4 py-3">${computeEffectiveTotal(o).toFixed(2)}</td>
                     <td className="px-4 py-3">
                       {editingId === String(o._id) ? (
                         <div className="flex items-center gap-2">

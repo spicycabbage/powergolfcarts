@@ -23,6 +23,7 @@ interface Bundle {
   description: string
   requiredQuantity: number
   discountPercentage: number
+  skuFilter: string
 }
 
 interface BundleProductsResponse {
@@ -68,11 +69,13 @@ export default function BundlePage() {
 
   // Calculate bundle progress
   const bundleProgress = useMemo(() => {
-    if (!data) return { count: 0, items: [] }
+    if (!data || !data.bundle) return { count: 0, items: [] }
     
-    const bundleItems = cart.items.filter(item => 
-      data.products.some(product => product._id === item.product._id)
-    )
+    // Only count items that match this specific bundle's SKU filter
+    const bundleItems = cart.items.filter(item => {
+      const sku = item.variant?.sku || item.product.inventory?.sku || ''
+      return sku.includes(data.bundle.skuFilter)
+    })
     
     const totalCount = bundleItems.reduce((sum, item) => sum + item.quantity, 0)
     
@@ -348,7 +351,7 @@ export default function BundlePage() {
               {/* Pricing */}
               <div className="border-t pt-4 mb-4">
                 {(() => {
-                  const regularPrice = bundleProgress.items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0)
+                  const regularPrice = bundleProgress.items.reduce((sum, item) => sum + ((item.variant?.price || item.product.price) * item.quantity), 0)
                   const isDiscountActive = bundleProgress.count >= bundle.requiredQuantity
                   const discountAmount = isDiscountActive ? (regularPrice * bundle.discountPercentage / 100) : 0
                   const finalPrice = regularPrice - discountAmount

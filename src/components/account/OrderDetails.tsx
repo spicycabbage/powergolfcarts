@@ -82,8 +82,9 @@ export default function OrderDetails({ userId }: OrderDetailsProps) {
   const computeEffectiveTotal = (order: any) => {
     const sub = Number(order?.subtotal || 0)
     const ship = Number(order?.shipping || 0)
-    const disc = Number((order as any)?.coupon?.discount || 0)
-    return Math.max(0, sub - disc + ship)
+    const bundleDisc = Number(order?.bundleDiscount || 0)
+    const couponDisc = Number((order as any)?.coupon?.discount || 0)
+    return Math.max(0, sub - bundleDisc - couponDisc + ship)
   }
 
   const buildTrackingUrl = (carrier?: string, trackingNumber?: string) => {
@@ -202,6 +203,12 @@ export default function OrderDetails({ userId }: OrderDetailsProps) {
                 <span className="text-gray-600">Subtotal:</span>
                 <span className="text-gray-900">{formatCurrency(selectedOrder.subtotal)}</span>
               </div>
+              {selectedOrder.bundleDiscount && Number(selectedOrder.bundleDiscount) > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-green-600">Bundle Discount:</span>
+                  <span className="text-green-600">-{formatCurrency(selectedOrder.bundleDiscount)}</span>
+                </div>
+              )}
               {(selectedOrder as any).coupon && (
                 <div className="flex justify-between">
                   <span className="text-green-600">Discount ({(selectedOrder as any).coupon.code}):</span>
