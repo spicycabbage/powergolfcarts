@@ -84,7 +84,7 @@ export default function BundlePage() {
 
   const getProductQuantityInCart = (product: Product) => {
     // Match by both product ID and variant ID to handle same product with different variants
-    const variantId = product.variantId
+    const variantId = (product as any).variantId
     const item = cart.items.find(item => 
       item.product._id === product._id && item.variant?._id === variantId
     )
@@ -129,7 +129,7 @@ export default function BundlePage() {
     
     // Create the variant object for the specific bundle variant
     const variant = {
-      _id: product.variantId, // Should always be set by the API now
+      _id: (product as any).variantId, // Should always be set by the API now
       sku: product.sku,
       name: 'Weight',
       value: bundle.name.includes('28g') ? '28g' : '7g',
@@ -143,7 +143,7 @@ export default function BundlePage() {
 
   const handleUpdateQuantity = (product: Product, newQuantity: number) => {
     // Find the cart item by both product ID and variant ID
-    const variantId = product.variantId
+    const variantId = (product as any).variantId
     const cartItem = cart.items.find(item => 
       item.product._id === product._id && item.variant?._id === variantId
     )
