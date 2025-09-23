@@ -232,7 +232,7 @@ export default function BundlePage() {
                       <div className="w-24 h-24 bg-gray-200 flex-shrink-0">
                         {product.images && product.images.length > 0 ? (
                           <OptimizedImage
-                            src={typeof product.images[0] === 'string' ? product.images[0] : product.images[0]?.url || ''}
+                            src={typeof product.images[0] === 'string' ? product.images[0] : (product.images[0] as any)?.url || ''}
                             alt={product.name}
                             width={96}
                             height={96}
