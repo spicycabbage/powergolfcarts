@@ -40,20 +40,14 @@ export default function BundlePage() {
   const [data, setData] = useState<BundleProductsResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [search, setSearch] = useState('')
-
   useEffect(() => {
     fetchBundleProducts()
-  }, [slug, search])
+  }, [slug])
 
   const fetchBundleProducts = async () => {
     try {
       setLoading(true)
-      const params = new URLSearchParams({
-        ...(search && { search })
-      })
-      
-      const response = await fetch(`/api/bundles/${slug}/products?${params}`)
+      const response = await fetch(`/api/bundles/${slug}/products`)
       if (!response.ok) {
         throw new Error('Failed to fetch bundle products')
       }
@@ -227,17 +221,6 @@ export default function BundlePage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Left Column - Products (3/4 width) */}
           <div className="lg:col-span-3">
-            {/* Search */}
-            <div className="mb-6">
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                />
-            </div>
-
             {/* Products Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               {products.map((product, index) => {
@@ -251,86 +234,9 @@ export default function BundlePage() {
                       ? 'border-blue-500 ring-2 ring-blue-200' 
                       : 'border-gray-200'
                   }`}>
-                    {/* Mobile Layout - Stack vertically */}
-                    <div className="block sm:hidden">
+                    <div className="flex">
                       {/* Product Image */}
-                      <div className="w-full h-32 bg-gray-200 relative overflow-hidden">
-                        {product.images && product.images.length > 0 ? (
-                          <OptimizedImage
-                            src={typeof product.images[0] === 'string' ? product.images[0] : (product.images[0] as any)?.url || ''}
-                            alt={product.name}
-                            width={200}
-                            height={128}
-                            className="w-full h-full object-cover transform-gpu"
-                            priority={isAboveFold}
-                            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                            <span className="text-gray-400 text-xs">No Image</span>
-                          </div>
-                        )}
-                        {/* Quantity Badge */}
-                        {quantityInCart > 0 && (
-                          <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
-                            {quantityInCart}
-                          </div>
-                        )}
-                      </div>
-                      
-                      {/* Product Info */}
-                      <div className="p-4">
-                        <h3 className="font-medium text-gray-900 mb-2 text-sm">
-                          {product.name}
-                        </h3>
-                        <div className="flex justify-between items-center">
-                          <div className="text-lg font-bold text-gray-900">
-                            ${product.price.toFixed(2)}/{bundle.name.includes('7g') ? '7g' : '28g'}
-                          </div>
-                          
-                          {/* Add Button or Quantity Controls */}
-                          <div>
-                            {!isOutOfStock && (
-                              <>
-                                {quantityInCart === 0 ? (
-                                  <button
-                                    onClick={() => handleAddToCart(product)}
-                                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                                  >
-                                    Add
-                                  </button>
-                                ) : (
-                                  <div className="flex items-center space-x-2">
-                                    <button
-                                      onClick={() => handleUpdateQuantity(product, quantityInCart - 1)}
-                                      className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded text-red-600"
-                                    >
-                                      <Minus size={14} />
-                                    </button>
-                                    <span className="w-8 text-center font-medium text-sm">{quantityInCart}</span>
-                                    <button
-                                      onClick={() => handleUpdateQuantity(product, quantityInCart + 1)}
-                                      className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded text-green-600"
-                                      disabled={quantityInCart >= product.inventory}
-                                    >
-                                      <Plus size={14} />
-                                    </button>
-                                  </div>
-                                )}
-                              </>
-                            )}
-                            {isOutOfStock && (
-                              <span className="text-red-600 text-sm font-medium">Out of Stock</span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Desktop Layout - Horizontal */}
-                    <div className="hidden sm:flex">
-                      {/* Product Image */}
-                      <div className="w-24 h-24 bg-gray-200 flex-shrink-0 relative overflow-hidden">
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-200 flex-shrink-0 relative overflow-hidden">
                         {product.images && product.images.length > 0 ? (
                           <OptimizedImage
                             src={typeof product.images[0] === 'string' ? product.images[0] : (product.images[0] as any)?.url || ''}
@@ -339,7 +245,7 @@ export default function BundlePage() {
                             height={96}
                             className="w-full h-full object-cover transform-gpu"
                             priority={isAboveFold}
-                            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 96px"
+                            sizes="(max-width: 640px) 80px, 96px"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gray-100">
@@ -348,49 +254,51 @@ export default function BundlePage() {
                         )}
                         {/* Quantity Badge */}
                         {quantityInCart > 0 && (
-                          <div className="absolute top-1 right-1 bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                          <div className="absolute top-1 right-1 bg-blue-600 text-white text-xs font-bold rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center">
                             {quantityInCart}
                           </div>
                         )}
                       </div>
 
                       {/* Product Info */}
-                      <div className="flex-1 p-4 flex justify-between items-center">
-                        <div className="flex-1">
-                          <h3 className="font-medium text-gray-900 mb-1 text-sm">
+                      <div className="flex-1 p-3 sm:p-4 flex flex-col justify-between min-w-0">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-medium text-gray-900 mb-1 text-sm truncate">
                             {product.name}
                           </h3>
-                          <div className="text-lg font-bold text-gray-900">
+                          <div className="text-base sm:text-lg font-bold text-gray-900 mb-2">
                             ${product.price.toFixed(2)}/{bundle.name.includes('7g') ? '7g' : '28g'}
                           </div>
                         </div>
 
                         {/* Add Button or Quantity Controls */}
-                        <div className="ml-4">
+                        <div className="flex justify-end">
                           {!isOutOfStock && (
                             <>
                               {quantityInCart === 0 ? (
                                 <button
                                   onClick={() => handleAddToCart(product)}
-                                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                                  className="bg-blue-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                                 >
                                   Add
                                 </button>
                               ) : (
-                                <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-1 sm:space-x-2">
                                   <button
                                     onClick={() => handleUpdateQuantity(product, quantityInCart - 1)}
-                                    className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded text-red-600"
+                                    className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded text-red-600"
                                   >
-                                    <Minus size={14} />
+                                    <Minus size={12} className="sm:hidden" />
+                                    <Minus size={14} className="hidden sm:block" />
                                   </button>
-                                  <span className="w-8 text-center font-medium text-sm">{quantityInCart}</span>
+                                  <span className="w-6 sm:w-8 text-center font-medium text-sm">{quantityInCart}</span>
                                   <button
                                     onClick={() => handleUpdateQuantity(product, quantityInCart + 1)}
-                                    className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded text-green-600"
+                                    className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded text-green-600"
                                     disabled={quantityInCart >= product.inventory}
                                   >
-                                    <Plus size={14} />
+                                    <Plus size={12} className="sm:hidden" />
+                                    <Plus size={14} className="hidden sm:block" />
                                   </button>
                                 </div>
                               )}
