@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode } from 'react'
+import { ReactNode, Suspense } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster as HotToaster } from 'react-hot-toast'
 import { ReferralProvider } from './providers/ReferralProvider'
@@ -27,10 +27,12 @@ const queryClient = new QueryClient({
 export function Providers({ children }: ProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <ReferralProvider>
-        {children}
-        <HotToaster position="top-right" toastOptions={{ duration: 2500 }} />
-      </ReferralProvider>
+      <Suspense fallback={<div />}>
+        <ReferralProvider>
+          {children}
+          <HotToaster position="top-right" toastOptions={{ duration: 2500 }} />
+        </ReferralProvider>
+      </Suspense>
     </QueryClientProvider>
   )
 }
