@@ -33,6 +33,7 @@ export interface IUser extends Document {
     createdAt: Date
     usedAt?: Date
   }>
+  referralCode?: string
   emailVerified: boolean
   lastLogin?: Date
   resetPasswordToken?: string
@@ -155,6 +156,12 @@ const UserSchema = new Schema<IUser>({
     createdAt: { type: Date, default: Date.now },
     usedAt: { type: Date }
   }],
+  referralCode: {
+    type: String,
+    unique: true,
+    sparse: true, // Allow null values but ensure uniqueness when present
+    uppercase: true
+  },
   emailVerified: {
     type: Boolean,
     default: false

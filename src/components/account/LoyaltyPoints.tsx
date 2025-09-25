@@ -11,13 +11,33 @@ export default function LoyaltyPoints({ userId }: { userId?: string }) {
   const [myCoupons, setMyCoupons] = useState<{ code: string; value: number; createdAt?: string; usedAt?: string | null }[]>([])
   const [ordersIndex, setOrdersIndex] = useState<Record<string, string>>({})
 
+  const fetchUserData = async () => {
+    setLoading(true)
+    try {
+      // fetch user profile lightweight endpoint (no cache) with timestamp to force refresh
+      const timestamp = Date.now()
+      const u = await fetch(`/api/user/me?t=${timestamp}`, { 
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      }).then(r=>r.ok?r.json():null).catch(()=>null)
+      if (u && u.success) { 
+        setPoints(Number(u.data?.loyaltyPoints ?? 0)); 
+        setMyCoupons(Array.isArray(u.data?.loyaltyCoupons) ? u.data.loyaltyCoupons : []) 
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
     ;(async () => {
-      try {
-        // fetch user profile lightweight endpoint (no cache)
-        const u = await fetch('/api/user/me', { cache: 'no-store' }).then(r=>r.ok?r.json():null).catch(()=>null)
-        if (u && u.success) { setPoints(Number(u.data?.loyaltyPoints ?? 0)); setMyCoupons(Array.isArray(u.data?.loyaltyCoupons) ? u.data.loyaltyCoupons : []) }
-      } catch {}
+      await fetchUserData()
       try {
         const cfg = await fetch('/api/admin/loyalty/config', { cache: 'no-store' }).then(r=>r.ok?r.json():null).catch(()=>null)
         if (cfg && cfg.success) setRate(Number(cfg.data?.pointsPerDollar ?? 1))
@@ -81,7 +101,15 @@ export default function LoyaltyPoints({ userId }: { userId?: string }) {
 
   return (
     <div>
-      <h2 className="text-lg font-medium text-gray-900 mb-4">Loyalty Points</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-medium text-gray-900">Loyalty Points</h2>
+        <button 
+          onClick={fetchUserData}
+          className="px-3 py-1 text-sm bg-primary-600 text-white rounded hover:bg-primary-700"
+        >
+          Refresh
+        </button>
+      </div>
       {loading ? (
         <div className="text-sm text-gray-600">Loading…</div>
       ) : (

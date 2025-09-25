@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
     const session: any = await getServerSession(authOptions as any)
 
     const body = await req.json()
-    const { items, subtotal, bundleDiscount, couponDiscount, appliedCoupon, shipping, total, shippingAddress, storeCreditUsed, customerEmail, idempotencyKey } = body || {}
+    const { items, subtotal, bundleDiscount, couponDiscount, appliedCoupon, shipping, total, shippingAddress, storeCreditUsed, customerEmail, idempotencyKey, referralData } = body || {}
     if (!Array.isArray(items) || typeof subtotal !== 'number' || typeof shipping !== 'number' || typeof total !== 'number') {
       return NextResponse.json({ success: false, error: 'Invalid payload' }, { status: 400 })
     }
@@ -200,57 +200,72 @@ export async function POST(req: NextRequest) {
       console.error('Store credit deduction error:', e)
     }
 
-    // Decrement inventory for each item (variant-aware)
-    try {
-      for (const it of orderItems) {
-        const product: any = await Product.findById(it.product)
-        if (!product) {
-          console.log(`⚠️ Product not found for ID: ${it.product}`)
-          continue
-        }
-        const qty = Number(it.quantity || 0)
-        if (qty <= 0) continue
-
-        console.log(`📦 Processing inventory for: ${product.name}, Qty: ${qty}`)
-        console.log(`🔍 Variant data:`, it.variant)
-        console.log(`📊 Product has ${product.variants?.length || 0} variants`)
-
-        if (Array.isArray(product.variants) && product.variants.length > 0 && it.variant) {
-          const v = it.variant || {}
-          let idx = -1
-          if (v._id) idx = product.variants.findIndex((pv: any) => String(pv?._id) === String(v._id))
-          if (idx < 0 && v.sku) idx = product.variants.findIndex((pv: any) => String(pv?.sku || '').toLowerCase() === String(v.sku).toLowerCase())
-          if (idx < 0 && v.value) idx = product.variants.findIndex((pv: any) => String(pv?.value || '').trim().toLowerCase() === String(v.value).trim().toLowerCase())
-          if (idx < 0 && v.name && v.value) idx = product.variants.findIndex((pv: any) => String(pv?.name || '').trim().toLowerCase() === String(v.name).trim().toLowerCase() && String(pv?.value || '').trim().toLowerCase() === String(v.value).trim().toLowerCase())
-          
-          if (idx >= 0) {
-            const cur = Number(product.variants[idx].inventory || 0)
-            const newInventory = Math.max(0, cur - qty)
-            console.log(`✅ Found variant at index ${idx}, SKU: ${product.variants[idx].sku}, Current: ${cur}, New: ${newInventory}`)
-            product.variants[idx].inventory = newInventory
-            product.markModified('variants')
-          } else {
-            console.log(`❌ No matching variant found for:`, v)
-          }
-        } else {
-          console.log(`📦 Using product-level inventory`)
-          if (!product.inventory) {
-            product.inventory = { quantity: 0, lowStockThreshold: 5, sku: '', trackInventory: true } as any
-          }
-          if (product.inventory.trackInventory !== false) {
-            const cur = Number(product.inventory.quantity || 0)
-            const newInventory = Math.max(0, cur - qty)
-            console.log(`✅ Product inventory - Current: ${cur}, New: ${newInventory}`)
-            product.inventory.quantity = newInventory
-          }
-        }
-        await product.save()
-      }
-    } catch (invErr) {
-      console.error('Order inventory decrement error:', invErr)
-    }
+    // Note: Inventory will be deducted when order is marked as "completed" by admin
+    // This prevents inventory issues if orders are cancelled before fulfillment
 
     const orderId = String(order._id)
+    
+    // Process referral if present - create permanent relationship
+    if (referralData && referralData.referrerId && referralData.referralCode) {
+      try {
+        const ReferralSettings = (await import('@/models/ReferralSettings')).default
+        const ReferralRelationship = (await import('../../../models/ReferralRelationship')).default
+        const User = (await import('@/lib/models/User')).default
+        
+        const settings = await ReferralSettings.getCurrentSettings()
+        
+        if (settings.isActive && session?.user?.id) {
+          // Create or get permanent referral relationship
+          const referredEmail = (shippingAddress?.email || customerEmail || session?.user?.email || '')
+          
+          const relationship = await ReferralRelationship.createOrGet(
+            referralData.referrerId,
+            session.user.id,
+            referralData.referralCode,
+            referredEmail
+          )
+          
+          console.log(`✅ Permanent referral relationship established: ${referralData.referralCode} → ${referredEmail}`)
+          console.log(`   Future orders by this user will automatically award points to the referrer`)
+        } else if (settings.isActive) {
+          // For guest orders, still create a one-time referral record for now
+          // This will be converted to permanent relationship when user creates account
+          const Referral = (await import('@/models/Referral')).default
+          
+          const actualAmountSpent = Math.max(0, subtotal - (bundleDiscount || 0))
+          
+          if (actualAmountSpent >= settings.minimumOrderAmount) {
+            const loyaltyPointsAwarded = Math.min(
+              Math.floor(actualAmountSpent * settings.pointsPerDollarSpent),
+              settings.maxPointsPerReferral || Infinity
+            )
+            
+            await Referral.create({
+              referrer: referralData.referrerId,
+              referred: null, // Guest order
+              referralCode: referralData.referralCode,
+              referredEmail: (shippingAddress?.email || customerEmail || ''),
+              order: order._id,
+              orderTotal: actualAmountSpent,
+              loyaltyPointsAwarded,
+              pointsPerDollarSpent: settings.pointsPerDollarSpent,
+              status: 'pending',
+              metadata: {
+                source: 'guest_order',
+                userAgent: req.headers.get('user-agent') || '',
+                ipAddress: req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || ''
+              }
+            })
+            
+            console.log(`✅ Guest referral processed: ${referralData.referralCode} (will convert to permanent when user registers)`)
+          }
+        }
+      } catch (referralError) {
+        console.error('Referral processing error:', referralError)
+        // Don't fail the order if referral processing fails
+      }
+    }
+    
     // Get full product details for email template
     const itemsForTemplate = []
     for (const orderItem of orderItems) {

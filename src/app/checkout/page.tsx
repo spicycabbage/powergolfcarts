@@ -7,11 +7,13 @@ import { useCart } from '@/hooks/useCart'
 import { useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { calculateCartTotals } from '@/utils/cartCalculations'
+import { useReferral } from '@/components/providers/ReferralProvider'
 
 export default function CheckoutPage() {
   const router = useRouter()
   const { cart } = useCart()
   const { data: session } = useSession()
+  const { referralData } = useReferral()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [shipping, setShipping] = useState({
@@ -137,6 +139,11 @@ export default function CheckoutPage() {
       sessionStorage.setItem('checkout_selected_shipping', JSON.stringify(selectedShippingPayload))
       sessionStorage.setItem('checkout_order_summary', JSON.stringify(orderSummary))
       sessionStorage.setItem('checkout_items', JSON.stringify(itemsForCheckout))
+      
+      // Store referral data if present
+      if (referralData) {
+        sessionStorage.setItem('checkout_referral', JSON.stringify(referralData))
+      }
       // Clear any previous order data to ensure a fresh order is created
       sessionStorage.removeItem('lastInvoice')
       sessionStorage.removeItem('checkout_idem') // Clear idempotency key to ensure new order

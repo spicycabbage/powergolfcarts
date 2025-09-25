@@ -166,6 +166,15 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
           idem = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
           try { sessionStorage.setItem('checkout_idem', idem) } catch {}
         }
+        // Get referral data from sessionStorage
+        let referralData = null
+        try {
+          const storedReferral = sessionStorage.getItem('checkout_referral')
+          if (storedReferral) {
+            referralData = JSON.parse(storedReferral)
+          }
+        } catch {}
+        
         const payload = { 
           items, 
           subtotal, 
@@ -176,7 +185,8 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
           total, 
           shippingAddress: shipping,
           customerEmail: (shipping as any)?.email || orderMeta?.email || '',
-          idempotencyKey: idem
+          idempotencyKey: idem,
+          referralData
         }
         const res = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
         const json = await res.json().catch(() => ({} as any))
@@ -201,6 +211,7 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
           sessionStorage.removeItem('checkout_selected_shipping')
           sessionStorage.removeItem('checkout_order_summary')
           sessionStorage.removeItem('checkout_applied_coupon')
+          sessionStorage.removeItem('checkout_referral')
         } catch {}
       } catch {}
     })()

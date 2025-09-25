@@ -37,12 +37,36 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 8)
 
+    // Generate unique referral code
+    const generateReferralCode = async () => {
+      const baseCode = firstName.substring(0, 4).toUpperCase()
+      let attempts = 0
+      
+      while (attempts < 10) {
+        const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase()
+        const referralCode = baseCode + randomSuffix
+        
+        // Check if code already exists
+        const existing = await User.findOne({ referralCode })
+        if (!existing) {
+          return referralCode
+        }
+        attempts++
+      }
+      
+      // Fallback to completely random code
+      return Math.random().toString(36).substring(2, 8).toUpperCase()
+    }
+
+    const referralCode = await generateReferralCode()
+
     // Create user
     const user = await User.create({
       email,
       password: hashedPassword,
       firstName,
       lastName,
+      referralCode,
       addresses: [],
       orders: [],
       wishlist: []

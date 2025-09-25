@@ -3,6 +3,7 @@
 import { ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster as HotToaster } from 'react-hot-toast'
+import { ReferralProvider } from './providers/ReferralProvider'
 
 interface ProvidersProps {
   children: ReactNode
@@ -26,8 +27,10 @@ const queryClient = new QueryClient({
 export function Providers({ children }: ProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      {children}
-      <HotToaster position="top-right" toastOptions={{ duration: 2500 }} />
+      <ReferralProvider>
+        {children}
+        <HotToaster position="top-right" toastOptions={{ duration: 2500 }} />
+      </ReferralProvider>
     </QueryClientProvider>
   )
 }

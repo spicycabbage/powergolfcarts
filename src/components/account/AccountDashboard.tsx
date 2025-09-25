@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { signOut } from 'next-auth/react'
 import { Session } from 'next-auth'
+import { useRouter } from 'next/navigation'
 import OrderDetails from './OrderDetails'
 import AccountDetails from './AccountDetails'
 import AddressManagement from './AddressManagement'
@@ -13,10 +14,11 @@ interface AccountDashboardProps {
   session: Session
 }
 
-type TabType = 'orders' | 'account' | 'addresses' | 'password' | 'loyalty'
+type TabType = 'orders' | 'account' | 'addresses' | 'password' | 'loyalty' | 'referrals'
 
 export default function AccountDashboard({ session }: AccountDashboardProps) {
   const [activeTab, setActiveTab] = useState<TabType>('orders')
+  const router = useRouter()
 
   const tabs = [
     { id: 'orders' as TabType, name: 'Order Details', icon: '📦' },
@@ -24,6 +26,7 @@ export default function AccountDashboard({ session }: AccountDashboardProps) {
     { id: 'addresses' as TabType, name: 'Change Addresses', icon: '📍' },
     { id: 'password' as TabType, name: 'Change Password', icon: '🔐' },
     { id: 'loyalty' as TabType, name: 'Loyalty Points', icon: '⭐' },
+    { id: 'referrals' as TabType, name: 'Referrals', icon: '👥' },
   ]
 
   const handleLogout = async () => {
@@ -63,7 +66,13 @@ export default function AccountDashboard({ session }: AccountDashboardProps) {
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => {
+                    if (tab.id === 'referrals') {
+                      router.push('/account/referrals')
+                    } else {
+                      setActiveTab(tab.id)
+                    }
+                  }}
                   className={`whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-sm ${
                     activeTab === tab.id
                       ? 'border-blue-500 text-blue-600'

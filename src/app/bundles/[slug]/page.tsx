@@ -86,12 +86,21 @@ export default function BundlePage() {
   }, [cart.items, data])
 
   const getProductQuantityInCart = (product: Product) => {
-    // Match by both product ID and variant ID to handle same product with different variants
-    const variantId = (product as any).variantId
-    const item = cart.items.find(item => 
-      item.product._id === product._id && item.variant?._id === variantId
-    )
-    return item ? item.quantity : 0
+    // Use the same SKU-based matching as bundleProgress for consistency
+    const productSku = product.sku
+    if (!productSku || !data?.bundle?.skuFilter) return 0
+    
+    // Only count if this product matches the bundle's SKU filter
+    if (!productSku.includes(data.bundle.skuFilter)) return 0
+    
+    // Find all cart items that match this specific product's SKU
+    const matchingItems = cart.items.filter(item => {
+      const itemSku = item.variant?.sku || item.product.inventory?.sku || ''
+      return itemSku === productSku
+    })
+    
+    // Return total quantity for this specific product SKU
+    return matchingItems.reduce((sum, item) => sum + item.quantity, 0)
   }
 
   const handleAddToCart = (product: Product) => {
@@ -145,11 +154,12 @@ export default function BundlePage() {
   }
 
   const handleUpdateQuantity = (product: Product, newQuantity: number) => {
-    // Find the cart item by both product ID and variant ID
-    const variantId = (product as any).variantId
-    const cartItem = cart.items.find(item => 
-      item.product._id === product._id && item.variant?._id === variantId
-    )
+    // Find cart item by SKU instead of variant ID to handle cross-page compatibility
+    const productSku = product.sku
+    const cartItem = cart.items.find(item => {
+      const itemSku = item.variant?.sku || item.product.inventory?.sku || ''
+      return itemSku === productSku
+    })
     
     if (cartItem) {
       if (newQuantity === 0) {
@@ -229,10 +239,14 @@ export default function BundlePage() {
                 const isOutOfStock = product.inventory <= 0
                 
                 return (
-                  <div key={product._id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                  <div key={product._id} className={`bg-white rounded-lg shadow-sm border overflow-hidden ${
+                    quantityInCart > 0 
+                      ? 'border-blue-500 ring-2 ring-blue-200' 
+                      : 'border-gray-200'
+                  }`}>
                     <div className="flex">
                       {/* Product Image */}
-                      <div className="w-24 h-24 bg-gray-200 flex-shrink-0">
+                      <div className="w-24 h-24 bg-gray-200 flex-shrink-0 relative">
                         {product.images && product.images.length > 0 ? (
                           <OptimizedImage
                             src={typeof product.images[0] === 'string' ? product.images[0] : (product.images[0] as any)?.url || ''}
@@ -244,6 +258,12 @@ export default function BundlePage() {
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gray-100">
                             <span className="text-gray-400 text-xs">No Image</span>
+                          </div>
+                        )}
+                        {/* Quantity Badge */}
+                        {quantityInCart > 0 && (
+                          <div className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                            {quantityInCart}
                           </div>
                         )}
                       </div>
@@ -331,16 +351,16 @@ export default function BundlePage() {
                 <h4 className="font-medium text-gray-900 mb-2">Selected Items:</h4>
                 {bundleProgress.items.length > 0 ? (
                   <div className="space-y-2">
-                    {bundleProgress.items.map((item) => (
-                      <div key={item.product._id} className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600 truncate">{item.quantity}x {item.product.name}</span>
-                        <button
-                          onClick={() => updateQuantity(item.product._id, 0, item.variant)}
-                          className="text-red-600 hover:text-red-700 ml-2"
-                        >
-                          ×
-                        </button>
-                      </div>
+                    {bundleProgress.items.map((item, index) => (
+                        <div key={`bundle-item-${index}`} className="flex items-center justify-between text-sm">
+                          <span className="text-gray-600 truncate">{item.quantity}x {item.product.name}</span>
+                          <button
+                            onClick={() => updateQuantity(item.product._id, 0, item.variant)}
+                            className="text-red-600 hover:text-red-700 ml-2"
+                          >
+                            ×
+                          </button>
+                        </div>
                     ))}
                   </div>
                 ) : (

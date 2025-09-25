@@ -4,8 +4,10 @@ export function buildOrderEmail(order: any, type: 'placed' | 'complete' = 'place
   const items: any[] = Array.isArray(order?.items) ? order.items : []
   const subtotal = Number(order?.subtotal || 0)
   const bundleDiscount = Number(order?.bundleDiscount || 0)
+  const couponDiscount = Number(order?.coupon?.discount || order?.couponDiscount || 0)
   const shipping = Number(order?.shipping || 0)
-  const total = Number(order?.total || 0)
+  // Use the same calculation as admin page: subtotal + shipping - bundleDiscount - couponDiscount
+  const total = Math.max(0, subtotal + shipping - bundleDiscount - couponDiscount)
 
   const ship = order?.shippingAddress || {}
   const fullName = `${ship.firstName || ''} ${ship.lastName || ''}`.trim()
@@ -101,6 +103,12 @@ export function buildOrderEmail(order: any, type: 'placed' | 'complete' = 'place
           <tr>
             <td style="text-align:right;color:#059669;padding:4px 8px">Bundle Discount:</td>
             <td style="text-align:right;color:#059669;padding:4px 8px;width:140px">-$${bundleDiscount.toFixed(2)}</td>
+          </tr>
+          ` : ''}
+          ${couponDiscount > 0 ? `
+          <tr>
+            <td style="text-align:right;color:#059669;padding:4px 8px">Coupon Discount:</td>
+            <td style="text-align:right;color:#059669;padding:4px 8px;width:140px">-$${couponDiscount.toFixed(2)}</td>
           </tr>
           ` : ''}
           <tr>

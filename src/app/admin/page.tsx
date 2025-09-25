@@ -13,7 +13,8 @@ import {
   Link2,
   Percent,
   Star,
-  Gift
+  Gift,
+  UserPlus
 } from 'lucide-react'
 import Link from 'next/link'
  
@@ -127,6 +128,13 @@ export default function AdminDashboard() {
       icon: Gift,
       href: '/admin/bundles',
       color: 'bg-rose-500',
+      disabled: false
+    },
+    {
+      title: 'Referral System',
+      icon: UserPlus,
+      href: '/admin/referrals',
+      color: 'bg-cyan-500',
       disabled: false
     },
     {
