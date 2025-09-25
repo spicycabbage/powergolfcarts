@@ -67,9 +67,9 @@ export default function BundlePage() {
     }
   }
 
-  // Calculate bundle progress
+  // Calculate bundle progress - memoized to prevent reflows
   const bundleProgress = useMemo(() => {
-    if (!data || !data.bundle) return { count: 0, items: [] }
+    if (!data?.bundle) return { count: 0, items: [], regularPrice: 0, discountedPrice: 0 }
     
     // Only count items that match this specific bundle's SKU filter
     const bundleItems = cart.items.filter(item => {
@@ -78,12 +78,18 @@ export default function BundlePage() {
     })
     
     const totalCount = bundleItems.reduce((sum, item) => sum + item.quantity, 0)
+    const regularPrice = bundleItems.reduce((sum, item) => sum + ((item.variant?.price || item.product.price) * item.quantity), 0)
+    const discountedPrice = totalCount >= data.bundle.requiredQuantity 
+      ? regularPrice * (1 - data.bundle.discountPercentage / 100)
+      : regularPrice
     
     return {
       count: totalCount,
-      items: bundleItems
+      items: bundleItems,
+      regularPrice,
+      discountedPrice
     }
-  }, [cart.items, data])
+  }, [cart.items, data?.bundle])
 
   const getProductQuantityInCart = (product: Product) => {
     // Use the same SKU-based matching as bundleProgress for consistency
@@ -234,9 +240,10 @@ export default function BundlePage() {
 
             {/* Products Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              {products.map((product) => {
+              {products.map((product, index) => {
                 const quantityInCart = getProductQuantityInCart(product)
                 const isOutOfStock = product.inventory <= 0
+                const isAboveFold = index < 4 // First 4 products are likely above the fold
                 
                 return (
                   <div key={product._id} className={`bg-white rounded-lg shadow-sm border overflow-hidden ${
@@ -244,16 +251,19 @@ export default function BundlePage() {
                       ? 'border-blue-500 ring-2 ring-blue-200' 
                       : 'border-gray-200'
                   }`}>
-                    <div className="flex">
+                    {/* Mobile Layout - Stack vertically */}
+                    <div className="block sm:hidden">
                       {/* Product Image */}
-                      <div className="w-24 h-24 bg-gray-200 flex-shrink-0 relative">
+                      <div className="w-full h-32 bg-gray-200 relative overflow-hidden">
                         {product.images && product.images.length > 0 ? (
                           <OptimizedImage
                             src={typeof product.images[0] === 'string' ? product.images[0] : (product.images[0] as any)?.url || ''}
                             alt={product.name}
-                            width={96}
-                            height={96}
-                            className="w-full h-full object-cover"
+                            width={200}
+                            height={128}
+                            className="w-full h-full object-cover transform-gpu"
+                            priority={isAboveFold}
+                            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gray-100">
@@ -262,7 +272,83 @@ export default function BundlePage() {
                         )}
                         {/* Quantity Badge */}
                         {quantityInCart > 0 && (
-                          <div className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                          <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                            {quantityInCart}
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Product Info */}
+                      <div className="p-4">
+                        <h3 className="font-medium text-gray-900 mb-2 text-sm">
+                          {product.name}
+                        </h3>
+                        <div className="flex justify-between items-center">
+                          <div className="text-lg font-bold text-gray-900">
+                            ${product.price.toFixed(2)}/{bundle.name.includes('7g') ? '7g' : '28g'}
+                          </div>
+                          
+                          {/* Add Button or Quantity Controls */}
+                          <div>
+                            {!isOutOfStock && (
+                              <>
+                                {quantityInCart === 0 ? (
+                                  <button
+                                    onClick={() => handleAddToCart(product)}
+                                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                                  >
+                                    Add
+                                  </button>
+                                ) : (
+                                  <div className="flex items-center space-x-2">
+                                    <button
+                                      onClick={() => handleUpdateQuantity(product, quantityInCart - 1)}
+                                      className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded text-red-600"
+                                    >
+                                      <Minus size={14} />
+                                    </button>
+                                    <span className="w-8 text-center font-medium text-sm">{quantityInCart}</span>
+                                    <button
+                                      onClick={() => handleUpdateQuantity(product, quantityInCart + 1)}
+                                      className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded text-green-600"
+                                      disabled={quantityInCart >= product.inventory}
+                                    >
+                                      <Plus size={14} />
+                                    </button>
+                                  </div>
+                                )}
+                              </>
+                            )}
+                            {isOutOfStock && (
+                              <span className="text-red-600 text-sm font-medium">Out of Stock</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Desktop Layout - Horizontal */}
+                    <div className="hidden sm:flex">
+                      {/* Product Image */}
+                      <div className="w-24 h-24 bg-gray-200 flex-shrink-0 relative overflow-hidden">
+                        {product.images && product.images.length > 0 ? (
+                          <OptimizedImage
+                            src={typeof product.images[0] === 'string' ? product.images[0] : (product.images[0] as any)?.url || ''}
+                            alt={product.name}
+                            width={96}
+                            height={96}
+                            className="w-full h-full object-cover transform-gpu"
+                            priority={isAboveFold}
+                            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 96px"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                            <span className="text-gray-400 text-xs">No Image</span>
+                          </div>
+                        )}
+                        {/* Quantity Badge */}
+                        {quantityInCart > 0 && (
+                          <div className="absolute top-1 right-1 bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
                             {quantityInCart}
                           </div>
                         )}

@@ -15,6 +15,7 @@ interface OptimizedImageProps {
   quality?: number
   placeholder?: 'blur' | 'empty'
   blurDataURL?: string
+  fetchPriority?: 'high' | 'low' | 'auto'
   onLoad?: () => void
   onError?: () => void
 }
@@ -31,6 +32,7 @@ export function OptimizedImage({
   quality = 85,
   placeholder = 'empty',
   blurDataURL,
+  fetchPriority = 'auto',
   onLoad,
   onError
 }: OptimizedImageProps) {
@@ -124,6 +126,13 @@ export function OptimizedImage({
     placeholder,
     onLoad: handleLoad,
     onError: handleError,
+  }
+
+  // Add fetchPriority for LCP optimization
+  if (priority || fetchPriority === 'high') {
+    imageProps.fetchPriority = 'high'
+  } else if (fetchPriority === 'low') {
+    imageProps.fetchPriority = 'low'
   }
 
   if (fill) {
