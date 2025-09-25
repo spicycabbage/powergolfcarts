@@ -212,13 +212,13 @@ export async function POST(req: NextRequest) {
         const ReferralRelationship = (await import('../../../models/ReferralRelationship')).default
         const User = (await import('@/lib/models/User')).default
         
-        const settings = await ReferralSettings.getCurrentSettings()
+        const settings = await (ReferralSettings as any).getCurrentSettings()
         
         if (settings.isActive && session?.user?.id) {
           // Create or get permanent referral relationship
           const referredEmail = (shippingAddress?.email || customerEmail || session?.user?.email || '')
           
-          const relationship = await ReferralRelationship.createOrGet(
+          const relationship = await (ReferralRelationship as any).createOrGet(
             referralData.referrerId,
             session.user.id,
             referralData.referralCode,

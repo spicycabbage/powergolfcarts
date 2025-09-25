@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     await connectToDatabase()
     
     const ReferralSettings = (await import('@/models/ReferralSettings')).default
-    const settings = await ReferralSettings.getCurrentSettings()
+    const settings = await (ReferralSettings as any).getCurrentSettings()
 
     return NextResponse.json({
       success: true,

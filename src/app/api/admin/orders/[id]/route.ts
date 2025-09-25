@@ -224,11 +224,11 @@ async function processOrderReferrals(order: any) {
       // Scenario 2: Create new referrals for first-time completion
       console.log(`🆕 No existing referrals found - checking for permanent relationships`)
       
-      const relationship = await ReferralRelationship.findActiveRelationship(order.user)
+      const relationship = await (ReferralRelationship as any).findActiveRelationship(order.user)
       
       if (relationship) {
         console.log(`✅ Found permanent relationship: ${relationship.referralCode}`)
-        const settings = await ReferralSettings.getCurrentSettings()
+        const settings = await (ReferralSettings as any).getCurrentSettings()
         
         if (settings.isActive) {
           // Calculate points for this order
