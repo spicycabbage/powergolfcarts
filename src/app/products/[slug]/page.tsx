@@ -16,6 +16,7 @@ import { ReviewsTabs } from '@/components/ReviewsTabs'
 import LearnMore from '@/components/LearnMore'
 import { serializeProductForClient } from '@/lib/serializers'
 import { sanitizeHtml } from '@/utils/sanitize'
+import VariantCard from '@/components/product/VariantCard'
 
 function normalizeContent(html: string): string {
   try {
@@ -112,7 +113,18 @@ export default async function ProductPage({ params }: ProductPageProps) {
           { categories: (product as any).category?._id || (product as any).category }
         ]
       },
-      projection: { name: 1, slug: 1, price: 1, originalPrice: 1, images: 1 },
+      projection: { 
+        name: 1, 
+        slug: 1, 
+        price: 1, 
+        originalPrice: 1, 
+        images: 1,
+        variants: 1,
+        averageRating: 1,
+        reviewCount: 1,
+        inventory: 1,
+        badges: 1
+      },
       limit: 8,
     })
   } else {
@@ -123,7 +135,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         { category: (product as any).category?._id || (product as any).category },
         { categories: (product as any).category?._id || (product as any).category }
       ]
-    }).select('name slug price originalPrice images')
+    }).select('name slug price originalPrice images variants.name variants.value variants.price variants.originalPrice variants.inventory variants.sku averageRating reviewCount inventory badges')
       .limit(8)
       .lean()
     
@@ -362,32 +374,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <h2 className="text-2xl font-bold text-gray-900 mb-6">You Might Also Like</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {related.slice(0, 4).map((relatedProduct: any) => (
-                <div
+                <VariantCard
                   key={String(relatedProduct._id)}
-                  className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 group cursor-default"
-                >
-                  <div className="aspect-square relative overflow-hidden">
-                    <Link href={`/products/${relatedProduct.slug}`} className="block cursor-pointer">
-                      <Image
-                        src={typeof relatedProduct.images?.[0] === 'string' ? relatedProduct.images[0] : relatedProduct.images?.[0]?.url}
-                        alt={relatedProduct.name}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-200 cursor-pointer"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      />
-                    </Link>
-                  </div>
-                  <div className="p-4">
-                    <Link href={`/products/${relatedProduct.slug}`} className="cursor-pointer">
-                      <h3 className="font-medium text-gray-900 mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors cursor-pointer">
-                        {relatedProduct.name}
-                      </h3>
-                    </Link>
-                    <p className="text-lg font-bold text-gray-900">
-                      ${Number(relatedProduct.price ?? relatedProduct.originalPrice ?? 0).toFixed(2)}
-                    </p>
-                  </div>
-                </div>
+                  product={relatedProduct}
+                  priority={false}
+                />
               ))}
             </div>
           </div>

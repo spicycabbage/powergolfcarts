@@ -75,8 +75,10 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Search filter (regex-based to avoid text-index dependency)
+    // Search filter - we'll handle prioritization in the aggregation pipeline
+    let hasSearch = false
     if (search && search.trim()) {
+      hasSearch = true
       const escaped = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
       const regex = new RegExp(escaped, 'i')
       const searchOr = [{ name: regex }, { description: regex }]
@@ -130,30 +132,111 @@ export async function GET(request: NextRequest) {
       })
       total = await dataCount('products', query)
     } else {
-      let findQuery = Product.find(query)
-        .sort(sortOptions)
-        .skip(skip)
-        .limit(limit)
-        .lean()
+      // Use aggregation pipeline for search to prioritize name matches
+      if (hasSearch && search) {
+        const escaped = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        const exactRegex = new RegExp(`^${escaped}$`, 'i') // Exact match
+        const startsWithRegex = new RegExp(`^${escaped}`, 'i') // Starts with
+        const containsRegex = new RegExp(escaped, 'i') // Contains
+        
+        const pipeline: any[] = [
+          { $match: query },
+          {
+            $addFields: {
+              searchPriority: {
+                $switch: {
+                  branches: [
+                    // Priority 1: Exact name match
+                    { case: { $regexMatch: { input: "$name", regex: exactRegex } }, then: 1 },
+                    // Priority 2: Name starts with search term
+                    { case: { $regexMatch: { input: "$name", regex: startsWithRegex } }, then: 2 },
+                    // Priority 3: Name contains search term
+                    { case: { $regexMatch: { input: "$name", regex: containsRegex } }, then: 3 },
+                    // Priority 4: Description contains search term
+                    { case: { $regexMatch: { input: "$description", regex: containsRegex } }, then: 4 }
+                  ],
+                  default: 5
+                }
+              }
+            }
+          },
+          { $sort: { searchPriority: 1, ...sortOptions } },
+          { $skip: skip },
+          { $limit: limit }
+        ]
 
-      if (fieldsParam) {
-        // Support comma-separated fields; allow nested dot paths
-        const normalized = fieldsParam.split(',').map(f => f.trim()).filter(Boolean).join(' ')
-        findQuery = findQuery.select(normalized)
+        if (doPopulate) {
+          pipeline.push(
+            {
+              $lookup: {
+                from: 'categories',
+                localField: 'category',
+                foreignField: '_id',
+                as: 'category',
+                pipeline: [{ $project: { name: 1, slug: 1 } }]
+              }
+            },
+            {
+              $lookup: {
+                from: 'categories',
+                localField: 'categories',
+                foreignField: '_id',
+                as: 'categories',
+                pipeline: [{ $project: { name: 1, slug: 1 } }]
+              }
+            },
+            {
+              $addFields: {
+                category: { $arrayElemAt: ['$category', 0] }
+              }
+            }
+          )
+        }
+
+        // Remove searchPriority field from final results
+        pipeline.push({ $unset: 'searchPriority' })
+
+        if (fieldsParam) {
+          const projection: any = {}
+          for (const f of fieldsParam.split(',').map(s => s.trim()).filter(Boolean)) {
+            projection[f] = 1
+          }
+          pipeline.push({ $project: projection })
+        }
+
+        const [docs, cnt] = await Promise.all([
+          Product.aggregate(pipeline),
+          Product.countDocuments(query)
+        ])
+        products = docs
+        total = cnt
+      } else {
+        // Regular query without search prioritization
+        let findQuery = Product.find(query)
+          .sort(sortOptions)
+          .skip(skip)
+          .limit(limit)
+          .lean()
+
+        if (fieldsParam) {
+          // Support comma-separated fields; allow nested dot paths
+          const normalized = fieldsParam.split(',').map(f => f.trim()).filter(Boolean).join(' ')
+          findQuery = findQuery.select(normalized)
+        }
+
+        if (doPopulate) {
+          findQuery = findQuery
+            .populate('category', 'name slug')
+            .populate('categories', 'name slug')
+        }
+
+        const [docs, cnt] = await Promise.all([
+          findQuery,
+          Product.countDocuments(query)
+        ])
+        products = docs as any
+        total = cnt
       }
-
-      if (doPopulate) {
-        findQuery = findQuery
-          .populate('category', 'name slug')
-          .populate('categories', 'name slug')
-      }
-
-      const [docs, cnt] = await Promise.all([
-        findQuery,
-        Product.countDocuments(query)
-      ])
-      products = docs as any
-      total = cnt
     }
 
     // Add virtual fields using utility functions
