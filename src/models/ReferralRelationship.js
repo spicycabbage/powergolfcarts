@@ -124,3 +124,4 @@ ReferralRelationshipSchema.statics.createOrGet = async function(referrerId, refe
 }
 
 module.exports = mongoose.models.ReferralRelationship || mongoose.model('ReferralRelationship', ReferralRelationshipSchema)
+
