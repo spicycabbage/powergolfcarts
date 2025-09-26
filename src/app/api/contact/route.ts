@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
     `
 
     await transporter.sendMail({
-      from: `${name} <${fromAddress}>`,
+      from: `"Godbud.cc - ${name}" <${fromAddress}>`,
       replyTo: email,
       to,
       subject: subject || `New contact form message from ${name}`,

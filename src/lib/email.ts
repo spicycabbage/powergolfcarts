@@ -19,7 +19,7 @@ export async function sendEmail(to: string, subject: string, html: string) {
           refreshToken: gmailRefreshToken as string,
         },
       })
-      await transporter.sendMail({ from: gmailUser as string, to, subject, html })
+      await transporter.sendMail({ from: `"Godbud.cc" <${gmailUser}>`, to, subject, html })
       return
     }
 
@@ -38,7 +38,8 @@ export async function sendEmail(to: string, subject: string, html: string) {
       secure: port === 465,
       auth: { user, pass },
     })
-    await transporter.sendMail({ from: process.env.SMTP_FROM || process.env.EMAIL_FROM || user, to, subject, html })
+    const fromAddress = process.env.SMTP_FROM || process.env.EMAIL_FROM || user
+    await transporter.sendMail({ from: `"Godbud.cc" <${fromAddress}>`, to, subject, html })
   } catch (err) {
     console.error('sendEmail error:', err)
   }
