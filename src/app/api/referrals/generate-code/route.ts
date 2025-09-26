@@ -14,9 +14,22 @@ export async function POST(request: NextRequest) {
 
     await connectToDatabase()
     
-    const user = await User.findById(session.user.id)
+    // Try multiple ways to find the user
+    let user = await User.findById(session.user.id)
+    
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+      user = await User.findOne({ email: session.user.email })
+    }
+    
+    if (!user) {
+      // Create the user if they don't exist
+      user = new User({
+        email: session.user.email,
+        firstName: session.user.name?.split(' ')[0] || 'User',
+        lastName: session.user.name?.split(' ').slice(1).join(' ') || '',
+        loyaltyPoints: 0
+      })
+      await user.save()
     }
 
     // If user already has a referral code, return it
@@ -67,4 +80,3 @@ export async function POST(request: NextRequest) {
     )
   }
 }
-

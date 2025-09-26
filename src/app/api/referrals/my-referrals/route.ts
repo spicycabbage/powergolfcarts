@@ -40,15 +40,10 @@ export async function GET(request: NextRequest) {
       .lean()
 
     // Calculate totals
-    console.log(`🔍 API Debug - User ID: ${session.user.id}, Email: ${session.user.email}`)
-    
     const totalPointsEarned = await Referral.aggregate([
       { $match: { referrer: userObjectId, status: 'awarded' } },
       { $group: { _id: null, total: { $sum: '$loyaltyPointsAwarded' } } }
     ])
-    
-    console.log(`📊 API Debug - Aggregation result:`, totalPointsEarned)
-    console.log(`📊 API Debug - Points to return:`, totalPointsEarned[0]?.total || 0)
 
     return NextResponse.json({
       success: true,

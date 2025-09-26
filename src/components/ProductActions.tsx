@@ -61,9 +61,12 @@ export function ProductActions({ product }: ProductActionsProps) {
 
   // Fetch user's existing referral code
   const fetchReferralCode = async () => {
-    if (!session?.user) return null
+    if (!session?.user) {
+      return null
+    }
     
     setLoadingReferralCode(true)
+    
     try {
       const response = await fetch('/api/referrals/generate-code', {
         method: 'POST',
@@ -84,22 +87,33 @@ export function ProductActions({ product }: ProductActionsProps) {
   }
 
   const handleShare = async () => {
+    console.log('🔗 Share button clicked')
+    console.log('Session user:', session?.user)
+    console.log('Current URL:', window.location.href)
+    
     if (session?.user) {
       // For logged-in users, show referral share modal
+      console.log('✅ Logged in user - showing referral modal')
       setShowShareModal(true)
       if (!referralCode) {
+        console.log('🔄 No referral code, fetching...')
         await fetchReferralCode()
+      } else {
+        console.log('✅ Referral code exists:', referralCode)
       }
     } else {
       // For non-logged-in users, use simple share
+      console.log('👤 Guest user - using simple share')
       const url = window.location.href
       if (navigator.share) {
+        console.log('📱 Using native share')
         navigator.share({
           title: product.name,
           text: `Check out ${product.name}`,
           url: url,
         })
       } else {
+        console.log('📋 Copying to clipboard')
         navigator.clipboard.writeText(url)
         toast.success('Link copied to clipboard!')
       }
@@ -107,10 +121,20 @@ export function ProductActions({ product }: ProductActionsProps) {
   }
 
   const getReferralUrl = () => {
-    if (!referralCode) return window.location.href
-    const url = new URL(window.location.href)
+    const currentUrl = window.location.href
+    console.log('🔗 Generating referral URL from:', currentUrl)
+    
+    if (!referralCode) {
+      console.log('❌ No referral code, returning current URL')
+      return currentUrl
+    }
+    
+    const url = new URL(currentUrl)
     url.searchParams.set('ref', referralCode)
-    return url.toString()
+    const referralUrl = url.toString()
+    
+    console.log('✅ Generated referral URL:', referralUrl)
+    return referralUrl
   }
 
   const copyReferralLink = async () => {
@@ -268,11 +292,6 @@ export function ProductActions({ product }: ProductActionsProps) {
                 </div>
               ) : referralCode ? (
                 <>
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-xs text-gray-500 mb-1">Your referral code:</p>
-                    <p className="font-mono font-semibold text-primary-600">{referralCode}</p>
-                  </div>
-                  
                   <div className="bg-gray-50 p-3 rounded-lg">
                     <p className="text-xs text-gray-500 mb-2">Your referral link:</p>
                     <div className="flex items-center gap-2">

@@ -93,64 +93,59 @@ export default function BundlesPage() {
         {/* Bundle Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {bundles.map((bundle) => (
-            <Link
+            <div
               key={bundle._id}
-              href={`/bundles/${bundle.slug}`}
               className="group bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden"
             >
-              {/* Bundle Image */}
-              <div className="relative h-48 bg-gray-200">
-                {bundle.image ? (
-                  <OptimizedImage
-                    src={bundle.image}
-                    alt={bundle.name}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-100 to-primary-200">
-                    <div className="text-center">
-                      <div className="text-4xl mb-2">
-                        {bundle.category === 'flower' && '🌿'}
-                        {bundle.category === 'hash' && '🟫'}
-                        {bundle.category === 'shatter' && '💎'}
+              {/* Bundle Image - Clickable */}
+              <Link href={`/bundles/${bundle.slug}`}>
+                <div className="relative h-48 bg-gray-200 cursor-pointer">
+                  {bundle.image ? (
+                    <OptimizedImage
+                      src={bundle.image}
+                      alt={bundle.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-100 to-primary-200 cursor-pointer">
+                      <div className="text-center">
+                        <div className="text-4xl mb-2">
+                          {bundle.category === 'flower' && '🌿'}
+                          {bundle.category === 'hash' && '🟫'}
+                          {bundle.category === 'shatter' && '💎'}
+                        </div>
+                        <p className="text-primary-700 font-medium">{bundle.category.toUpperCase()}</p>
+                        <p className="text-primary-600 text-sm">{bundle.size}</p>
                       </div>
-                      <p className="text-primary-700 font-medium">{bundle.category.toUpperCase()}</p>
-                      <p className="text-primary-600 text-sm">{bundle.size}</p>
                     </div>
+                  )}
+                  {/* Discount Badge */}
+                  <div className="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                    {bundle.discountPercentage}% OFF
                   </div>
-                )}
-                {/* Discount Badge */}
-                <div className="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                  {bundle.discountPercentage}% OFF
                 </div>
-              </div>
+              </Link>
 
               {/* Bundle Info */}
               <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
                   {bundle.name}
                 </h3>
                 <p className="text-gray-600 mb-4 line-clamp-2">
                   {bundle.description}
                 </p>
                 
-                {/* Bundle Details */}
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center space-x-4">
-                    <span className="bg-gray-100 px-2 py-1 rounded text-gray-700">
-                      Buy {bundle.requiredQuantity}
-                    </span>
-                    <span className="bg-green-100 px-2 py-1 rounded text-green-700">
-                      Save {bundle.discountPercentage}%
-                    </span>
-                  </div>
-                  <span className="text-primary-600 font-medium group-hover:text-primary-700">
-                    Shop Now →
-                  </span>
+                {/* Shop Now CTA - Clickable */}
+                <div className="mt-4">
+                  <Link href={`/bundles/${bundle.slug}`}>
+                    <div className="w-full bg-primary-600 text-white text-center py-3 px-4 rounded-lg font-semibold hover:bg-primary-700 transition-colors cursor-pointer">
+                      Shop Now →
+                    </div>
+                  </Link>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
 
