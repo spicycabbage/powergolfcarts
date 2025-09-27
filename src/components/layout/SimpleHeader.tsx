@@ -103,6 +103,7 @@ export function SimpleHeader() {
                       <Link href="/categories/hybrid" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Hybrid</Link>
                       <Link href="/categories/aaa" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">AAA</Link>
                     </div>
+                  </div>
                 </div>
               )}
             </div>
