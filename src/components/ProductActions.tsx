@@ -260,7 +260,7 @@ export function ProductActions({ product }: ProductActionsProps) {
       <div className="flex items-center gap-3">
         <button
           onClick={handleShare}
-          className="w-full mt-2 text-sm text-gray-600 hover:text-primary-600 flex items-center justify-center p-2 rounded-lg border hover:bg-gray-50 transition-colors"
+          className="w-full mt-2 text-sm text-white bg-gray-700 hover:bg-gray-800 flex items-center justify-center p-2 rounded-lg border border-gray-700 hover:border-gray-800 transition-colors"
         >
           <Share2 className="w-4 h-4 mr-2" />
           {session?.user ? 'Share & Earn' : 'Share'}

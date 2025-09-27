@@ -102,7 +102,7 @@ export function SimpleHeader() {
                       <Link href="/categories/sativa" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Sativa</Link>
                       <Link href="/categories/hybrid" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Hybrid</Link>
                       <Link href="/categories/aaa" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">AAA</Link>
-                    </div>
+                      <Link href="/categories/moonrock" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Moonrock</Link>                    </div>
                   </div>
                 </div>
               )}
@@ -280,6 +280,7 @@ export function SimpleHeader() {
                 <Link href="/categories/sativa" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Sativa</Link>
                 <Link href="/categories/hybrid" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Hybrid</Link>
                 <Link href="/categories/aaa" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>AAA</Link>
+                <Link href="/categories/moonrock" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Moonrock</Link>
               </div>
             </div>
 
