@@ -82,7 +82,7 @@ export default function AdminReviewsPage() {
                   <th className="px-4 py-3">Product</th>
                   <th className="px-4 py-3">User</th>
                   <th className="px-4 py-3">Rating</th>
-                  <th className="px-4 py-3">Title</th>
+                  <th className="px-4 py-3">Date</th>
                   <th className="px-4 py-3">Comment</th>
                   <th className="px-4 py-3">Status</th>
                   <th className="px-4 py-3">Actions</th>
@@ -94,7 +94,7 @@ export default function AdminReviewsPage() {
                     <td className="px-4 py-3"><Link href={`/products/${r.product?.slug}`} className="text-primary-600 hover:underline">{r.product?.name}</Link></td>
                     <td className="px-4 py-3">{r.customerName || r.user?.firstName || (r.user?.name ? String(r.user.name).split(' ')[0] : 'Anonymous')}</td>
                     <td className="px-4 py-3">{r.rating}★</td>
-                    <td className="px-4 py-3">{r.title}</td>
+                    <td className="px-4 py-3">{new Date(r.createdAt).toLocaleDateString()}</td>
                     <td className="px-4 py-3 max-w-md truncate" title={r.comment}>{r.comment}</td>
                     <td className="px-4 py-3">{r.isApproved === true ? 'approved' : r.isApproved === false ? 'rejected' : 'pending'}</td>
                     <td className="px-4 py-3 space-x-2">
