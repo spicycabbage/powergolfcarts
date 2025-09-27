@@ -162,6 +162,7 @@ export function SimpleHeader() {
                     <div className="bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[200px]">
                       <Link href="/categories/gummies" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Gummies</Link>
                       <Link href="/categories/strong-edibles" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Strong Edibles</Link>
+                      <Link href="/categories/candies" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Candies</Link>
                     </div>
                   </div>
                 </div>
@@ -299,6 +300,7 @@ export function SimpleHeader() {
               <div className="ml-4 space-y-1">
                 <Link href="/categories/gummies" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Gummies</Link>
                 <Link href="/categories/strong-edibles" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Strong Edibles</Link>
+                <Link href="/categories/candies" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Candies</Link>
               </div>
             </div>
 
