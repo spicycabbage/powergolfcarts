@@ -34,25 +34,6 @@ export function sanitizeHtml(html: string): string {
 }
 
 /**
- * Sanitize blog content and convert H1 tags to H2 to avoid duplicate H1 issues
- * Used specifically for blog post content where the page already has an H1
- */
-export function sanitizeBlogContent(html: string): string {
-  if (!html || typeof html !== 'string') {
-    return ''
-  }
-
-  // First apply standard sanitization
-  let cleanHtml = sanitizeHtml(html)
-  
-  // Convert H1 tags to H2 tags to avoid duplicate H1 on the page
-  cleanHtml = cleanHtml.replace(/<h1(\s[^>]*)?>/gi, '<h2$1>')
-  cleanHtml = cleanHtml.replace(/<\/h1>/gi, '</h2>')
-  
-  return cleanHtml
-}
-
-/**
  * Enhanced input sanitization for form inputs
  * Removes potentially dangerous characters and scripts
  */
