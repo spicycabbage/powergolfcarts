@@ -32,10 +32,10 @@ export function HeroSection() {
 
       <div className="relative h-full flex items-center justify-center px-4 sm:px-6 lg:px-8 text-center">
         <div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
             Buy Weed Online
             <span className="block text-primary-200">In Canada</span>
-          </h1>
+          </h2>
           <p className="text-base sm:text-lg md:text-xl text-primary-100 mb-6 sm:mb-8 max-w-xs sm:max-w-sm md:max-w-lg mx-auto">
             High-quality cannabis, edibles, vapes, and concentrates delivered directly to your door.
           </p>

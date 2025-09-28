@@ -96,6 +96,9 @@ export default function HomePage() {
         })();
       `}} />
       
+      {/* Main H1 for SEO - Must be visible to crawlers */}
+      <h1 className="sr-only">Buy Weed Online in Canada - Premium Cannabis Dispensary | Godbud.cc</h1>
+      
       {/* Hero Section */}
       <HeroSection />
 
