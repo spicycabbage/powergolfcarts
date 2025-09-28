@@ -69,6 +69,7 @@ module.exports = (phase) => {
       ]
     },
     async rewrites() {
+      // No rewrites needed - sitemap.ts handles /sitemap.xml directly
       return []
     },
   }
