@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { connectToDatabase } from '@/lib/mongodb'
 import Post from '@/lib/models/Post'
 import BlogSidebar from '@/components/blog/BlogSidebar'
-import { sanitizeHtml } from '@/utils/sanitize'
+import { sanitizeBlogContent } from '@/utils/sanitize'
 
 export const dynamic = 'force-dynamic'
 
@@ -48,7 +48,7 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
         {post.excerpt && (
           <p className="text-lg text-gray-700 mb-6">{post.excerpt}</p>
         )}
-        <div className="prose max-w-none text-gray-800" dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content || '') }} />
+        <div className="prose max-w-none text-gray-800" dangerouslySetInnerHTML={{ __html: sanitizeBlogContent(post.content || '') }} />
         </div>
         <div>
           <BlogSidebar />
