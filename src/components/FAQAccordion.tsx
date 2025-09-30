@@ -35,25 +35,38 @@ export default function FAQAccordion({ htmlContent }: FAQAccordionProps) {
       
       // Method 1: Look for headings (h1-h6) followed by content
       const headings = tempDiv.querySelectorAll('h1, h2, h3, h4, h5, h6')
+      console.log('Found headings:', headings.length, Array.from(headings).map(h => h.textContent))
       
-      headings.forEach((heading) => {
+      headings.forEach((heading, index) => {
         const question = heading.textContent?.trim()
-        if (!question || question.length < 5) return
+        console.log(`Processing heading ${index}:`, question)
+        
+        if (!question || question.length < 5) {
+          console.log('Skipping heading - too short or empty')
+          return
+        }
         
         // Collect all content until the next heading
         let answer = ''
         let nextElement = heading.nextElementSibling
         
+        console.log('Looking for answer content after heading...')
         while (nextElement && !['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(nextElement.tagName)) {
+          console.log('Found element:', nextElement.tagName, nextElement.textContent?.substring(0, 50))
           answer += nextElement.outerHTML || ''
           nextElement = nextElement.nextElementSibling
         }
+        
+        console.log(`Answer for "${question}":`, answer.substring(0, 100))
         
         if (answer.trim()) {
           faqs.push({
             question: question,
             answer: answer.trim()
           })
+          console.log('Added FAQ:', question)
+        } else {
+          console.log('No answer found for:', question)
         }
       })
       
