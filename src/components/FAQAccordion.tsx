@@ -179,10 +179,26 @@ export default function FAQAccordion({ htmlContent }: FAQAccordionProps) {
 
   const faqs = parseFAQs(htmlContent)
 
-  // If no FAQs could be parsed, show the raw content
+  // Debug: show what we found
+  console.log('FAQ parsing results:', {
+    contentLength: htmlContent.length,
+    faqsFound: faqs.length,
+    faqs: faqs
+  })
+
+  // If no FAQs could be parsed, show debug info and raw content
   if (faqs.length === 0) {
     return (
-      <div className="prose max-w-none text-gray-800" dangerouslySetInnerHTML={{ __html: htmlContent }} />
+      <div>
+        <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <p className="text-sm text-yellow-800">
+            <strong>Debug:</strong> No FAQ structure detected. Content length: {htmlContent.length} characters.
+            <br />
+            <strong>Raw content preview:</strong> {htmlContent.substring(0, 200)}...
+          </p>
+        </div>
+        <div className="prose max-w-none text-gray-800" dangerouslySetInnerHTML={{ __html: htmlContent }} />
+      </div>
     )
   }
 
