@@ -99,6 +99,52 @@ export default function FAQAccordion({ htmlContent }: FAQAccordionProps) {
           }
         })
       }
+
+      // Method 4: Look for paragraph patterns with question marks
+      if (faqs.length === 0) {
+        const paragraphs = tempDiv.querySelectorAll('p')
+        for (let i = 0; i < paragraphs.length - 1; i++) {
+          const p = paragraphs[i]
+          const question = p.textContent?.trim()
+          
+          if (question && question.endsWith('?') && question.length > 10) {
+            // Look for the next paragraph as the answer
+            const nextP = paragraphs[i + 1]
+            const answer = nextP?.innerHTML?.trim()
+            
+            if (answer && answer.length > 10 && !answer.endsWith('?')) {
+              faqs.push({ question, answer })
+            }
+          }
+        }
+      }
+
+      // Method 5: Look for any text with question marks followed by other content
+      if (faqs.length === 0) {
+        const allElements = tempDiv.querySelectorAll('*')
+        allElements.forEach((element, index) => {
+          const text = element.textContent?.trim()
+          if (text && text.endsWith('?') && text.length > 10) {
+            // Try to find answer in next elements
+            let answer = ''
+            for (let i = index + 1; i < Math.min(index + 3, allElements.length); i++) {
+              const nextElement = allElements[i]
+              const nextText = nextElement.textContent?.trim()
+              if (nextText && !nextText.endsWith('?')) {
+                answer += nextElement.innerHTML + ' '
+                break
+              }
+            }
+            
+            if (answer.trim().length > 10) {
+              faqs.push({
+                question: text,
+                answer: answer.trim()
+              })
+            }
+          }
+        })
+      }
       
     } catch (error) {
       console.warn('Error parsing FAQ content:', error)
@@ -116,10 +162,22 @@ export default function FAQAccordion({ htmlContent }: FAQAccordionProps) {
 
   const faqs = parseFAQs(htmlContent)
 
+  // Debug: log the content and parsed FAQs
+  console.log('FAQ HTML Content:', htmlContent.substring(0, 500) + '...')
+  console.log('Parsed FAQs:', faqs.length, faqs)
+
   if (faqs.length === 0) {
     // Fallback: render raw HTML if no FAQs could be parsed
     return (
-      <div className="prose max-w-none text-gray-800" dangerouslySetInnerHTML={{ __html: htmlContent }} />
+      <div>
+        <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <p className="text-sm text-yellow-800">
+            <strong>Debug:</strong> No FAQ structure detected. Showing raw content. 
+            Found {htmlContent.length} characters of content.
+          </p>
+        </div>
+        <div className="prose max-w-none text-gray-800" dangerouslySetInnerHTML={{ __html: htmlContent }} />
+      </div>
     )
   }
 
