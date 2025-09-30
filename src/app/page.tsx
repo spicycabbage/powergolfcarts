@@ -99,7 +99,7 @@ export default function HomePage() {
       {/* Main H1 for SEO - Visible to crawlers */}
       <div className="bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1">
-          <h1 className="text-lg font-semibold text-gray-900 text-center">Buy Weed Online in Canada - Premium Cannabis Dispensary</h1>
+          <h1 className="text-lg font-semibold text-gray-900 text-center">Buy Weed Online Canada</h1>
         </div>
       </div>
       
