@@ -33,18 +33,11 @@ export default function FAQAccordion({ htmlContent }: FAQAccordionProps) {
       const tempDiv = document.createElement('div')
       tempDiv.innerHTML = html
       
-      // Debug: log what we're working with
-      console.log('FAQ HTML content:', html.substring(0, 500))
-      console.log('Parsed DOM:', tempDiv.innerHTML.substring(0, 500))
-      
       // Method 1: Look for headings (h1-h6) followed by content
       const headings = tempDiv.querySelectorAll('h1, h2, h3, h4, h5, h6')
-      console.log('Found headings:', headings.length)
       
-      headings.forEach((heading, index) => {
+      headings.forEach((heading) => {
         const question = heading.textContent?.trim()
-        console.log(`Heading ${index}:`, question)
-        
         if (!question || question.length < 5) return
         
         // Collect all content until the next heading
@@ -55,8 +48,6 @@ export default function FAQAccordion({ htmlContent }: FAQAccordionProps) {
           answer += nextElement.outerHTML || ''
           nextElement = nextElement.nextElementSibling
         }
-        
-        console.log(`Answer for "${question}":`, answer.substring(0, 100))
         
         if (answer.trim()) {
           faqs.push({
@@ -140,48 +131,36 @@ export default function FAQAccordion({ htmlContent }: FAQAccordionProps) {
         })
       }
       
-      // Method 4: Manual parsing for the specific FAQ format we see
+      // Method 4: If still no FAQs found, try to parse plain text format
       if (faqs.length === 0) {
-        console.log('Trying manual parsing...')
+        // Try to split content by common question patterns
+        const lines = html.split(/\n|<br\s*\/?>/i).map(line => line.trim()).filter(line => line.length > 0)
         
-        // Split by question patterns and create manual FAQs
-        const manualFAQs = [
-          {
-            question: "What payment methods do you accept?",
-            answer: "We accept Interac e-Transfer and Bitcoin payments."
-          },
-          {
-            question: "Do you ship nationwide?",
-            answer: "Yes, we ship discreetly to all provinces and territories in Canada where cannabis is legal."
-          },
-          {
-            question: "How long does shipping take?",
-            answer: "Standard shipping (2-4 business days) costs $18. Or you can choose Purolator Express (1-3 business days) for $40. We offer free standard shipping if your order is $175 or more."
-          },
-          {
-            question: "Is my order discreetly packaged?",
-            answer: "Absolutely! All orders are shipped in plain, unmarked packaging with no indication of contents for complete privacy."
-          },
-          {
-            question: "Are all products lab tested?",
-            answer: "Yes, all of our cannabis products undergo rigorous third-party lab testing for potency, pesticides, and contaminants."
-          },
-          {
-            question: "What is your return policy?",
-            answer: "Due to the nature of cannabis products, we cannot accept returns. However, if you receive damaged or incorrect items, please contact us within 48 hours."
-          },
-          {
-            question: "How can I track my order?",
-            answer: "Once your order ships, you'll receive a tracking number via email to monitor your package's progress."
-          },
-          {
-            question: "How do the loyalty points work?",
-            answer: "You earn 1 point for every dollar spent. Points can be redeemed for discounts on future orders. Check your account dashboard to see your current balance."
+        for (let i = 0; i < lines.length - 1; i++) {
+          const line = lines[i]
+          // Look for lines that end with ? or contain question words
+          if ((line.includes('?') || /^(what|how|do|does|can|is|are|when|where|why)/i.test(line)) && line.length > 10) {
+            let answer = ''
+            let j = i + 1
+            
+            // Collect following lines as answer until next question or end
+            while (j < lines.length) {
+              const nextLine = lines[j]
+              if ((nextLine.includes('?') || /^(what|how|do|does|can|is|are|when|where|why)/i.test(nextLine)) && nextLine.length > 10) {
+                break
+              }
+              answer += nextLine + ' '
+              j++
+            }
+            
+            if (answer.trim().length > 10) {
+              faqs.push({
+                question: line,
+                answer: answer.trim()
+              })
+            }
           }
-        ]
-        
-        faqs.push(...manualFAQs)
-        console.log('Added manual FAQs:', manualFAQs.length)
+        }
       }
       
     } catch (error) {
