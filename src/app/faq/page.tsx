@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { connectToDatabase } from '@/lib/mongodb'
 import Page from '@/lib/models/Page'
 import FAQSchema from '@/components/seo/FAQSchema'
+import FAQAccordion from '@/components/FAQAccordion'
 
 export const dynamic = 'force-dynamic'
 
@@ -46,7 +47,7 @@ export default async function FAQPage() {
       </section>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-lg shadow-sm p-8">
-          <div className="prose max-w-none text-gray-800" dangerouslySetInnerHTML={{ __html: page.content || '' }} />
+          <FAQAccordion htmlContent={page.content || ''} />
         </div>
       </div>
     </div>
