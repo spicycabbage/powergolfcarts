@@ -66,6 +66,29 @@ export async function connectToDatabase() {
   }
 }
 
+// New function for build-time safe database access
+export async function connectToDatabaseSafe() {
+  // Check if we're in build mode or if MongoDB URI is not available
+  if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
+    console.warn('MongoDB URI not available during build, skipping database connection')
+    return null
+  }
+
+  // Check if we're in a build environment where database might not be accessible
+  if (process.env.VERCEL_ENV === 'preview' || process.env.NEXT_PHASE === 'phase-production-build') {
+    console.warn('Build environment detected, using safe database connection')
+  }
+
+  try {
+    return await connectToDatabase()
+  } catch (error) {
+    // During build time or when database is unavailable, return null
+    // This allows pages to render with fallback content
+    console.warn('Database connection failed during build/safe access:', error)
+    return null
+  }
+}
+
 // Helper function to disconnect (useful for testing)
 export async function disconnectDatabase(): Promise<void> {
   if (cached.conn) {

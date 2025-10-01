@@ -3,6 +3,9 @@ import { redirect } from 'next/navigation'
 import { authOptions } from '@/lib/auth/options'
 import NavigationAdminClient from '@/components/admin/NavigationAdminClient'
 
+// Prevent static generation for admin pages that require database access
+export const dynamic = 'force-dynamic'
+
 export default async function NavigationAdmin() {
   const session = await getServerSession(authOptions)
   

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { getSiteConfig } from '@/lib/config'
-import { connectToDatabase } from '@/lib/mongodb'
+import { connectToDatabaseSafe } from '@/lib/mongodb'
 import Post from '@/lib/models/Post'
 import Product from '@/lib/models/Product'
 import Category from '@/lib/models/Category'
@@ -18,7 +18,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   try {
-    await connectToDatabase()
+    const db = await connectToDatabaseSafe()
+    
+    if (!db) {
+      // Database not available during build, return static URLs only
+      return staticUrls
+    }
     
     // Blog posts
     const posts = await Post.find({ isPublished: true }).select('slug updatedAt publishedAt').lean()
