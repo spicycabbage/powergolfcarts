@@ -14,8 +14,8 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   if (tag) {
     const tagTitle = tag.charAt(0).toUpperCase() + tag.slice(1)
     return {
-      title: `${tagTitle} Posts | Godbud.cc Blog`,
-      description: `Latest posts about ${tagTitle.toLowerCase()}`,
+      title: `${tagTitle} Posts | Insanity Golf Blog`,
+      description: `Latest posts about ${tagTitle.toLowerCase()} in golf`,
       alternates: {
         canonical: `/blog?tag=${tag}`,
       },
@@ -23,8 +23,8 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   }
   
   return {
-    title: 'Blog | Godbud.cc',
-    description: 'Latest updates, guides, and news',
+    title: 'Blog | Insanity Golf',
+    description: 'Latest updates, guides, and news about golf and electric golf caddies',
     alternates: {
       canonical: '/blog',
     },
@@ -67,10 +67,10 @@ export default async function BlogIndex({ searchParams }: { searchParams: Promis
       <section className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            {tag ? `${tagTitle} Posts` : 'Cannabis Blog'}
+            {tag ? `${tagTitle} Posts` : 'Golf Blog'}
           </h1>
           <p className="text-gray-600 mt-2">
-            {tag ? `Posts about ${tag.toLowerCase()}` : 'Expert insights, tips, and news about cannabis'}
+            {tag ? `Posts about ${tag.toLowerCase()}` : 'Expert insights, tips, and news about golf and electric golf caddies'}
           </p>
         </div>
       </section>
@@ -124,61 +124,61 @@ export default async function BlogIndex({ searchParams }: { searchParams: Promis
 
         <div className="mt-12 bg-white rounded-lg shadow p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            {tag ? `Complete Guide to ${tagTitle} in Cannabis` : 'Complete Cannabis Education Guide'}
+            {tag ? `Complete Guide to ${tagTitle} in Golf` : 'Complete Golf Education Guide'}
           </h2>
           <div className="prose max-w-none text-gray-700 space-y-4">
             {tag ? (
               <>
                 <p>
-                  Understanding {tag.toLowerCase()} in cannabis requires comprehensive knowledge of how different strains, consumption methods, and individual factors interact to create unique experiences. At Godbud.cc, we've compiled extensive research and expert insights to help Canadian cannabis consumers make informed decisions about {tag.toLowerCase()}-related products and consumption practices.
+                  Understanding {tag.toLowerCase()} in golf requires comprehensive knowledge of how different equipment, techniques, and course conditions interact to create optimal playing experiences. At Insanity Golf, we've compiled extensive research and expert insights to help golfers make informed decisions about {tag.toLowerCase()}-related equipment and playing strategies.
                 </p>
                 <p>
-                  The science behind {tag.toLowerCase()} and cannabis involves complex interactions between cannabinoids like THC and CBD, terpenes that provide aroma and flavor profiles, and individual factors such as tolerance, body weight, metabolism, and previous cannabis experience. Our detailed articles explore how {tag.toLowerCase()} manifests differently across indica, sativa, and hybrid strains, providing practical guidance for both recreational and medical cannabis users.
+                  The science behind {tag.toLowerCase()} and golf involves complex interactions between club technology, ball physics, swing mechanics, and course conditions. Our detailed articles explore how {tag.toLowerCase()} manifests differently across various golf equipment and playing styles, providing practical guidance for both recreational and competitive golfers.
                 </p>
                 <p>
-                  Cannabis strains associated with {tag.toLowerCase()} often feature specific terpene profiles that contribute to their effects. For example, strains high in limonene may promote uplifting effects, while those rich in myrcene tend to be more relaxing. Understanding these relationships helps consumers select products that align with their desired {tag.toLowerCase()} experience, whether they're seeking daytime functionality or evening relaxation.
+                  Golf equipment associated with {tag.toLowerCase()} often features specific technological innovations that contribute to performance. For example, clubs with advanced face technology may promote better ball speed, while those with optimized weight distribution tend to provide more consistent accuracy. Understanding these relationships helps golfers select equipment that aligns with their desired {tag.toLowerCase()} experience.
                 </p>
                 <p>
-                  Consumption methods significantly impact how {tag.toLowerCase()} effects manifest. Smoking and vaporizing provide rapid onset but shorter duration, making them ideal for immediate {tag.toLowerCase()} needs. Edibles offer longer-lasting effects but require patience due to delayed onset. Tinctures and oils provide middle-ground options with moderate onset times and duration, perfect for consistent {tag.toLowerCase()} maintenance throughout the day.
+                  Playing conditions significantly impact how {tag.toLowerCase()} performance manifests. Course conditions, weather, and terrain all affect equipment performance and playing strategy. Understanding how to adapt your {tag.toLowerCase()} approach to different conditions is essential for consistent performance across various golf courses and weather scenarios.
                 </p>
                 <p>
-                  Dosage considerations for {tag.toLowerCase()}-focused cannabis use vary dramatically between individuals and consumption methods. New users should start with minimal doses (2.5-5mg THC for edibles, single small inhalations for smoking) and gradually increase until desired {tag.toLowerCase()} effects are achieved. Experienced users may require higher doses but should always consider tolerance breaks to maintain effectiveness and reduce potential side effects.
+                  Equipment selection for {tag.toLowerCase()}-focused golf varies dramatically between individual playing styles and skill levels. New golfers should start with forgiving equipment designed for improvement, while experienced players may require precision equipment for competitive play. Understanding your skill level and playing goals helps ensure equipment choices support your {tag.toLowerCase()} objectives.
                 </p>
                 <p>
-                  Legal cannabis products in Canada undergo rigorous testing for potency, pesticides, heavy metals, and microbials, ensuring safe consumption for {tag.toLowerCase()} purposes. Licensed producers must provide detailed cannabinoid and terpene profiles, helping consumers make informed choices about products that support their {tag.toLowerCase()} goals while maintaining safety and quality standards.
+                  Quality golf equipment undergoes rigorous testing for durability, performance, and safety, ensuring reliable performance for {tag.toLowerCase()} purposes. Reputable manufacturers provide detailed specifications and performance data, helping golfers make informed choices about equipment that supports their {tag.toLowerCase()} goals while maintaining quality and reliability standards.
                 </p>
                 <p>
-                  The Canadian cannabis market offers diverse product categories for {tag.toLowerCase()} applications, including dried flower, pre-rolls, concentrates, edibles, beverages, topicals, and accessories. Each category provides unique advantages: flower offers full-spectrum effects, concentrates provide potent experiences, edibles deliver long-lasting relief, and topicals offer localized benefits without psychoactive effects.
+                  The golf equipment market offers diverse product categories for {tag.toLowerCase()} applications, including clubs, balls, bags, accessories, and electric golf caddies. Each category provides unique advantages: clubs offer precision and power, balls provide distance and control, bags deliver organization and convenience, and electric caddies offer mobility and course navigation assistance.
                 </p>
                 <p>
-                  Storage and handling practices significantly impact cannabis quality and {tag.toLowerCase()} effectiveness. Proper storage in cool, dark, dry environments preserves cannabinoid potency and terpene profiles. Glass containers with airtight seals prevent degradation, while avoiding plastic containers prevents static buildup and terpene absorption. Fresh cannabis provides optimal {tag.toLowerCase()} experiences compared to degraded products.
+                  Maintenance and care practices significantly impact golf equipment quality and {tag.toLowerCase()} effectiveness. Proper storage in dry, temperature-controlled environments preserves equipment performance and longevity. Regular cleaning and inspection prevent damage, while proper handling techniques ensure consistent performance. Well-maintained equipment provides optimal {tag.toLowerCase()} experiences compared to neglected gear.
                 </p>
               </>
             ) : (
               <>
                 <p>
-                  Cannabis education encompasses understanding the complex relationships between plant genetics, cannabinoid profiles, terpene compositions, and individual physiological factors that determine user experiences. At Godbud.cc, we provide comprehensive information about cannabis science, consumption methods, strain characteristics, and safety considerations to help Canadian consumers make informed decisions about their cannabis journey.
+                  Golf education encompasses understanding the complex relationships between equipment technology, swing mechanics, course management, and individual playing factors that determine performance outcomes. At Insanity Golf, we provide comprehensive information about golf science, equipment selection, playing techniques, and course strategies to help golfers make informed decisions about their golf journey.
                 </p>
                 <p>
-                  The cannabis plant contains over 100 cannabinoids and 200 terpenes that work together through the entourage effect to create unique therapeutic and recreational experiences. THC (tetrahydrocannabinol) provides psychoactive effects, while CBD (cannabidiol) offers therapeutic benefits without intoxication. Minor cannabinoids like CBG, CBN, and CBC contribute additional effects, creating the complex profiles that distinguish different strains and products.
+                  Modern golf equipment incorporates advanced materials and engineering to optimize performance across different playing conditions. Club technology focuses on maximizing ball speed, improving accuracy, and enhancing forgiveness, while ball design emphasizes distance, control, and feel. Understanding these technological innovations helps golfers select equipment that matches their playing style and skill level.
                 </p>
                 <p>
-                  Indica, sativa, and hybrid classifications provide general guidance about potential effects, but modern cannabis breeding has created diverse strains that don't always conform to traditional categories. Indica strains typically offer relaxing, body-focused effects ideal for evening use, while sativa strains tend to provide energizing, cerebral experiences suitable for daytime activities. Hybrid strains combine characteristics from both categories, offering balanced effects.
+                  Golf equipment categories provide general guidance about intended use, but modern technology has created versatile products that serve multiple purposes. Drivers are designed for maximum distance off the tee, irons provide precision for approach shots, wedges offer control around the green, and putters deliver accuracy on the putting surface. Understanding each category's strengths helps golfers build complete equipment sets.
                 </p>
                 <p>
-                  Terpenes significantly influence cannabis effects and flavors, with each compound contributing unique characteristics. Myrcene promotes relaxation and sedation, limonene provides mood elevation and stress relief, pinene enhances alertness and memory retention, linalool offers calming and anti-anxiety effects, and caryophyllene provides anti-inflammatory benefits. Understanding terpene profiles helps consumers select strains that match their desired outcomes.
+                  Course conditions significantly influence equipment selection and playing strategy. Firm, fast conditions may favor lower-lofted clubs and firmer golf balls, while soft, wet conditions might require higher-lofted clubs and softer balls. Understanding how equipment interacts with course conditions helps golfers adapt their approach for optimal performance in various playing environments.
                 </p>
                 <p>
-                  Consumption methods dramatically affect onset time, duration, and intensity of cannabis effects. Inhalation methods (smoking, vaporizing) provide rapid onset within minutes but shorter duration of 1-3 hours. Oral consumption (edibles, beverages) requires 30-120 minutes for onset but provides effects lasting 4-8 hours. Sublingual administration offers middle-ground timing with 15-45 minute onset and 2-4 hour duration.
+                  Playing techniques dramatically affect equipment performance and shot outcomes. Proper swing mechanics maximize equipment potential, while poor technique can negate even the best equipment advantages. Understanding fundamental swing principles, course management strategies, and mental game techniques helps golfers optimize their equipment investment and improve overall performance.
                 </p>
                 <p>
-                  Dosage guidelines vary significantly based on individual tolerance, body weight, metabolism, and desired effects. New users should follow the "start low, go slow" principle, beginning with 2.5-5mg THC for edibles or single small inhalations for smoking. Experienced users may require higher doses but should consider tolerance breaks to maintain effectiveness and prevent dependence or adverse effects.
+                  Equipment fitting guidelines vary significantly based on individual physical characteristics, swing mechanics, and playing goals. Proper fitting ensures equipment matches your swing characteristics, while poor fitting can hinder performance regardless of equipment quality. Professional fitting services help golfers select equipment that optimizes their natural abilities and playing style.
                 </p>
                 <p>
-                  Canada's legal cannabis framework ensures product safety through mandatory testing, standardized packaging, and licensed production facilities. All legal cannabis products undergo testing for potency, pesticides, heavy metals, microbials, and residual solvents. Licensed producers must provide accurate labeling with cannabinoid content, allowing consumers to make informed purchasing decisions based on their needs and preferences.
+                  The golf industry maintains high standards for equipment quality through rigorous testing, certification processes, and performance standards. Reputable manufacturers conduct extensive testing for durability, performance, and safety, ensuring equipment meets professional standards. Understanding quality indicators and manufacturer reputations helps golfers make informed purchasing decisions.
                 </p>
                 <p>
-                  The Canadian cannabis market offers diverse product categories including dried flower, pre-rolls, concentrates (shatter, wax, live resin), edibles (gummies, chocolates, beverages), oils and tinctures, topicals, and accessories. Each category serves different consumer needs: flower provides traditional experiences, concentrates offer potency, edibles deliver convenience, oils enable precise dosing, and topicals provide localized relief without psychoactive effects.
+                  The golf equipment market offers diverse product categories including clubs (drivers, irons, wedges, putters), golf balls, bags and accessories, electric golf caddies, and training aids. Each category serves different playing needs: clubs provide shot-making tools, balls deliver performance characteristics, bags offer organization and transport, electric caddies provide course navigation and equipment transport, and training aids support skill development.
                 </p>
               </>
             )}

@@ -2,8 +2,8 @@ import { Metadata } from 'next'
 import { ProductList } from '@/components/ProductList'
 
 export const metadata: Metadata = {
-  title: 'Products | Godbud.cc',
-  description: 'Browse our complete product catalog with advanced filtering and search.',
+  title: 'Products | Insanity Golf',
+  description: 'Browse our complete golf equipment catalog with advanced filtering and search.',
   alternates: {
     canonical: '/products',
   },
@@ -13,8 +13,8 @@ export default function ProductsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white border-b border-gray-200 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-        <h1 className="text-3xl font-bold text-gray-900">All Products</h1>
-        <p className="text-gray-700 mt-0.5">Discover our complete product catalog</p>
+        <h1 className="text-3xl font-bold text-gray-900">All Golf Products</h1>
+        <p className="text-gray-700 mt-0.5">Discover our complete golf equipment catalog</p>
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -23,39 +23,38 @@ export default function ProductsPage() {
         {/* Comprehensive Product Information Section - Lazy Loaded */}
         <section className="mt-16 bg-white rounded-lg p-8 shadow-sm max-w-4xl mx-auto" style={{ contentVisibility: 'auto' }}>
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Complete Cannabis Product Catalog - Buy Weed Online in Canada
+              Complete Golf Equipment Catalog - Premium Golf Products Online
             </h2>
             
             <div className="prose max-w-none text-gray-700">
               <p className="text-lg leading-relaxed mb-6">
-                Welcome to Canada's most comprehensive online cannabis catalog, featuring over 90 unique products 
-                from trusted Canadian suppliers. Our extensive selection includes premium flowers, potent concentrates, 
-                delicious edibles, convenient vapes, traditional hash, and therapeutic CBD products - everything you 
-                need for your cannabis journey.
+                Welcome to Canada's most comprehensive online golf equipment catalog, featuring premium golf products 
+                from trusted manufacturers. Our extensive selection includes electric golf caddies, clubs, balls, 
+                bags, accessories, and training aids - everything you need for your golf journey.
               </p>
 
               <div className="grid md:grid-cols-2 gap-8 mb-8">
                 <div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">Product Categories</h3>
                   <ul className="space-y-3">
-                    <li><strong>Cannabis Flowers:</strong> Premium indica, sativa, and hybrid strains with detailed THC/CBD profiles</li>
-                    <li><strong>Edibles:</strong> Gummies, chocolates, beverages, and baked goods with precise dosing</li>
-                    <li><strong>Concentrates:</strong> Shatter, wax, live resin, rosin, and diamonds for experienced users</li>
-                    <li><strong>Hash:</strong> Traditional Afghan, Lebanese, Moroccan, and modern bubble hash varieties</li>
-                    <li><strong>Vapes:</strong> Cartridges, disposable pens, and devices for clean consumption</li>
-                    <li><strong>CBD Products:</strong> Oils, capsules, and topicals for therapeutic benefits</li>
+                    <li><strong>Electric Golf Caddies:</strong> Premium electric golf carts with advanced navigation and battery technology</li>
+                    <li><strong>Golf Clubs:</strong> Drivers, irons, wedges, and putters from top manufacturers</li>
+                    <li><strong>Golf Balls:</strong> Distance, control, and premium balls for all skill levels</li>
+                    <li><strong>Golf Bags:</strong> Cart bags, stand bags, and travel bags for every need</li>
+                    <li><strong>Accessories:</strong> Gloves, tees, markers, and essential golf accessories</li>
+                    <li><strong>Training Aids:</strong> Practice equipment and tools to improve your game</li>
                   </ul>
                 </div>
 
                 <div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">Why Shop With Us?</h3>
                   <ul className="space-y-3">
-                    <li><strong>Quality Guarantee:</strong> All products lab-tested for potency and purity</li>
-                    <li><strong>Competitive Pricing:</strong> Direct supplier relationships ensure best prices</li>
+                    <li><strong>Quality Guarantee:</strong> All products from authorized dealers with warranties</li>
+                    <li><strong>Competitive Pricing:</strong> Direct manufacturer relationships ensure best prices</li>
                     <li><strong>Fast Shipping:</strong> Free shipping on orders over $175, 2-5 day delivery</li>
-                    <li><strong>Discreet Packaging:</strong> No identifying marks or odors for privacy</li>
-                    <li><strong>Expert Support:</strong> Knowledgeable customer service team</li>
+                    <li><strong>Expert Support:</strong> Knowledgeable golf equipment specialists</li>
                     <li><strong>Secure Ordering:</strong> SSL encryption and secure payment processing</li>
+                    <li><strong>Professional Service:</strong> Golf equipment fitting and consultation available</li>
                   </ul>
                 </div>
               </div>
@@ -64,19 +63,19 @@ export default function ProductsPage() {
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">Product Selection Process</h3>
                 <p className="leading-relaxed mb-4">
                   Every product in our catalog is carefully selected through a rigorous evaluation process. We work 
-                  exclusively with licensed Canadian producers who meet our strict quality standards. Each batch 
-                  undergoes comprehensive testing for:
+                  exclusively with authorized dealers and manufacturers who meet our strict quality standards. Each product 
+                  undergoes comprehensive evaluation for:
                 </p>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <ul className="space-y-2">
-                    <li>• Cannabinoid potency (THC/CBD levels)</li>
-                    <li>• Pesticide and chemical residues</li>
-                    <li>• Heavy metals and contaminants</li>
+                    <li>• Performance specifications and technology</li>
+                    <li>• Build quality and durability</li>
+                    <li>• Manufacturer warranties and support</li>
                   </ul>
                   <ul className="space-y-2">
-                    <li>• Microbial contamination</li>
-                    <li>• Moisture content and freshness</li>
-                    <li>• Terpene profiles and flavor</li>
+                    <li>• Customer reviews and feedback</li>
+                    <li>• Professional testing and validation</li>
+                    <li>• Value and competitive pricing</li>
                   </ul>
                 </div>
               </div>
@@ -85,31 +84,30 @@ export default function ProductsPage() {
                 <div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">Ordering & Delivery</h3>
                   <p className="leading-relaxed">
-                    Our streamlined ordering process makes it easy to buy weed online in Canada. Browse our catalog, 
+                    Our streamlined ordering process makes it easy to buy golf equipment online. Browse our catalog, 
                     read detailed product descriptions and customer reviews, add items to your cart, and checkout 
-                    securely. We accept various payment methods including e-transfer, credit cards, and cryptocurrency. 
-                    Orders are processed within 24 hours and shipped via Canada Post with tracking information provided.
+                    securely. We accept various payment methods including credit cards, PayPal, and bank transfers. 
+                    Orders are processed within 24 hours and shipped via reliable carriers with tracking information provided.
                   </p>
                 </div>
 
                 <div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">Customer Satisfaction</h3>
                   <p className="leading-relaxed">
-                    Since 2019, we've built our reputation on customer satisfaction and product quality. Our return 
-                    policy ensures peace of mind - while we don't accept returns due to the nature of cannabis products, 
-                    we offer store credit for any unsatisfactory items. Our customer service team is available to help 
-                    with product selection, dosage guidance, and any questions about your order.
+                    We've built our reputation on customer satisfaction and product quality. Our return 
+                    policy ensures peace of mind with 30-day returns on most items. Our customer service team is available to help 
+                    with product selection, equipment fitting guidance, and any questions about your order.
                   </p>
                 </div>
               </div>
 
               <div className="mt-8 p-6 bg-primary-50 rounded-lg border border-primary-200">
-                <h3 className="text-xl font-semibold text-primary-900 mb-4">Legal & Responsible Use</h3>
+                <h3 className="text-xl font-semibold text-primary-900 mb-4">Golf Equipment Care & Safety</h3>
                 <p className="text-primary-800 leading-relaxed">
-                  All our products comply with Canadian cannabis regulations. Customers must be 19+ (18+ in Alberta and Quebec) 
-                  to purchase. Please consume responsibly, start with low doses, and store products safely away from children 
-                  and pets. Do not drive or operate machinery after consumption. Cannabis affects everyone differently - know 
-                  your limits and consume in a safe environment.
+                  All our golf equipment meets industry safety standards. Please follow manufacturer guidelines for 
+                  proper use and maintenance. Store equipment in dry, temperature-controlled environments and 
+                  perform regular maintenance as recommended. Electric golf caddies should be charged according to 
+                  manufacturer specifications and used responsibly on golf courses.
                 </p>
               </div>
             </div>
