@@ -16,9 +16,8 @@ export async function GET(request: NextRequest) {
         fetch(`${origin}/about-us`, { cache: 'no-store' }).catch(() => null),
         fetch(`${origin}/contact`, { cache: 'no-store' }).catch(() => null),
         fetch(`${origin}/blog`, { cache: 'no-store' }).catch(() => null),
-        fetch(`${origin}/categories/flowers`, { cache: 'no-store' }).catch(() => null),
-        fetch(`${origin}/categories/concentrates`, { cache: 'no-store' }).catch(() => null),
-        fetch(`${origin}/categories/hash`, { cache: 'no-store' }).catch(() => null),
+        fetch(`${origin}/categories/electric-carts`, { cache: 'no-store' }).catch(() => null),
+        fetch(`${origin}/categories/robera`, { cache: 'no-store' }).catch(() => null),
       ])
     } catch {}
     return NextResponse.json({ ok: true })

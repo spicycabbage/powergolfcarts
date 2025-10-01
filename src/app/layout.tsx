@@ -10,33 +10,33 @@ import HeaderServer from '@/components/layout/HeaderServer'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Godbud.cc',
-  description: 'Premium cannabis products delivered across Canada',
-  keywords: 'ecommerce, shopping, online store, products',
-  authors: [{ name: 'Godbud.cc' }],
-  creator: 'Godbud.cc',
-  publisher: 'Godbud.cc',
+  title: 'Insanity Golf',
+  description: 'Premium electric golf caddies and E-Carts for effortless course navigation',
+  keywords: 'golf equipment, electric golf caddy, e-cart, golf accessories, golf gear',
+  authors: [{ name: 'Insanity Golf' }],
+  creator: 'Insanity Golf',
+  publisher: 'Insanity Golf',
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://www.godbud.cc'),
+  metadataBase: new URL('https://www.insanitygolf.ca'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://www.godbud.cc',
-    title: 'Godbud.cc',
-    description: 'Premium cannabis products delivered across Canada',
-    siteName: 'Godbud.cc',
+    url: 'https://www.insanitygolf.ca',
+    title: 'Insanity Golf',
+    description: 'Premium electric golf caddies and E-Carts for effortless course navigation',
+    siteName: 'Insanity Golf',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Godbud.cc',
-    description: 'Premium cannabis products delivered across Canada',
+    title: 'Insanity Golf',
+    description: 'Premium electric golf caddies and E-Carts for effortless course navigation',
   },
   robots: {
     index: true,
@@ -67,32 +67,32 @@ export default async function RootLayout({
             {
               '@context': 'https://schema.org',
               '@type': 'Organization',
-              '@id': 'https://www.godbud.cc/#organization',
-              name: 'Godbud.cc',
-              url: 'https://www.godbud.cc',
-              logo: 'https://www.godbud.cc/favicon.ico',
-              description: 'Premium cannabis products delivered across Canada',
+              '@id': 'https://www.insanitygolf.com/#organization',
+              name: 'Insanity Golf',
+              url: 'https://www.insanitygolf.com',
+              logo: 'https://www.insanitygolf.com/favicon.ico',
+              description: 'Premium golf equipment and accessories',
               address: {
                 '@type': 'PostalAddress',
-                addressCountry: 'CA'
+                addressCountry: 'US'
               }
             },
             {
               '@context': 'https://schema.org',
               '@type': 'WebSite',
-              '@id': 'https://www.godbud.cc/#website',
-              name: 'Godbud.cc - Buy Weed Online in Canada',
-              alternateName: 'Godbud.cc',
-              url: 'https://www.godbud.cc',
-              description: 'Premium cannabis products delivered across Canada',
+              '@id': 'https://www.insanitygolf.com/#website',
+              name: 'Insanity Golf - Premium Golf Equipment',
+              alternateName: 'Insanity Golf',
+              url: 'https://www.insanitygolf.com',
+              description: 'Premium golf equipment and accessories',
               publisher: {
-                '@id': 'https://www.godbud.cc/#organization'
+                '@id': 'https://www.insanitygolf.com/#organization'
               },
               potentialAction: {
                 '@type': 'SearchAction',
                 target: {
                   '@type': 'EntryPoint',
-                  urlTemplate: 'https://www.godbud.cc/categories?search={search_term_string}'
+                  urlTemplate: 'https://www.insanitygolf.com/categories?search={search_term_string}'
                 },
                 'query-input': 'required name=search_term_string'
               }

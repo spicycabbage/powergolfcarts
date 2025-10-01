@@ -31,13 +31,13 @@ function sanitizeNavigation(doc: any | null): INavigationConfig {
 export const defaultNavigation: INavigationConfig = {
   header: {
     logo: {
-      text: 'E-Commerce',
+      text: 'Insanity Golf',
       href: '/',
       image: '',
       useImage: false,
     },
     banner: {
-      text: 'Free shipping on orders over $50! Use code FREESHIP',
+      text: 'Free shipping on orders over $100! Premium golf equipment delivered to your door',
       isActive: true,
     },
   },

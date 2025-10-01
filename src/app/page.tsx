@@ -12,9 +12,9 @@ import { Introduction } from '@/components/Introduction'
 import JsonLd from '@/components/seo/JsonLd'
 
 export const metadata: Metadata = {
-  title: 'Godbud.cc: Buy Weed Online in Canada | Mail Order Marijuana',
-  description: "Godbud.cc is Canada's top online dispensary for high-quality cannabis. We offer a wide selection of flowers, edibles, vapes, and concentrates with fast, discreet shipping.",
-  keywords: 'buy weed online, mail order marijuana, online dispensary, cannabis, canada, flowers, edibles, concentrates',
+  title: 'Insanity Golf - Premium Golf Equipment & Gear Online',
+  description: "Shop premium golf clubs, balls, accessories, and apparel at Insanity Golf. Quality equipment for golfers of all skill levels with fast shipping.",
+  keywords: 'golf equipment, golf clubs, golf balls, golf gear, golf accessories, golf apparel, online golf store',
   // Remove other metadata - we'll handle preloading differently
 }
 
@@ -27,56 +27,56 @@ export default function HomePage() {
           {
             '@context': 'https://schema.org',
             '@type': 'Store',
-            '@id': 'https://www.godbud.cc/#store',
-            name: 'Godbud.cc',
-            description: "Canada's top online dispensary for high-quality cannabis products",
-            url: 'https://www.godbud.cc',
-            telephone: '+1-800-GODBUD',
+            '@id': 'https://www.insanitygolf.com/#store',
+            name: 'Insanity Golf',
+            description: "Premium golf equipment and accessories for golfers of all skill levels",
+            url: 'https://www.insanitygolf.com',
+            telephone: '+1-800-GOLF',
             address: {
               '@type': 'PostalAddress',
-              addressCountry: 'CA'
+              addressCountry: 'US'
             },
             openingHours: 'Mo-Su 00:00-23:59',
-            currenciesAccepted: 'CAD',
-            paymentAccepted: ['Credit Card', 'Debit Card', 'E-Transfer']
+            currenciesAccepted: 'USD',
+            paymentAccepted: ['Credit Card', 'Debit Card', 'PayPal']
           },
           {
             '@context': 'https://schema.org',
             '@type': 'ItemList',
-            '@id': 'https://www.godbud.cc/#productcategories',
-            name: 'Cannabis Product Categories',
-            description: 'Browse our selection of premium cannabis products',
+            '@id': 'https://www.insanitygolf.com/#productcategories',
+            name: 'Golf Equipment Categories',
+            description: 'Browse our selection of premium golf equipment',
             numberOfItems: 5,
             itemListElement: [
               {
                 '@type': 'ListItem',
                 position: 1,
-                name: 'Flowers',
-                url: 'https://www.godbud.cc/categories/flowers'
+                name: 'Golf Clubs',
+                url: 'https://www.insanitygolf.com/categories/golf-clubs'
               },
               {
                 '@type': 'ListItem',
                 position: 2,
-                name: 'Edibles',
-                url: 'https://www.godbud.cc/categories/edibles'
+                name: 'Golf Balls',
+                url: 'https://www.insanitygolf.com/categories/golf-balls'
               },
               {
                 '@type': 'ListItem',
                 position: 3,
-                name: 'Concentrates',
-                url: 'https://www.godbud.cc/categories/concentrates'
+                name: 'Golf Bags',
+                url: 'https://www.insanitygolf.com/categories/golf-bags'
               },
               {
                 '@type': 'ListItem',
                 position: 4,
-                name: 'Hash',
-                url: 'https://www.godbud.cc/categories/hash'
+                name: 'Accessories',
+                url: 'https://www.insanitygolf.com/categories/accessories'
               },
               {
                 '@type': 'ListItem',
                 position: 5,
-                name: 'CBD',
-                url: 'https://www.godbud.cc/categories/cbd'
+                name: 'Apparel',
+                url: 'https://www.insanitygolf.com/categories/apparel'
               }
             ]
           }
@@ -99,7 +99,7 @@ export default function HomePage() {
       {/* Main H1 for SEO - Visible to crawlers */}
       <div className="bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1">
-          <h1 className="text-lg font-semibold text-gray-900 text-center">Buy Weed Online Canada</h1>
+          <h1 className="text-lg font-semibold text-gray-900 text-center">Premium Golf Equipment & Gear</h1>
         </div>
       </div>
       
@@ -119,39 +119,31 @@ export default function HomePage() {
       
       <section className="bg-white pt-8 pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-xl font-semibold text-gray-900 mb-2">
-          Voted One of Canada's Top Online Dispensaries
+          Your Trusted Golf Equipment Retailer
         </h2>
         <p className="text-gray-700 mb-4">
-          Trusted by thousands of customers and featured across major cannabis platforms
+          Trusted by golfers nationwide for premium equipment and expert service
         </p>
         <p className="text-sm text-gray-600 mb-6">
-          As seen on Cannabis Culture, Weedmaps, The Weed Blog, and Leafly - Canada's most trusted cannabis review platforms
+          Partnered with leading golf brands to bring you the best equipment for your game
         </p>
-        <img
-          src="/trust-logos.webp"
-          alt="As seen on platforms like Cannabis Culture, Weedmaps, The Weed Blog, and Leafly"
-          className="h-auto max-h-[120px] object-contain mx-auto mb-6"
-        />
         <div className="max-w-3xl mx-auto">
             <p className="text-gray-700 text-sm leading-relaxed mb-4">
-              Since 2019, Godbud.cc has been recognized as one of Canada's premier online cannabis dispensaries. 
-              Our commitment to quality, customer service, and competitive pricing has earned us features on leading 
-              cannabis platforms and thousands of positive customer reviews. Join the community of satisfied customers 
-              who trust us for their cannabis needs across Canada.
+              Insanity Golf has been dedicated to providing golfers of all skill levels with premium equipment and expert guidance. 
+              Our commitment to quality, competitive pricing, and exceptional customer service has made us a trusted destination 
+              for golfers looking to improve their game. Join thousands of satisfied customers who rely on us for their golf needs.
             </p>
             <p className="text-gray-700 text-sm leading-relaxed mb-4">
-              We understand that choosing the right cannabis products can be overwhelming, which is why our expert team 
-              carefully curates every item in our catalog. From premium BC flowers and artisanal concentrates to precisely 
-              dosed edibles and convenient vape cartridges, we ensure that every product meets our strict quality standards. 
-              Our partnerships with licensed Canadian producers guarantee that you receive authentic, lab-tested cannabis 
-              products that are safe, potent, and consistent.
+              We understand that choosing the right golf equipment can be challenging, which is why our expert team 
+              carefully selects every item in our catalog. From top-tier drivers and precision irons to high-performance balls 
+              and premium accessories, we ensure that every product meets our strict quality standards. Our partnerships with 
+              leading golf brands guarantee that you receive authentic, tour-tested equipment that delivers results.
             </p>
             <p className="text-gray-700 text-sm leading-relaxed">
-              Shopping with Godbud.cc means accessing Canada's most comprehensive cannabis selection with the convenience 
-              of online ordering and discreet home delivery. Our knowledgeable customer service team is always available 
-              to help you find the perfect products for your needs, whether you're seeking relaxation, creativity, pain 
-              relief, or simply exploring the world of cannabis. Experience the difference that quality, service, and 
-              expertise make when you choose Canada's trusted online cannabis destination.
+              Shopping with Insanity Golf means accessing a comprehensive selection of golf equipment with the convenience 
+              of online ordering and fast shipping. Our knowledgeable customer service team is always available to help you 
+              find the perfect equipment for your game, whether you're a beginner, weekend warrior, or competitive player. 
+              Experience the difference that quality, service, and expertise make when you choose Insanity Golf.
             </p>
         </div>
       </section>
@@ -167,32 +159,32 @@ export default function HomePage() {
       
       <section className="bg-gray-50 py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Canada's Premier Online Cannabis Dispensary</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Your Premier Golf Equipment Destination</h2>
             <div className="grid md:grid-cols-2 gap-8 text-left">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Premium Cannabis Products</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Premium Golf Equipment</h3>
                 <p className="text-gray-700 mb-4">
-                  Our extensive selection includes premium cannabis flowers, precisely dosed edibles, high-potency concentrates, 
-                  convenient vape products, and therapeutic CBD items. Every product is sourced from licensed Canadian producers 
-                  and lab-tested for quality, potency, and safety.
+                  Our extensive selection includes top-tier golf clubs, high-performance balls, premium bags, 
+                  essential accessories, and quality apparel. Every product is sourced from leading golf brands 
+                  and tested for quality, performance, and durability.
                 </p>
                 <p className="text-gray-700">
-                  From classic strains like OG Kush and Blue Dream to exclusive varieties, our flower selection caters to all 
-                  preferences. Our edibles range from delicious gummies to artisanal chocolates, while our concentrate collection 
-                  features shatter, wax, live resin, and rosin for experienced users.
+                  From the latest drivers and fairway woods to precision irons and forgiving putters, our club selection 
+                  caters to all skill levels. Our golf balls range from tour-level performance to distance-focused designs, 
+                  while our accessories include everything you need to elevate your game.
                 </p>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Trusted Service Since 2019</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Trusted Golf Experts</h3>
                 <p className="text-gray-700 mb-4">
-                  With thousands of satisfied customers across Canada, we've built our reputation on quality products, 
+                  With thousands of satisfied golfers nationwide, we've built our reputation on quality equipment, 
                   competitive pricing, and exceptional customer service. Our knowledgeable team is always available to 
-                  help you find the perfect cannabis products for your needs.
+                  help you find the perfect gear for your game.
                 </p>
                 <p className="text-gray-700">
-                  We offer fast, discreet shipping nationwide with secure packaging and reliable delivery. Whether you're 
-                  seeking relaxation, creativity, pain relief, or exploring cannabis for the first time, we provide the 
-                  products and guidance you need for a positive experience.
+                  We offer fast shipping nationwide with secure packaging and reliable delivery. Whether you're 
+                  just starting out, improving your game, or competing at a high level, we provide the 
+                  equipment and expertise you need to succeed on the course.
                 </p>
               </div>
             </div>

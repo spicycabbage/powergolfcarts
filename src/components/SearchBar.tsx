@@ -147,19 +147,19 @@ export function SearchBar({ isOpen, onClose }: SearchBarProps) {
               </div>
               <div className="space-x-3">
                 <Link
-                  href="/categories/flowers"
+                  href="/categories/electric-carts"
                   onClick={handleResultClick}
                   className="text-primary-600 hover:text-primary-700 text-sm font-medium"
                 >
-                  Browse Flowers
+                  Browse E-Carts
                 </Link>
                 <span className="text-gray-300">•</span>
                 <Link
-                  href="/categories/edibles"
+                  href="/categories/robera"
                   onClick={handleResultClick}
                   className="text-primary-600 hover:text-primary-700 text-sm font-medium"
                 >
-                  Browse Edibles
+                  Browse Robera
                 </Link>
               </div>
             </div>

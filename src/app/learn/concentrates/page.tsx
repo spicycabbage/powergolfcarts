@@ -21,7 +21,7 @@ export default function ConcentratesHub() {
         <p>
           <a href="/products/la-kush-cake-shatter">LA Kush Cake Shatter</a> ·{' '}
           <a href="/products/wedding-cake-diamond">Wedding Cake Diamond</a> ·{' '}
-          <a href="/categories/concentrates">Browse all concentrates</a>
+          <a href="/categories/electric-carts">Browse all E-Carts</a>
         </p>
       </section>
 

@@ -70,111 +70,83 @@ export function SimpleHeader() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="text-2xl font-bold text-yellow-500">
-            Godbud.cc
+          <Link href="/" className="text-2xl font-bold text-green-500">
+            Insanity Golf
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
-            {/* Flowers Dropdown */}
+            {/* Golf Clubs Dropdown */}
             <div 
               className="relative"
-              onMouseEnter={() => setOpenDropdown('flowers')}
+              onMouseEnter={() => setOpenDropdown('clubs')}
               onMouseLeave={() => setOpenDropdown(null)}
             >
               <Link
-                href="/categories/flowers"
-                className="text-white hover:text-primary-600 transition-colors font-medium flex items-center"
+                href="/categories/golf-clubs"
+                className="text-white hover:text-green-400 transition-colors font-medium flex items-center"
               >
-                Flowers
+                Golf Clubs
                 <ChevronDown 
                   size={16} 
                   className={`ml-1 transition-transform duration-200 ${
-                    openDropdown === 'flowers' ? 'rotate-180' : ''
+                    openDropdown === 'clubs' ? 'rotate-180' : ''
                   }`} 
                 />
               </Link>
-              {openDropdown === 'flowers' && (
+              {openDropdown === 'clubs' && (
                 <div className="absolute left-0 top-full z-50">
                   <div className="pt-2 bg-transparent">
                     <div className="bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[200px]">
-                      <Link href="/categories/indica" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Indica</Link>
-                      <Link href="/categories/sativa" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Sativa</Link>
-                      <Link href="/categories/hybrid" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Hybrid</Link>
-                      <Link href="/categories/aaa" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">AAA</Link>
+                      <Link href="/categories/drivers" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Drivers</Link>
+                      <Link href="/categories/irons" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Irons</Link>
+                      <Link href="/categories/putters" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Putters</Link>
+                      <Link href="/categories/wedges" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Wedges</Link>
                     </div>
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Concentrates Dropdown */}
+            {/* Golf Balls - No Dropdown */}
+            <Link href="/categories/golf-balls" className="text-white hover:text-green-400 transition-colors font-medium">Golf Balls</Link>
+
+            {/* Golf Bags - No Dropdown */}
+            <Link href="/categories/golf-bags" className="text-white hover:text-green-400 transition-colors font-medium">Golf Bags</Link>
+
+            {/* Accessories Dropdown */}
             <div 
               className="relative"
-              onMouseEnter={() => setOpenDropdown('concentrates')}
+              onMouseEnter={() => setOpenDropdown('accessories')}
               onMouseLeave={() => setOpenDropdown(null)}
             >
               <Link
-                href="/categories/concentrates"
-                className="text-white hover:text-primary-600 transition-colors font-medium flex items-center"
+                href="/categories/accessories"
+                className="text-white hover:text-green-400 transition-colors font-medium flex items-center"
               >
-                Concentrates
+                Accessories
                 <ChevronDown 
                   size={16} 
                   className={`ml-1 transition-transform duration-200 ${
-                    openDropdown === 'concentrates' ? 'rotate-180' : ''
+                    openDropdown === 'accessories' ? 'rotate-180' : ''
                   }`} 
                 />
               </Link>
-              {openDropdown === 'concentrates' && (
+              {openDropdown === 'accessories' && (
                 <div className="absolute left-0 top-full z-50">
                   <div className="pt-2 bg-transparent">
                     <div className="bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[200px]">
-                      <Link href="/categories/shatters" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Shatters</Link>
-                      <Link href="/categories/diamonds" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Diamonds</Link>
-                      <Link href="/categories/moonrocks" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Moonrocks</Link>
+                      <Link href="/categories/gloves" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Gloves</Link>
+                      <Link href="/categories/tees" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Tees</Link>
+                      <Link href="/categories/towels" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Towels</Link>
                     </div>
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Edibles Dropdown */}
-            <div 
-              className="relative"
-              onMouseEnter={() => setOpenDropdown('edibles')}
-              onMouseLeave={() => setOpenDropdown(null)}
-            >
-              <Link
-                href="/categories/edibles"
-                className="text-white hover:text-primary-600 transition-colors font-medium flex items-center"
-              >
-                Edibles
-                <ChevronDown 
-                  size={16} 
-                  className={`ml-1 transition-transform duration-200 ${
-                    openDropdown === 'edibles' ? 'rotate-180' : ''
-                  }`} 
-                />
-              </Link>
-              {openDropdown === 'edibles' && (
-                <div className="absolute left-0 top-full z-50">
-                  <div className="pt-2 bg-transparent">
-                    <div className="bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[200px]">
-                      <Link href="/categories/gummies" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Gummies</Link>
-                      <Link href="/categories/strong-edibles" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Strong Edibles</Link>
-                      <Link href="/categories/candies" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">Candies</Link>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Hash - No Dropdown */}
-            <Link href="/categories/hash" className="text-white hover:text-primary-600 transition-colors font-medium">Hash</Link>
-
-            {/* CBD - No Dropdown */}
-            <Link href="/categories/cbd" className="text-white hover:text-primary-600 transition-colors font-medium">CBD</Link>
+            {/* Apparel - No Dropdown */}
+            <Link href="/categories/apparel" className="text-white hover:text-green-400 transition-colors font-medium">Apparel</Link>
 
             {/* Bundles Dropdown */}
             <div 
@@ -184,7 +156,7 @@ export function SimpleHeader() {
             >
               <Link
                 href="/bundles"
-                className="text-white hover:text-primary-600 transition-colors font-medium flex items-center"
+                className="text-white hover:text-green-400 transition-colors font-medium flex items-center"
               >
                 Bundles
                 <ChevronDown 
@@ -198,29 +170,17 @@ export function SimpleHeader() {
                 <div className="absolute left-0 top-full z-50">
                   <div className="pt-2 bg-transparent">
                     <div className="bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[240px]">
-                      <Link href="/bundles/flower-28g" className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">
-                        <span>Flower 4x28g</span>
+                      <Link href="/bundles/starter-set" className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">
+                        <span>Starter Set</span>
                         <span className="text-green-600 font-medium">15% off</span>
                       </Link>
-                      <Link href="/bundles/hash-28g" className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">
-                        <span>Hash 4x28g</span>
-                        <span className="text-green-600 font-medium">15% off</span>
+                      <Link href="/bundles/complete-set" className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">
+                        <span>Complete Set</span>
+                        <span className="text-green-600 font-medium">20% off</span>
                       </Link>
-                      <Link href="/bundles/shatter-28g" className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">
-                        <span>Shatter 4x28g</span>
-                        <span className="text-green-600 font-medium">15% off</span>
-                      </Link>
-                      <Link href="/bundles/flower-7g" className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">
-                        <span>Flower 4x7g</span>
-                        <span className="text-green-600 font-medium">15% off</span>
-                      </Link>
-                      <Link href="/bundles/hash-7g" className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">
-                        <span>Hash 4x7g</span>
-                        <span className="text-green-600 font-medium">15% off</span>
-                      </Link>
-                      <Link href="/bundles/shatter-7g" className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">
-                        <span>Shatter 4x7g</span>
-                        <span className="text-green-600 font-medium">15% off</span>
+                      <Link href="/bundles/ball-pack" className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">
+                        <span>Golf Ball Pack</span>
+                        <span className="text-green-600 font-medium">10% off</span>
                       </Link>
                     </div>
                   </div>
@@ -274,51 +234,41 @@ export function SimpleHeader() {
       {isMenuOpen && (
         <div className="md:hidden bg-black border-t border-gray-700">
           <div className="px-4 py-4 space-y-4 max-h-[calc(100vh-64px)] overflow-y-auto">
-            {/* Flowers */}
+            {/* Golf Clubs */}
             <div>
-              <Link href="/categories/flowers" className="block text-white hover:text-primary-600 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Flowers</Link>
+              <Link href="/categories/golf-clubs" className="block text-white hover:text-green-400 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Golf Clubs</Link>
               <div className="ml-4 space-y-1">
-                <Link href="/categories/indica" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Indica</Link>
-                <Link href="/categories/sativa" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Sativa</Link>
-                <Link href="/categories/hybrid" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Hybrid</Link>
-                <Link href="/categories/aaa" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>AAA</Link>
+                <Link href="/categories/drivers" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Drivers</Link>
+                <Link href="/categories/irons" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Irons</Link>
+                <Link href="/categories/putters" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Putters</Link>
+                <Link href="/categories/wedges" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Wedges</Link>
               </div>
             </div>
 
-            {/* Concentrates */}
+            {/* Golf Balls & Bags */}
+            <Link href="/categories/golf-balls" className="block text-white hover:text-green-400 font-medium" onClick={() => setIsMenuOpen(false)}>Golf Balls</Link>
+            <Link href="/categories/golf-bags" className="block text-white hover:text-green-400 font-medium" onClick={() => setIsMenuOpen(false)}>Golf Bags</Link>
+
+            {/* Accessories */}
             <div>
-              <Link href="/categories/concentrates" className="block text-white hover:text-primary-600 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Concentrates</Link>
+              <Link href="/categories/accessories" className="block text-white hover:text-green-400 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Accessories</Link>
               <div className="ml-4 space-y-1">
-                <Link href="/categories/shatters" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Shatters</Link>
-                <Link href="/categories/diamonds" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Diamonds</Link>
-                <Link href="/categories/moonrocks" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Moonrocks</Link>
+                <Link href="/categories/gloves" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Gloves</Link>
+                <Link href="/categories/tees" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Tees</Link>
+                <Link href="/categories/towels" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Towels</Link>
               </div>
             </div>
 
-            {/* Edibles */}
-            <div>
-              <Link href="/categories/edibles" className="block text-white hover:text-primary-600 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Edibles</Link>
-              <div className="ml-4 space-y-1">
-                <Link href="/categories/gummies" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Gummies</Link>
-                <Link href="/categories/strong-edibles" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Strong Edibles</Link>
-                <Link href="/categories/candies" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Candies</Link>
-              </div>
-            </div>
-
-            {/* Hash & CBD */}
-            <Link href="/categories/hash" className="block text-white hover:text-primary-600 font-medium" onClick={() => setIsMenuOpen(false)}>Hash</Link>
-            <Link href="/categories/cbd" className="block text-white hover:text-primary-600 font-medium" onClick={() => setIsMenuOpen(false)}>CBD</Link>
+            {/* Apparel */}
+            <Link href="/categories/apparel" className="block text-white hover:text-green-400 font-medium" onClick={() => setIsMenuOpen(false)}>Apparel</Link>
 
             {/* Bundles */}
             <div>
-              <Link href="/bundles" className="block text-white hover:text-primary-600 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Bundles</Link>
+              <Link href="/bundles" className="block text-white hover:text-green-400 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Bundles</Link>
               <div className="ml-4 space-y-1">
-                <Link href="/bundles/flower-28g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Flower 4x28g | 15% off</Link>
-                <Link href="/bundles/hash-28g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Hash 4x28g | 15% off</Link>
-                <Link href="/bundles/shatter-28g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Shatter 4x28g | 15% off</Link>
-                <Link href="/bundles/flower-7g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Flower 4x7g | 15% off</Link>
-                <Link href="/bundles/hash-7g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Hash 4x7g | 15% off</Link>
-                <Link href="/bundles/shatter-7g" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Shatter 4x7g | 15% off</Link>
+                <Link href="/bundles/starter-set" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Starter Set | 15% off</Link>
+                <Link href="/bundles/complete-set" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Complete Set | 20% off</Link>
+                <Link href="/bundles/ball-pack" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Golf Ball Pack | 10% off</Link>
               </div>
             </div>
 

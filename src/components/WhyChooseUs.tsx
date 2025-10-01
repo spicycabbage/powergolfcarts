@@ -2,23 +2,23 @@ import { Star, Tag, Package, ThumbsUp } from 'lucide-react'
 
 const features = [
   {
-    name: 'Top Quality Product',
-    description: 'We source only the highest quality cannabis through our top-notch network of suppliers, ensuring every product meets our exacting standards.',
+    name: 'Premium Equipment',
+    description: 'We source only the highest quality golf equipment from leading brands, ensuring every product meets tour-level standards for performance.',
     icon: Star,
   },
   {
-    name: 'Great Prices',
-    description: 'Our direct relationships with large-scale suppliers allow us to offer some of the most competitive prices on the market when you buy weed online.',
+    name: 'Competitive Prices',
+    description: 'Our direct relationships with major golf brands allow us to offer some of the most competitive prices on premium golf equipment.',
     icon: Tag,
   },
   {
-    name: 'Extensive Catalogue',
-    description: 'We carry a wide selection of premium cannabis flowers, CBD products, concentrates, edibles, and vapes from top Canadian brands.',
+    name: 'Extensive Selection',
+    description: 'We carry a wide selection of golf clubs, balls, bags, accessories, and apparel from top brands like TaylorMade, Callaway, Titleist, and more.',
     icon: Package,
   },
   {
     name: '100% Satisfaction',
-    description: 'We want you to shop with peace of mind. If you are not satisfied with your purchase, contact us, and we will make things right.',
+    description: 'We want you to shop with confidence. If you are not satisfied with your purchase, contact us, and we will make things right.',
     icon: ThumbsUp,
   },
 ]
