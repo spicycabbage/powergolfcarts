@@ -1,7 +1,7 @@
 {
-  "name": "ecommerce-engine",
+  "name": "insanitygolf",
   "version": "1.0.0",
-  "description": "Multi-tenant ecommerce engine for building multiple websites",
+  "description": "insanitygolf ecommerce site",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -24,7 +24,8 @@
     "create-site": "node scripts/create-site.js",
     "deploy-site": "node scripts/deploy-site.js",
     "create:contact-page": "node scripts/create-contact-page.js",
-    "create:sample-post": "node scripts/create-sample-post.js"
+    "create:sample-post": "node scripts/create-sample-post.js",
+    "clone-site": "node create-new-site.js"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

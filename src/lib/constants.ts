@@ -55,10 +55,10 @@ export const IMAGE_CONFIG = {
 
 // SEO Configuration
 export const SEO_CONFIG = {
-  DEFAULT_TITLE: 'Godbud.cc - Buy Weed Online in Canada',
-  DEFAULT_DESCRIPTION: 'Premium cannabis products delivered across Canada. Shop flowers, edibles, concentrates, and more.',
-  SITE_NAME: 'Godbud.cc',
-  DOMAIN: 'https://www.godbud.cc',
+  DEFAULT_TITLE: 'Insanity Golf - Premium Golf Equipment & Gear',
+  DEFAULT_DESCRIPTION: 'Shop premium golf clubs, balls, accessories, and apparel. Quality golf equipment for players of all skill levels.',
+  SITE_NAME: 'Insanity Golf',
+  DOMAIN: 'https://www.insanitygolf.com',
   DEFAULT_IMAGE: '/og-image.jpg',
   MAX_TITLE_LENGTH: 60,
   MAX_DESCRIPTION_LENGTH: 160

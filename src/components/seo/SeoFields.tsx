@@ -72,7 +72,7 @@ export default function SeoFields({ seo, onChange, titleLabel = 'SEO Title', des
           type="text"
           value={keyphrase}
           onChange={(e) => setKeyphrase(e.target.value)}
-          placeholder="e.g., premium pink kush indica"
+          placeholder="e.g., electric golf caddy e-cart"
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
         />
         <p className="mt-1 text-xs text-gray-500">Multiple words allowed (a phrase).</p>
