@@ -111,7 +111,7 @@ export function SearchBar({ isOpen, onClose }: SearchBarProps) {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search for cannabis products..."
+              placeholder="Search for golf cart products..."
               className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-lg"
             />
             {query && (

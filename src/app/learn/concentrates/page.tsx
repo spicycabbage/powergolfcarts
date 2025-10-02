@@ -7,7 +7,7 @@ export const metadata = {
 export default function ConcentratesHub() {
   return (
     <main className="prose max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <h1>Cannabis Concentrates Guide</h1>
+      <h1>Golf Cart Accessories Guide</h1>
       <p>Quick overview of shatter, diamonds, rosin, plus storage and dosing best practices.</p>
 
       <nav>

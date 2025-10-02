@@ -70,7 +70,7 @@ export default async function ContactPage() {
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Get in Touch with Godbud.cc</h2>
             
             <p className="text-lg leading-relaxed mb-6">
-              We're here to help with all your cannabis-related questions and concerns. Whether you need product 
+              We're here to help with all your golf cart-related questions and concerns. Whether you need product 
               recommendations, have questions about your order, or want to learn more about our services, our 
               knowledgeable customer service team is ready to assist you. We pride ourselves on providing prompt, 
               helpful responses to ensure you have the best possible experience with Godbud.cc.
@@ -78,11 +78,11 @@ export default async function ContactPage() {
             
             <h3 className="text-xl font-semibold text-gray-900 mb-4">How We Can Help</h3>
             <ul className="list-disc pl-6 mb-6 space-y-2">
-              <li><strong>Product Recommendations:</strong> Our experts can help you find the perfect cannabis products based on your preferences, experience level, and desired effects.</li>
+              <li><strong>Product Recommendations:</strong> Our experts can help you find the perfect golf cart products based on your preferences, experience level, and needs.</li>
               <li><strong>Order Support:</strong> Questions about your order status, shipping, or delivery? We're here to provide updates and resolve any issues.</li>
               <li><strong>Product Information:</strong> Need detailed information about strains, potency, consumption methods, or effects? Our team has the knowledge you need.</li>
               <li><strong>Account Assistance:</strong> Help with account setup, password resets, or managing your profile and preferences.</li>
-              <li><strong>General Inquiries:</strong> Any other questions about our services, policies, or the cannabis industry in Canada.</li>
+              <li><strong>General Inquiries:</strong> Any other questions about our services, policies, or golf cart industry.</li>
             </ul>
             
             <h3 className="text-xl font-semibold text-gray-900 mb-4">Response Times</h3>
