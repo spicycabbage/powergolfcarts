@@ -10,7 +10,6 @@ import {
   Users,
   Package,
   Mail,
-  Link2,
   Percent,
   Star,
   Gift,
@@ -172,12 +171,6 @@ export default function AdminDashboard() {
       color: 'bg-pink-500',
       disabled: false
     },
-    {
-      title: 'Slug Manager',
-      icon: Link2,
-      href: '/admin/slug-manager',
-      color: 'bg-indigo-500'
-    }
   ]
 
   return (
