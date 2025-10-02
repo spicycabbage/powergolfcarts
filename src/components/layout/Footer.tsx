@@ -56,7 +56,7 @@ export function Footer() {
                   <strong className="text-white">Phone:</strong> 1-778-861-8599
                 </p>
                 <p className="text-sm mb-1">
-                  <strong className="text-white">Email:</strong> info@insanitygolf.ca
+                  <strong className="text-white">Email:</strong> info@powergolfcarts.com
                 </p>
                 <p className="text-sm mb-3">
                   <strong className="text-white">Text Support:</strong> 1-604-319-4330
@@ -65,8 +65,8 @@ export function Footer() {
               <div>
                 <p className="text-sm text-white mb-2">Follow us:</p>
                 <div className="flex space-x-4">
-                  <a href="https://www.facebook.com/InsanityGolf" className="text-gray-300 hover:text-white text-sm">Facebook</a>
-                  <a href="https://www.tiktok.com/@insanitygolfer" className="text-gray-300 hover:text-white text-sm">TikTok</a>
+                  <a href="#" className="text-gray-300 hover:text-white text-sm">Facebook</a>
+                  <a href="#" className="text-gray-300 hover:text-white text-sm">TikTok</a>
                   <a href="#" className="text-gray-300 hover:text-white text-sm">Instagram</a>
                 </div>
               </div>
@@ -74,17 +74,12 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-4 md:mb-0">
+        <div className="border-t border-gray-800 pt-6">
+          <div>
             <Link href="/" className="text-2xl font-bold text-white mb-2 block">Power Golf Carts</Link>
             <p className="text-gray-400 text-sm">© {currentYear} by Power Golf Carts. All rights reserved.</p>
             <p className="text-gray-500 text-xs mt-1">Power Golf Carts has copyright for all the photos and videos.</p>
           </div>
-          <img 
-            src="/trust-badges.webp" 
-            alt="Accepted payment methods: Norton Secured, SSL Certificate, PayPal, Credit Cards, Bitcoin"
-            className="h-8 w-auto"
-          />
         </div>
       </div>
     </footer>
