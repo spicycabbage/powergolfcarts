@@ -26,7 +26,6 @@ interface Category {
   image?: string
   parent?: string
   children: string[]
-  isActive: boolean
   featuredOnHomepage?: boolean
   homepageOrder?: number
   seo: {
@@ -52,7 +51,6 @@ export default function CategoriesAdmin() {
     description: '',
     image: '',
     parent: '',
-    isActive: true,
     featuredOnHomepage: false,
     homepageOrder: 0,
     seo: {
@@ -114,7 +112,6 @@ export default function CategoriesAdmin() {
         parent: typeof (category as any).parent === 'object' && (category as any).parent?._id
           ? String((category as any).parent._id)
           : (typeof (category as any).parent === 'string' ? String((category as any).parent) : ''),
-        isActive: category.isActive,
         featuredOnHomepage: category.featuredOnHomepage || false,
         homepageOrder: category.homepageOrder || 0,
         seo: {
@@ -131,7 +128,6 @@ export default function CategoriesAdmin() {
         description: '',
         image: '',
         parent: '',
-        isActive: true,
         featuredOnHomepage: false,
         homepageOrder: 0,
         seo: {
@@ -166,7 +162,6 @@ export default function CategoriesAdmin() {
         description: (formData.description || '').trim(),
         image: (formData.image || '').trim(),
         parent: formData.parent && formData.parent !== '' ? formData.parent : undefined,
-        isActive: formData.isActive,
         featuredOnHomepage: formData.featuredOnHomepage,
         homepageOrder: formData.homepageOrder,
         seo: {
@@ -300,11 +295,6 @@ export default function CategoriesAdmin() {
             </div>
 
             <div className="flex items-center space-x-2">
-              <span className={`px-2 py-1 text-xs rounded-full ${
-                category.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-              }`}>
-                {category.isActive ? 'Active' : 'Inactive'}
-              </span>
               <button
                 onClick={() => openModal(category)}
                 className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors flex items-center justify-center clickable"
@@ -349,11 +339,6 @@ export default function CategoriesAdmin() {
                         </div>
 
                         <div className="flex items-center space-x-2">
-                          <span className={`px-2 py-1 text-xs rounded-full ${
-                            child.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                          }`}>
-                            {child.isActive ? 'Active' : 'Inactive'}
-                          </span>
                           <button
                             onClick={() => openModal(child)}
                             className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors flex items-center justify-center clickable"
@@ -647,18 +632,6 @@ export default function CategoriesAdmin() {
                 )}
               </div>
 
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="isActive"
-                  checked={formData.isActive}
-                  onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                />
-                <label htmlFor="isActive" className="ml-2 block text-sm text-gray-700">
-                  Active (visible in navigation)
-                </label>
-              </div>
 
               {/* Homepage Featured Section */}
               <div className="border-t pt-6">
