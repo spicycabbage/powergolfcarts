@@ -10,26 +10,24 @@ const DEFAULT_LOCATION: GeoLocation = {
 
 /**
  * Map country code to location object
+ * Canada gets CAD, everything else gets USD
  */
 function mapCountryToLocation(countryCode: string): GeoLocation {
   const upperCode = countryCode.toUpperCase()
   
-  switch (upperCode) {
-    case 'US':
-      return {
-        country: 'US',
-        currency: 'USD',
-        countryName: 'United States'
-      }
-    case 'CA':
-      return {
-        country: 'CA',
-        currency: 'CAD',
-        countryName: 'Canada'
-      }
-    default:
-      // Default to US for other countries
-      return DEFAULT_LOCATION
+  if (upperCode === 'CA') {
+    return {
+      country: 'CA',
+      currency: 'CAD',
+      countryName: 'Canada'
+    }
+  } else {
+    // All other countries (including US) get USD
+    return {
+      country: 'US',
+      currency: 'USD',
+      countryName: 'United States'
+    }
   }
 }
 

@@ -5,7 +5,6 @@ import { Country, Currency, GeoLocation, detectUserLocationClient } from '@/lib/
 
 interface CurrencyContextType {
   location: GeoLocation
-  setLocation: (location: GeoLocation) => void
   isLoading: boolean
 }
 
@@ -32,39 +31,14 @@ export function CurrencyProvider({ children, initialLocation }: CurrencyProvider
       detectUserLocationClient().then((detectedLocation) => {
         setLocation(detectedLocation)
         setIsLoading(false)
-        
-        // Store in localStorage for future visits
-        localStorage.setItem('user-location', JSON.stringify(detectedLocation))
       })
     } else {
       setIsLoading(false)
     }
   }, [initialLocation])
 
-  // Load saved location from localStorage on mount
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedLocation = localStorage.getItem('user-location')
-      if (savedLocation && !initialLocation) {
-        try {
-          const parsed = JSON.parse(savedLocation)
-          setLocation(parsed)
-          setIsLoading(false)
-        } catch (error) {
-          console.warn('Failed to parse saved location:', error)
-        }
-      }
-    }
-  }, [initialLocation])
-
   const value: CurrencyContextType = {
     location,
-    setLocation: (newLocation) => {
-      setLocation(newLocation)
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('user-location', JSON.stringify(newLocation))
-      }
-    },
     isLoading
   }
 

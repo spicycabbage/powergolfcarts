@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react'
 import { useCart } from '@/hooks/useCart'
 import { useAuth } from '@/hooks/useAuth'
 import { SearchBar } from '@/components/SearchBar'
-import CurrencySwitcher from '@/components/CurrencySwitcher'
 
 export function SimpleHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -205,11 +204,6 @@ export function SimpleHeader() {
               <Search size={20} />
             </button>
 
-            {/* Currency Switcher */}
-            <div className="hidden md:block">
-              <CurrencySwitcher showCountry={false} />
-            </div>
-
             {/* Cart */}
             <Link 
               href="/cart" 
@@ -279,13 +273,6 @@ export function SimpleHeader() {
                 <Link href="/bundles/starter-set" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Starter Set | 15% off</Link>
                 <Link href="/bundles/complete-set" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Complete Set | 20% off</Link>
                 <Link href="/bundles/ball-pack" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Golf Ball Pack | 10% off</Link>
-              </div>
-            </div>
-
-            {/* Currency Switcher for Mobile */}
-            <div className="pt-2 border-t border-gray-700">
-              <div className="py-3">
-                <CurrencySwitcher showCountry={true} />
               </div>
             </div>
 
