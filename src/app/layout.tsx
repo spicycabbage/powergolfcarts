@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import '../styles/globals.css'
 import { Providers } from '@/components/Providers'
+import { CurrencyProviderWrapper } from '@/components/CurrencyProviderWrapper'
 import JsonLd from '@/components/seo/JsonLd'
 import { ConditionalFooter } from '@/components/layout/ConditionalFooter'
 import { SessionProvider } from '@/components/SessionProvider'
@@ -101,13 +102,15 @@ export default async function RootLayout({
         />
         <SessionProvider>
           <Providers>
-            <div className="min-h-screen flex flex-col">
-              <HeaderServer />
-              <main className="flex-1">
-                {children}
-              </main>
-              <ConditionalFooter />
-            </div>
+            <CurrencyProviderWrapper>
+              <div className="min-h-screen flex flex-col">
+                <HeaderServer />
+                <main className="flex-1">
+                  {children}
+                </main>
+                <ConditionalFooter />
+              </div>
+            </CurrencyProviderWrapper>
           </Providers>
         </SessionProvider>
       </body>
