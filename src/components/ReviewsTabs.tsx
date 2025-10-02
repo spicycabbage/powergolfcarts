@@ -146,7 +146,7 @@ export function ReviewsTabs({ productId, htmlDescription, productName, productSl
                   <ReviewSchema 
                     reviews={reviews}
                     productName={productName}
-                    productUrl={`${typeof window !== 'undefined' ? window.location.origin : 'https://www.godbud.cc'}/products/${productSlug}`}
+                    productUrl={`${typeof window !== 'undefined' ? window.location.origin : 'https://www.insanitygolf.com'}/products/${productSlug}`}
                   />
                 )}
                 

@@ -2,10 +2,10 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Admin - Godbud.cc',
-    default: 'Admin - Godbud.cc',
+    template: '%s | Admin - Insanity Golf',
+    default: 'Admin - Insanity Golf',
   },
-  description: 'Admin panel for managing your ecommerce store',
+  description: 'Admin panel for managing your golf equipment store',
 }
 
 export default function AdminLayout({

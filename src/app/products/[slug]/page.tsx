@@ -199,8 +199,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
             itemCondition: 'https://schema.org/NewCondition',
             seller: {
               '@type': 'Organization',
-              '@id': 'https://www.godbud.cc/#organization',
-              name: 'Godbud.cc',
+              '@id': 'https://www.insanitygolf.com/#organization',
+              name: 'Insanity Golf',
               url: baseUrl
             },
             shippingDetails: {
