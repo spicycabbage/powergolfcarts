@@ -5,6 +5,12 @@ export interface Product {
   slug: string
   description: string
   shortDescription?: string
+  // Dual pricing for US and Canadian markets
+  priceUSD: number
+  priceCAD: number
+  originalPriceUSD?: number
+  originalPriceCAD?: number
+  // Legacy fields for backward compatibility
   price: number
   originalPrice?: number
   images: ProductImage[]
@@ -36,6 +42,12 @@ export interface ProductVariant {
   _id: string
   name: string
   value: string
+  // Dual pricing for variants
+  priceUSD: number
+  priceCAD: number
+  originalPriceUSD?: number
+  originalPriceCAD?: number
+  // Legacy fields for backward compatibility
   originalPrice?: number
   price?: number
   inventory: number

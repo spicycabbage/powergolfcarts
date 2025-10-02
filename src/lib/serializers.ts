@@ -20,6 +20,12 @@ export function serializeProductForClient(p: any) {
     slug: String(p.slug || ''),
     description: String(p.description || ''),
     shortDescription: String(p.shortDescription || ''),
+    // Dual pricing for US and Canadian markets
+    priceUSD: Number(p.priceUSD ?? p.price ?? 0),
+    priceCAD: Number(p.priceCAD ?? p.price ?? 0),
+    originalPriceUSD: p.originalPriceUSD != null ? Number(p.originalPriceUSD) : (p.originalPrice != null ? Number(p.originalPrice) : undefined),
+    originalPriceCAD: p.originalPriceCAD != null ? Number(p.originalPriceCAD) : (p.originalPrice != null ? Number(p.originalPrice) : undefined),
+    // Legacy fields for backward compatibility
     price: Number(p.price ?? 0),
     originalPrice: p.originalPrice != null ? Number(p.originalPrice) : undefined,
     images,
@@ -42,6 +48,12 @@ export function serializeProductForClient(p: any) {
           _id: String(v?._id || i),
           name: String(v?.name || ''),
           value: String(v?.value || ''),
+          // Dual pricing for variants
+          priceUSD: Number(v?.priceUSD ?? v?.price ?? 0),
+          priceCAD: Number(v?.priceCAD ?? v?.price ?? 0),
+          originalPriceUSD: v?.originalPriceUSD != null ? Number(v.originalPriceUSD) : (v?.originalPrice != null ? Number(v.originalPrice) : undefined),
+          originalPriceCAD: v?.originalPriceCAD != null ? Number(v.originalPriceCAD) : (v?.originalPrice != null ? Number(v.originalPrice) : undefined),
+          // Legacy fields for backward compatibility
           originalPrice: v?.originalPrice != null ? Number(v.originalPrice) : undefined,
           price: v?.price != null ? Number(v.price) : undefined,
           inventory: Number(v?.inventory || 0),
