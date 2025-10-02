@@ -73,7 +73,7 @@ export async function sendPasswordResetEmail(to: string, resetToken: string, fir
         <div class="content">
           <p>Hi ${firstName},</p>
           
-          <p>We received a request to reset your password for your Godbud.cc account. If you didn't make this request, you can safely ignore this email.</p>
+          <p>We received a request to reset your password for your Power Golf Carts account. If you didn't make this request, you can safely ignore this email.</p>
           
           <p>To reset your password, click the button below:</p>
           
@@ -90,10 +90,10 @@ export async function sendPasswordResetEmail(to: string, resetToken: string, fir
           
           <p>If you continue to have problems, please contact our support team.</p>
           
-          <p>Best regards,<br>The Godbud.cc Team</p>
+          <p>Best regards,<br>The Power Golf Carts Team</p>
         </div>
         <div class="footer">
-          <p>© ${new Date().getFullYear()} Godbud.cc. All rights reserved.</p>
+          <p>© ${new Date().getFullYear()} Power Golf Carts. All rights reserved.</p>
           <p>This is an automated message, please do not reply to this email.</p>
         </div>
       </div>
@@ -101,7 +101,7 @@ export async function sendPasswordResetEmail(to: string, resetToken: string, fir
     </html>
   `
 
-  await sendEmail(to, 'Reset Your Password - Godbud.cc', html)
+  await sendEmail(to, 'Reset Your Password - Power Golf Carts', html)
 }
 
 export async function sendPasswordResetConfirmation(to: string, firstName: string) {
@@ -132,21 +132,21 @@ export async function sendPasswordResetConfirmation(to: string, firstName: strin
             <strong>Your password has been successfully reset!</strong>
           </div>
           
-          <p>Your Godbud.cc account password was changed on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}.</p>
+          <p>Your Power Golf Carts account password was changed on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}.</p>
           
           <p>If you didn't make this change, please contact our support team immediately.</p>
           
           <p>You can now log in to your account with your new password.</p>
           
-          <p>Best regards,<br>The Godbud.cc Team</p>
+          <p>Best regards,<br>The Power Golf Carts Team</p>
         </div>
         <div class="footer">
-          <p>© ${new Date().getFullYear()} Godbud.cc. All rights reserved.</p>
+          <p>© ${new Date().getFullYear()} Power Golf Carts. All rights reserved.</p>
         </div>
       </div>
     </body>
     </html>
   `
 
-  await sendEmail(to, 'Password Reset Successful - Godbud.cc', html)
+  await sendEmail(to, 'Password Reset Successful - Power Golf Carts', html)
 }

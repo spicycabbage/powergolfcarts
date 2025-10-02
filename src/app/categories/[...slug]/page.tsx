@@ -35,11 +35,11 @@ export async function generateMetadata({ params }: CatchAllCategoryPageProps): P
   }
 
   if (!category) {
-    return { title: 'Category Not Found | Godbud.cc' }
+    return { title: 'Category Not Found | Power Golf Carts' }
   }
 
   return {
-    title: category.seo?.title || `${category.name} | Godbud.cc`,
+    title: category.seo?.title || `${category.name} | Power Golf Carts`,
     description: category.seo?.description || category.description || '',
     keywords: category.seo?.keywords || [],
     alternates: {

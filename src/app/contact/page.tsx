@@ -67,13 +67,13 @@ export default async function ContactPage() {
       </section>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-3 bg-white rounded-lg shadow-sm m-4">
           <div className="prose max-w-none text-gray-800 mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Get in Touch with Godbud.cc</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Get in Touch with Power Golf Carts</h2>
             
             <p className="text-lg leading-relaxed mb-6">
               We're here to help with all your golf cart-related questions and concerns. Whether you need product 
               recommendations, have questions about your order, or want to learn more about our services, our 
               knowledgeable customer service team is ready to assist you. We pride ourselves on providing prompt, 
-              helpful responses to ensure you have the best possible experience with Godbud.cc.
+              helpful responses to ensure you have the best possible experience with Power Golf Carts.
             </p>
             
             <h3 className="text-xl font-semibold text-gray-900 mb-4">How We Can Help</h3>

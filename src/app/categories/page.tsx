@@ -6,7 +6,7 @@ import { connectToDatabase } from '@/lib/mongodb'
 import Category from '@/lib/models/Category'
 
 export const metadata: Metadata = {
-  title: 'Categories | Godbud.cc',
+  title: 'Categories | Power Golf Carts',
   description: 'Browse our product categories and find exactly what you need.',
   alternates: {
     canonical: '/categories',

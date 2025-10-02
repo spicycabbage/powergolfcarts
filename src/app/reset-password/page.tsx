@@ -3,8 +3,8 @@ import { Suspense } from 'react'
 import ResetPasswordForm from '@/components/auth/ResetPasswordForm'
 
 export const metadata: Metadata = {
-  title: 'Reset Password | Godbud.cc',
-  description: 'Create a new password for your Godbud.cc account.',
+  title: 'Reset Password | Power Golf Carts',
+  description: 'Create a new password for your Power Golf Carts account.',
 }
 
 export default function ResetPasswordPage() {

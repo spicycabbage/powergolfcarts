@@ -64,11 +64,11 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   }
 
   if (!product) {
-    return { title: 'Product Not Found | Godbud.cc' }
+    return { title: 'Product Not Found | Power Golf Carts' }
   }
 
   return {
-    title: `${(product as any).name} | Godbud.cc`,
+    title: `${(product as any).name} | Power Golf Carts`,
     description: (product as any).shortDescription || (product as any).description || '',
     alternates: {
       canonical: `/products/${slug}`,
@@ -180,12 +180,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
             : [],
           brand: { 
             '@type': 'Brand', 
-            name: 'Godbud.cc',
+            name: 'Power Golf Carts',
             url: baseUrl
           },
           manufacturer: {
             '@type': 'Organization',
-            name: 'Godbud.cc',
+            name: 'Power Golf Carts',
             url: baseUrl
           },
           offers: {
