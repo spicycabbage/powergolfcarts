@@ -80,117 +80,46 @@ export function SimpleHeader() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
-            {/* Golf Clubs Dropdown */}
+            {/* Electric Carts Dropdown */}
             <div 
               className="relative"
-              onMouseEnter={() => setOpenDropdown('clubs')}
+              onMouseEnter={() => setOpenDropdown('electric-carts')}
               onMouseLeave={() => setOpenDropdown(null)}
             >
               <Link
-                href="/categories/golf-clubs"
+                href="/categories/electric-carts"
                 className="text-white hover:text-green-400 transition-colors font-medium flex items-center"
               >
-                Golf Clubs
+                Electric Carts
                 <ChevronDown 
                   size={16} 
                   className={`ml-1 transition-transform duration-200 ${
-                    openDropdown === 'clubs' ? 'rotate-180' : ''
+                    openDropdown === 'electric-carts' ? 'rotate-180' : ''
                   }`} 
                 />
               </Link>
-              {openDropdown === 'clubs' && (
+              {openDropdown === 'electric-carts' && (
                 <div className="absolute left-0 top-full z-50">
                   <div className="pt-2 bg-transparent">
                     <div className="bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[200px]">
-                      <Link href="/categories/drivers" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Drivers</Link>
-                      <Link href="/categories/irons" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Irons</Link>
-                      <Link href="/categories/putters" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Putters</Link>
-                      <Link href="/categories/wedges" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Wedges</Link>
+                      <Link href="/categories/ego-caddy" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Ego Caddy</Link>
+                      <Link href="/categories/robera" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Robera</Link>
+                      <Link href="/categories/tasmania" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Tasmania</Link>
+                      <Link href="/categories/volt-caddy" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Volt Caddy</Link>
                     </div>
                   </div>
                 </div>
               )}
             </div>
-
-            {/* Golf Balls - No Dropdown */}
-            <Link href="/categories/golf-balls" className="text-white hover:text-green-400 transition-colors font-medium">Golf Balls</Link>
 
             {/* Golf Bags - No Dropdown */}
             <Link href="/categories/golf-bags" className="text-white hover:text-green-400 transition-colors font-medium">Golf Bags</Link>
 
-            {/* Accessories Dropdown */}
-            <div 
-              className="relative"
-              onMouseEnter={() => setOpenDropdown('accessories')}
-              onMouseLeave={() => setOpenDropdown(null)}
-            >
-              <Link
-                href="/categories/accessories"
-                className="text-white hover:text-green-400 transition-colors font-medium flex items-center"
-              >
-                Accessories
-                <ChevronDown 
-                  size={16} 
-                  className={`ml-1 transition-transform duration-200 ${
-                    openDropdown === 'accessories' ? 'rotate-180' : ''
-                  }`} 
-                />
-              </Link>
-              {openDropdown === 'accessories' && (
-                <div className="absolute left-0 top-full z-50">
-                  <div className="pt-2 bg-transparent">
-                    <div className="bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[200px]">
-                      <Link href="/categories/gloves" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Gloves</Link>
-                      <Link href="/categories/tees" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Tees</Link>
-                      <Link href="/categories/towels" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Towels</Link>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+            {/* Accessories - No Dropdown */}
+            <Link href="/categories/accessories" className="text-white hover:text-green-400 transition-colors font-medium">Accessories</Link>
 
-            {/* Apparel - No Dropdown */}
-            <Link href="/categories/apparel" className="text-white hover:text-green-400 transition-colors font-medium">Apparel</Link>
-
-            {/* Bundles Dropdown */}
-            <div 
-              className="relative"
-              onMouseEnter={() => setOpenDropdown('bundles')}
-              onMouseLeave={() => setOpenDropdown(null)}
-            >
-              <Link
-                href="/bundles"
-                className="text-white hover:text-green-400 transition-colors font-medium flex items-center"
-              >
-                Bundles
-                <ChevronDown 
-                  size={16} 
-                  className={`ml-1 transition-transform duration-200 ${
-                    openDropdown === 'bundles' ? 'rotate-180' : ''
-                  }`} 
-                />
-              </Link>
-              {openDropdown === 'bundles' && (
-                <div className="absolute left-0 top-full z-50">
-                  <div className="pt-2 bg-transparent">
-                    <div className="bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[240px]">
-                      <Link href="/bundles/starter-set" className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">
-                        <span>Starter Set</span>
-                        <span className="text-green-600 font-medium">15% off</span>
-                      </Link>
-                      <Link href="/bundles/complete-set" className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">
-                        <span>Complete Set</span>
-                        <span className="text-green-600 font-medium">20% off</span>
-                      </Link>
-                      <Link href="/bundles/ball-pack" className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">
-                        <span>Golf Ball Pack</span>
-                        <span className="text-green-600 font-medium">10% off</span>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+            {/* Promotions - No Dropdown */}
+            <Link href="/promotions" className="text-white hover:text-green-400 transition-colors font-medium">Promotions</Link>
           </nav>
 
           {/* Right Side */}
@@ -238,43 +167,25 @@ export function SimpleHeader() {
       {isMenuOpen && (
         <div className="md:hidden bg-black border-t border-gray-700">
           <div className="px-4 py-4 space-y-4 max-h-[calc(100vh-64px)] overflow-y-auto">
-            {/* Golf Clubs */}
+            {/* Electric Carts */}
             <div>
-              <Link href="/categories/golf-clubs" className="block text-white hover:text-green-400 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Golf Clubs</Link>
+              <Link href="/categories/electric-carts" className="block text-white hover:text-green-400 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Electric Carts</Link>
               <div className="ml-4 space-y-1">
-                <Link href="/categories/drivers" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Drivers</Link>
-                <Link href="/categories/irons" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Irons</Link>
-                <Link href="/categories/putters" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Putters</Link>
-                <Link href="/categories/wedges" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Wedges</Link>
+                <Link href="/categories/ego-caddy" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Ego Caddy</Link>
+                <Link href="/categories/robera" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Robera</Link>
+                <Link href="/categories/tasmania" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Tasmania</Link>
+                <Link href="/categories/volt-caddy" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Volt Caddy</Link>
               </div>
             </div>
 
-            {/* Golf Balls & Bags */}
-            <Link href="/categories/golf-balls" className="block text-white hover:text-green-400 font-medium" onClick={() => setIsMenuOpen(false)}>Golf Balls</Link>
+            {/* Golf Bags */}
             <Link href="/categories/golf-bags" className="block text-white hover:text-green-400 font-medium" onClick={() => setIsMenuOpen(false)}>Golf Bags</Link>
 
             {/* Accessories */}
-            <div>
-              <Link href="/categories/accessories" className="block text-white hover:text-green-400 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Accessories</Link>
-              <div className="ml-4 space-y-1">
-                <Link href="/categories/gloves" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Gloves</Link>
-                <Link href="/categories/tees" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Tees</Link>
-                <Link href="/categories/towels" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Towels</Link>
-              </div>
-            </div>
+            <Link href="/categories/accessories" className="block text-white hover:text-green-400 font-medium" onClick={() => setIsMenuOpen(false)}>Accessories</Link>
 
-            {/* Apparel */}
-            <Link href="/categories/apparel" className="block text-white hover:text-green-400 font-medium" onClick={() => setIsMenuOpen(false)}>Apparel</Link>
-
-            {/* Bundles */}
-            <div>
-              <Link href="/bundles" className="block text-white hover:text-green-400 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Bundles</Link>
-              <div className="ml-4 space-y-1">
-                <Link href="/bundles/starter-set" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Starter Set | 15% off</Link>
-                <Link href="/bundles/complete-set" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Complete Set | 20% off</Link>
-                <Link href="/bundles/ball-pack" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Golf Ball Pack | 10% off</Link>
-              </div>
-            </div>
+            {/* Promotions */}
+            <Link href="/promotions" className="block text-white hover:text-green-400 font-medium" onClick={() => setIsMenuOpen(false)}>Promotions</Link>
 
             {/* Info links under categories for mobile (ordered, large touch targets) */}
             <div className="pt-2 border-t border-gray-700 space-y-1">
