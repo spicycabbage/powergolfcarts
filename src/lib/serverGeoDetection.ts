@@ -41,7 +41,7 @@ function mapCountryToLocation(countryCode: string): GeoLocation {
 export async function detectUserLocationServer(): Promise<GeoLocation> {
   try {
     // In server components, we can access headers
-    const headersList = headers()
+    const headersList = await headers()
     const cfCountry = headersList.get('cf-ipcountry')
     
     if (cfCountry) {
