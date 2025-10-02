@@ -10,33 +10,33 @@ import HeaderServer from '@/components/layout/HeaderServer'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Insanity Golf',
-  description: 'Premium electric golf caddies and E-Carts for effortless course navigation',
-  keywords: 'golf equipment, electric golf caddy, e-cart, golf accessories, golf gear',
-  authors: [{ name: 'Insanity Golf' }],
-  creator: 'Insanity Golf',
-  publisher: 'Insanity Golf',
+  title: 'Power Golf Carts',
+  description: 'Premium electric golf carts and golf equipment for effortless course navigation',
+  keywords: 'electric golf carts, golf carts, golf equipment, golf accessories, golf gear, golf cart parts',
+  authors: [{ name: 'Power Golf Carts' }],
+  creator: 'Power Golf Carts',
+  publisher: 'Power Golf Carts',
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://www.insanitygolf.ca'),
+  metadataBase: new URL('https://www.powergolfcarts.com'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://www.insanitygolf.ca',
-    title: 'Insanity Golf',
-    description: 'Premium electric golf caddies and E-Carts for effortless course navigation',
-    siteName: 'Insanity Golf',
+    url: 'https://www.powergolfcarts.com',
+    title: 'Power Golf Carts',
+    description: 'Premium electric golf carts and golf equipment for effortless course navigation',
+    siteName: 'Power Golf Carts',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Insanity Golf',
-    description: 'Premium electric golf caddies and E-Carts for effortless course navigation',
+    title: 'Power Golf Carts',
+    description: 'Premium electric golf carts and golf equipment for effortless course navigation',
   },
   robots: {
     index: true,
@@ -67,11 +67,11 @@ export default async function RootLayout({
             {
               '@context': 'https://schema.org',
               '@type': 'Organization',
-              '@id': 'https://www.insanitygolf.com/#organization',
-              name: 'Insanity Golf',
-              url: 'https://www.insanitygolf.com',
-              logo: 'https://www.insanitygolf.com/favicon.ico',
-              description: 'Premium golf equipment and accessories',
+              '@id': 'https://www.powergolfcarts.com/#organization',
+              name: 'Power Golf Carts',
+              url: 'https://www.powergolfcarts.com',
+              logo: 'https://www.powergolfcarts.com/power-golf-carts-black-2.jpg',
+              description: 'Premium electric golf carts and golf equipment',
               address: {
                 '@type': 'PostalAddress',
                 addressCountry: 'US'
@@ -80,19 +80,19 @@ export default async function RootLayout({
             {
               '@context': 'https://schema.org',
               '@type': 'WebSite',
-              '@id': 'https://www.insanitygolf.com/#website',
-              name: 'Insanity Golf - Premium Golf Equipment',
-              alternateName: 'Insanity Golf',
-              url: 'https://www.insanitygolf.com',
-              description: 'Premium golf equipment and accessories',
+              '@id': 'https://www.powergolfcarts.com/#website',
+              name: 'Power Golf Carts - Premium Electric Golf Carts',
+              alternateName: 'Power Golf Carts',
+              url: 'https://www.powergolfcarts.com',
+              description: 'Premium electric golf carts and golf equipment',
               publisher: {
-                '@id': 'https://www.insanitygolf.com/#organization'
+                '@id': 'https://www.powergolfcarts.com/#organization'
               },
               potentialAction: {
                 '@type': 'SearchAction',
                 target: {
                   '@type': 'EntryPoint',
-                  urlTemplate: 'https://www.insanitygolf.com/categories?search={search_term_string}'
+                  urlTemplate: 'https://www.powergolfcarts.com/categories?search={search_term_string}'
                 },
                 'query-input': 'required name=search_term_string'
               }

@@ -13,8 +13,8 @@ export default function ProductsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white border-b border-gray-200 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-        <h1 className="text-3xl font-bold text-gray-900">All Golf Products</h1>
-        <p className="text-gray-700 mt-0.5">Discover our complete golf equipment catalog</p>
+        <h1 className="text-3xl font-bold text-gray-900">All Golf Cart Products</h1>
+        <p className="text-gray-700 mt-0.5">Discover our complete electric golf cart and equipment catalog</p>
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -23,14 +23,14 @@ export default function ProductsPage() {
         {/* Comprehensive Product Information Section - Lazy Loaded */}
         <section className="mt-16 bg-white rounded-lg p-8 shadow-sm max-w-4xl mx-auto" style={{ contentVisibility: 'auto' }}>
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Complete Golf Equipment Catalog - Premium Golf Products Online
+              Complete Electric Golf Cart Catalog - Premium Golf Cart Products Online
             </h2>
             
             <div className="prose max-w-none text-gray-700">
               <p className="text-lg leading-relaxed mb-6">
-                Welcome to Canada's most comprehensive online golf equipment catalog, featuring premium golf products 
-                from trusted manufacturers. Our extensive selection includes electric golf caddies, clubs, balls, 
-                bags, accessories, and training aids - everything you need for your golf journey.
+                Welcome to Canada's most comprehensive online electric golf cart catalog, featuring premium golf cart products 
+                from trusted manufacturers. Our extensive selection includes electric golf carts, golf equipment, 
+                accessories, and parts - everything you need for your golf cart journey.
               </p>
 
               <div className="grid md:grid-cols-2 gap-8 mb-8">

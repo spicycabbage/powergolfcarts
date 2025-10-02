@@ -13,22 +13,22 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   
   if (tag) {
     const tagTitle = tag.charAt(0).toUpperCase() + tag.slice(1)
-    return {
-      title: `${tagTitle} Posts | Insanity Golf Blog`,
-      description: `Latest posts about ${tagTitle.toLowerCase()} in golf`,
-      alternates: {
-        canonical: `/blog?tag=${tag}`,
-      },
-    }
+      return {
+        title: `${tagTitle} Posts | Power Golf Carts Blog`,
+        description: `Latest posts about ${tagTitle.toLowerCase()} in golf`,
+        alternates: {
+          canonical: `/blog?tag=${tag}`,
+        },
+      }
   }
   
-  return {
-    title: 'Blog | Insanity Golf',
-    description: 'Latest updates, guides, and news about golf and electric golf caddies',
-    alternates: {
-      canonical: '/blog',
-    },
-  }
+    return {
+      title: 'Blog | Power Golf Carts',
+      description: 'Latest updates, guides, and news about electric golf carts and golf equipment',
+      alternates: {
+        canonical: '/blog',
+      },
+    }
 }
 
 export default async function BlogIndex({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {

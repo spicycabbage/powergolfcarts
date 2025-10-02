@@ -55,10 +55,10 @@ export const IMAGE_CONFIG = {
 
 // SEO Configuration
 export const SEO_CONFIG = {
-  DEFAULT_TITLE: 'Insanity Golf - Premium Golf Equipment & Gear',
-  DEFAULT_DESCRIPTION: 'Shop premium golf clubs, balls, accessories, and apparel. Quality golf equipment for players of all skill levels.',
-  SITE_NAME: 'Insanity Golf',
-  DOMAIN: 'https://www.insanitygolf.com',
+  DEFAULT_TITLE: 'Power Golf Carts - Premium Electric Golf Carts & Equipment',
+  DEFAULT_DESCRIPTION: 'Shop premium electric golf carts, golf equipment, and accessories. Quality golf carts and gear for players of all skill levels.',
+  SITE_NAME: 'Power Golf Carts',
+  DOMAIN: 'https://www.powergolfcarts.com',
   DEFAULT_IMAGE: '/og-image.jpg',
   MAX_TITLE_LENGTH: 60,
   MAX_DESCRIPTION_LENGTH: 160

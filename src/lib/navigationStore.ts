@@ -31,13 +31,13 @@ function sanitizeNavigation(doc: any | null): INavigationConfig {
 export const defaultNavigation: INavigationConfig = {
   header: {
     logo: {
-      text: 'Insanity Golf',
+      text: 'Power Golf Carts',
       href: '/',
-      image: '',
-      useImage: false,
+      image: '/power-golf-carts-black-2.jpg',
+      useImage: true,
     },
     banner: {
-      text: 'Free shipping on orders over $100! Premium golf equipment delivered to your door',
+      text: 'Free shipping on orders over $100! Premium electric golf carts delivered to your door',
       isActive: true,
     },
   },
