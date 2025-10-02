@@ -18,8 +18,8 @@ const faqData = [
     answerFr: "Oui, pour la plupart des colis traçables, les informations de suivi sont envoyées par courrier électronique une fois l'expédition confirmée."
   },
   {
-    question: "How does Insanity Golf E-Cart slow down or stop on a hill?",
-    questionFr: "Comment Insanity Golf E-Cart ralentit-il ou s'arrête-t-il sur une colline?",
+    question: "How does Power Golf Carts E-Cart slow down or stop on a hill?",
+    questionFr: "Comment Power Golf Carts E-Cart ralentit-il ou s'arrête-t-il sur une colline?",
     answer: "These E-Carts have down hills slope control, they will slow down by themselves when they go down of the hills. Or you can use hand dial or remote control to slow or stop your E-Cart.",
     answerFr: "Ces E-Carts disposent d'un contrôle de pente en descente, ils ralentiront d'eux-mêmes lorsqu'ils descendent les collines. Ou vous pouvez utiliser une molette ou une télécommande pour ralentir ou arrêter votre E-Cart."
   },

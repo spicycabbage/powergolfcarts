@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { ProductList } from '@/components/ProductList'
 
 export const metadata: Metadata = {
-  title: 'Products | Insanity Golf',
+  title: 'Products | Power Golf Carts',
   description: 'Browse our complete golf equipment catalog with advanced filtering and search.',
   alternates: {
     canonical: '/products',

@@ -8,7 +8,7 @@ export function Introduction() {
           Your Trusted Golf Equipment Retailer
         </h2>
         <p className="text-gray-600 leading-relaxed mb-6">
-          Insanity Golf's mission is to provide golfers with a reliable platform to shop premium golf equipment at competitive prices. Working directly with leading golf brands, we ensure that any product you order — from our selection of clubs to golf balls, bags, accessories, and apparel — is of top quality.
+          Power Golf Carts' mission is to provide golfers with a reliable platform to shop premium golf cart equipment at competitive prices. Working directly with leading golf cart manufacturers, we ensure that any product you order — from our selection of electric golf carts to accessories, parts, and equipment — is of top quality.
         </p>
         <p className="text-gray-600 leading-relaxed mb-8">
           We pride ourselves on building long-lasting relationships with our customers. If you're looking for a trusted online retailer to purchase high-quality golf equipment, look no further and join our community today.

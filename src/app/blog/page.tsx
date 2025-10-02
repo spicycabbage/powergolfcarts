@@ -130,7 +130,7 @@ export default async function BlogIndex({ searchParams }: { searchParams: Promis
             {tag ? (
               <>
                 <p>
-                  Understanding {tag.toLowerCase()} in golf requires comprehensive knowledge of how different equipment, techniques, and course conditions interact to create optimal playing experiences. At Insanity Golf, we've compiled extensive research and expert insights to help golfers make informed decisions about {tag.toLowerCase()}-related equipment and playing strategies.
+                  Understanding {tag.toLowerCase()} in golf requires comprehensive knowledge of how different equipment, techniques, and course conditions interact to create optimal playing experiences. At Power Golf Carts, we've compiled extensive research and expert insights to help golfers make informed decisions about {tag.toLowerCase()}-related equipment and playing strategies.
                 </p>
                 <p>
                   The science behind {tag.toLowerCase()} and golf involves complex interactions between club technology, ball physics, swing mechanics, and course conditions. Our detailed articles explore how {tag.toLowerCase()} manifests differently across various golf equipment and playing styles, providing practical guidance for both recreational and competitive golfers.
@@ -157,7 +157,7 @@ export default async function BlogIndex({ searchParams }: { searchParams: Promis
             ) : (
               <>
                 <p>
-                  Golf education encompasses understanding the complex relationships between equipment technology, swing mechanics, course management, and individual playing factors that determine performance outcomes. At Insanity Golf, we provide comprehensive information about golf science, equipment selection, playing techniques, and course strategies to help golfers make informed decisions about their golf journey.
+                  Golf education encompasses understanding the complex relationships between equipment technology, swing mechanics, course management, and individual playing factors that determine performance outcomes. At Power Golf Carts, we provide comprehensive information about golf science, equipment selection, playing techniques, and course strategies to help golfers make informed decisions about their golf journey.
                 </p>
                 <p>
                   Modern golf equipment incorporates advanced materials and engineering to optimize performance across different playing conditions. Club technology focuses on maximizing ball speed, improving accuracy, and enhancing forgiveness, while ball design emphasizes distance, control, and feel. Understanding these technological innovations helps golfers select equipment that matches their playing style and skill level.

@@ -35,7 +35,7 @@ export function Footer() {
 
           {/* About Insanity Golf */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-white">About Insanity Golf</h3>
+            <h3 className="text-lg font-semibold mb-4 text-white">About Power Golf Carts</h3>
             <div className="space-y-2 text-gray-300">
               <Link href="/about" className="block hover:text-white">About Us</Link>
               <Link href="/reviews" className="block hover:text-white">Our Reviews</Link>
@@ -76,9 +76,9 @@ export function Footer() {
 
         <div className="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
-            <Link href="/" className="text-2xl font-bold text-white mb-2 block">Insanity Golf</Link>
-            <p className="text-gray-400 text-sm">© {currentYear} by Insanity Golf. All rights reserved.</p>
-            <p className="text-gray-500 text-xs mt-1">Insanity Golf has copyright for all the photos and videos.</p>
+            <Link href="/" className="text-2xl font-bold text-white mb-2 block">Power Golf Carts</Link>
+            <p className="text-gray-400 text-sm">© {currentYear} by Power Golf Carts. All rights reserved.</p>
+            <p className="text-gray-500 text-xs mt-1">Power Golf Carts has copyright for all the photos and videos.</p>
           </div>
           <img 
             src="/trust-badges.webp" 

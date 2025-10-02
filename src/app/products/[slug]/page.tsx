@@ -200,7 +200,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             seller: {
               '@type': 'Organization',
               '@id': 'https://www.insanitygolf.com/#organization',
-              name: 'Insanity Golf',
+              name: 'Power Golf Carts',
               url: baseUrl
             },
             shippingDetails: {

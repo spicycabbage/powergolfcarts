@@ -12,8 +12,8 @@ import { Introduction } from '@/components/Introduction'
 import JsonLd from '@/components/seo/JsonLd'
 
 export const metadata: Metadata = {
-  title: 'Insanity Golf - Premium Golf Equipment & Gear Online',
-  description: "Shop premium golf clubs, balls, accessories, and apparel at Insanity Golf. Quality equipment for golfers of all skill levels with fast shipping.",
+  title: 'Power Golf Carts - Premium Electric Golf Carts & Equipment Online',
+  description: "Shop premium electric golf carts, accessories, and equipment at Power Golf Carts. Quality golf cart products for golfers of all skill levels with fast shipping.",
   keywords: 'golf equipment, golf clubs, golf balls, golf gear, golf accessories, golf apparel, online golf store',
   // Remove other metadata - we'll handle preloading differently
 }
@@ -28,7 +28,7 @@ export default function HomePage() {
             '@context': 'https://schema.org',
             '@type': 'Store',
             '@id': 'https://www.insanitygolf.com/#store',
-            name: 'Insanity Golf',
+            name: 'Power Golf Carts',
             description: "Premium golf equipment and accessories for golfers of all skill levels",
             url: 'https://www.insanitygolf.com',
             telephone: '+1-800-GOLF',
@@ -129,7 +129,7 @@ export default function HomePage() {
         </p>
         <div className="max-w-3xl mx-auto">
             <p className="text-gray-700 text-sm leading-relaxed mb-4">
-              Insanity Golf has been dedicated to providing golfers of all skill levels with premium equipment and expert guidance. 
+              Power Golf Carts has been dedicated to providing golfers of all skill levels with premium electric golf cart equipment and expert guidance. 
               Our commitment to quality, competitive pricing, and exceptional customer service has made us a trusted destination 
               for golfers looking to improve their game. Join thousands of satisfied customers who rely on us for their golf needs.
             </p>
@@ -140,10 +140,10 @@ export default function HomePage() {
               leading golf brands guarantee that you receive authentic, tour-tested equipment that delivers results.
             </p>
             <p className="text-gray-700 text-sm leading-relaxed">
-              Shopping with Insanity Golf means accessing a comprehensive selection of golf equipment with the convenience 
+              Shopping with Power Golf Carts means accessing a comprehensive selection of electric golf cart equipment with the convenience 
               of online ordering and fast shipping. Our knowledgeable customer service team is always available to help you 
               find the perfect equipment for your game, whether you're a beginner, weekend warrior, or competitive player. 
-              Experience the difference that quality, service, and expertise make when you choose Insanity Golf.
+              Experience the difference that quality, service, and expertise make when you choose Power Golf Carts.
             </p>
         </div>
       </section>

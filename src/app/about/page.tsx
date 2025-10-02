@@ -67,10 +67,10 @@ export default async function AboutPage() {
       </section>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-3 bg-white rounded-lg shadow-sm m-4">
           <div className="prose max-w-none text-gray-800">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">About Insanity Golf - Premium Electric Golf Caddies</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">About Power Golf Carts - Premium Electric Golf Carts</h2>
             
             <p className="text-lg leading-relaxed mb-6">
-              Insanity Golf has been revolutionizing the golfing experience with our innovative electric golf caddies and E-Carts. 
+              Power Golf Carts has been revolutionizing the golfing experience with our innovative electric golf carts and equipment. 
               We've built our reputation on three core principles: cutting-edge technology, exceptional customer 
               service, and reliable products that enhance your golf game. Our mission is to make golf more 
               enjoyable and accessible for players of all skill levels.

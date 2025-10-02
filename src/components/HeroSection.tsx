@@ -9,7 +9,7 @@ export function HeroSection() {
       <div className="absolute inset-0">
         <Image
           src="/electric-power-golf-caddy.jpg"
-          alt="Electric Power Golf Caddy - Insanity Golf E-Carts"
+          alt="Electric Power Golf Cart - Power Golf Carts"
           fill
           className="object-cover"
           priority
@@ -20,7 +20,7 @@ export function HeroSection() {
       <div className="relative h-full flex items-center justify-center px-4 sm:px-6 lg:px-8 text-center">
         <div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
-            Insanity Golf E-Carts
+            Power Golf Carts
             <span className="block text-green-200">Power Your Game</span>
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-green-100 mb-6 sm:mb-8 max-w-xs sm:max-w-sm md:max-w-lg mx-auto">
