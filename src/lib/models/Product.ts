@@ -267,10 +267,13 @@ ProductSchema.index({ createdAt: -1 })
 // Speed up sort by name (asc/desc)
 ProductSchema.index({ name: 1 })
 
-// Virtual for discount percentage
+// Virtual for discount percentage (using USD pricing as default)
 ProductSchema.virtual('discountPercentage').get(function() {
-  if (this.originalPrice && this.originalPrice > this.price) {
-    return Math.round(((this.originalPrice - this.price) / this.originalPrice) * 100)
+  const originalPrice = this.originalPriceUSD || this.originalPrice
+  const currentPrice = this.priceUSD || this.price
+  
+  if (originalPrice && currentPrice && originalPrice > currentPrice) {
+    return Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
   }
   return 0
 })
