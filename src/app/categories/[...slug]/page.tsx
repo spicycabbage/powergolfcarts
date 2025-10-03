@@ -64,11 +64,19 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
     }
 
     if (!category) {
+      console.error(`Category not found for slug: ${lastSlug}`)
       return notFound()
     }
 
   // --- Breadcrumb Data Fetching and Formatting ---
-  const breadcrumbData = await Category.getBreadcrumbs(String(category._id));
+  let breadcrumbData: any[] = []
+  try {
+    breadcrumbData = await Category.getBreadcrumbs(String(category._id))
+  } catch (breadcrumbError) {
+    console.error(`Breadcrumb generation failed for category ${category._id}:`, breadcrumbError)
+    // Fallback: just use the current category
+    breadcrumbData = [{ _id: category._id, name: category.name, slug: category.slug }]
+  }
   const breadcrumbItems = breadcrumbData.map((segment) => ({
     name: segment.name,
     href: `/categories/${segment.slug}`,
