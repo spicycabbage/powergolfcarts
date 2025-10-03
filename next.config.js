@@ -32,6 +32,7 @@ module.exports = (phase) => {
     },
     env: {
       MONGODB_URI: process.env.MONGODB_URI,
+      MONGODB_DB: process.env.MONGODB_DB,
       SUPABASE_URL: process.env.SUPABASE_URL,
       SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
       STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
