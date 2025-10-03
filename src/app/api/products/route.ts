@@ -13,6 +13,7 @@ import {
 } from '@/utils/apiResponse'
 import { isUsingDataApi, findMany as dataFindMany, count as dataCount, insertOne as dataInsertOne, findOne as dataFindOne } from '@/lib/dataApi'
 import { addProductVirtuals } from '@/lib/utils/product'
+import mongoose from 'mongoose'
 
 // GET /api/products - Get all products with filtering and pagination
 export async function GET(request: NextRequest) {
@@ -62,15 +63,21 @@ export async function GET(request: NextRequest) {
     if (category) {
       if (category.includes(',')) {
         // Multiple categories
-        const categoryIds = category.split(',')
+        const categoryIds = category.split(',').map(id => 
+          mongoose.Types.ObjectId.isValid(id) ? new mongoose.Types.ObjectId(id) : id
+        )
         query.$or = [
           { category: { $in: categoryIds } },
           { categories: { $in: categoryIds } }
         ]
       } else {
+        // Convert to ObjectId if it's a valid ObjectId string
+        const categoryValue = mongoose.Types.ObjectId.isValid(category) 
+          ? new mongoose.Types.ObjectId(category) 
+          : category
         query.$or = [
-          { category: category },
-          { categories: category }
+          { category: categoryValue },
+          { categories: categoryValue }
         ]
       }
     }
