@@ -19,6 +19,8 @@ export async function POST(request: NextRequest) {
           currency: 'usd',
           product_data: { name },
           unit_amount: unitAmount,
+          // US sales tax will be calculated automatically by Stripe Tax
+          tax_behavior: 'exclusive',
         },
         quantity,
       }
@@ -29,8 +31,12 @@ export async function POST(request: NextRequest) {
       payment_method_types: ['card'],
       line_items,
       customer_email: shipping?.email || undefined,
+      // Enable automatic tax calculation (configure jurisdictions in Stripe Tax dashboard)
+      automatic_tax: { enabled: true },
+      // Create/attach a Stripe Customer so address persists for tax
+      customer_creation: 'always',
       shipping_address_collection: {
-        allowed_countries: ['US', 'CA', 'GB', 'AU', 'NZ']
+        allowed_countries: ['US', 'CA']
       },
       shipping_options: selectedShipping && typeof selectedShipping.price === 'number'
         ? [
@@ -39,6 +45,9 @@ export async function POST(request: NextRequest) {
                 type: 'fixed_amount',
                 fixed_amount: { amount: Math.round(Number(selectedShipping.price) * 100), currency: 'usd' },
                 display_name: selectedShipping.name || 'Shipping',
+                // Ensure shipping is taxed according to the destination rules
+                tax_behavior: 'exclusive',
+                tax_code: 'txcd_920100',
               }
             }
           ]

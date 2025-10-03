@@ -26,7 +26,7 @@ export default function CheckoutPage() {
     city: '',
     state: '',
     postalCode: '',
-    country: 'CA',
+    country: 'US',
   })
   const [shippingConfig, setShippingConfig] = useState<{
     methods: Array<{ name: string, price: number, freeThreshold?: number, sortOrder?: number, isActive?: boolean }>
@@ -343,7 +343,7 @@ export default function CheckoutPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-700 mb-1">State/Province</label>
+                    <label className="block text-sm text-gray-700 mb-1">{shipping.country === 'US' ? 'State' : 'State/Province'}</label>
                     {shipping.country === 'CA' ? (
                       <select
                         value={shipping.state}
@@ -365,6 +365,65 @@ export default function CheckoutPage() {
                         <option value="SK">Saskatchewan</option>
                         <option value="YT">Yukon</option>
                       </select>
+                    ) : shipping.country === 'US' ? (
+                      <select
+                        value={shipping.state}
+                        onChange={(e) => setShipping(s => ({ ...s, state: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      >
+                        <option value="">Select state</option>
+                        <option value="AL">Alabama</option>
+                        <option value="AK">Alaska</option>
+                        <option value="AZ">Arizona</option>
+                        <option value="AR">Arkansas</option>
+                        <option value="CA">California</option>
+                        <option value="CO">Colorado</option>
+                        <option value="CT">Connecticut</option>
+                        <option value="DE">Delaware</option>
+                        <option value="DC">District of Columbia</option>
+                        <option value="FL">Florida</option>
+                        <option value="GA">Georgia</option>
+                        <option value="HI">Hawaii</option>
+                        <option value="ID">Idaho</option>
+                        <option value="IL">Illinois</option>
+                        <option value="IN">Indiana</option>
+                        <option value="IA">Iowa</option>
+                        <option value="KS">Kansas</option>
+                        <option value="KY">Kentucky</option>
+                        <option value="LA">Louisiana</option>
+                        <option value="ME">Maine</option>
+                        <option value="MD">Maryland</option>
+                        <option value="MA">Massachusetts</option>
+                        <option value="MI">Michigan</option>
+                        <option value="MN">Minnesota</option>
+                        <option value="MS">Mississippi</option>
+                        <option value="MO">Missouri</option>
+                        <option value="MT">Montana</option>
+                        <option value="NE">Nebraska</option>
+                        <option value="NV">Nevada</option>
+                        <option value="NH">New Hampshire</option>
+                        <option value="NJ">New Jersey</option>
+                        <option value="NM">New Mexico</option>
+                        <option value="NY">New York</option>
+                        <option value="NC">North Carolina</option>
+                        <option value="ND">North Dakota</option>
+                        <option value="OH">Ohio</option>
+                        <option value="OK">Oklahoma</option>
+                        <option value="OR">Oregon</option>
+                        <option value="PA">Pennsylvania</option>
+                        <option value="RI">Rhode Island</option>
+                        <option value="SC">South Carolina</option>
+                        <option value="SD">South Dakota</option>
+                        <option value="TN">Tennessee</option>
+                        <option value="TX">Texas</option>
+                        <option value="UT">Utah</option>
+                        <option value="VT">Vermont</option>
+                        <option value="VA">Virginia</option>
+                        <option value="WA">Washington</option>
+                        <option value="WV">West Virginia</option>
+                        <option value="WI">Wisconsin</option>
+                        <option value="WY">Wyoming</option>
+                      </select>
                     ) : (
                       <input
                         type="text"
@@ -375,7 +434,7 @@ export default function CheckoutPage() {
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-700 mb-1">Postal code</label>
+                    <label className="block text-sm text-gray-700 mb-1">{shipping.country === 'US' ? 'ZIP code' : 'Postal code'}</label>
                     <input
                       type="text"
                       value={shipping.postalCode}
@@ -390,11 +449,8 @@ export default function CheckoutPage() {
                       onChange={(e) => setShipping(s => ({ ...s, country: e.target.value }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary-500"
                     >
-                      <option value="CA">Canada</option>
                       <option value="US">United States</option>
-                      <option value="GB">United Kingdom</option>
-                      <option value="AU">Australia</option>
-                      <option value="NZ">New Zealand</option>
+                      <option value="CA">Canada</option>
                     </select>
                   </div>
                 </div>
@@ -434,7 +490,11 @@ export default function CheckoutPage() {
                     <span className="text-gray-600">Shipping</span>
                     <span className="text-gray-900">{computedShippingCost === 0 ? 'Free' : `$${computedShippingCost.toFixed(2)}`}</span>
                   </div>
-                  {/* Tax row removed: prices include tax */}
+                  {/* Tax is calculated at Stripe Checkout based on destination */}
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>Sales tax</span>
+                    <span>Calculated at checkout</span>
+                  </div>
                   <div className="border-t border-gray-200 pt-4">
                     <div className="flex justify-between text-lg font-medium">
                       <span className="text-gray-900">Total</span>

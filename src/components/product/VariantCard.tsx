@@ -8,20 +8,11 @@ import { ShoppingCart } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { ProductRating } from '@/components/ProductRating'
 import ProductBadge from './ProductBadge'
-import ProductPrice from '@/components/ProductPrice'
-import { formatPrice } from '@/lib/geoDetection'
-import { useCurrentCurrency } from '@/contexts/CurrencyContext'
 
 type Variant = {
   _id?: string
   name?: string
   value?: string
-  // Dual pricing for variants
-  priceUSD?: number
-  priceCAD?: number
-  originalPriceUSD?: number
-  originalPriceCAD?: number
-  // Legacy fields for backward compatibility
   price?: number
   originalPrice?: number
   sku?: string
@@ -45,12 +36,6 @@ type CardProduct = {
   name: string
   slug: string
   images?: any[]
-  // Dual pricing for US and Canadian markets
-  priceUSD?: number
-  priceCAD?: number
-  originalPriceUSD?: number
-  originalPriceCAD?: number
-  // Legacy fields for backward compatibility
   price?: number
   originalPrice?: number
   averageRating?: number
@@ -63,7 +48,6 @@ type CardProduct = {
 export default function VariantCard({ product, priority = false }: { product: CardProduct, priority?: boolean }) {
   const { addItem } = useCart()
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null)
-  const currency = useCurrentCurrency()
 
   // Auto-select first variant if none selected
   const effectiveVariantId = selectedVariantId || (Array.isArray(product.variants) && product.variants.length > 0 ? String(product.variants[0]._id) : null)
@@ -91,38 +75,15 @@ export default function VariantCard({ product, priority = false }: { product: Ca
   const onAdd = () => {
     console.log('🔍 VARIANT DEBUG:')
     console.log('Selected Variant:', selectedVariant)
-    console.log('Current Currency:', currency)
+    console.log('Variant price:', selectedVariant?.price)
+    console.log('Variant originalPrice:', selectedVariant?.originalPrice)
+    console.log('Product price:', product.price)
     
-    // Get the appropriate price based on currency
-    const getEffectivePrice = (variant: any, product: any, currency: string) => {
-      if (variant) {
-        if (currency === 'CAD') {
-          return variant.originalPriceCAD != null && Number(variant.originalPriceCAD) > 0
-            ? variant.originalPriceCAD
-            : (variant.priceCAD != null && Number(variant.priceCAD) > 0
-                ? variant.priceCAD
-                : (product.priceCAD != null ? product.priceCAD : 0))
-        } else {
-          return variant.originalPriceUSD != null && Number(variant.originalPriceUSD) > 0
-            ? variant.originalPriceUSD
-            : (variant.priceUSD != null && Number(variant.priceUSD) > 0
-                ? variant.priceUSD
-                : (product.priceUSD != null ? product.priceUSD : 0))
-        }
-      } else {
-        if (currency === 'CAD') {
-          return product.originalPriceCAD != null && Number(product.originalPriceCAD) > 0
-            ? product.originalPriceCAD
-            : (product.priceCAD != null ? product.priceCAD : 0)
-        } else {
-          return product.originalPriceUSD != null && Number(product.originalPriceUSD) > 0
-            ? product.originalPriceUSD
-            : (product.priceUSD != null ? product.priceUSD : 0)
-        }
-      }
-    }
-    
-    const effectivePrice = getEffectivePrice(selectedVariant, product, currency)
+    const effectivePrice = selectedVariant?.originalPrice && Number(selectedVariant.originalPrice) > 0
+      ? selectedVariant.originalPrice
+      : (selectedVariant?.price && Number(selectedVariant.price) > 0
+          ? selectedVariant.price
+          : product.price)
     
     console.log('Effective price chosen:', effectivePrice)
     
@@ -132,7 +93,7 @@ export default function VariantCard({ product, priority = false }: { product: Ca
           name: String(selectedVariant.name || ''),
           value: String(selectedVariant.value || ''),
           price: effectivePrice,
-          originalPrice: currency === 'CAD' ? selectedVariant.originalPriceCAD : selectedVariant.originalPriceUSD,
+          originalPrice: selectedVariant.originalPrice,
           sku: String(selectedVariant.sku || ''),
           inventory: Number(selectedVariant.inventory || 0),
         }
@@ -144,8 +105,8 @@ export default function VariantCard({ product, priority = false }: { product: Ca
         slug: String(product.slug || ''),
         description: '',
         shortDescription: '',
-        price: effectivePrice,
-        originalPrice: currency === 'CAD' ? product.originalPriceCAD : product.originalPriceUSD,
+        price: Number(product.price || 0) as any,
+        originalPrice: product.originalPrice as any,
         images: [
           {
             _id: '0' as any,
@@ -244,24 +205,11 @@ export default function VariantCard({ product, priority = false }: { product: Ca
               {product.variants.map((v, idx) => {
                 const isSelected = String(effectiveVariantId) === String((v as any)._id)
                 const disabled = Number((v as any).inventory || 0) <= 0
-                // Get the appropriate price based on currency
-                const getVariantPrice = (variant: any, currency: string) => {
-                  if (currency === 'CAD') {
-                    return variant.originalPriceCAD != null && Number(variant.originalPriceCAD) > 0
-                      ? Number(variant.originalPriceCAD)
-                      : (variant.priceCAD != null && Number(variant.priceCAD) > 0
-                          ? Number(variant.priceCAD)
-                          : (product.priceCAD != null ? Number(product.priceCAD) : NaN))
-                  } else {
-                    return variant.originalPriceUSD != null && Number(variant.originalPriceUSD) > 0
-                      ? Number(variant.originalPriceUSD)
-                      : (variant.priceUSD != null && Number(variant.priceUSD) > 0
-                          ? Number(variant.priceUSD)
-                          : (product.priceUSD != null ? Number(product.priceUSD) : NaN))
-                  }
-                }
-                
-                const priceNum = getVariantPrice(v, currency)
+                const priceNum = (v as any).originalPrice != null && Number((v as any).originalPrice) > 0
+                  ? Number((v as any).originalPrice)
+                  : ((v as any).price != null && Number((v as any).price) > 0
+                      ? Number((v as any).price)
+                      : (product.price != null ? Number(product.price) : NaN))
                 const label = String(v.value || '').trim()
                 return (
                   <button
@@ -273,7 +221,7 @@ export default function VariantCard({ product, priority = false }: { product: Ca
                   >
                     <div className="flex items-center justify-between">
                       <span className="truncate">{label}</span>
-                      <span className="font-medium">{Number.isFinite(priceNum) ? formatPrice(priceNum, currency as any) : '—'}</span>
+                      <span className="font-medium">{Number.isFinite(priceNum) ? `$${priceNum.toFixed(2)}` : '—'}</span>
                     </div>
                     {disabled && <span className="text-[10px] text-red-600">Out of stock</span>}
                   </button>
@@ -283,7 +231,16 @@ export default function VariantCard({ product, priority = false }: { product: Ca
           </div>
         ) : (
           <div className="mb-3 text-center">
-            <ProductPrice product={product as any} size="md" />
+            <span className="text-lg font-bold text-gray-900">
+              {product.originalPrice && product.originalPrice > (product.price || 0) ? (
+                <>
+                  <span className="line-through text-gray-500 mr-2">${product.originalPrice.toFixed(2)}</span>
+                  <span className="text-red-600">${(product.price || 0).toFixed(2)}</span>
+                </>
+              ) : (
+                <span>${(product.price || 0).toFixed(2)}</span>
+              )}
+            </span>
           </div>
         )}
 

@@ -36,12 +36,7 @@ export const useCartStore = create<CartStore>()(
           slug: String(p.slug),
           description: String(p.description || ''),
           shortDescription: String(p.shortDescription || ''),
-          // Dual pricing for US and Canadian markets
-          priceUSD: Number(p.priceUSD ?? p.price ?? 0) as any,
-          priceCAD: Number(p.priceCAD ?? p.price ?? 0) as any,
-          originalPriceUSD: p.originalPriceUSD != null ? Number(p.originalPriceUSD) : (p.originalPrice != null ? Number(p.originalPrice) : undefined) as any,
-          originalPriceCAD: p.originalPriceCAD != null ? Number(p.originalPriceCAD) : (p.originalPrice != null ? Number(p.originalPrice) : undefined) as any,
-          // Legacy fields for backward compatibility
+          // Pricing fields
           price: Number(p.price ?? 0) as any,
           originalPrice: p.originalPrice != null ? Number(p.originalPrice) : undefined as any,
           images: Array.isArray(p.images)

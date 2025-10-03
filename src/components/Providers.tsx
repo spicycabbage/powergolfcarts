@@ -4,7 +4,6 @@ import { ReactNode, Suspense } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster as HotToaster } from 'react-hot-toast'
 import { ReferralProvider } from './providers/ReferralProvider'
-import { CurrencyProvider } from '@/contexts/CurrencyContext'
 
 interface ProvidersProps {
   children: ReactNode
@@ -29,12 +28,10 @@ export function Providers({ children }: ProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <Suspense fallback={<div />}>
-        <CurrencyProvider>
-          <ReferralProvider>
-            {children}
-            <HotToaster position="top-right" toastOptions={{ duration: 2500 }} />
-          </ReferralProvider>
-        </CurrencyProvider>
+        <ReferralProvider>
+          {children}
+          <HotToaster position="top-right" toastOptions={{ duration: 2500 }} />
+        </ReferralProvider>
       </Suspense>
     </QueryClientProvider>
   )

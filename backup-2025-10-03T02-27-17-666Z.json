@@ -1,0 +1,337 @@
+{
+  "orders": [],
+  "posts": [],
+  "shippingsettings": [
+    {
+      "_id": "68dc651c45dea9bdf6e2b284",
+      "freeShippingThreshold": 50,
+      "methods": [
+        {
+          "name": "Standard",
+          "price": 9.99,
+          "sortOrder": 1,
+          "isActive": true,
+          "_id": "68dc651c45dea9bdf6e2b285"
+        },
+        {
+          "name": "Express",
+          "price": 19.99,
+          "sortOrder": 1,
+          "isActive": true,
+          "_id": "68dc651c45dea9bdf6e2b286"
+        }
+      ],
+      "createdAt": "2025-09-30T23:17:48.539Z",
+      "updatedAt": "2025-09-30T23:17:48.539Z",
+      "__v": 0
+    }
+  ],
+  "pages": [],
+  "users": [
+    {
+      "_id": "68dc9c49758ab87c337adf5e",
+      "email": "admin@yourstore.com",
+      "password": "$2a$10$qwAiTlUROitVVXrhDOFI3Ot2Fw5MjBAu0LstiDSXxeTSleNpL3RLO",
+      "firstName": "Admin",
+      "lastName": "User",
+      "role": "admin",
+      "isVerified": true,
+      "wishlist": [],
+      "preferences": {
+        "newsletter": false,
+        "smsNotifications": false,
+        "orderUpdates": true
+      },
+      "addresses": [],
+      "createdAt": "2025-10-01T03:13:13.506Z",
+      "updatedAt": "2025-10-01T06:33:10.991Z",
+      "__v": 0
+    }
+  ],
+  "products": [
+    {
+      "_id": "68dedaccdee00316faf68b6b",
+      "name": "Robera Pro",
+      "slug": "robera-pro",
+      "description": "<p><strong>Built-in AI Vision:</strong> Featuring advanced RGB and TOF technology, Robera uses an AI deep learning model to recognize golfers in all lighting conditions, even at night. This allows the caddy to accurately follow you using hand gestures. </p><p><strong>Automatic Follow-Up Mode:</strong> The caddy tracks you at a customizable distance of up to 5 meters, ensuring it stays close without losing signal. </p><p><strong>Marching Mode:</strong> The Robera Pro takes the lead, moving ahead of you in reverse follow mode. </p><p><strong>Speed Control Mode:</strong> You can adjust the speed in gears ranging from 1 to 9, making it easier for golfers to maneuver the caddy. </p><p><strong>Remote Summon:</strong> Just press buttons on the remote, and Robera will come to you from within a 100-meter range. <strong>No-Go Zones Detection:</strong> The caddy automatically stops before entering areas like bunkers and ponds. </p><p><strong>Obstacles Avoidance:</strong> It navigates around golfers, bags, sand traps, and bushes with ease. </p><p><strong>Anti-Tipping Feature:</strong> Robera remains stable on slopes of up to 25° </p><p><strong>Massive Battery Capacity:</strong> Designed to power you through a 18-36-hole round. </p><p><strong>Convenience Holders:</strong> Compatiable with Robera holders for drinks, umbrellas, and scorecards to enhance your golfing experience.</p>",
+      "shortDescription": "The Global Premiere of Al Visual Smart Golf Caddy",
+      "productType": "simple",
+      "originalPriceUSD": 1999,
+      "originalPriceCAD": 2499,
+      "images": [
+        {
+          "url": "/uploads/products/robera-pro-black-1-1759435040228.jpg",
+          "alt": "Robera Pro",
+          "width": 800,
+          "height": 800,
+          "isPrimary": true,
+          "_id": "68dedbd1dee00316faf68bf0"
+        },
+        {
+          "url": "/uploads/products/robera-pro-black-2-1759435713298.jpg",
+          "alt": "Robera Pro",
+          "width": 800,
+          "height": 800,
+          "isPrimary": false,
+          "_id": "68dedbd1dee00316faf68bf1"
+        },
+        {
+          "url": "/uploads/products/robera-pro-black-3-1759435717955.jpg",
+          "alt": "Robera Pro",
+          "width": 800,
+          "height": 800,
+          "isPrimary": false,
+          "_id": "68dedbd1dee00316faf68bf2"
+        },
+        {
+          "url": "/uploads/products/robera-pro-ai-1-1759435723260.jpg",
+          "alt": "Robera Pro",
+          "width": 800,
+          "height": 800,
+          "isPrimary": false,
+          "_id": "68dedbd1dee00316faf68bf3"
+        },
+        {
+          "url": "/uploads/products/robera-pro-ai-2-1759435726725.jpg",
+          "alt": "Robera Pro",
+          "width": 800,
+          "height": 800,
+          "isPrimary": false,
+          "_id": "68dedbd1dee00316faf68bf4"
+        }
+      ],
+      "category": "68dd8db6902bc2c21beddd7b",
+      "categories": [
+        "68ddacf6902bc2c21bedddf6"
+      ],
+      "tags": [],
+      "inventory": {
+        "quantity": 10,
+        "lowStockThreshold": 5,
+        "trackInventory": true,
+        "_id": "68dedbd1dee00316faf68bf5"
+      },
+      "seo": {
+        "title": "R",
+        "description": "<p><strong>Built-in AI Vision:</strong> Featuring advanced RGB and TOF technology, Robera uses an AI deep learning model to recognize golfers in all lighting co",
+        "keywords": [
+          "R"
+        ],
+        "noIndex": false,
+        "_id": "68dedbd1dee00316faf68bf6"
+      },
+      "variants": [],
+      "reviews": [],
+      "averageRating": 0,
+      "reviewCount": 0,
+      "isActive": true,
+      "isFeatured": false,
+      "createdAt": "2025-10-02T20:04:28.672Z",
+      "updatedAt": "2025-10-02T20:08:49.569Z",
+      "__v": 0,
+      "badges": {},
+      "originalPrice": 1999,
+      "price": 1999
+    }
+  ],
+  "reviews": [],
+  "navigations": [],
+  "bundles": [],
+  "paymentsettings": [
+    {
+      "_id": "68dccb9e902bc2c21beddcc6",
+      "etransfer": {
+        "enabled": true,
+        "note": "Auto-deposit enabled. No security question required."
+      },
+      "createdAt": "2025-10-01T06:35:10.231Z",
+      "updatedAt": "2025-10-01T06:35:10.231Z",
+      "__v": 0
+    },
+    {
+      "_id": "68dccb9e902bc2c21beddcc8",
+      "etransfer": {
+        "enabled": true,
+        "note": "Auto-deposit enabled. No security question required."
+      },
+      "createdAt": "2025-10-01T06:35:10.247Z",
+      "updatedAt": "2025-10-01T06:35:10.247Z",
+      "__v": 0
+    }
+  ],
+  "categories": [
+    {
+      "_id": "68dd8db6902bc2c21beddd7b",
+      "name": "Electric Carts",
+      "slug": "electric-carts",
+      "description": "Hands free walking",
+      "image": "/uploads/categories/robera-pro-black-1-1759350151087.jpg",
+      "children": [
+        "68ddacf6902bc2c21bedddf6",
+        "68de201cdee00316faf6876c",
+        "68de2088dee00316faf68776",
+        "68de20a3dee00316faf6877e"
+      ],
+      "seo": {
+        "title": "Electric Carts: The Future of Golfing - PowerGolfCarts",
+        "description": "Explore the future of golf with Electric Carts. Enjoy hands-free walking and enhanced performance on the course.",
+        "keywords": [
+          "Electric Carts"
+        ],
+        "noIndex": false,
+        "_id": "68dd8db6902bc2c21beddd7c"
+      },
+      "isSystem": false,
+      "isActive": true,
+      "featuredOnHomepage": true,
+      "homepageOrder": 0,
+      "createdAt": "2025-10-01T20:23:18.203Z",
+      "updatedAt": "2025-10-02T18:56:50.930Z",
+      "__v": 0
+    },
+    {
+      "_id": "68ddacf6902bc2c21bedddf6",
+      "name": "Robera",
+      "slug": "robera",
+      "description": "AI-powered smart golf caddy",
+      "image": "/uploads/categories/robera-pro-black-2-1759357935445.jpg",
+      "parent": "68dd8db6902bc2c21beddd7b",
+      "children": [],
+      "seo": {
+        "title": "Robera Electric Golf Caddy - Follow Me AI carts | InsanityGolf",
+        "description": "Explore the advantages of electric carts for convenience and efficiency in transportation and leisure activities.",
+        "keywords": [
+          "electric golf caddy"
+        ],
+        "noIndex": false,
+        "_id": "68ddacf6902bc2c21bedddf7"
+      },
+      "isSystem": false,
+      "isActive": true,
+      "featuredOnHomepage": true,
+      "homepageOrder": 0,
+      "createdAt": "2025-10-01T22:36:38.633Z",
+      "updatedAt": "2025-10-01T22:36:38.633Z",
+      "__v": 0
+    },
+    {
+      "_id": "68de201cdee00316faf6876c",
+      "name": "Ego Caddy",
+      "slug": "ego-caddy",
+      "description": "test tst ego caddy",
+      "image": "/uploads/categories/coming-soon-1759387666721.jpg",
+      "parent": "68dd8db6902bc2c21beddd7b",
+      "children": [],
+      "seo": {
+        "title": "Ego Caddytest",
+        "description": "Shop Ego Caddy products",
+        "keywords": [
+          "test 12312"
+        ],
+        "noIndex": false,
+        "_id": "68de201cdee00316faf6876d"
+      },
+      "isSystem": false,
+      "isActive": true,
+      "featuredOnHomepage": false,
+      "homepageOrder": 0,
+      "createdAt": "2025-10-02T06:47:56.725Z",
+      "updatedAt": "2025-10-02T06:47:56.725Z",
+      "__v": 0
+    },
+    {
+      "_id": "68de2088dee00316faf68776",
+      "name": "Tasmania",
+      "slug": "tasmania",
+      "description": "test teadsa",
+      "image": "/uploads/categories/coming-soon-1759387778522.jpg",
+      "parent": "68dd8db6902bc2c21beddd7b",
+      "children": [],
+      "seo": {
+        "title": "Tasmania",
+        "description": "Shop Tasmania products",
+        "keywords": [
+          "test"
+        ],
+        "noIndex": false,
+        "_id": "68de2088dee00316faf68777"
+      },
+      "isSystem": false,
+      "isActive": true,
+      "featuredOnHomepage": false,
+      "homepageOrder": 0,
+      "createdAt": "2025-10-02T06:49:44.577Z",
+      "updatedAt": "2025-10-02T06:49:44.577Z",
+      "__v": 0
+    },
+    {
+      "_id": "68de20a3dee00316faf6877e",
+      "name": "Volt Caddy",
+      "slug": "volt-caddy",
+      "description": "adsfdsafds",
+      "image": "/uploads/categories/coming-soon-1759387805876.jpg",
+      "parent": "68dd8db6902bc2c21beddd7b",
+      "children": [],
+      "seo": {
+        "title": "Volt Caddy",
+        "description": "Shop Volt Caddy productsadsdsad",
+        "keywords": [
+          "dsasdasd"
+        ],
+        "noIndex": false,
+        "_id": "68de20a3dee00316faf6877f"
+      },
+      "isSystem": false,
+      "isActive": true,
+      "featuredOnHomepage": false,
+      "homepageOrder": 0,
+      "createdAt": "2025-10-02T06:50:11.504Z",
+      "updatedAt": "2025-10-02T06:50:11.504Z",
+      "__v": 0
+    },
+    {
+      "_id": "68de2bbbdee00316faf6879d",
+      "name": "Golf Bags",
+      "slug": "golf-bags",
+      "description": "fasdfasdfsadsafd",
+      "image": "/uploads/categories/coming-soon-1759390647819.jpg",
+      "children": [],
+      "seo": {
+        "title": "Golf Bags",
+        "description": "Shop Golf Bags products",
+        "keywords": [],
+        "noIndex": false,
+        "_id": "68de2bbbdee00316faf6879e"
+      },
+      "isSystem": false,
+      "isActive": true,
+      "featuredOnHomepage": false,
+      "homepageOrder": 0,
+      "createdAt": "2025-10-02T07:37:31.915Z",
+      "updatedAt": "2025-10-02T07:37:31.915Z",
+      "__v": 0
+    },
+    {
+      "_id": "68decb97dee00316faf68807",
+      "name": "Accessories",
+      "slug": "accessories",
+      "description": "asdfasdfdsf",
+      "image": "/uploads/categories/coming-soon-1759431572459.jpg",
+      "children": [],
+      "seo": {
+        "title": "Accessories",
+        "description": "Shop Accessories products",
+        "keywords": [],
+        "noIndex": false,
+        "_id": "68ded395dee00316faf689ba"
+      },
+      "isSystem": false,
+      "isActive": true,
+      "featuredOnHomepage": false,
+      "homepageOrder": 0,
+      "createdAt": "2025-10-02T18:59:35.965Z",
+      "updatedAt": "2025-10-02T19:33:41.388Z",
+      "__v": 0
+    }
+  ]
+}

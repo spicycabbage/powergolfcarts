@@ -11,12 +11,7 @@ export interface IProductImage {
 export interface IProductVariant {
   name: string
   value: string
-  // Dual pricing for variants
-  priceUSD: number
-  priceCAD: number
-  originalPriceUSD?: number
-  originalPriceCAD?: number
-  // Legacy fields for backward compatibility
+  // Pricing fields
   originalPrice?: number
   price?: number
   inventory: number
@@ -59,12 +54,7 @@ export interface IProduct {
   description: string
   shortDescription?: string
   productType?: 'simple' | 'variable'
-  // Dual pricing for US and Canadian markets
-  priceUSD: number
-  priceCAD: number
-  originalPriceUSD?: number
-  originalPriceCAD?: number
-  // Legacy price field for backward compatibility (will be removed in future)
+  // Pricing fields
   price?: number
   originalPrice?: number
   images: IProductImage[]
@@ -95,12 +85,7 @@ const ProductImageSchema = new Schema<IProductImage>({
 const ProductVariantSchema = new Schema<IProductVariant>({
   name: { type: String, required: true },
   value: { type: String, required: true },
-  // Dual pricing for variants
-  priceUSD: { type: Number },
-  priceCAD: { type: Number },
-  originalPriceUSD: { type: Number },
-  originalPriceCAD: { type: Number },
-  // Legacy fields for backward compatibility
+  // Pricing fields
   originalPrice: { type: Number },
   price: { type: Number },
   inventory: { type: Number, required: true, min: 0 },
@@ -181,26 +166,7 @@ const ProductSchema = new Schema<IProduct>({
     enum: ['simple', 'variable'],
     default: 'simple'
   },
-  // Dual pricing for US and Canadian markets
-  priceUSD: {
-    type: Number,
-    required: [true, 'USD price is required'],
-    min: [0, 'USD price must be positive']
-  },
-  priceCAD: {
-    type: Number,
-    required: [true, 'CAD price is required'],
-    min: [0, 'CAD price must be positive']
-  },
-  originalPriceUSD: {
-    type: Number,
-    min: [0, 'Original USD price must be positive']
-  },
-  originalPriceCAD: {
-    type: Number,
-    min: [0, 'Original CAD price must be positive']
-  },
-  // Legacy fields for backward compatibility
+  // Pricing fields
   price: {
     type: Number,
     min: [0, 'Price must be positive']
@@ -269,8 +235,8 @@ ProductSchema.index({ name: 1 })
 
 // Virtual for discount percentage (using USD pricing as default)
 ProductSchema.virtual('discountPercentage').get(function() {
-  const originalPrice = this.originalPriceUSD || this.originalPrice
-  const currentPrice = this.priceUSD || this.price
+  const originalPrice = this.originalPrice
+  const currentPrice = this.price
   
   if (originalPrice && currentPrice && originalPrice > currentPrice) {
     return Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
