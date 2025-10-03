@@ -59,25 +59,38 @@ export async function GET(request: NextRequest) {
       query.isActive = true
     }
 
-    // Category filter
+    // Category filter (supports ObjectId or slug). We normalize to ObjectIds only to avoid CastErrors.
     if (category) {
-      if (category.includes(',')) {
-        // Multiple categories
-        const rawIds = category.split(',').map(id => id.trim()).filter(Boolean)
-        const objectIds = rawIds.filter(id => mongoose.Types.ObjectId.isValid(id)).map(id => new mongoose.Types.ObjectId(id))
-        const anyIds = [...objectIds, ...rawIds]
+      const parts = category.split(',').map(s => s.trim()).filter(Boolean)
+
+      if (usingDataApi) {
+        // Data API path: use string ids; the wrapper will convert to $oid where appropriate
+        const slugParts = parts.filter(p => !/^[0-9a-fA-F]{24}$/.test(p))
+        let slugIds: string[] = []
+        if (slugParts.length) {
+          const cats = await dataFindMany('categories', { filter: { slug: { $in: slugParts } }, projection: { _id: 1 } })
+          slugIds = cats.map((c: any) => String(c._id))
+        }
+        const idStrings = parts.filter(p => /^[0-9a-fA-F]{24}$/.test(p)).concat(slugIds)
         query.$or = [
-          { category: { $in: anyIds } },
-          { categories: { $in: anyIds } }
+          { category: { $in: idStrings } },
+          { categories: { $in: idStrings } }
         ]
       } else {
-        const isOid = mongoose.Types.ObjectId.isValid(category)
-        const categoryObjectId = isOid ? new mongoose.Types.ObjectId(category) : undefined
-        // Match both possible representations defensively
+        // Mongoose path: convert everything to ObjectId
+        const slugParts = parts.filter(p => !mongoose.Types.ObjectId.isValid(p))
+        let slugObjectIds: mongoose.Types.ObjectId[] = []
+        if (slugParts.length) {
+          const cats = await Category.find({ slug: { $in: slugParts } }).select('_id').lean()
+          slugObjectIds = cats.map(c => new mongoose.Types.ObjectId(String(c._id)))
+        }
+        const objectIds = parts
+          .filter(p => mongoose.Types.ObjectId.isValid(p))
+          .map(p => new mongoose.Types.ObjectId(p))
+        const ids = [...objectIds, ...slugObjectIds]
         query.$or = [
-          ...(categoryObjectId ? [{ category: categoryObjectId }, { categories: categoryObjectId }] : []),
-          { category },
-          { categories: category }
+          { category: { $in: ids } },
+          { categories: { $in: ids } }
         ]
       }
     }
