@@ -768,7 +768,7 @@ export default function EditProductPage() {
               )}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Tags (comma-separated)</label>
-                <input value={tagsInput} onChange={e => setTagsInput(e.target.value)} placeholder="e.g. electric, lithium-ion, remote-control" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+                <input value={tagsInput} onChange={e => setTagsInput(e.target.value)} placeholder="e.g. indica, gassy, kush" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
               </div>
             </div>
           </div>

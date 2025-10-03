@@ -17,7 +17,6 @@ import LearnMore from '@/components/LearnMore'
 import { serializeProductForClient } from '@/lib/serializers'
 import { sanitizeHtml } from '@/utils/sanitize'
 import VariantCard from '@/components/product/VariantCard'
-import RoberaProContent from '@/components/pdp/RoberaProContent'
 
 function normalizeContent(html: string): string {
   try {
@@ -368,11 +367,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
             />
           )
         })()}
-
-        {/* Rich content section for Robera Pro */}
-        {String((product as any).slug) === 'robera-pro' && (
-          <RoberaProContent />
-        )}
 
         {/* Related Products */}
         {Array.isArray(related) && related.length > 0 && (

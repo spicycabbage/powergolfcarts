@@ -13,7 +13,6 @@ import { Breadcrumbs } from '@/components/Breadcrumbs'
 import SortSelect from '@/components/SortSelect'
 import { CategoryInfoSection } from '@/components/CategoryInfoSection'
 import { serializeArrayForClient } from '@/lib/utils/serialize'
-import mongoose from 'mongoose'
 
 export const dynamic = 'force-dynamic'
 
@@ -65,19 +64,11 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
     }
 
     if (!category) {
-      console.error(`Category not found for slug: ${lastSlug}`)
       return notFound()
     }
 
   // --- Breadcrumb Data Fetching and Formatting ---
-  let breadcrumbData: any[] = []
-  try {
-    breadcrumbData = await Category.getBreadcrumbs(String(category._id))
-  } catch (breadcrumbError) {
-    console.error(`Breadcrumb generation failed for category ${category._id}:`, breadcrumbError)
-    // Fallback: just use the current category
-    breadcrumbData = [{ _id: category._id, name: category.name, slug: category.slug }]
-  }
+  const breadcrumbData = await Category.getBreadcrumbs(String(category._id));
   const breadcrumbItems = breadcrumbData.map((segment) => ({
     name: segment.name,
     href: `/categories/${segment.slug}`,
@@ -91,16 +82,13 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
   }));
 
   // --- Product Fetching Logic ---
-  const rootId = String(category._id)
-  const allCategoryIds: (string | mongoose.Types.ObjectId)[] = [new mongoose.Types.ObjectId(rootId)]
-  let frontier: (string | mongoose.Types.ObjectId)[] = [new mongoose.Types.ObjectId(rootId)]
+  const allCategoryIds: string[] = [String(category._id)];
+  let frontier: string[] = [String(category._id)]
   while (frontier.length > 0) {
-    const frontierIds = frontier.map(id => new mongoose.Types.ObjectId(String(id)))
-    const children = await Category.find({ parent: { $in: frontierIds } }).select('_id').lean()
+    const children = await Category.find({ parent: { $in: frontier } }).select('_id').lean()
     const newIds = children
       .map(c => String(c._id))
-      .filter(id => !allCategoryIds.map(x => String(x)).includes(id))
-      .map(id => new mongoose.Types.ObjectId(id))
+      .filter(id => !allCategoryIds.includes(id))
     if (newIds.length === 0) break
     allCategoryIds.push(...newIds)
     frontier = newIds
@@ -117,20 +105,15 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
     }
   })()
 
-  const stringIds = allCategoryIds.map(id => String(id))
   const query = {
     isActive: true,
     $or: [
-      // ObjectId representations
       { category: { $in: allCategoryIds } },
       { categories: { $in: allCategoryIds } },
-      // Defensive: if some documents stored string ids
-      { category: { $in: stringIds } },
-      { categories: { $in: stringIds } },
     ]
-  } as any
+  }
 
-  const rawProducts = await Product.find(query as any)
+  const rawProducts = await Product.find(query)
     .select('name slug price originalPrice images averageRating reviewCount inventory variants.name variants.value variants.price variants.originalPrice variants.inventory variants.sku badges')
     .sort(sortBy as any)
     .limit(100) // Limit to prevent mobile timeouts

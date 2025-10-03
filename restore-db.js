@@ -1,11 +1,39 @@
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config({ path: '.env.local' });
 
 const MONGODB_URI = process.env.MONGODB_URI;
-const MONGODB_DB = process.env.MONGODB_DB || 'ecommerce';
+// Derive DB name from URI path if present; else fallback to env or default
+function getDbNameFromUri(uri) {
+    try {
+        const m = String(uri).match(/^mongodb(?:\+srv)?:\/\/[^/]+\/(\w+)(?:\?|$)/)
+        return m && m[1] ? m[1] : null
+    } catch {
+        return null
+    }
+}
+const derivedDb = getDbNameFromUri(MONGODB_URI)
+const MONGODB_DB = derivedDb || process.env.MONGODB_DB || 'ecommerce';
 const BACKUP_FILE = path.join(__dirname, 'backups/full-backup-2025-10-03T02-27-28-120Z/database-backup.json');
+
+function reviveIds(doc) {
+    if (!doc || typeof doc !== 'object') return doc;
+    if (Array.isArray(doc)) return doc.map(reviveIds);
+    const out = {};
+    for (const [k, v] of Object.entries(doc)) {
+        if (k === '_id' || k === 'parent' || k === 'category') {
+            out[k] = /^[0-9a-fA-F]{24}$/.test(String(v)) ? new ObjectId(String(v)) : v;
+        } else if (k === 'categories' || k === 'children' || k === 'reviews') {
+            out[k] = Array.isArray(v) ? v.map(x => (/^[0-9a-fA-F]{24}$/.test(String(x)) ? new ObjectId(String(x)) : x)) : v;
+        } else if (typeof v === 'object' && v !== null) {
+            out[k] = reviveIds(v);
+        } else {
+            out[k] = v;
+        }
+    }
+    return out;
+}
 
 async function restoreDatabase() {
     if (!MONGODB_URI) {
@@ -14,7 +42,8 @@ async function restoreDatabase() {
     }
 
     console.log('📂 Reading backup file...');
-    const backupData = JSON.parse(fs.readFileSync(BACKUP_FILE, 'utf8'));
+    const backupJson = JSON.parse(fs.readFileSync(BACKUP_FILE, 'utf8'));
+    const collections = backupJson.collections || backupJson;
     
     const client = new MongoClient(MONGODB_URI);
     
@@ -23,47 +52,28 @@ async function restoreDatabase() {
         console.log('✅ Connected to MongoDB');
         
         const db = client.db(MONGODB_DB);
+        console.log(`🗄️  Target database: ${MONGODB_DB}`)
         
-        // Restore each collection
-        for (const collectionName in backupData) {
-            const documents = backupData[collectionName];
-            
-            if (!Array.isArray(documents) || documents.length === 0) {
-                console.log(`⏭️  Skipping empty collection: ${collectionName}`);
+        const names = Object.keys(collections);
+        for (const name of names) {
+            const docs = collections[name];
+            if (!Array.isArray(docs)) {
+                console.log(`⏭️  Skipping non-array collection: ${name}`);
                 continue;
             }
-            
-            console.log(`\n📦 Restoring ${collectionName}...`);
-            
-            // Drop existing collection
-            try {
-                await db.collection(collectionName).drop();
-                console.log(`  🗑️  Dropped existing ${collectionName}`);
-            } catch (err) {
-                // Collection might not exist, that's fine
-                console.log(`  ℹ️  Collection ${collectionName} didn't exist`);
-            }
-            
-            // Insert documents
-            const result = await db.collection(collectionName).insertMany(documents);
-            console.log(`  ✅ Restored ${result.insertedCount} documents to ${collectionName}`);
+            console.log(`\n📦 Restoring ${name} (${docs.length} documents)...`);
+            try { await db.collection(name).drop(); } catch {}
+            if (docs.length === 0) { console.log('  (empty)'); continue; }
+            const revived = docs.map(reviveIds);
+            const result = await db.collection(name).insertMany(revived);
+            console.log(`  ✅ Inserted ${result.insertedCount} docs into ${name}`);
         }
         
         console.log('\n✅ Database restored successfully!');
-        
-        // Verify restoration
-        console.log('\n🔍 Verification:');
         const categories = await db.collection('categories').countDocuments();
         const products = await db.collection('products').countDocuments();
         console.log(`  Categories: ${categories}`);
         console.log(`  Products: ${products}`);
-        
-        const roberaPro = await db.collection('products').findOne({ slug: 'robera-pro' });
-        if (roberaPro) {
-            console.log(`  ✅ Robera Pro found: ${roberaPro.name}`);
-            console.log(`     Category: ${roberaPro.category}`);
-        }
-        
     } catch (error) {
         console.error('❌ Error restoring database:', error);
     } finally {

@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
           product_data: { name },
           unit_amount: unitAmount,
           // US sales tax will be calculated automatically by Stripe Tax
-          tax_behavior: 'exclusive' as const,
+          tax_behavior: 'exclusive',
         },
         quantity,
       }
@@ -42,12 +42,12 @@ export async function POST(request: NextRequest) {
         ? [
             {
               shipping_rate_data: {
-                type: 'fixed_amount' as const,
+                type: 'fixed_amount',
                 fixed_amount: { amount: Math.round(Number(selectedShipping.price) * 100), currency: 'usd' },
                 display_name: selectedShipping.name || 'Shipping',
                 // Ensure shipping is taxed according to the destination rules
-                tax_behavior: 'exclusive' as const,
-                tax_code: 'txcd_92010001',
+                tax_behavior: 'exclusive',
+                tax_code: 'txcd_920100',
               }
             }
           ]
