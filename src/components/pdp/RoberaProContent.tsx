@@ -35,9 +35,9 @@ export default function RoberaProContent() {
       </div>
 
       {/* Specs snapshot (Robera Pro only) */}
-      <div className="border border-gray-200 rounded-lg overflow-hidden">
-        <div className="bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-900">Robera Pro Specifications</div>
-        <div className="divide-y divide-gray-200">
+      <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm bg-gradient-to-br from-gray-50 to-white">
+        <div className="bg-gradient-to-r from-gray-800 to-gray-700 px-4 py-3 text-sm font-semibold text-white">Robera Pro Specifications</div>
+        <div className="divide-y divide-gray-200 bg-white">
           {[
             ['Max Speed', '2.5 m/s'],
             ['Response Distance', '15 m'],
@@ -47,10 +47,10 @@ export default function RoberaProContent() {
             ['USB Ports', 'Type A, Type C'],
             ['Weight', '17.5 kg'],
             ['Water Resistance', 'IPX3']
-          ].map(([k, v]) => (
-            <div key={k} className="grid grid-cols-2 gap-4 px-4 py-2 text-sm">
-              <div className="text-gray-600">{k}</div>
-              <div className="text-gray-900">{v}</div>
+          ].map(([k, v], idx) => (
+            <div key={k} className={`grid grid-cols-2 gap-4 px-4 py-3 text-sm ${idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}>
+              <div className="text-gray-700 font-medium">{k}</div>
+              <div className="text-gray-900 font-semibold">{v}</div>
             </div>
           ))}
         </div>
@@ -85,9 +85,9 @@ function Feature({ title, body }: { title: string; body: string }) {
 
 function Faq({ q, a }: { q: string; a: string }) {
   return (
-    <details className="rounded-lg border border-gray-200 p-4 bg-white">
-      <summary className="cursor-pointer text-sm font-medium text-gray-900">{q}</summary>
-      <div className="mt-2 text-sm text-gray-700">{a}</div>
+    <details className="rounded-lg border border-gray-300 p-4 bg-gradient-to-br from-blue-50 to-gray-50 shadow-sm hover:shadow-md transition-shadow">
+      <summary className="cursor-pointer text-sm font-semibold text-gray-900 hover:text-primary-600 transition-colors">{q}</summary>
+      <div className="mt-3 text-sm text-gray-700 leading-relaxed pl-1">{a}</div>
     </details>
   )
 }
