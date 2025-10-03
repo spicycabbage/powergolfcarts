@@ -13,6 +13,7 @@ import { Breadcrumbs } from '@/components/Breadcrumbs'
 import SortSelect from '@/components/SortSelect'
 import { CategoryInfoSection } from '@/components/CategoryInfoSection'
 import { serializeArrayForClient } from '@/lib/utils/serialize'
+import mongoose from 'mongoose'
 
 export const dynamic = 'force-dynamic'
 
@@ -90,13 +91,16 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
   }));
 
   // --- Product Fetching Logic ---
-  const allCategoryIds: string[] = [String(category._id)];
-  let frontier: string[] = [String(category._id)]
+  const rootId = String(category._id)
+  const allCategoryIds: (string | mongoose.Types.ObjectId)[] = [new mongoose.Types.ObjectId(rootId)]
+  let frontier: (string | mongoose.Types.ObjectId)[] = [new mongoose.Types.ObjectId(rootId)]
   while (frontier.length > 0) {
-    const children = await Category.find({ parent: { $in: frontier } }).select('_id').lean()
+    const frontierIds = frontier.map(id => new mongoose.Types.ObjectId(String(id)))
+    const children = await Category.find({ parent: { $in: frontierIds } }).select('_id').lean()
     const newIds = children
       .map(c => String(c._id))
-      .filter(id => !allCategoryIds.includes(id))
+      .filter(id => !allCategoryIds.map(x => String(x)).includes(id))
+      .map(id => new mongoose.Types.ObjectId(id))
     if (newIds.length === 0) break
     allCategoryIds.push(...newIds)
     frontier = newIds
@@ -121,7 +125,7 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
     ]
   }
 
-  const rawProducts = await Product.find(query)
+  const rawProducts = await Product.find(query as any)
     .select('name slug price originalPrice images averageRating reviewCount inventory variants.name variants.value variants.price variants.originalPrice variants.inventory variants.sku badges')
     .sort(sortBy as any)
     .limit(100) // Limit to prevent mobile timeouts
