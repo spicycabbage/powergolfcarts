@@ -63,21 +63,21 @@ export async function GET(request: NextRequest) {
     if (category) {
       if (category.includes(',')) {
         // Multiple categories
-        const categoryIds = category.split(',').map(id => 
-          mongoose.Types.ObjectId.isValid(id) ? new mongoose.Types.ObjectId(id) : id
-        )
+        const rawIds = category.split(',').map(id => id.trim()).filter(Boolean)
+        const objectIds = rawIds.filter(id => mongoose.Types.ObjectId.isValid(id)).map(id => new mongoose.Types.ObjectId(id))
+        const anyIds = [...objectIds, ...rawIds]
         query.$or = [
-          { category: { $in: categoryIds } },
-          { categories: { $in: categoryIds } }
+          { category: { $in: anyIds } },
+          { categories: { $in: anyIds } }
         ]
       } else {
-        // Convert to ObjectId if it's a valid ObjectId string
-        const categoryValue = mongoose.Types.ObjectId.isValid(category) 
-          ? new mongoose.Types.ObjectId(category) 
-          : category
+        const isOid = mongoose.Types.ObjectId.isValid(category)
+        const categoryObjectId = isOid ? new mongoose.Types.ObjectId(category) : undefined
+        // Match both possible representations defensively
         query.$or = [
-          { category: categoryValue },
-          { categories: categoryValue }
+          ...(categoryObjectId ? [{ category: categoryObjectId }, { categories: categoryObjectId }] : []),
+          { category },
+          { categories: category }
         ]
       }
     }
