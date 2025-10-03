@@ -117,13 +117,18 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
     }
   })()
 
+  const stringIds = allCategoryIds.map(id => String(id))
   const query = {
     isActive: true,
     $or: [
+      // ObjectId representations
       { category: { $in: allCategoryIds } },
       { categories: { $in: allCategoryIds } },
+      // Defensive: if some documents stored string ids
+      { category: { $in: stringIds } },
+      { categories: { $in: stringIds } },
     ]
-  }
+  } as any
 
   const rawProducts = await Product.find(query as any)
     .select('name slug price originalPrice images averageRating reviewCount inventory variants.name variants.value variants.price variants.originalPrice variants.inventory variants.sku badges')
