@@ -27,7 +27,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Build select fields - use provided fields or default
-    const selectFields = fields || 'name slug description image parent isActive featuredOnHomepage homepageOrder'
+    // Convert comma-separated to space-separated for Mongoose
+    const selectFields = fields 
+      ? fields.replace(/,/g, ' ')
+      : 'name slug description image parent isActive featuredOnHomepage homepageOrder'
 
     let categoriesQuery = Category.find(query)
       .select(selectFields)
