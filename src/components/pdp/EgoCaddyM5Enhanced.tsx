@@ -1,4 +1,9 @@
 export default function EgoCaddyM5Enhanced() {
+  const batteryStats = [
+    { value: '36-45 Holes', label: 'Support a full game' },
+    { value: '20 Miles', label: 'Extended range' },
+  ]
+
   const specs = [
     { label: 'Model Name', value: 'Ego Caddy' },
     { label: 'Folded Size', value: '24.4 x 24.7 x 13.4 Inches' },
@@ -20,6 +25,29 @@ export default function EgoCaddyM5Enhanced() {
 
   return (
     <div className="space-y-8 py-12">
+      {/* Battery Capacity Section */}
+      <section className="bg-gradient-to-b from-green-50 to-white py-12">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+            <h2 className="text-3xl font-bold text-center mb-8 text-gray-900">
+              Massive Battery Capacity
+            </h2>
+            <div className="grid md:grid-cols-2 gap-8">
+              {batteryStats.map((stat, idx) => (
+                <div key={idx} className="text-center space-y-2">
+                  <div className="text-4xl md:text-5xl font-bold text-green-600">
+                    {stat.value}
+                  </div>
+                  <div className="text-lg md:text-xl font-semibold text-gray-700">
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Specifications Section */}
       <section className="bg-gradient-to-b from-green-50 to-white py-12">
         <div className="max-w-4xl mx-auto px-4">
@@ -50,13 +78,10 @@ export default function EgoCaddyM5Enhanced() {
           </h2>
           
           <div className="space-y-6">
-            {/* Design and Battery */}
+            {/* Design */}
             <div className="bg-green-50 p-6 rounded-lg">
-              <p className="text-gray-800 leading-relaxed mb-4">
-                <strong>Foldable design</strong> with durable light-weight aluminum frame and wrapped with carbon fiber, high-end appearance
-              </p>
               <p className="text-gray-800 leading-relaxed">
-                <strong>36-45 Holes</strong> long range lithium battery
+                <strong>Foldable design</strong> with durable light-weight aluminum frame and wrapped with carbon fiber, high-end appearance
               </p>
             </div>
 
@@ -188,14 +213,24 @@ export default function EgoCaddyM5Enhanced() {
         <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
           <h3 className="text-xl font-bold text-green-900 mb-4">📹 Installation Instructions & User Manual</h3>
           <p className="text-gray-700 mb-4">
-            Check out our comprehensive assembly and setup videos:
+            Check out our comprehensive assembly and setup videos or download the user manual:
           </p>
-          <a 
-            href="/videos" 
-            className="inline-flex items-center px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors"
-          >
-            Watch Installation Videos →
-          </a>
+          <div className="flex flex-wrap gap-4">
+            <a 
+              href="/videos" 
+              className="inline-flex items-center px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors"
+            >
+              Watch Installation Videos →
+            </a>
+            <a 
+              href="/manuals/egocaddy-m5-user-manual.pdf" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              📄 Download Manual
+            </a>
+          </div>
         </div>
       </section>
     </div>

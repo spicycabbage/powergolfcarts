@@ -20,6 +20,7 @@ import VariantCard from '@/components/product/VariantCard'
 import RoberaProEnhanced from '@/components/pdp/RoberaProEnhanced'
 import EgoCaddyM5Enhanced from '@/components/pdp/EgoCaddyM5Enhanced'
 import TasmaniaG2Enhanced from '@/components/pdp/TasmaniaG2Enhanced'
+import VoltCaddyEnhanced from '@/components/pdp/VoltCaddyEnhanced'
 
 function normalizeContent(html: string): string {
   try {
@@ -360,6 +361,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
         {/* Tasmania G2 Enhanced Content */}
         {slug === 'tasmania-g2' && <TasmaniaG2Enhanced />}
+
+        {/* Volt Caddy Enhanced Content */}
+        {slug === 'volt-caddy' && <VoltCaddyEnhanced />}
 
         {/* Related Products */}
         {Array.isArray(related) && related.length > 0 && (

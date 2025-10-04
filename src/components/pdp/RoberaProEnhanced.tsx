@@ -172,6 +172,55 @@ export default function RoberaProEnhanced() {
           </div>
         </div>
       </section>
+
+      {/* Additional Information */}
+      <section className="max-w-4xl mx-auto px-4 space-y-4">
+        {/* Warranty Section */}
+        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+          <h3 className="text-xl font-bold text-green-900 mb-4">🛡️ Warranty</h3>
+          <p className="text-gray-700 leading-relaxed">
+            Power Golf Carts will provide 1 year warranty on battery, cart motor and all electronic components under normal condition usage. Wear and tear parts are not covered.
+          </p>
+        </div>
+
+        {/* Shipping Section */}
+        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+          <h3 className="text-xl font-bold text-green-900 mb-4">📦 Shipping Information</h3>
+          <div className="space-y-4 text-gray-700">
+            <div>
+              <h4 className="font-semibold text-green-900 mb-2">Shipping and Handling Time</h4>
+              <p>Shipping and handling time is about 1-8 business days within the United States, depending on customer location.</p>
+            </div>
+            <p className="text-sm italic">
+              Note: US orders may be subject to local state taxes, customs inspection fees, import fees and/or regulatory fees depending on your jurisdiction for which the recipient will be responsible.
+            </p>
+          </div>
+        </div>
+
+        {/* Installation Instructions */}
+        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+          <h3 className="text-xl font-bold text-green-900 mb-4">📹 Installation Instructions & User Manual</h3>
+          <p className="text-gray-700 mb-4">
+            Check out our comprehensive assembly and setup videos or download the user manual:
+          </p>
+          <div className="flex flex-wrap gap-4">
+            <a 
+              href="/videos" 
+              className="inline-flex items-center px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors"
+            >
+              Watch Installation Videos →
+            </a>
+            <a 
+              href="/manuals/robera-pro-user-manual.pdf" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              📄 Download Manual
+            </a>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
