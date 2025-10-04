@@ -25,19 +25,6 @@ export default function VideosPage() {
         { title: 'Adjust 2 Sides of Motor Speeds', url: 'https://www.youtube.com/embed/VIDEO_ID_8' },
       ]
     },
-    {
-      title: 'InsanitEcart Remote Control E-Cart',
-      videos: [
-        { title: 'Cart performance reviews', url: 'https://www.youtube.com/embed/VIDEO_ID_9' },
-        { title: 'Installation Instructions, Part 1', url: 'https://www.youtube.com/embed/VIDEO_ID_10' },
-        { title: 'Installation Instructions, Part 2', url: 'https://www.youtube.com/embed/VIDEO_ID_11' },
-        { title: 'Adjust Front Wheel Alignment', url: 'https://www.youtube.com/embed/VIDEO_ID_12' },
-        { title: 'Excellent Slope Control', url: 'https://www.youtube.com/embed/VIDEO_ID_13' },
-        { title: 'How To Park The E-Cart On The Hills', url: 'https://www.youtube.com/embed/VIDEO_ID_14' },
-        { title: 'How to Set Up and Operate The E-Cart', url: 'https://www.youtube.com/embed/VIDEO_ID_15' },
-        { title: 'InsanitEcarts', url: 'https://www.youtube.com/embed/VIDEO_ID_16' },
-      ]
-    },
   ]
 
   return (
