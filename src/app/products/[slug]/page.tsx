@@ -354,9 +354,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
 
-        {/* Robera Pro Enhanced Content */}
-        {slug === 'robera-pro' && <RoberaProEnhanced />}
-
         {/* Description / Reviews Tabs */}
         {(() => {
           const raw = String((product as any).description || '')
@@ -371,6 +368,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
             />
           )
         })()}
+
+        {/* Robera Pro Enhanced Content */}
+        {slug === 'robera-pro' && <RoberaProEnhanced />}
 
         {/* Related Products */}
         {Array.isArray(related) && related.length > 0 && (
