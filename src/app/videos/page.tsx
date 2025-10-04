@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Insanity Golf Videos | Power Golf Carts',
+  title: 'Instructional Videos | Power Golf Carts',
   description: 'Watch instructional videos and product demonstrations for our electric golf carts including Egocaddy, Tasmania, and InsanitEcart.',
 }
 
@@ -30,12 +30,9 @@ export default function VideosPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-green-600 to-green-700 text-white py-16">
+      <section className="bg-gradient-to-r from-green-600 to-green-700 text-white py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold mb-4">Insanity Golf Videos</h1>
-          <p className="text-xl text-green-100">
-            Watch instructional videos and product demonstrations for our electric golf carts
-          </p>
+          <h1 className="text-2xl font-bold">Instructional Videos</h1>
         </div>
       </section>
 
