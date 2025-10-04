@@ -18,6 +18,7 @@ export default function HtmlEditor({ label, value, onChange, rows = 12, required
   const editorRef = useRef<HTMLDivElement | null>(null)
   const quillRef = useRef<any>(null)
   const suppressChangeRef = useRef<boolean>(false)
+  const isTypingRef = useRef<boolean>(false)
 
   const toolbarOptions = useMemo(() => ([
     [{ header: [1, 2, 3, false] }],
@@ -92,8 +93,11 @@ export default function HtmlEditor({ label, value, onChange, rows = 12, required
       }
       quillRef.current.on('text-change', () => {
         if (suppressChangeRef.current) return
+        isTypingRef.current = true
         const html: string = quillRef.current.root.innerHTML || ''
         onChange(cleanEditorHtml(html))
+        // Reset typing flag after a short delay to allow for external updates
+        setTimeout(() => { isTypingRef.current = false }, 100)
       })
     })()
     return () => { mounted = false }
@@ -103,11 +107,16 @@ export default function HtmlEditor({ label, value, onChange, rows = 12, required
   // Sync external value into editor when it changes (and differs)
   useEffect(() => {
     if (mode !== 'visual') return
+    // Don't sync if user is actively typing (prevents cursor reset)
+    if (isTypingRef.current) return
     if (quillRef.current && typeof value === 'string') {
       const currentHtml: string = quillRef.current.root.innerHTML || ''
-      if (value !== currentHtml) {
+      const cleanedValue = cleanEditorHtml(extractInnerContent(value))
+      const cleanedCurrent = cleanEditorHtml(currentHtml)
+      // Only sync if the cleaned versions differ significantly (avoid cursor resets during typing)
+      if (cleanedValue !== cleanedCurrent) {
         suppressChangeRef.current = true
-        quillRef.current.root.innerHTML = cleanEditorHtml(extractInnerContent(value))
+        quillRef.current.root.innerHTML = cleanedValue
         setTimeout(() => { suppressChangeRef.current = false }, 0)
       }
     }
