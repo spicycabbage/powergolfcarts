@@ -68,6 +68,17 @@ export async function PUT(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { getServerSession } = await import('next-auth')
+    const { authOptions } = await import('@/lib/auth/options')
+    
+    const session = await getServerSession(authOptions)
+    if (!session?.user || (session.user as any).role !== 'admin') {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized - Admin access required' },
+        { status: 401 }
+      )
+    }
+
     await connectToDatabase()
 
     const body = await request.json()
@@ -190,6 +201,17 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { getServerSession } = await import('next-auth')
+    const { authOptions } = await import('@/lib/auth/options')
+    
+    const session = await getServerSession(authOptions)
+    if (!session?.user || (session.user as any).role !== 'admin') {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized - Admin access required' },
+        { status: 401 }
+      )
+    }
+
     await connectToDatabase()
 
     const { id } = await context.params
