@@ -256,6 +256,12 @@ export async function GET(request: NextRequest) {
 // POST /api/products - Create a new product (Admin only)
 export async function POST(request: NextRequest) {
   try {
+    // Check admin authentication
+    const session = await getServerSession(authOptions)
+    if (!session?.user || (session.user as any).role !== 'admin') {
+      return createErrorResponse('Unauthorized - Admin access required', 401)
+    }
+
     const usingDataApi = isUsingDataApi()
     if (!usingDataApi) {
       await connectToDatabase()
