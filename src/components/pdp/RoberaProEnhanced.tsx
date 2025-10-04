@@ -1,6 +1,11 @@
 import Image from 'next/image'
 
 export default function RoberaProEnhanced() {
+  const batteryStats = [
+    { value: '＞18-36 Holes', label: 'Support a full game' },
+    { value: '6 Hours', label: 'Extra long battery life' },
+  ]
+
   const features = [
     { image: '/robera/ai-vision.jpg', title: 'AI Vision' },
     { image: '/robera/auto-follow.jpg', title: 'Auto Follow' },
@@ -56,6 +61,29 @@ export default function RoberaProEnhanced() {
 
   return (
     <div className="space-y-16 py-12">
+      {/* Battery Capacity Section */}
+      <section className="bg-gradient-to-b from-blue-50 to-white py-12">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+            <h2 className="text-3xl font-bold text-center mb-8 text-gray-900">
+              Massive Battery Capacity
+            </h2>
+            <div className="grid md:grid-cols-2 gap-8">
+              {batteryStats.map((stat, idx) => (
+                <div key={idx} className="text-center space-y-2">
+                  <div className="text-4xl md:text-5xl font-bold text-blue-600">
+                    {stat.value}
+                  </div>
+                  <div className="text-lg md:text-xl font-semibold text-gray-700">
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Quick Overview Section */}
       <section className="bg-gradient-to-b from-gray-50 to-white py-12">
         <div className="max-w-7xl mx-auto px-4">
