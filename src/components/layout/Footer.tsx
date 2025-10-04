@@ -14,7 +14,7 @@ export function Footer() {
               <Link href="/contact" className="block hover:text-white">Contact Us</Link>
               <Link href="/faq" className="block hover:text-white">FAQ</Link>
               <Link href="/shipping" className="block hover:text-white">US Shipping Fees</Link>
-              <Link href="/terms" className="block hover:text-white">Terms and Conditions</Link>
+              <Link href="/terms-conditions" className="block hover:text-white">Terms and Conditions</Link>
               <Link href="/delivery" className="block hover:text-white">Delivery Information</Link>
               <Link href="/returns" className="block hover:text-white">Return Policy</Link>
             </div>
