@@ -139,14 +139,34 @@ export default function EditPost() {
                   <label className="block text-sm font-medium text-gray-700">Feature Image</label>
                   <label className="inline-flex items-center px-2 py-1 bg-primary-600 text-white rounded cursor-pointer text-xs">
                     <input type="file" accept="image/*" className="hidden" onChange={async e => {
-                      const f = e.target.files?.[0]
-                      if (!f) return
-                      const form = new FormData()
-                      form.append('file', f)
-                      const res = await fetch('/api/admin/posts/upload', { method: 'POST', body: form, credentials: 'include' })
-                      if (!res.ok) { alert('Upload failed'); return }
-                      const data = await res.json()
-                      setCoverImage(data.url)
+                      try {
+                        const f = e.target.files?.[0]
+                        if (!f) return
+                        
+                        console.log('Uploading:', f.name, f.size, f.type)
+                        
+                        const form = new FormData()
+                        form.append('file', f)
+                        
+                        const res = await fetch('/api/admin/posts/upload', { method: 'POST', body: form, credentials: 'include' })
+                        console.log('Response status:', res.status)
+                        
+                        if (!res.ok) { 
+                          const errorData = await res.json().catch(() => ({}))
+                          const errorMsg = errorData.details || errorData.error || 'Upload failed'
+                          console.error('Upload error:', errorData)
+                          alert(`Upload failed: ${errorMsg}`)
+                          return 
+                        }
+                        
+                        const data = await res.json()
+                        console.log('Upload successful:', data)
+                        setCoverImage(data.url)
+                      } catch (err) {
+                        console.error('Upload exception:', err)
+                        const message = err instanceof Error ? err.message : 'Network error'
+                        alert(`Upload error: ${message}`)
+                      }
                     }} />
                     <Plus className="w-3 h-3 mr-1"/> Upload
                   </label>

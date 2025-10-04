@@ -8,26 +8,50 @@ export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('📸 Post image upload started')
+    
     const session: any = await getServerSession(authOptions as any)
+    console.log('Session check:', session?.user?.role)
+    
     if (!session || !session.user || session.user.role !== 'admin') {
+      console.log('❌ Unauthorized upload attempt')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const form = await request.formData()
     const file = form.get('file') as File | null
-    if (!file) return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
+    
+    if (!file) {
+      console.log('❌ No file in form data')
+      return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
+    }
+    
+    console.log('File received:', {
+      name: (file as any).name,
+      type: file.type,
+      size: file.size
+    })
+    
     if (!file.type?.startsWith('image/')) {
+      console.log('❌ Invalid file type:', file.type)
       return NextResponse.json({ error: 'Invalid file type' }, { status: 400 })
     }
     if (file.size > 4 * 1024 * 1024) {
+      console.log('❌ File too large:', file.size)
       return NextResponse.json({ error: 'File too large (max 4MB)' }, { status: 413 })
     }
 
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
+    console.log('Buffer created, size:', buffer.length)
 
     const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'posts')
-    if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true })
+    console.log('Upload directory path:', uploadsDir)
+    
+    if (!fs.existsSync(uploadsDir)) {
+      console.log('Creating uploads directory...')
+      fs.mkdirSync(uploadsDir, { recursive: true })
+    }
 
     const originalName = (file as any).name || 'post'
     const extFromName = path.extname(originalName)
@@ -43,13 +67,22 @@ export async function POST(request: NextRequest) {
     
     const filename = `${baseName}-${Date.now()}${ext}`
     const filepath = path.join(uploadsDir, filename)
+    
+    console.log('Writing file to:', filepath)
     fs.writeFileSync(filepath, buffer)
+    console.log('✅ File written successfully')
 
     const publicUrl = `/uploads/posts/${filename}`
+    console.log('✅ Upload complete, URL:', publicUrl)
+    
     return NextResponse.json({ url: publicUrl })
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ Post image upload API error:', error)
-    return NextResponse.json({ error: 'Failed to upload image' }, { status: 500 })
+    console.error('Error stack:', error?.stack)
+    return NextResponse.json({ 
+      error: 'Failed to upload image', 
+      details: error?.message || String(error) 
+    }, { status: 500 })
   }
 }
 
