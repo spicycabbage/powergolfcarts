@@ -10,19 +10,19 @@ export default function VideosPage() {
     {
       title: 'Egocaddy Follow Me E-Cart',
       videos: [
-        { title: 'Follow Me Mode on the golf course', url: 'https://www.youtube.com/embed/VIDEO_ID_1' },
-        { title: 'Installation Instructions, Part1', url: 'https://www.youtube.com/embed/VIDEO_ID_2' },
-        { title: 'Installation Instructions, Part 2', url: 'https://www.youtube.com/embed/VIDEO_ID_3' },
-        { title: 'Installation Instructions, Part 3', url: 'https://www.youtube.com/embed/VIDEO_ID_4' },
-        { title: 'App Instructions', url: 'https://www.youtube.com/embed/VIDEO_ID_5' },
-        { title: 'Winter-time cart performance', url: 'https://www.youtube.com/embed/VIDEO_ID_6' },
+        { title: 'Follow Me Mode on the golf course', url: 'https://www.youtube.com/embed/Cyr3cg7PRSo' },
+        { title: 'Installation Instructions, Part 1', url: 'https://video.wixstatic.com/video/6df5bf_a68d1be0f8274244a12a3a5311a36d8c/360p/mp4/file.mp4' },
+        { title: 'Installation Instructions, Part 2', url: 'https://video.wixstatic.com/video/6df5bf_3468aa0ee37d41eda72c81aaeb261f10/360p/mp4/file.mp4' },
+        { title: 'Installation Instructions, Part 3', url: 'https://video.wixstatic.com/video/6df5bf_6b0a1f2802434875a18af5f755150696/1080p/mp4/file.mp4' },
+        { title: 'App Instructions', url: 'https://video.wixstatic.com/video/6df5bf_ca52a9ca77c94cbd86423aa84c03917d/1080p/mp4/file.mp4' },
+        { title: 'Winter-time cart performance', url: 'https://www.youtube.com/embed/uBsV2qbIbts' },
       ]
     },
     {
       title: 'Tasmania 360 Swivel Front Wheel E-Cart',
       videos: [
-        { title: 'Cart performance on the golf course', url: 'https://www.youtube.com/embed/VIDEO_ID_7' },
-        { title: 'Adjust 2 Sides of Motor Speeds', url: 'https://www.youtube.com/embed/VIDEO_ID_8' },
+        { title: 'Cart performance on the golf course', url: 'https://www.youtube.com/embed/mMYQsYxs5Ic' },
+        { title: 'Adjust 2 Sides of Motor Speeds', url: 'https://video.wixstatic.com/video/6df5bf_7a0a3420ab8e4650859e4096dd44975f/1080p/mp4/file.mp4' },
       ]
     },
   ]
@@ -53,7 +53,7 @@ export default function VideosPage() {
                         src={video.url}
                         title={video.title}
                         className="absolute inset-0 w-full h-full"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                       />
                     </div>

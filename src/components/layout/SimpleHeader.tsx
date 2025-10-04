@@ -121,6 +121,9 @@ export function SimpleHeader() {
             {/* Promotions - No Dropdown */}
             <Link href="/promotions" className="text-white hover:text-green-400 transition-colors font-medium">Promotions</Link>
 
+            {/* Brands - No Dropdown */}
+            <Link href="/brands" className="text-white hover:text-green-400 transition-colors font-medium">Brands</Link>
+
             {/* Videos - No Dropdown */}
             <Link href="/videos" className="text-white hover:text-green-400 transition-colors font-medium">Videos</Link>
           </nav>
@@ -189,6 +192,9 @@ export function SimpleHeader() {
 
             {/* Promotions */}
             <Link href="/promotions" className="block text-white hover:text-green-400 font-medium" onClick={() => setIsMenuOpen(false)}>Promotions</Link>
+
+            {/* Brands */}
+            <Link href="/brands" className="block text-white hover:text-green-400 font-medium" onClick={() => setIsMenuOpen(false)}>Brands</Link>
 
             {/* Videos */}
             <Link href="/videos" className="block text-white hover:text-green-400 font-medium" onClick={() => setIsMenuOpen(false)}>Videos</Link>
