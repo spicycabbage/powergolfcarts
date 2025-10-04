@@ -774,6 +774,32 @@ export default function EditProductPage() {
           </div>
         </div>
 
+        {/* Validation Errors */}
+        {!canSave && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <h3 className="text-red-800 font-semibold mb-2">Please fix the following errors:</h3>
+            <ul className="list-disc list-inside text-red-700 text-sm space-y-1">
+              {!name.trim() && <li>Product name is required</li>}
+              {!slug.trim() && <li>Slug is required</li>}
+              {(!description || longVisibleLen === 0) && <li>Long description is required</li>}
+              {(isNaN(parseInt(quantity)) || parseInt(quantity) < 0) && <li>Quantity must be a valid number (0 or greater)</li>}
+              {shortVisibleLen > 500 && <li>Short description exceeds 500 visible characters ({shortVisibleLen}/500)</li>}
+              {longVisibleLen > 2500 && <li>Long description exceeds 2500 visible characters ({longVisibleLen}/2500)</li>}
+              {productType === 'simple' && (() => {
+                const op = originalPrice ? parseFloat(originalPrice) : undefined
+                const p = price ? parseFloat(price) : undefined
+                const hasRegular = op !== undefined && !isNaN(op) && op > 0
+                const hasSale = p !== undefined && !isNaN(p) && p >= 0
+                if (!hasRegular && !hasSale) return <li>Regular Price or Sales Price is required</li>
+                if (hasRegular && hasSale && p! >= op!) return <li>Sales Price must be less than Regular Price</li>
+                return null
+              })()}
+              {productType === 'variable' && variants.length === 0 && <li>At least one variant is required for variable products</li>}
+              {productType === 'variable' && variants.some(v => !v.value.trim()) && <li>All variants must have a value</li>}
+            </ul>
+          </div>
+        )}
+
         {/* Save */}
         <div className="flex justify-end pt-8">
           <button type="submit" disabled={!canSave || saving} className="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50">
