@@ -18,7 +18,7 @@ export default function TasmaniaG2Enhanced() {
   ]
 
   return (
-    <div className="space-y-16 py-12">
+    <div className="space-y-8 py-12">
       {/* Specifications Section */}
       <section className="bg-gradient-to-b from-green-50 to-white py-12">
         <div className="max-w-4xl mx-auto px-4">
