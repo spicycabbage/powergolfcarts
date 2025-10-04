@@ -62,7 +62,7 @@ export default function RoberaProEnhanced() {
   return (
     <div className="space-y-16 py-12">
       {/* Battery Capacity Section */}
-      <section className="bg-gradient-to-b from-blue-50 to-white py-12">
+      <section className="py-12">
         <div className="max-w-4xl mx-auto px-4">
           <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
             <h2 className="text-3xl font-bold text-center mb-8 text-gray-900">
@@ -85,7 +85,7 @@ export default function RoberaProEnhanced() {
       </section>
 
       {/* Quick Overview Section */}
-      <section className="bg-gradient-to-b from-gray-50 to-white py-12">
+      <section className="py-12">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
             Quick Overview of Robera Pro
@@ -115,7 +115,7 @@ export default function RoberaProEnhanced() {
       </section>
 
       {/* Specifications Section */}
-      <section className="bg-gradient-to-b from-blue-50 to-white py-12">
+      <section className="py-12">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
             Robera Pro Specifications
@@ -137,7 +137,7 @@ export default function RoberaProEnhanced() {
       </section>
 
       {/* FAQs Section */}
-      <section className="bg-gradient-to-b from-green-50 to-white py-12">
+      <section className="py-12">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
             Frequently Asked Questions
