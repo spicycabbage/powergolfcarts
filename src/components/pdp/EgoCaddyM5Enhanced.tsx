@@ -41,6 +41,92 @@ export default function EgoCaddyM5Enhanced() {
           </div>
         </div>
       </section>
+
+      {/* Additional Information */}
+      <section className="max-w-4xl mx-auto px-4 space-y-8">
+        
+        {/* Warning Section */}
+        <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg">
+          <h3 className="text-xl font-bold text-red-900 mb-4">⚠️ Warning</h3>
+          <div className="space-y-4 text-gray-700">
+            <p>
+              <strong>Water Resistance:</strong> Power Golf Carts smart follow me cart is water-resistant and safe to use under normal condition of rain will not damage the trolley. However, this E-caddy is not waterproof. The battery and mainboard will die if it goes into a water hazard such as a pond or lake. This is not covered under the warranty plan.
+            </p>
+            <p>
+              <strong>Smart Follow Mode Usage:</strong> The Smart Follow Mode is not allowed to use in crowded areas or parking lots. All smart follow me carts must be manually pushed in crowded places. The Follow Mode can only be used to play on the fairway. All accidents and damages caused by improper handling are the responsibility of the user.
+            </p>
+          </div>
+        </div>
+
+        {/* Mobile App Section */}
+        <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
+          <h3 className="text-xl font-bold text-blue-900 mb-4">📱 Smart Follow Me Cart Mobile App</h3>
+          <p className="text-gray-700">
+            The Mobile App is available on <strong>iOS and Android</strong>
+          </p>
+        </div>
+
+        {/* Warranty Section */}
+        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+          <h3 className="text-xl font-bold text-green-900 mb-4">🛡️ Warranty</h3>
+          <p className="text-gray-700 leading-relaxed">
+            The Power Golf Carts smart follow me cart, charger and battery are covered by a 1 year warranty from the date of purchase. The warranty covers manufacturing defects that occur during normal use and only applies to new follow me carts. Any breakage caused by accidental damage, or as a result of abuse or misuse, are not covered by the warranty. The warranty is not transferable. Used follow me carts are not subject to any warranty unless specified.
+          </p>
+        </div>
+
+        {/* Shipping Section */}
+        <div className="bg-purple-50 border-l-4 border-purple-500 p-6 rounded-lg">
+          <h3 className="text-xl font-bold text-purple-900 mb-4">📦 Shipping Information</h3>
+          <div className="space-y-4 text-gray-700">
+            <div>
+              <h4 className="font-semibold text-purple-900 mb-2">Shipping Time</h4>
+              <p>Shipping and handling time is about 1-8 business days within the United States, depending on customer location.</p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-purple-900 mb-2">US Shipping Fee</h4>
+              <p>Free shipping within the USA for this product.</p>
+            </div>
+            <p className="text-sm italic">
+              Note: US orders may be subject to local state taxes, customs inspection fees, import fees and/or regulatory fees depending on your jurisdiction for which the recipient will be responsible.
+            </p>
+          </div>
+        </div>
+
+        {/* Accessories Included */}
+        <div className="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-lg">
+          <h3 className="text-xl font-bold text-amber-900 mb-4">🎁 Accessories Included</h3>
+          <ul className="list-disc list-inside text-gray-700 space-y-2">
+            <li>Remote control</li>
+            <li>Free Score Card Holder</li>
+            <li>Free Tees and Balls storage</li>
+            <li>Free Large Drink Holder (Cup holder)</li>
+            <li>Free Umbrella Holder</li>
+            <li>USB Port for device charging</li>
+          </ul>
+        </div>
+
+        {/* Installation Instructions */}
+        <div className="bg-cyan-50 border-l-4 border-cyan-500 p-6 rounded-lg">
+          <h3 className="text-xl font-bold text-cyan-900 mb-4">📹 Installation Instructions & User Manual</h3>
+          <p className="text-gray-700 mb-4">
+            Check out our comprehensive assembly and setup videos:
+          </p>
+          <a 
+            href="/videos" 
+            className="inline-flex items-center px-6 py-3 bg-cyan-600 text-white font-semibold rounded-lg hover:bg-cyan-700 transition-colors"
+          >
+            Watch Installation Videos →
+          </a>
+        </div>
+
+        {/* Competitors Section */}
+        <div className="bg-gray-50 border-l-4 border-gray-400 p-6 rounded-lg">
+          <h3 className="text-xl font-bold text-gray-900 mb-4">🏆 Compare with Competitors</h3>
+          <p className="text-gray-700">
+            Similar models: Stewart Golf Q Follow lithium Electric Golf Cart, Stewart Golf X10 Follow
+          </p>
+        </div>
+      </section>
     </div>
   )
 }
