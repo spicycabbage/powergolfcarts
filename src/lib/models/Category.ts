@@ -184,7 +184,7 @@ CategorySchema.statics.getBreadcrumbs = async function(categoryId: string) {
   // If has parent, fetch all potential ancestors in one query
   if (category.parent) {
     const allCategories = await this.find({}).select('_id name slug parent').lean()
-    const categoryMap = new Map(allCategories.map(c => [String(c._id), c]))
+    const categoryMap = new Map(allCategories.map((c: any) => [String(c._id), c]))
     
     let currentId = String(category.parent)
     let depth = 0
