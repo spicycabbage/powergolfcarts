@@ -292,12 +292,13 @@ export default function AdminInventoryPage() {
                         <td className="px-1 py-4 whitespace-nowrap text-sm">
                           {Array.isArray(p.images) && p.images.length > 0 ? (
                             <div className="w-12 h-12 relative rounded overflow-hidden bg-gray-100">
-                              <OptimizedImage
+                              <Image
                                 src={typeof p.images[0] === 'string' ? p.images[0] : (p.images[0]?.url || '/placeholder-product.jpg')}
                                 alt={typeof p.images[0] === 'string' ? p.name : (p.images[0]?.alt || p.name)}
                                 width={48}
                                 height={48}
                                 className="object-cover"
+                                unoptimized
                               />
                             </div>
                           ) : (
