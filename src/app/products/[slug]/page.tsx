@@ -4,8 +4,8 @@ import Image from 'next/image'
 import { Star } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import { ProductImageGallery } from '@/components/ProductImageGallery'
-import { ProductActions } from '@/components/ProductActions'
 import { ClickableRating } from '@/components/ClickableRating'
+import { ProductDetailClient } from '@/components/pdp/ProductDetailClient'
 import JsonLd from '@/components/seo/JsonLd'
 import BreadcrumbsJsonLd from '@/components/seo/BreadcrumbsJsonLd'
 import { connectToDatabase } from '@/lib/mongodb'
@@ -315,27 +315,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
               )}
             </div>
 
-            {/* Price */}
-            <div className="flex items-center space-x-4">
-              <span className="text-3xl font-bold text-gray-900">
-                ${Number((product as any).price ?? (product as any).originalPrice ?? 0).toFixed(2)}
-              </span>
-              {(product as any).originalPrice && (product as any).originalPrice > (product as any).price && (
-                <span className="text-xl text-gray-500 line-through">
-                  ${Number((product as any).originalPrice).toFixed(2)}
-                </span>
-              )}
-              {(product as any).originalPrice && (product as any).originalPrice > (product as any).price && (
-                <span className="bg-red-100 text-red-800 px-2 py-1 rounded text-sm font-medium">
-                  {Math.round((((Number((product as any).originalPrice) - Number((product as any).price)) / Number((product as any).originalPrice)) * 100))}% OFF
-                </span>
-              )}
-            </div>
-
-            {/* Stock status intentionally hidden per requirements */}
-
-            {/* Product Actions */}
-            <ProductActions product={serializeProductForClient(product as any) as any} />
+            {/* Price & Product Actions - Dynamic with shared variant state */}
+            <ProductDetailClient product={serializeProductForClient(product as any) as any} />
 
             {/* Features */}
             {Array.isArray((product as any).features) && (product as any).features.length > 0 && (

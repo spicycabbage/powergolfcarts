@@ -9,12 +9,24 @@ import toast from 'react-hot-toast'
 
 interface ProductActionsProps {
   product: Product
+  selectedVariantId?: string | null
+  onVariantChange?: (variantId: string | null) => void
 }
 
-export function ProductActions({ product }: ProductActionsProps) {
+export function ProductActions({ product, selectedVariantId: externalVariantId, onVariantChange }: ProductActionsProps) {
   const [quantity, setQuantity] = useState(1)
-  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null)
+  const [internalVariantId, setInternalVariantId] = useState<string | null>(null)
   const [showShareModal, setShowShareModal] = useState(false)
+  
+  // Use external variant ID if provided, otherwise use internal state
+  const selectedVariantId = externalVariantId !== undefined ? externalVariantId : internalVariantId
+  const setSelectedVariantId = (id: string) => {
+    if (onVariantChange) {
+      onVariantChange(id)
+    } else {
+      setInternalVariantId(id)
+    }
+  }
   const [referralCode, setReferralCode] = useState<string | null>(null)
   const [loadingReferralCode, setLoadingReferralCode] = useState(false)
   const [copiedLink, setCopiedLink] = useState(false)
@@ -28,9 +40,10 @@ export function ProductActions({ product }: ProductActionsProps) {
 
   // Auto-select the first in-stock variant (or the first variant) on mount
   useEffect(() => {
-    if (!selectedVariantId && Array.isArray(product.variants) && product.variants.length > 0) {
+    // Only auto-select if we're using internal state (no external control)
+    if (externalVariantId === undefined && !internalVariantId && Array.isArray(product.variants) && product.variants.length > 0) {
       const firstInStock = product.variants.find(v => (v.inventory ?? 0) > 0)
-      setSelectedVariantId((firstInStock || product.variants[0])._id)
+      setInternalVariantId((firstInStock || product.variants[0])._id)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product.variants])
