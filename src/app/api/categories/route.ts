@@ -12,10 +12,11 @@ export async function GET(request: NextRequest) {
     await connectToDatabase()
 
     const { searchParams } = new URL(request.url)
-    const limit = parseInt(searchParams.get('limit') || '20')
-    const activeOnly = searchParams.get('active') !== 'false'
+    const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : null
+    const activeOnly = searchParams.get('activeOnly') === 'true'
     const parent = searchParams.get('parent')
     const featured = searchParams.get('featured') === 'true'
+    const fields = searchParams.get('fields')
 
     const query: any = {}
     if (activeOnly) {
@@ -25,10 +26,17 @@ export async function GET(request: NextRequest) {
       query.parent = parent
     }
 
+    // Build select fields - use provided fields or default
+    const selectFields = fields || 'name slug description image parent isActive featuredOnHomepage homepageOrder'
+
     let categoriesQuery = Category.find(query)
-      .select('name slug description image parent isActive featuredOnHomepage homepageOrder')
+      .select(selectFields)
       .sort({ name: 1 })
-      .limit(limit)
+    
+    // Only apply limit if specified
+    if (limit) {
+      categoriesQuery = categoriesQuery.limit(limit)
+    }
 
     // For featured categories (homepage), filter by featuredOnHomepage and sort by homepageOrder
     if (featured) {
@@ -36,9 +44,12 @@ export async function GET(request: NextRequest) {
         ...query,
         featuredOnHomepage: true
       })
-        .select('name slug description image parent isActive featuredOnHomepage homepageOrder')
+        .select(selectFields)
         .sort({ homepageOrder: 1, name: 1 }) // Sort by order first, then name
-        .limit(limit)
+      
+      if (limit) {
+        categoriesQuery = categoriesQuery.limit(limit)
+      }
     }
 
     const categories = await categoriesQuery.lean()

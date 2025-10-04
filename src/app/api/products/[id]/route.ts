@@ -13,10 +13,16 @@ export async function GET(
     await connectToDatabase()
 
     const { id } = await context.params
-    const product = await Product.findById(id)
+    const { searchParams } = new URL(request.url)
+    const skipReviews = searchParams.get('skipReviews') === 'true'
+    
+    let query = Product.findById(id)
       .populate('category', 'name slug description')
       .populate('categories', 'name slug description')
-      .populate({
+
+    // Only populate reviews if not skipped (admin edit doesn't need them)
+    if (!skipReviews) {
+      query = query.populate({
         path: 'reviews',
         populate: {
           path: 'user',
@@ -24,6 +30,9 @@ export async function GET(
         },
         options: { sort: { createdAt: -1 }, limit: 10 }
       })
+    }
+
+    const product = await query.lean()
 
     if (!product) {
       return NextResponse.json(
@@ -32,20 +41,24 @@ export async function GET(
       )
     }
 
-    // Get review statistics
-    const reviews = await Review.find({ product: id, isApproved: true }).lean()
-    const totalReviews = reviews.length
-    const averageRating = totalReviews > 0 
-      ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews 
-      : 0
-    const reviewStats = {
-      averageRating: Math.round(averageRating * 10) / 10,
-      totalReviews
+    let reviewStats = { averageRating: 0, totalReviews: 0 }
+    
+    // Only fetch review stats if not skipped
+    if (!skipReviews) {
+      const reviews = await Review.find({ product: id, isApproved: true }).lean()
+      const totalReviews = reviews.length
+      const averageRating = totalReviews > 0 
+        ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews 
+        : 0
+      reviewStats = {
+        averageRating: Math.round(averageRating * 10) / 10,
+        totalReviews
+      }
     }
 
     // Add virtual fields using utility functions
     const productWithVirtuals = {
-      ...addProductVirtuals(product.toObject()),
+      ...addProductVirtuals(product),
       reviewStats
     }
 

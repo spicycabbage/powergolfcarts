@@ -73,15 +73,15 @@ export default function EditProductPage() {
       return
     }
     if (user?.role === 'admin') {
-      fetchCategories()
-      fetchProduct()
+      // Fetch in parallel for faster loading
+      Promise.all([fetchCategories(), fetchProduct()])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.role, isLoading])
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch('/api/categories?activeOnly=true&limit=1000', { cache: 'no-store' })
+      const res = await fetch('/api/categories?activeOnly=false&fields=_id,name,slug,parent,isSystem', { cache: 'no-store' })
       if (!res.ok) return
       const json = await res.json().catch(() => ({} as any))
       // Handle different API response structures
@@ -96,7 +96,7 @@ export default function EditProductPage() {
 
   const fetchProduct = async () => {
     try {
-      const res = await fetch(`/api/products/${productId}`, { cache: 'no-store' })
+      const res = await fetch(`/api/products/${productId}?skipReviews=true`, { cache: 'no-store' })
       if (!res.ok) return
       const json = await res.json().catch(() => ({} as any))
       const p = json?.data || json
