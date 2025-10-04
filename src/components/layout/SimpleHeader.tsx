@@ -80,37 +80,8 @@ export function SimpleHeader() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
-            {/* Electric Carts Dropdown */}
-            <div 
-              className="relative"
-              onMouseEnter={() => setOpenDropdown('electric-carts')}
-              onMouseLeave={() => setOpenDropdown(null)}
-            >
-              <Link
-                href="/categories/electric-carts"
-                className="text-white hover:text-green-400 transition-colors font-medium flex items-center"
-              >
-                Electric Carts
-                <ChevronDown 
-                  size={16} 
-                  className={`ml-1 transition-transform duration-200 ${
-                    openDropdown === 'electric-carts' ? 'rotate-180' : ''
-                  }`} 
-                />
-              </Link>
-              {openDropdown === 'electric-carts' && (
-                <div className="absolute left-0 top-full z-50">
-                  <div className="pt-2 bg-transparent">
-                    <div className="bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[200px]">
-                      <Link href="/categories/ego-caddy" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Ego Caddy</Link>
-                      <Link href="/categories/robera" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Robera</Link>
-                      <Link href="/categories/tasmania" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Tasmania</Link>
-                      <Link href="/categories/volt-caddy" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Volt Caddy</Link>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+            {/* Electric Carts - No Dropdown */}
+            <Link href="/categories/electric-carts" className="text-white hover:text-green-400 transition-colors font-medium">Electric Carts</Link>
 
             {/* Golf Bags - No Dropdown */}
             <Link href="/categories/golf-bags" className="text-white hover:text-green-400 transition-colors font-medium">Golf Bags</Link>
@@ -121,8 +92,38 @@ export function SimpleHeader() {
             {/* Promotions - No Dropdown */}
             <Link href="/promotions" className="text-white hover:text-green-400 transition-colors font-medium">Promotions</Link>
 
-            {/* Brands - No Dropdown */}
-            <Link href="/brands" className="text-white hover:text-green-400 transition-colors font-medium">Brands</Link>
+            {/* Brands Dropdown */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setOpenDropdown('brands')}
+              onMouseLeave={() => setOpenDropdown(null)}
+            >
+              <Link
+                href="/brands"
+                className="text-white hover:text-green-400 transition-colors font-medium flex items-center"
+              >
+                Brands
+                <ChevronDown 
+                  size={16} 
+                  className={`ml-1 transition-transform duration-200 ${
+                    openDropdown === 'brands' ? 'rotate-180' : ''
+                  }`} 
+                />
+              </Link>
+              {openDropdown === 'brands' && (
+                <div className="absolute left-0 top-full z-50">
+                  <div className="pt-2 bg-transparent">
+                    <div className="bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[200px]">
+                      <Link href="/categories/robera" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Robera</Link>
+                      <Link href="/categories/insanity-golf" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Insanity Golf</Link>
+                      <Link href="/categories/ego-caddy" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Ego Caddy</Link>
+                      <Link href="/categories/tasmania" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Tasmania</Link>
+                      <Link href="/categories/volt-caddy" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">Volt Caddy</Link>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Videos - No Dropdown */}
             <Link href="/videos" className="text-white hover:text-green-400 transition-colors font-medium">Videos</Link>
@@ -174,15 +175,7 @@ export function SimpleHeader() {
         <div className="md:hidden bg-black border-t border-gray-700">
           <div className="px-4 py-4 space-y-4 max-h-[calc(100vh-64px)] overflow-y-auto">
             {/* Electric Carts */}
-            <div>
-              <Link href="/categories/electric-carts" className="block text-white hover:text-green-400 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Electric Carts</Link>
-              <div className="ml-4 space-y-1">
-                <Link href="/categories/ego-caddy" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Ego Caddy</Link>
-                <Link href="/categories/robera" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Robera</Link>
-                <Link href="/categories/tasmania" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Tasmania</Link>
-                <Link href="/categories/volt-caddy" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Volt Caddy</Link>
-              </div>
-            </div>
+            <Link href="/categories/electric-carts" className="block text-white hover:text-green-400 font-medium" onClick={() => setIsMenuOpen(false)}>Electric Carts</Link>
 
             {/* Golf Bags */}
             <Link href="/categories/golf-bags" className="block text-white hover:text-green-400 font-medium" onClick={() => setIsMenuOpen(false)}>Golf Bags</Link>
@@ -194,7 +187,16 @@ export function SimpleHeader() {
             <Link href="/promotions" className="block text-white hover:text-green-400 font-medium" onClick={() => setIsMenuOpen(false)}>Promotions</Link>
 
             {/* Brands */}
-            <Link href="/brands" className="block text-white hover:text-green-400 font-medium" onClick={() => setIsMenuOpen(false)}>Brands</Link>
+            <div>
+              <Link href="/brands" className="block text-white hover:text-green-400 font-medium mb-2" onClick={() => setIsMenuOpen(false)}>Brands</Link>
+              <div className="ml-4 space-y-1">
+                <Link href="/categories/robera" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Robera</Link>
+                <Link href="/categories/insanity-golf" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Insanity Golf</Link>
+                <Link href="/categories/ego-caddy" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Ego Caddy</Link>
+                <Link href="/categories/tasmania" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Tasmania</Link>
+                <Link href="/categories/volt-caddy" className="block text-sm text-gray-300 hover:text-white" onClick={() => setIsMenuOpen(false)}>Volt Caddy</Link>
+              </div>
+            </div>
 
             {/* Videos */}
             <Link href="/videos" className="block text-white hover:text-green-400 font-medium" onClick={() => setIsMenuOpen(false)}>Videos</Link>
