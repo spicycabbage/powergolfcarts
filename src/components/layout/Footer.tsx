@@ -60,7 +60,7 @@ export function Footer() {
               <div>
                 <p className="text-sm text-white mb-2">Follow us:</p>
                 <div className="flex space-x-4">
-                  <a href="#" className="text-gray-300 hover:text-white text-sm">Facebook</a>
+                  <a href="https://www.facebook.com/InsanityGolf" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white text-sm">Facebook</a>
                   <a href="#" className="text-gray-300 hover:text-white text-sm">TikTok</a>
                   <a href="#" className="text-gray-300 hover:text-white text-sm">Instagram</a>
                 </div>
