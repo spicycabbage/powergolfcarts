@@ -17,6 +17,7 @@ import LearnMore from '@/components/LearnMore'
 import { serializeProductForClient } from '@/lib/serializers'
 import { sanitizeHtml } from '@/utils/sanitize'
 import VariantCard from '@/components/product/VariantCard'
+import RoberaProEnhanced from '@/components/pdp/RoberaProEnhanced'
 
 function normalizeContent(html: string): string {
   try {
@@ -352,6 +353,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
             )}
           </div>
         </div>
+
+        {/* Robera Pro Enhanced Content */}
+        {slug === 'robera-pro' && <RoberaProEnhanced />}
 
         {/* Description / Reviews Tabs */}
         {(() => {
