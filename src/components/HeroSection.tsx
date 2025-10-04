@@ -27,7 +27,7 @@ export function HeroSection() {
             Premium electric golf caddies and E-Carts for effortless course navigation and enhanced golfing experience.
           </p>
           <Link
-            href="/categories/e-carts"
+            href="/categories/electric-carts"
             className="inline-flex items-center justify-center px-8 py-4 bg-white text-green-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors duration-200 shadow-lg"
           >
             Shop E-Carts
