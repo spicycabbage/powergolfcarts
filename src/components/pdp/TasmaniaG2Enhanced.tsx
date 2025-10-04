@@ -143,14 +143,6 @@ export default function TasmaniaG2Enhanced() {
       {/* Additional Information */}
       <section className="max-w-4xl mx-auto px-4 space-y-4">
         
-        {/* Accessories Included (Detailed) */}
-        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
-          <h3 className="text-xl font-bold text-green-900 mb-4">🎁 Accessories Included</h3>
-          <p className="text-gray-700">
-            Rechargeable Remote control, scorecard holder, tee and ball holder, cup holder, umbrella holder, mesh bag, cooler pocket, storage bag, USB port. <strong>Seat is Optional.</strong>
-          </p>
-        </div>
-
         {/* Warranty Section */}
         <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
           <h3 className="text-xl font-bold text-green-900 mb-4">🛡️ Warranty</h3>

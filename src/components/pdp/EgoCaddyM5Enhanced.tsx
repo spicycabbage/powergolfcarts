@@ -184,19 +184,6 @@ export default function EgoCaddyM5Enhanced() {
           </div>
         </div>
 
-        {/* Accessories Included */}
-        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
-          <h3 className="text-xl font-bold text-green-900 mb-4">🎁 Accessories Included</h3>
-          <ul className="list-disc list-inside text-gray-700 space-y-2">
-            <li>Remote control</li>
-            <li>Free Score Card Holder</li>
-            <li>Free Tees and Balls storage</li>
-            <li>Free Large Drink Holder (Cup holder)</li>
-            <li>Free Umbrella Holder</li>
-            <li>USB Port for device charging</li>
-          </ul>
-        </div>
-
         {/* Installation Instructions */}
         <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
           <h3 className="text-xl font-bold text-green-900 mb-4">📹 Installation Instructions & User Manual</h3>
