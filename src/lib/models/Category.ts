@@ -189,7 +189,7 @@ CategorySchema.statics.getBreadcrumbs = async function(categoryId: string) {
     let currentId = String(category.parent)
     let depth = 0
     while (currentId && depth < 10) { // Max 10 levels to prevent infinite loops
-      const parent = categoryMap.get(currentId)
+      const parent: any = categoryMap.get(currentId)
       if (!parent) break
       
       breadcrumbs.unshift({
