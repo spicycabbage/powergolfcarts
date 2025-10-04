@@ -135,7 +135,7 @@ export default function EgoCaddyM5Enhanced() {
       </section>
 
       {/* Additional Information */}
-      <section className="max-w-4xl mx-auto px-4 space-y-8">
+      <section className="max-w-4xl mx-auto px-4 space-y-4">
         
         {/* Warning Section */}
         <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg">
