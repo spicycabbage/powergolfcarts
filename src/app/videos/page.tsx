@@ -19,7 +19,7 @@ export default function VideosPage() {
       ]
     },
     {
-      title: 'Tasmania 360 Swivel Front Wheel E-Cart',
+      title: 'Tasmania G2 - 360 Swivel Front Wheel E-Cart',
       videos: [
         { title: 'Cart performance on the golf course', url: 'https://www.youtube.com/embed/mMYQsYxs5Ic' },
         { title: 'Adjust 2 Sides of Motor Speeds', url: 'https://video.wixstatic.com/video/6df5bf_7a0a3420ab8e4650859e4096dd44975f/1080p/mp4/file.mp4' },
