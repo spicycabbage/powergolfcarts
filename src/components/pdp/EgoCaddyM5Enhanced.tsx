@@ -210,14 +210,6 @@ export default function EgoCaddyM5Enhanced() {
             Watch Installation Videos →
           </a>
         </div>
-
-        {/* Competitors Section */}
-        <div className="bg-gray-50 border-l-4 border-gray-400 p-6 rounded-lg">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">🏆 Compare with Competitors</h3>
-          <p className="text-gray-700">
-            Similar models: Stewart Golf Q Follow lithium Electric Golf Cart, Stewart Golf X10 Follow
-          </p>
-        </div>
       </section>
     </div>
   )
