@@ -9,9 +9,10 @@ import HeaderServer from '@/components/layout/HeaderServer'
 
 const inter = Inter({ 
   subsets: ['latin'],
-  display: 'swap',
+  display: 'optional',
   preload: true,
   fallback: ['system-ui', 'arial'],
+  variable: '--font-inter',
 })
 
 export const metadata: Metadata = {
