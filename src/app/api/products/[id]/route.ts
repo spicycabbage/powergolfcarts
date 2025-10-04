@@ -58,7 +58,7 @@ export async function GET(
 
     // Add virtual fields using utility functions
     const productWithVirtuals = {
-      ...addProductVirtuals(product),
+      ...addProductVirtuals(product as any),
       reviewStats
     }
 
