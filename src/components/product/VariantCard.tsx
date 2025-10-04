@@ -205,10 +205,11 @@ export default function VariantCard({ product, priority = false }: { product: Ca
               {product.variants.map((v, idx) => {
                 const isSelected = String(effectiveVariantId) === String((v as any)._id)
                 const disabled = Number((v as any).inventory || 0) <= 0
-                const priceNum = (v as any).originalPrice != null && Number((v as any).originalPrice) > 0
-                  ? Number((v as any).originalPrice)
-                  : ((v as any).price != null && Number((v as any).price) > 0
-                      ? Number((v as any).price)
+                // Show sale price if available, otherwise show original price
+                const priceNum = (v as any).price != null && Number((v as any).price) > 0
+                  ? Number((v as any).price)
+                  : ((v as any).originalPrice != null && Number((v as any).originalPrice) > 0
+                      ? Number((v as any).originalPrice)
                       : (product.price != null ? Number(product.price) : NaN))
                 const label = String(v.value || '').trim()
                 return (
