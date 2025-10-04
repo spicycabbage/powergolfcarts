@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 export default function VideosPage() {
   const videoSections = [
     {
-      title: 'Egocaddy Follow Me E-Cart',
+      title: 'Ego Caddy M5 - Follow Me E-Cart',
       videos: [
         { title: 'Follow Me Mode on the golf course', url: 'https://www.youtube.com/embed/Cyr3cg7PRSo' },
         { title: 'Installation Instructions, Part 1', url: 'https://video.wixstatic.com/video/6df5bf_a68d1be0f8274244a12a3a5311a36d8c/360p/mp4/file.mp4' },
