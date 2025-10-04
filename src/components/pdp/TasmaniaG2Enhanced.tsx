@@ -172,6 +172,20 @@ export default function TasmaniaG2Enhanced() {
             </p>
           </div>
         </div>
+
+        {/* Installation Instructions */}
+        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+          <h3 className="text-xl font-bold text-green-900 mb-4">📹 Installation Instructions & User Manual</h3>
+          <p className="text-gray-700 mb-4">
+            Check out our comprehensive assembly and setup videos:
+          </p>
+          <a 
+            href="/videos" 
+            className="inline-flex items-center px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors"
+          >
+            Watch Installation Videos →
+          </a>
+        </div>
       </section>
     </div>
   )
