@@ -172,16 +172,6 @@ export default function TasmaniaG2Enhanced() {
             </p>
           </div>
         </div>
-
-        {/* Dimensions */}
-        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
-          <h3 className="text-xl font-bold text-green-900 mb-4">📏 Dimensions and Weight</h3>
-          <div className="space-y-2 text-gray-700">
-            <p><strong>Without Wheels:</strong> 27 x 32 x 10 inch</p>
-            <p><strong>With Wheels:</strong> 29 x 34 x 15 inch</p>
-            <p><strong>Net Weight:</strong> 16 Kg (35.3 LB)</p>
-          </div>
-        </div>
       </section>
     </div>
   )
