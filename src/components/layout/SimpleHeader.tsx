@@ -39,7 +39,7 @@ export function SimpleHeader() {
     <header className={`bg-black sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'shadow-lg' : 'shadow-sm'}`}>
       {/* Announcement Bar */}
       <div className={`bg-primary-600 text-white text-center text-sm transition-all duration-300 ${isScrolled ? 'h-0 overflow-hidden' : 'py-2'}`}>
-        <p>Free shipping for orders over $175</p>
+        <p>Free shipping within USA</p>
       </div>
       
       {/* Secondary Navigation */}

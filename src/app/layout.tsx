@@ -7,7 +7,12 @@ import { ConditionalFooter } from '@/components/layout/ConditionalFooter'
 import { SessionProvider } from '@/components/SessionProvider'
 import HeaderServer from '@/components/layout/HeaderServer'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap',
+  preload: true,
+  fallback: ['system-ui', 'arial'],
+})
 
 export const metadata: Metadata = {
   title: 'Power Golf Carts',

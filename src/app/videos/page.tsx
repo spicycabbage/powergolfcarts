@@ -63,11 +63,6 @@ export default function VideosPage() {
             </div>
           ))}
         </div>
-
-        {/* Copyright Notice */}
-        <div className="mt-16 text-center text-sm text-gray-600">
-          <p>Insanity Golf has copyright for all the photos and videos.</p>
-        </div>
       </div>
     </div>
   )
