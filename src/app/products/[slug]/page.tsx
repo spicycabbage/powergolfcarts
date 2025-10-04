@@ -19,6 +19,7 @@ import { sanitizeHtml } from '@/utils/sanitize'
 import VariantCard from '@/components/product/VariantCard'
 import RoberaProEnhanced from '@/components/pdp/RoberaProEnhanced'
 import EgoCaddyM5Enhanced from '@/components/pdp/EgoCaddyM5Enhanced'
+import TasmaniaG2Enhanced from '@/components/pdp/TasmaniaG2Enhanced'
 
 function normalizeContent(html: string): string {
   try {
@@ -356,6 +357,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
         {/* Ego Caddy M5 Enhanced Content */}
         {slug === 'ego-caddy-m5' && <EgoCaddyM5Enhanced />}
+
+        {/* Tasmania G2 Enhanced Content */}
+        {slug === 'tasmania-g2' && <TasmaniaG2Enhanced />}
 
         {/* Related Products */}
         {Array.isArray(related) && related.length > 0 && (
