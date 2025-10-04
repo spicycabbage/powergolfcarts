@@ -35,7 +35,7 @@ export function Footer() {
             <h3 className="text-lg font-semibold mb-4 text-white">About Power Golf Carts</h3>
             <div className="space-y-2 text-gray-300">
               <Link href="/about" className="block hover:text-white">About Us</Link>
-              <Link href="/showcase" className="block hover:text-white">Showcase Videos</Link>
+              <Link href="/videos" className="block hover:text-white">Showcase Videos</Link>
               <Link href="/blog" className="block hover:text-white">Blog</Link>
               <Link href="/legal" className="block hover:text-white">Legal Information</Link>
               <Link href="/showrooms" className="block hover:text-white">Find a Show Room</Link>
