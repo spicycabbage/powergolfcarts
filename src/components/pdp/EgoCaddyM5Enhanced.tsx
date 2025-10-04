@@ -51,7 +51,7 @@ export default function EgoCaddyM5Enhanced() {
           
           <div className="space-y-6">
             {/* Design and Battery */}
-            <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg">
+            <div className="bg-green-50 p-6 rounded-lg">
               <p className="text-gray-800 leading-relaxed mb-4">
                 <strong>Foldable design</strong> with durable light-weight aluminum frame and wrapped with carbon fiber, high-end appearance
               </p>
@@ -61,8 +61,8 @@ export default function EgoCaddyM5Enhanced() {
             </div>
 
             {/* 3 Different Modes */}
-            <div className="bg-purple-50 p-6 rounded-lg">
-              <h3 className="text-xl font-bold text-purple-900 mb-4">3 Different Modes:</h3>
+            <div className="bg-green-50 p-6 rounded-lg">
+              <h3 className="text-xl font-bold text-green-900 mb-4">3 Different Modes:</h3>
               <ol className="list-decimal list-inside space-y-3 text-gray-800">
                 <li>
                   <strong>Accurate Smart Follow Mode:</strong> The best following mode you have ever experienced. Make you to enjoy walking and shoot better score
@@ -77,14 +77,14 @@ export default function EgoCaddyM5Enhanced() {
             </div>
 
             {/* Smart Engine */}
-            <div className="bg-amber-50 p-6 rounded-lg">
-              <h3 className="text-xl font-bold text-amber-900 mb-3">Smart Engine:</h3>
+            <div className="bg-green-50 p-6 rounded-lg">
+              <h3 className="text-xl font-bold text-green-900 mb-3">Smart Engine:</h3>
               <p className="text-gray-800">Auto-balancing, Slope and speed control</p>
             </div>
 
             {/* Egocaddy Mobile App */}
-            <div className="bg-blue-50 p-6 rounded-lg">
-              <h3 className="text-xl font-bold text-blue-900 mb-4">Use Egocaddy Mobile App:</h3>
+            <div className="bg-green-50 p-6 rounded-lg">
+              <h3 className="text-xl font-bold text-green-900 mb-4">Use Egocaddy Mobile App:</h3>
               <ol className="list-decimal list-inside space-y-2 text-gray-800">
                 <li>Control and monitor the cart</li>
                 <li>Check battery levels</li>
@@ -103,25 +103,25 @@ export default function EgoCaddyM5Enhanced() {
                 <p className="text-gray-800">Use remote control to record swing with slow motion playback.</p>
               </div>
 
-              <div className="bg-cyan-50 p-6 rounded-lg">
-                <h4 className="font-bold text-cyan-900 mb-2">🎮 Remote Controller</h4>
+              <div className="bg-green-50 p-6 rounded-lg">
+                <h4 className="font-bold text-green-900 mb-2">🎮 Remote Controller</h4>
                 <p className="text-gray-800">Fun somatosensory remote controllable.</p>
               </div>
 
-              <div className="bg-indigo-50 p-6 rounded-lg">
-                <h4 className="font-bold text-indigo-900 mb-2">🛞 Swivel Front Wheels</h4>
+              <div className="bg-green-50 p-6 rounded-lg">
+                <h4 className="font-bold text-green-900 mb-2">🛞 Swivel Front Wheels</h4>
                 <p className="text-gray-800">2 Swivel front wheels with brakes</p>
               </div>
 
-              <div className="bg-pink-50 p-6 rounded-lg">
-                <h4 className="font-bold text-pink-900 mb-2">⚙️ Advanced Settings</h4>
+              <div className="bg-green-50 p-6 rounded-lg">
+                <h4 className="font-bold text-green-900 mb-2">⚙️ Advanced Settings</h4>
                 <p className="text-gray-800">Monitor and make advanced settings to customize your own Ego Caddy Electric Golf trolley.</p>
               </div>
             </div>
 
             {/* Accessories Included in Features */}
-            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 p-6 rounded-lg">
-              <h3 className="text-xl font-bold text-orange-900 mb-4">Accessories Included:</h3>
+            <div className="bg-green-50 p-6 rounded-lg">
+              <h3 className="text-xl font-bold text-green-900 mb-4">Accessories Included:</h3>
               <ul className="list-disc list-inside space-y-2 text-gray-800">
                 <li>Free Score Card Holder</li>
                 <li>Free Tees and Balls storage</li>
@@ -151,8 +151,8 @@ export default function EgoCaddyM5Enhanced() {
         </div>
 
         {/* Mobile App Section */}
-        <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
-          <h3 className="text-xl font-bold text-blue-900 mb-4">📱 Smart Follow Me Cart Mobile App</h3>
+        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+          <h3 className="text-xl font-bold text-green-900 mb-4">📱 Smart Follow Me Cart Mobile App</h3>
           <p className="text-gray-700">
             The Mobile App is available on <strong>iOS and Android</strong>
           </p>
@@ -167,15 +167,15 @@ export default function EgoCaddyM5Enhanced() {
         </div>
 
         {/* Shipping Section */}
-        <div className="bg-purple-50 border-l-4 border-purple-500 p-6 rounded-lg">
-          <h3 className="text-xl font-bold text-purple-900 mb-4">📦 Shipping Information</h3>
+        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+          <h3 className="text-xl font-bold text-green-900 mb-4">📦 Shipping Information</h3>
           <div className="space-y-4 text-gray-700">
             <div>
-              <h4 className="font-semibold text-purple-900 mb-2">Shipping Time</h4>
+              <h4 className="font-semibold text-green-900 mb-2">Shipping Time</h4>
               <p>Shipping and handling time is about 1-8 business days within the United States, depending on customer location.</p>
             </div>
             <div>
-              <h4 className="font-semibold text-purple-900 mb-2">US Shipping Fee</h4>
+              <h4 className="font-semibold text-green-900 mb-2">US Shipping Fee</h4>
               <p>Free shipping within the USA for this product.</p>
             </div>
             <p className="text-sm italic">
@@ -185,8 +185,8 @@ export default function EgoCaddyM5Enhanced() {
         </div>
 
         {/* Accessories Included */}
-        <div className="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-lg">
-          <h3 className="text-xl font-bold text-amber-900 mb-4">🎁 Accessories Included</h3>
+        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+          <h3 className="text-xl font-bold text-green-900 mb-4">🎁 Accessories Included</h3>
           <ul className="list-disc list-inside text-gray-700 space-y-2">
             <li>Remote control</li>
             <li>Free Score Card Holder</li>
@@ -198,14 +198,14 @@ export default function EgoCaddyM5Enhanced() {
         </div>
 
         {/* Installation Instructions */}
-        <div className="bg-cyan-50 border-l-4 border-cyan-500 p-6 rounded-lg">
-          <h3 className="text-xl font-bold text-cyan-900 mb-4">📹 Installation Instructions & User Manual</h3>
+        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+          <h3 className="text-xl font-bold text-green-900 mb-4">📹 Installation Instructions & User Manual</h3>
           <p className="text-gray-700 mb-4">
             Check out our comprehensive assembly and setup videos:
           </p>
           <a 
             href="/videos" 
-            className="inline-flex items-center px-6 py-3 bg-cyan-600 text-white font-semibold rounded-lg hover:bg-cyan-700 transition-colors"
+            className="inline-flex items-center px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors"
           >
             Watch Installation Videos →
           </a>
