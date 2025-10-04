@@ -82,17 +82,12 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
   }));
 
   // --- Product Fetching Logic ---
-  const allCategoryIds: string[] = [String(category._id)];
-  let frontier: string[] = [String(category._id)]
-  while (frontier.length > 0) {
-    const children = await Category.find({ parent: { $in: frontier } }).select('_id').lean()
-    const newIds = children
-      .map(c => String(c._id))
-      .filter(id => !allCategoryIds.includes(id))
-    if (newIds.length === 0) break
-    allCategoryIds.push(...newIds)
-    frontier = newIds
-  }
+  // Fetch all children in ONE query instead of a loop
+  const allChildren = await Category.find({ parent: category._id }).select('_id').lean()
+  const allCategoryIds: string[] = [
+    String(category._id),
+    ...allChildren.map(c => String(c._id))
+  ]
 
   const sortParam = resolvedSearchParams?.sort ? String(resolvedSearchParams.sort) : 'priceDesc';
   const sortBy = (() => {

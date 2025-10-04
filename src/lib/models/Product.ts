@@ -231,6 +231,11 @@ ProductSchema.index({ averageRating: -1 })
 ProductSchema.index({ createdAt: -1 })
 // Speed up sort by name (asc/desc)
 ProductSchema.index({ name: 1 })
+// Compound indexes for common queries (most important first)
+ProductSchema.index({ isActive: 1, category: 1, price: -1 })
+ProductSchema.index({ isActive: 1, categories: 1, price: -1 })
+ProductSchema.index({ isActive: 1, isFeatured: 1 })
+ProductSchema.index({ isActive: 1, createdAt: -1 })
 
 // Virtual for discount percentage (using USD pricing as default)
 ProductSchema.virtual('discountPercentage').get(function() {

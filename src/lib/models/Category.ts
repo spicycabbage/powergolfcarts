@@ -170,25 +170,36 @@ CategorySchema.statics.getCategoryTree = async function() {
   return buildTree(categories)
 }
 
-// Static method to get breadcrumbs
+// Static method to get breadcrumbs - optimized to use single query
 CategorySchema.statics.getBreadcrumbs = async function(categoryId: string) {
-  const category = await this.findById(categoryId)
+  const category = await this.findById(categoryId).lean()
   if (!category) return []
 
-  const breadcrumbs = []
-  let current = category
+  const breadcrumbs = [{
+    _id: category._id,
+    name: category.name,
+    slug: category.slug
+  }]
 
-  while (current) {
-    breadcrumbs.unshift({
-      _id: current._id,
-      name: current.name,
-      slug: current.slug
-    })
-
-    if (current.parent) {
-      current = await this.findById(current.parent)
-    } else {
-      break
+  // If has parent, fetch all potential ancestors in one query
+  if (category.parent) {
+    const allCategories = await this.find({}).select('_id name slug parent').lean()
+    const categoryMap = new Map(allCategories.map(c => [String(c._id), c]))
+    
+    let currentId = String(category.parent)
+    let depth = 0
+    while (currentId && depth < 10) { // Max 10 levels to prevent infinite loops
+      const parent = categoryMap.get(currentId)
+      if (!parent) break
+      
+      breadcrumbs.unshift({
+        _id: parent._id,
+        name: parent.name,
+        slug: parent.slug
+      })
+      
+      currentId = parent.parent ? String(parent.parent) : ''
+      depth++
     }
   }
 
