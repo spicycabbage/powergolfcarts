@@ -42,6 +42,98 @@ export default function EgoCaddyM5Enhanced() {
         </div>
       </section>
 
+      {/* Features Section */}
+      <section className="bg-white py-12">
+        <div className="max-w-4xl mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
+            Features
+          </h2>
+          
+          <div className="space-y-6">
+            {/* Design and Battery */}
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg">
+              <p className="text-gray-800 leading-relaxed mb-4">
+                <strong>Foldable design</strong> with durable light-weight aluminum frame and wrapped with carbon fiber, high-end appearance
+              </p>
+              <p className="text-gray-800 leading-relaxed">
+                <strong>36-45 Holes</strong> long range lithium battery
+              </p>
+            </div>
+
+            {/* 3 Different Modes */}
+            <div className="bg-purple-50 p-6 rounded-lg">
+              <h3 className="text-xl font-bold text-purple-900 mb-4">3 Different Modes:</h3>
+              <ol className="list-decimal list-inside space-y-3 text-gray-800">
+                <li>
+                  <strong>Accurate Smart Follow Mode:</strong> The best following mode you have ever experienced. Make you to enjoy walking and shoot better score
+                </li>
+                <li>
+                  <strong>Remote Control Mode</strong>
+                </li>
+                <li>
+                  <strong>Manual Push Mode</strong>
+                </li>
+              </ol>
+            </div>
+
+            {/* Smart Engine */}
+            <div className="bg-amber-50 p-6 rounded-lg">
+              <h3 className="text-xl font-bold text-amber-900 mb-3">Smart Engine:</h3>
+              <p className="text-gray-800">Auto-balancing, Slope and speed control</p>
+            </div>
+
+            {/* Egocaddy Mobile App */}
+            <div className="bg-blue-50 p-6 rounded-lg">
+              <h3 className="text-xl font-bold text-blue-900 mb-4">Use Egocaddy Mobile App:</h3>
+              <ol className="list-decimal list-inside space-y-2 text-gray-800">
+                <li>Control and monitor the cart</li>
+                <li>Check battery levels</li>
+                <li>Mileage Remaining</li>
+                <li>Change cart walking speed</li>
+                <li>Change following distance</li>
+                <li><strong>Gravity Control Feature:</strong> Makes it more fun to use your phone to control the cart</li>
+                <li>Egocaddy APP is available both on <strong>iOS and Android</strong></li>
+              </ol>
+            </div>
+
+            {/* Additional Features */}
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-green-50 p-6 rounded-lg">
+                <h4 className="font-bold text-green-900 mb-2">🎥 Swing Recorder</h4>
+                <p className="text-gray-800">Use remote control to record swing with slow motion playback.</p>
+              </div>
+
+              <div className="bg-cyan-50 p-6 rounded-lg">
+                <h4 className="font-bold text-cyan-900 mb-2">🎮 Remote Controller</h4>
+                <p className="text-gray-800">Fun somatosensory remote controllable.</p>
+              </div>
+
+              <div className="bg-indigo-50 p-6 rounded-lg">
+                <h4 className="font-bold text-indigo-900 mb-2">🛞 Swivel Front Wheels</h4>
+                <p className="text-gray-800">2 Swivel front wheels with brakes</p>
+              </div>
+
+              <div className="bg-pink-50 p-6 rounded-lg">
+                <h4 className="font-bold text-pink-900 mb-2">⚙️ Advanced Settings</h4>
+                <p className="text-gray-800">Monitor and make advanced settings to customize your own Ego Caddy Electric Golf trolley.</p>
+              </div>
+            </div>
+
+            {/* Accessories Included in Features */}
+            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 p-6 rounded-lg">
+              <h3 className="text-xl font-bold text-orange-900 mb-4">Accessories Included:</h3>
+              <ul className="list-disc list-inside space-y-2 text-gray-800">
+                <li>Free Score Card Holder</li>
+                <li>Free Tees and Balls storage</li>
+                <li>Free Large Drink Holder</li>
+                <li>Free Umbrella Holder</li>
+                <li>USB Port</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Additional Information */}
       <section className="max-w-4xl mx-auto px-4 space-y-8">
         
