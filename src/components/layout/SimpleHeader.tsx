@@ -120,6 +120,9 @@ export function SimpleHeader() {
 
             {/* Promotions - No Dropdown */}
             <Link href="/promotions" className="text-white hover:text-green-400 transition-colors font-medium">Promotions</Link>
+
+            {/* Videos - No Dropdown */}
+            <Link href="/videos" className="text-white hover:text-green-400 transition-colors font-medium">Videos</Link>
           </nav>
 
           {/* Right Side */}
@@ -186,6 +189,9 @@ export function SimpleHeader() {
 
             {/* Promotions */}
             <Link href="/promotions" className="block text-white hover:text-green-400 font-medium" onClick={() => setIsMenuOpen(false)}>Promotions</Link>
+
+            {/* Videos */}
+            <Link href="/videos" className="block text-white hover:text-green-400 font-medium" onClick={() => setIsMenuOpen(false)}>Videos</Link>
 
             {/* Info links under categories for mobile (ordered, large touch targets) */}
             <div className="pt-2 border-t border-gray-700 space-y-1">
