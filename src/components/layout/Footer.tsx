@@ -24,7 +24,6 @@ export function Footer() {
             <div className="space-y-2 text-gray-300">
               <Link href="/warranty-request" className="block hover:text-white">Warranty Request Form</Link>
               <Link href="/warranty" className="block hover:text-white">Warranty Information</Link>
-              <Link href="/videos" className="block hover:text-white">Technical Videos</Link>
               <Link href="/manuals" className="block hover:text-white">Instruction Manuals</Link>
               <Link href="/battery-care" className="block hover:text-white">Battery Care</Link>
               <Link href="/privacy" className="block hover:text-white">Privacy Policy</Link>
