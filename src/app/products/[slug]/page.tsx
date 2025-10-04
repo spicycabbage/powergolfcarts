@@ -18,6 +18,7 @@ import { serializeProductForClient } from '@/lib/serializers'
 import { sanitizeHtml } from '@/utils/sanitize'
 import VariantCard from '@/components/product/VariantCard'
 import RoberaProEnhanced from '@/components/pdp/RoberaProEnhanced'
+import EgoCaddyM5Enhanced from '@/components/pdp/EgoCaddyM5Enhanced'
 
 function normalizeContent(html: string): string {
   try {
@@ -352,6 +353,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
         {/* Robera Pro Enhanced Content */}
         {slug === 'robera-pro' && <RoberaProEnhanced />}
+
+        {/* Ego Caddy M5 Enhanced Content */}
+        {slug === 'ego-caddy-m5' && <EgoCaddyM5Enhanced />}
 
         {/* Related Products */}
         {Array.isArray(related) && related.length > 0 && (

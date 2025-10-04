@@ -94,14 +94,14 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
     frontier = newIds
   }
 
-  const sortParam = resolvedSearchParams?.sort ? String(resolvedSearchParams.sort) : 'default';
+  const sortParam = resolvedSearchParams?.sort ? String(resolvedSearchParams.sort) : 'priceDesc';
   const sortBy = (() => {
     switch (sortParam) {
       case 'priceAsc': return { price: 1 }
       case 'priceDesc': return { price: -1 }
       case 'newest': return { createdAt: -1 }
       case 'rating': return { averageRating: -1 }
-      default: return { createdAt: -1 }
+      default: return { price: -1 }
     }
   })()
 

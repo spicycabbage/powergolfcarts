@@ -7,11 +7,11 @@ interface SortSelectProps {
 }
 
 const options = [
-  { value: 'popular', label: 'Most Popular' },
-  { value: 'priceAsc', label: 'Price: Low to High' },
   { value: 'priceDesc', label: 'Price: High to Low' },
+  { value: 'priceAsc', label: 'Price: Low to High' },
   { value: 'newest', label: 'Newest' },
   { value: 'rating', label: 'Rating' },
+  { value: 'popular', label: 'Most Popular' },
 ]
 
 export default function SortSelect({ value }: SortSelectProps) {
@@ -19,12 +19,12 @@ export default function SortSelect({ value }: SortSelectProps) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const current = value || searchParams.get('sort') || 'popular'
+  const current = value || searchParams.get('sort') || 'priceDesc'
 
   const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const next = e.target.value
     const params = new URLSearchParams(searchParams.toString())
-    if (next && next !== 'popular') params.set('sort', next)
+    if (next && next !== 'priceDesc') params.set('sort', next)
     else params.delete('sort')
     const qs = params.toString()
     router.push(qs ? `${pathname}?${qs}` : pathname)
