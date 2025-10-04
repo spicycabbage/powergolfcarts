@@ -13,7 +13,7 @@ const features = [
   },
   {
     name: 'Extensive Selection',
-    description: 'We carry a wide selection of golf clubs, balls, bags, accessories, and apparel from top brands like TaylorMade, Callaway, Titleist, and more.',
+    description: 'We carry a wide selection of electric caddies, bags, and accessories from top brands like Robera, Volt Caddy, Insanity Golf, Ego Caddy and more.',
     icon: Package,
   },
   {
