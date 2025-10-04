@@ -62,7 +62,7 @@ export default function RoberaProEnhanced() {
   return (
     <div className="space-y-16 py-12">
       {/* Battery Capacity Section */}
-      <section className="bg-gradient-to-b from-gray-50 to-white py-12">
+      <section className="bg-gradient-to-b from-green-50 to-white py-12">
         <div className="max-w-4xl mx-auto px-4">
           <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
             <h2 className="text-3xl font-bold text-center mb-8 text-gray-900">
@@ -71,7 +71,7 @@ export default function RoberaProEnhanced() {
             <div className="grid md:grid-cols-2 gap-8">
               {batteryStats.map((stat, idx) => (
                 <div key={idx} className="text-center space-y-2">
-                  <div className="text-4xl md:text-5xl font-bold text-blue-600">
+                  <div className="text-4xl md:text-5xl font-bold text-green-600">
                     {stat.value}
                   </div>
                   <div className="text-lg md:text-xl font-semibold text-gray-700">
@@ -85,7 +85,7 @@ export default function RoberaProEnhanced() {
       </section>
 
       {/* Quick Overview Section */}
-      <section className="bg-gradient-to-b from-gray-50 to-white py-12">
+      <section className="bg-gradient-to-b from-green-50 to-white py-12">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
             Quick Overview of Robera Pro
@@ -115,7 +115,7 @@ export default function RoberaProEnhanced() {
       </section>
 
       {/* Specifications Section */}
-      <section className="bg-gradient-to-b from-gray-50 to-white py-12">
+      <section className="bg-gradient-to-b from-green-50 to-white py-12">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
             Robera Pro Specifications
@@ -125,7 +125,7 @@ export default function RoberaProEnhanced() {
               {specs.map((spec, idx) => (
                 <div
                   key={idx}
-                  className="grid grid-cols-2 gap-4 p-4 md:p-6 hover:bg-gray-50 transition-colors"
+                  className="grid grid-cols-2 gap-4 p-4 md:p-6 hover:bg-green-50 transition-colors"
                 >
                   <div className="font-semibold text-gray-700">{spec.label}</div>
                   <div className="text-gray-900 font-medium">{spec.value}</div>
@@ -137,7 +137,7 @@ export default function RoberaProEnhanced() {
       </section>
 
       {/* FAQs Section */}
-      <section className="bg-gradient-to-b from-gray-50 to-white py-12">
+      <section className="bg-gradient-to-b from-green-50 to-white py-12">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
             Frequently Asked Questions
