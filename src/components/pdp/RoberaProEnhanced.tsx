@@ -7,14 +7,14 @@ export default function RoberaProEnhanced() {
   ]
 
   const features = [
-    { image: '/robera/ai-vision.jpg', title: 'AI Vision' },
-    { image: '/robera/auto-follow.jpg', title: 'Auto Follow' },
-    { image: '/robera/no-go.jpg', title: 'No-Go Zones Detection' },
-    { image: '/robera/gesture.jpg', title: 'Gesture Control' },
-    { image: '/robera/obstacles.jpg', title: 'Obstacles Avoidance' },
-    { image: '/robera/summon.jpg', title: 'Remote Summon' },
-    { image: '/robera/anti-tipping.jpg', title: 'Anti-Tipping' },
-    { image: '/robera/remote.jpg', title: 'Remote Control' },
+    { image: '/uploads/robera/ai-vision.jpg', title: 'AI Vision' },
+    { image: '/uploads/robera/auto-follow.jpg', title: 'Auto Follow' },
+    { image: '/uploads/robera/no-go.jpg', title: 'No-Go Zones Detection' },
+    { image: '/uploads/robera/gesture.jpg', title: 'Gesture Control' },
+    { image: '/uploads/robera/obstacles.jpg', title: 'Obstacles Avoidance' },
+    { image: '/uploads/robera/summon.jpg', title: 'Remote Summon' },
+    { image: '/uploads/robera/anti-tipping.jpg', title: 'Anti-Tipping' },
+    { image: '/uploads/robera/remote.jpg', title: 'Remote Control' },
   ]
 
   const specs = [

@@ -204,17 +204,9 @@ class ImageOptimizer {
   async run() {
     await this.init()
 
-    // Process all image directories
-    const directories = [
-      path.join(UPLOAD_DIR, 'products'),
-      path.join(UPLOAD_DIR, 'categories'), 
-      path.join(UPLOAD_DIR, 'posts')
-    ]
-
-    for (const dir of directories) {
-      console.log(`\n🔍 Processing directory: ${path.relative(process.cwd(), dir)}`)
-      await this.processDirectory(dir)
-    }
+    // Process ALL subdirectories in uploads folder (universal for any project)
+    console.log(`\n🔍 Processing all subdirectories in: ${path.relative(process.cwd(), UPLOAD_DIR)}`)
+    await this.processDirectory(UPLOAD_DIR)
 
     this.printStats()
   }
