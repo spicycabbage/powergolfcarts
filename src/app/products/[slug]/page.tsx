@@ -43,7 +43,7 @@ function normalizeContent(html: string): string {
 
 // DB-backed implementation
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60 // Cache for 60 seconds
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>

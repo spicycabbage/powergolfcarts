@@ -14,7 +14,7 @@ import SortSelect from '@/components/SortSelect'
 import { CategoryInfoSection } from '@/components/CategoryInfoSection'
 import { serializeArrayForClient } from '@/lib/utils/serialize'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60 // Cache for 60 seconds
 
 interface CatchAllCategoryPageProps {
   params: Promise<{ slug: string[] }>
@@ -67,8 +67,12 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
       return notFound()
     }
 
-  // --- Breadcrumb Data Fetching and Formatting ---
-  const breadcrumbData = await Category.getBreadcrumbs(String(category._id));
+  // --- Fetch breadcrumbs and children in parallel ---
+  const [breadcrumbData, allChildren] = await Promise.all([
+    Category.getBreadcrumbs(String(category._id)),
+    Category.find({ parent: category._id }).select('_id').lean()
+  ]);
+  
   const breadcrumbItems = breadcrumbData.map((segment) => ({
     name: segment.name,
     href: `/categories/${segment.slug}`,
@@ -80,10 +84,6 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
     name: item.name,
     item: `${baseUrl}${item.href}`
   }));
-
-  // --- Product Fetching Logic ---
-  // Fetch all children in ONE query instead of a loop
-  const allChildren = await Category.find({ parent: category._id }).select('_id').lean()
   const allCategoryIds: string[] = [
     String(category._id),
     ...allChildren.map(c => String(c._id))
@@ -113,7 +113,7 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
     .sort(sortBy as any)
     .limit(100) // Limit to prevent mobile timeouts
     .lean()
-    .maxTimeMS(10000) // 10 second timeout
+    .maxTimeMS(5000) // 5 second timeout (reduced from 10s)
 
   // Serialize products to remove MongoDB ObjectIds and toJSON methods
   const products = serializeArrayForClient(rawProducts)
