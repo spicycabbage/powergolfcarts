@@ -135,19 +135,37 @@ export default function CheckoutPage() {
         image: Array.isArray(it.product.images) && it.product.images.length > 0 ? (typeof it.product.images[0] === 'string' ? it.product.images[0] : (it.product.images[0]?.url || '')) : '',
         variant: it.variant ? { name: it.variant.name, value: it.variant.value, sku: it.variant.sku } : undefined,
       }))
-      sessionStorage.setItem('checkout_shipping', JSON.stringify(shipping))
-      sessionStorage.setItem('checkout_selected_shipping', JSON.stringify(selectedShippingPayload))
-      sessionStorage.setItem('checkout_order_summary', JSON.stringify(orderSummary))
-      sessionStorage.setItem('checkout_items', JSON.stringify(itemsForCheckout))
       
-      // Store referral data if present
-      if (referralData) {
-        sessionStorage.setItem('checkout_referral', JSON.stringify(referralData))
+      // Create Stripe checkout session
+      const checkoutResponse = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: itemsForCheckout,
+          shipping,
+          selectedShipping: selectedShippingPayload,
+          orderSummary,
+          appliedCoupon: appliedCoupon ? {
+            code: appliedCoupon.code,
+            name: appliedCoupon.name,
+            type: appliedCoupon.type,
+            value: appliedCoupon.value,
+            discount: appliedCoupon.discount
+          } : null,
+          referralData,
+          successUrl: `${window.location.origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+          cancelUrl: `${window.location.origin}/checkout`,
+        })
+      })
+
+      const checkoutData = await checkoutResponse.json()
+
+      if (!checkoutResponse.ok || !checkoutData.url) {
+        throw new Error(checkoutData.error || 'Failed to create checkout session')
       }
-      // Clear any previous order data to ensure a fresh order is created
-      sessionStorage.removeItem('lastInvoice')
-      sessionStorage.removeItem('checkout_idem') // Clear idempotency key to ensure new order
-      router.push('/checkout/confirmation')
+
+      // Redirect to Stripe checkout
+      window.location.href = checkoutData.url
     } catch (e: any) {
       setError(e?.message || 'Checkout failed')
     } finally {

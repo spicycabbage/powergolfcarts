@@ -13,7 +13,7 @@ export interface IOrderItem {
 }
 
 export interface IPaymentMethod {
-  type: 'card' | 'paypal' | 'bank_transfer'
+  type: 'card' | 'paypal' | 'bank_transfer' | 'stripe'
   card?: {
     last4: string
     brand: string
@@ -23,6 +23,8 @@ export interface IPaymentMethod {
   paypal?: {
     email: string
   }
+  stripeSessionId?: string
+  stripePaymentIntentId?: string
 }
 
 export interface IOrder {
@@ -79,6 +81,7 @@ export interface IOrder {
   loyaltyPoints?: number
   loyaltyPointsAwarded?: boolean
   idempotencyKey?: string
+  paidAt?: Date
   createdAt?: Date
   updatedAt?: Date
 }
@@ -114,7 +117,7 @@ const OrderItemSchema = new Schema<IOrderItem>({
 const PaymentMethodSchema = new Schema<IPaymentMethod>({
   type: {
     type: String,
-    enum: ['card', 'paypal', 'bank_transfer'],
+    enum: ['card', 'paypal', 'bank_transfer', 'stripe'],
     required: true
   },
   card: {
@@ -125,7 +128,9 @@ const PaymentMethodSchema = new Schema<IPaymentMethod>({
   },
   paypal: {
     email: String
-  }
+  },
+  stripeSessionId: String,
+  stripePaymentIntentId: String
 })
 
 const CouponSchema = new Schema({
@@ -214,7 +219,8 @@ const OrderSchema = new Schema<IOrder>({
   },
   loyaltyPoints: { type: Number, default: 0, min: 0 },
   loyaltyPointsAwarded: { type: Boolean, default: false },
-  idempotencyKey: { type: String, index: true, unique: true, sparse: true }
+  idempotencyKey: { type: String, index: true, unique: true, sparse: true },
+  paidAt: Date
 }, {
   timestamps: true,
   toJSON: { virtuals: true },

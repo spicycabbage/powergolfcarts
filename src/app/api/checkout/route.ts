@@ -3,7 +3,16 @@ import { stripe } from '@/lib/stripe'
 
 export async function POST(request: NextRequest) {
   try {
-    const { items, successUrl, cancelUrl, shipping, selectedShipping } = await request.json()
+    const { 
+      items, 
+      successUrl, 
+      cancelUrl, 
+      shipping, 
+      selectedShipping,
+      orderSummary,
+      appliedCoupon,
+      referralData
+    } = await request.json()
 
     if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ error: 'No items provided' }, { status: 400 })
@@ -11,13 +20,19 @@ export async function POST(request: NextRequest) {
 
     // Map cart items to Stripe line items
     const line_items = items.map((item: any) => {
-      const name = String(item?.product?.name || 'Item')
-      const unitAmount = Math.round(Number(item?.product?.price || 0) * 100)
-      const quantity = Math.max(1, Number(item?.quantity || 1))
+      // Use variant price if available, otherwise product price
+      const itemPrice = item.variant?.price ?? item.price ?? 0
+      const name = String(item.name || 'Item')
+      const unitAmount = Math.round(Number(itemPrice) * 100)
+      const quantity = Math.max(1, Number(item.quantity || 1))
       return {
         price_data: {
           currency: 'usd',
-          product_data: { name },
+          product_data: { 
+            name,
+            description: item.variant ? `${item.variant.name}: ${item.variant.value}` : undefined,
+            images: item.image ? [item.image] : undefined,
+          },
           unit_amount: unitAmount,
           // US sales tax will be calculated automatically by Stripe Tax
           tax_behavior: 'exclusive' as const,
@@ -25,6 +40,50 @@ export async function POST(request: NextRequest) {
         quantity,
       }
     })
+
+    // Build metadata object with all order information
+    const metadata: Record<string, string> = {
+      shipping_firstName: shipping?.firstName || '',
+      shipping_lastName: shipping?.lastName || '',
+      shipping_email: shipping?.email || '',
+      shipping_phone: shipping?.phone || '',
+      shipping_address1: shipping?.address1 || '',
+      shipping_address2: shipping?.address2 || '',
+      shipping_city: shipping?.city || '',
+      shipping_state: shipping?.state || '',
+      shipping_postalCode: shipping?.postalCode || '',
+      shipping_country: shipping?.country || '',
+      shipping_selected_name: selectedShipping?.name || '',
+      shipping_selected_price: typeof selectedShipping?.price === 'number' ? String(selectedShipping.price) : '',
+      subtotal: String(orderSummary?.subtotal || 0),
+      bundleDiscount: String(orderSummary?.bundleDiscount || 0),
+      couponDiscount: String(orderSummary?.couponDiscount || 0),
+    }
+
+    // Add coupon data if present
+    if (appliedCoupon) {
+      metadata.coupon_code = appliedCoupon.code || ''
+      metadata.coupon_name = appliedCoupon.name || ''
+      metadata.coupon_type = appliedCoupon.type || ''
+      metadata.coupon_value = String(appliedCoupon.value || 0)
+      metadata.coupon_discount = String(appliedCoupon.discount || 0)
+    }
+
+    // Add referral data if present
+    if (referralData) {
+      metadata.referral_code = referralData.code || ''
+      metadata.referral_source = referralData.source || ''
+    }
+
+    // Add item data (limit metadata size)
+    metadata.items = JSON.stringify(items.map((item: any) => ({
+      productId: item.productId,
+      name: item.name,
+      slug: item.slug,
+      price: item.price,
+      quantity: item.quantity,
+      variant: item.variant,
+    })))
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -52,21 +111,9 @@ export async function POST(request: NextRequest) {
             }
           ]
         : undefined,
-      metadata: {
-        shipping_firstName: shipping?.firstName || '',
-        shipping_lastName: shipping?.lastName || '',
-        shipping_phone: shipping?.phone || '',
-        shipping_address1: shipping?.address1 || '',
-        shipping_address2: shipping?.address2 || '',
-        shipping_city: shipping?.city || '',
-        shipping_state: shipping?.state || '',
-        shipping_postalCode: shipping?.postalCode || '',
-        shipping_country: shipping?.country || '',
-        shipping_selected_name: selectedShipping?.name || '',
-        shipping_selected_price: typeof selectedShipping?.price === 'number' ? String(selectedShipping.price) : '',
-      },
+      metadata,
       success_url: successUrl || `${process.env.NEXT_PUBLIC_BASE_URL || ''}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: cancelUrl || `${process.env.NEXT_PUBLIC_BASE_URL || ''}/checkout/cancel`,
+      cancel_url: cancelUrl || `${process.env.NEXT_PUBLIC_BASE_URL || ''}/checkout`,
     })
 
     return NextResponse.json({ id: session.id, url: session.url })
