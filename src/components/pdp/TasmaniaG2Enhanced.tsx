@@ -48,9 +48,9 @@ export default function TasmaniaG2Enhanced() {
             Features
           </h2>
           
-          <div className="space-y-6">
+          <div className="bg-green-50 p-8 rounded-lg space-y-8">
             {/* Key Features */}
-            <div className="bg-green-50 p-6 rounded-lg">
+            <div>
               <ul className="space-y-3 text-gray-800">
                 <li className="flex items-start">
                   <span className="text-green-600 mr-2">✓</span>
@@ -80,7 +80,7 @@ export default function TasmaniaG2Enhanced() {
             </div>
 
             {/* 3 Different Modes */}
-            <div className="bg-green-50 p-6 rounded-lg">
+            <div>
               <h3 className="text-xl font-bold text-green-900 mb-4">3 Different Modes:</h3>
               <ol className="list-decimal list-inside space-y-3 text-gray-800">
                 <li>
@@ -96,7 +96,7 @@ export default function TasmaniaG2Enhanced() {
             </div>
 
             {/* Technical Features */}
-            <div className="bg-green-50 p-6 rounded-lg">
+            <div>
               <h3 className="text-xl font-bold text-green-900 mb-4">Technical Features:</h3>
               <ul className="space-y-2 text-gray-800">
                 <li><strong>9 speeds settings</strong> on handle dial and remote control</li>
@@ -110,7 +110,7 @@ export default function TasmaniaG2Enhanced() {
             </div>
 
             {/* Battery & Performance */}
-            <div className="bg-green-50 p-6 rounded-lg">
+            <div>
               <h3 className="text-xl font-bold text-green-900 mb-4">Battery & Performance:</h3>
               <ul className="space-y-2 text-gray-800">
                 <li>Battery charges in <strong>3-4 hours</strong></li>
@@ -120,22 +120,22 @@ export default function TasmaniaG2Enhanced() {
                 <li><strong>One Year warranty</strong> on all electronic parts</li>
               </ul>
             </div>
+          </div>
 
-            {/* Accessories Included */}
-            <div className="bg-green-50 p-6 rounded-lg">
-              <h3 className="text-xl font-bold text-green-900 mb-4">Included Accessories:</h3>
-              <ul className="list-disc list-inside space-y-2 text-gray-800">
-                <li>Free Score Card Holder</li>
-                <li>Free Tee and Ball storage</li>
-                <li>Free Large Drink Holder</li>
-                <li>Free Umbrella Holder</li>
-                <li>Free Mesh Bag</li>
-                <li>Free Storage Bag</li>
-                <li>Free Cooler Pocket</li>
-                <li>USB Port</li>
-                <li>Seat is Optional</li>
-              </ul>
-            </div>
+          {/* Accessories Included - Separate Section */}
+          <div className="bg-green-50 p-6 rounded-lg mt-6">
+            <h3 className="text-xl font-bold text-green-900 mb-4">Included Accessories:</h3>
+            <ul className="list-disc list-inside space-y-2 text-gray-800">
+              <li>Free Score Card Holder</li>
+              <li>Free Tee and Ball storage</li>
+              <li>Free Large Drink Holder</li>
+              <li>Free Umbrella Holder</li>
+              <li>Free Mesh Bag</li>
+              <li>Free Storage Bag</li>
+              <li>Free Cooler Pocket</li>
+              <li>USB Port</li>
+              <li>Seat is Optional</li>
+            </ul>
           </div>
         </div>
       </section>

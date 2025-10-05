@@ -131,7 +131,7 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
           </div>
           <h1 className="text-3xl font-bold text-gray-900">{name}</h1>
           {description && (
-            <div className="mt-0.5 prose max-w-none text-gray-600">
+            <div className="mt-0.5 prose max-w-none text-gray-600 hidden md:block">
               <p>{description}</p>
             </div>
           )}
@@ -140,7 +140,7 @@ export default async function CatchAllCategoryPage({ params, searchParams }: Cat
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex flex-col gap-8">
-          <div className="flex items-center justify-between mb-3">
+          <div className="hidden md:flex items-center justify-between mb-3">
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-600">Sort by:</span>
               <SortSelect value={sortParam} />

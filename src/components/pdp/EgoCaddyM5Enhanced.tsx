@@ -77,16 +77,16 @@ export default function EgoCaddyM5Enhanced() {
             Features
           </h2>
           
-          <div className="space-y-6">
+          <div className="bg-green-50 p-8 rounded-lg space-y-8">
             {/* Design */}
-            <div className="bg-green-50 p-6 rounded-lg">
+            <div>
               <p className="text-gray-800 leading-relaxed">
                 <strong>Foldable design</strong> with durable light-weight aluminum frame and wrapped with carbon fiber, high-end appearance
               </p>
             </div>
 
             {/* 3 Different Modes */}
-            <div className="bg-green-50 p-6 rounded-lg">
+            <div>
               <h3 className="text-xl font-bold text-green-900 mb-4">3 Different Modes:</h3>
               <ol className="list-decimal list-inside space-y-3 text-gray-800">
                 <li>
@@ -102,13 +102,13 @@ export default function EgoCaddyM5Enhanced() {
             </div>
 
             {/* Smart Engine */}
-            <div className="bg-green-50 p-6 rounded-lg">
+            <div>
               <h3 className="text-xl font-bold text-green-900 mb-3">Smart Engine:</h3>
               <p className="text-gray-800">Auto-balancing, Slope and speed control</p>
             </div>
 
             {/* Egocaddy Mobile App */}
-            <div className="bg-green-50 p-6 rounded-lg">
+            <div>
               <h3 className="text-xl font-bold text-green-900 mb-4">Use Egocaddy Mobile App:</h3>
               <ol className="list-decimal list-inside space-y-2 text-gray-800">
                 <li>Control and monitor the cart</li>
@@ -122,39 +122,43 @@ export default function EgoCaddyM5Enhanced() {
             </div>
 
             {/* Additional Features */}
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-green-50 p-6 rounded-lg">
-                <h4 className="font-bold text-green-900 mb-2">🎥 Swing Recorder</h4>
-                <p className="text-gray-800">Use remote control to record swing with slow motion playback.</p>
-              </div>
+            <div>
+              <h3 className="text-xl font-bold text-green-900 mb-4">Additional Features:</h3>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-bold text-green-900 mb-2">🎥 Swing Recorder</h4>
+                  <p className="text-gray-800">Use remote control to record swing with slow motion playback.</p>
+                </div>
 
-              <div className="bg-green-50 p-6 rounded-lg">
-                <h4 className="font-bold text-green-900 mb-2">🎮 Remote Controller</h4>
-                <p className="text-gray-800">Fun somatosensory remote controllable.</p>
-              </div>
+                <div>
+                  <h4 className="font-bold text-green-900 mb-2">🎮 Remote Controller</h4>
+                  <p className="text-gray-800">Fun somatosensory remote controllable.</p>
+                </div>
 
-              <div className="bg-green-50 p-6 rounded-lg">
-                <h4 className="font-bold text-green-900 mb-2">🛞 Swivel Front Wheels</h4>
-                <p className="text-gray-800">2 Swivel front wheels with brakes</p>
-              </div>
+                <div>
+                  <h4 className="font-bold text-green-900 mb-2">🛞 Swivel Front Wheels</h4>
+                  <p className="text-gray-800">2 Swivel front wheels with brakes</p>
+                </div>
 
-              <div className="bg-green-50 p-6 rounded-lg">
-                <h4 className="font-bold text-green-900 mb-2">⚙️ Advanced Settings</h4>
-                <p className="text-gray-800">Monitor and make advanced settings to customize your own Ego Caddy Electric Golf trolley.</p>
+                <div>
+                  <h4 className="font-bold text-green-900 mb-2">⚙️ Advanced Settings</h4>
+                  <p className="text-gray-800">Monitor and make advanced settings to customize your own Ego Caddy Electric Golf trolley.</p>
+                </div>
               </div>
             </div>
+          </div>
 
-            {/* Accessories Included in Features */}
-            <div className="bg-green-50 p-6 rounded-lg">
-              <h3 className="text-xl font-bold text-green-900 mb-4">Accessories Included:</h3>
-              <ul className="list-disc list-inside space-y-2 text-gray-800">
-                <li>Free Score Card Holder</li>
-                <li>Free Tees and Balls storage</li>
-                <li>Free Large Drink Holder</li>
-                <li>Free Umbrella Holder</li>
-                <li>USB Port</li>
-              </ul>
-            </div>
+          {/* Accessories Included - Separate Section */}
+          <div className="bg-green-50 p-6 rounded-lg mt-6">
+            <h3 className="text-xl font-bold text-green-900 mb-4">Accessories Included:</h3>
+            <ul className="list-disc list-inside space-y-2 text-gray-800">
+              <li>Remote control</li>
+              <li>Free Score Card Holder</li>
+              <li>Free Tees and Balls storage</li>
+              <li>Free Large Drink Holder</li>
+              <li>Free Umbrella Holder</li>
+              <li>USB Port</li>
+            </ul>
           </div>
         </div>
       </section>
