@@ -127,8 +127,8 @@ export async function POST(request: NextRequest) {
           ]
         : undefined,
       metadata,
-      success_url: successUrl || `${process.env.NEXT_PUBLIC_BASE_URL || ''}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: cancelUrl || `${process.env.NEXT_PUBLIC_BASE_URL || ''}/checkout`,
+      success_url: successUrl || `https://powergolfcarts.shop/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: cancelUrl || `https://powergolfcarts.shop/checkout`,
     })
 
     return NextResponse.json({ id: session.id, url: session.url })
