@@ -161,7 +161,7 @@ export default function CheckoutPage() {
         country: shipping.country,
       } : billing
 
-      // Create Stripe checkout session
+      // Create Stripe checkout session (URLs handled by backend)
       const checkoutResponse = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -179,8 +179,6 @@ export default function CheckoutPage() {
             discount: appliedCoupon.discount
           } : null,
           referralData,
-          successUrl: `https://powergolfcarts.shop/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-          cancelUrl: `https://powergolfcarts.shop/checkout`,
         })
       })
 
