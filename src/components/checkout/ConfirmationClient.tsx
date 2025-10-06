@@ -15,10 +15,11 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
   const searchParams = useSearchParams()
   const [hydrated, setHydrated] = useState(false)
   const [paymentLoaded, setPaymentLoaded] = useState(Boolean(initialPayment))
-  const [orderMeta, setOrderMeta] = useState<{ id?: string, createdAt?: string, email?: string } | null>(initialOrder ? {
+  const [orderMeta, setOrderMeta] = useState<{ id?: string, createdAt?: string, email?: string, paymentMethod?: string } | null>(initialOrder ? {
     id: String(initialOrder.invoiceNumber || initialOrder._id),
     createdAt: initialOrder.createdAt,
     email: initialOrder?.user?.email,
+    paymentMethod: initialOrder?.paymentMethod?.type,
   } : (initialInvoice ? { id: String(initialInvoice) } : null))
   const [summary, setSummary] = useState<{ itemCount: number, subtotal: number, bundleDiscount?: number, couponDiscount?: number, shipping: number, total: number }>({
     itemCount: Array.isArray(initialOrder?.items) ? initialOrder.items.reduce((s: number, it: any) => s + Number(it?.quantity || 0), 0) : 0,
@@ -83,7 +84,12 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
           })
           setAppliedCoupon(order.coupon || null)
           setShipping(order.shippingAddress || null)
-          setOrderMeta({ id: String(order.invoiceNumber || order._id), createdAt: order.createdAt, email: (order as any)?.user?.email })
+          setOrderMeta({ 
+            id: String(order.invoiceNumber || order._id), 
+            createdAt: order.createdAt, 
+            email: (order as any)?.user?.email,
+            paymentMethod: order?.paymentMethod?.type 
+          })
         }
       } catch {}
     })()
@@ -248,7 +254,7 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
           </div>
         </div>
 
-        {paymentLoaded && payment?.etransfer?.enabled !== false && (
+        {paymentLoaded && payment?.etransfer?.enabled !== false && orderMeta?.paymentMethod !== 'stripe' && (
           <div className="rounded-lg p-0 mb-6 border-2 border-green-700 overflow-hidden">
             <div className="bg-green-700 text-white px-4 py-3 font-semibold uppercase text-sm tracking-wide">Interac e-Transfer Instructions</div>
             <div className="bg-green-50 px-4 py-4">

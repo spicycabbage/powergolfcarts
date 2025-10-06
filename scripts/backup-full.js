@@ -38,7 +38,7 @@ async function createFullBackup(purpose = '') {
     const codebaseBackupPath = path.join(backupPath, 'codebase-backup.tar.gz')
     
     // Create tar.gz of entire project (excluding node_modules, .git, backups)
-    execSync(`tar -czf "${codebaseBackupPath}" --exclude=node_modules --exclude=.git --exclude=backups --exclude=.next --exclude=.vercel --exclude=temp_restore .`, {
+    execSync(`tar -czf "${codebaseBackupPath}" --exclude=node_modules --exclude=.git --exclude=backups --exclude=.next --exclude=.vercel --exclude=temp_restore --exclude=*.csv .`, {
       cwd: path.join(__dirname, '..'),
       stdio: 'inherit'
     })

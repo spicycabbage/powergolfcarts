@@ -120,6 +120,22 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Calculate total (validate against client-sent total for logging)
+    const calculatedTotal = Math.max(0, Number(subtotal || 0) + Number(shipping || 0) - Number(bundleDiscount || 0) - Number(appliedCoupon?.discount || 0) - Number(storeCreditUsed || 0))
+    
+    // Log if there's a mismatch between client and server total
+    if (Math.abs(calculatedTotal - Number(total || 0)) > 0.01) {
+      console.warn('⚠️  Total mismatch:', {
+        clientTotal: Number(total || 0),
+        serverTotal: calculatedTotal,
+        subtotal: Number(subtotal || 0),
+        shipping: Number(shipping || 0),
+        bundleDiscount: Number(bundleDiscount || 0),
+        couponDiscount: Number(appliedCoupon?.discount || 0),
+        storeCreditUsed: Number(storeCreditUsed || 0),
+      })
+    }
+
     const order = await Order.create({
       user: session?.user?.id || undefined,
       items: orderItems,
@@ -137,7 +153,7 @@ export async function POST(req: NextRequest) {
       storeCreditUsed: Number(storeCreditUsed || 0),
       tax: 0,
       shipping,
-      total: Math.max(0, Number(subtotal || 0) + Number(0) + Number(shipping || 0) - Number(bundleDiscount || 0) - Number(appliedCoupon?.discount || 0) - Number(storeCreditUsed || 0)),
+      total: calculatedTotal,
       shippingAddress: {
         firstName: shippingAddress?.firstName || '',
         lastName: shippingAddress?.lastName || '',
