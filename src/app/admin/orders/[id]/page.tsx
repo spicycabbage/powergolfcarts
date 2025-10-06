@@ -146,8 +146,31 @@ export default function AdminOrderDetail() {
                 <div className="bg-white rounded-lg shadow-sm p-6 text-sm">
                   <h3 className="text-sm font-semibold text-gray-900 mb-2">Payment Method</h3>
                   <div className="text-gray-700 space-y-1">
-                    <div>Interac e‑Transfer</div>
-                    <div>Status: <span className={`px-2 py-0.5 rounded text-xs ${statusBadge}`}>{String(order?.status || '').toUpperCase()}</span></div>
+                    <div className="font-medium">
+                      {order?.paymentMethod?.type === 'stripe' ? (
+                        <>
+                          <span className="text-blue-600">💳 Stripe / Credit Card</span>
+                          {order?.stripePaymentIntentId && (
+                            <div className="text-xs text-gray-500 mt-1 font-mono">
+                              {order.stripePaymentIntentId}
+                            </div>
+                          )}
+                        </>
+                      ) : order?.paymentMethod?.type === 'card' ? (
+                        '💳 Credit Card'
+                      ) : order?.paymentMethod?.type === 'paypal' ? (
+                        'PayPal'
+                      ) : (
+                        'Interac e‑Transfer'
+                      )}
+                    </div>
+                    <div>Payment Status: <span className={`px-2 py-0.5 rounded text-xs ${order?.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>{String(order?.paymentStatus || 'pending').toUpperCase()}</span></div>
+                    <div>Order Status: <span className={`px-2 py-0.5 rounded text-xs ${statusBadge}`}>{String(order?.status || '').toUpperCase()}</span></div>
+                    {order?.paidAt && (
+                      <div className="text-xs text-gray-500 mt-2">
+                        Paid: {new Date(order.paidAt).toLocaleString()}
+                      </div>
+                    )}
                   </div>
                 </div>
                 
