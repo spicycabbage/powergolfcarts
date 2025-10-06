@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
     const session: any = await getServerSession(authOptions as any)
 
     const body = await req.json()
-    const { items, subtotal, bundleDiscount, couponDiscount, appliedCoupon, shipping, total, shippingAddress, storeCreditUsed, customerEmail, idempotencyKey, referralData } = body || {}
+    const { items, subtotal, bundleDiscount, couponDiscount, appliedCoupon, shipping, total, shippingAddress, billingAddress, storeCreditUsed, customerEmail, idempotencyKey, referralData, stripePaymentIntentId } = body || {}
     if (!Array.isArray(items) || typeof subtotal !== 'number' || typeof shipping !== 'number' || typeof total !== 'number') {
       return NextResponse.json({ success: false, error: 'Invalid payload' }, { status: 400 })
     }
@@ -153,18 +153,24 @@ export async function POST(req: NextRequest) {
         email: shippingAddress?.email || customerEmail || session?.user?.email || '',
       },
       billingAddress: {
-        firstName: shippingAddress?.firstName || '',
-        lastName: shippingAddress?.lastName || '',
-        company: shippingAddress?.company || '',
-        address1: shippingAddress?.address1 || '',
-        address2: shippingAddress?.address2 || '',
-        city: shippingAddress?.city || '',
-        state: shippingAddress?.state || '',
-        postalCode: shippingAddress?.postalCode || '',
-        country: shippingAddress?.country || '',
-        phone: shippingAddress?.phone || '',
+        firstName: billingAddress?.firstName || shippingAddress?.firstName || '',
+        lastName: billingAddress?.lastName || shippingAddress?.lastName || '',
+        company: billingAddress?.company || shippingAddress?.company || '',
+        address1: billingAddress?.address1 || shippingAddress?.address1 || '',
+        address2: billingAddress?.address2 || shippingAddress?.address2 || '',
+        city: billingAddress?.city || shippingAddress?.city || '',
+        state: billingAddress?.state || shippingAddress?.state || '',
+        postalCode: billingAddress?.postalCode || shippingAddress?.postalCode || '',
+        country: billingAddress?.country || shippingAddress?.country || '',
+        phone: billingAddress?.phone || shippingAddress?.phone || '',
       },
-      paymentMethod: { type: 'bank_transfer' },
+      paymentMethod: stripePaymentIntentId 
+        ? { type: 'stripe', stripePaymentIntentId } 
+        : { type: 'bank_transfer' },
+      stripePaymentIntentId: stripePaymentIntentId || undefined,
+      status: stripePaymentIntentId ? 'processing' : 'pending',
+      paymentStatus: stripePaymentIntentId ? 'paid' : 'pending',
+      paidAt: stripePaymentIntentId ? new Date() : undefined,
       contactEmail: (shippingAddress?.email || customerEmail || session?.user?.email || ''),
     })
 

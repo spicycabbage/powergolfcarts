@@ -8,6 +8,8 @@ import { useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { calculateCartTotals } from '@/utils/cartCalculations'
 import { useReferral } from '@/components/providers/ReferralProvider'
+import CheckoutWithStripe from '@/components/checkout/CheckoutWithStripe'
+import StripePaymentForm from '@/components/checkout/StripePaymentForm'
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -78,78 +80,45 @@ export default function CheckoutPage() {
     } catch {}
   }, [session])
 
-  const handleCheckout = async () => {
+  const handlePaymentSuccess = async (paymentIntentId: string) => {
     setLoading(true)
     setError(null)
     try {
-      // If user has no saved shipping address, save this one as default
-      try {
-        const res = await fetch('/api/user/addresses', { cache: 'no-store' })
-        if (res.ok) {
-          const addresses = await res.json().catch(() => [])
-          const shippingAddresses = Array.isArray(addresses) ? addresses.filter((a: any) => a?.type === 'shipping') : []
-          const hasShipping = shippingAddresses.length > 0
-          const hasDefaultShipping = shippingAddresses.some((a: any) => a?.isDefault)
-          if (!hasShipping || (hasShipping && !hasDefaultShipping)) {
-            const countryFull = shipping.country === 'CA' ? 'Canada' : (shipping.country === 'US' ? 'United States' : shipping.country)
-            await fetch('/api/user/addresses', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                type: 'shipping',
-                firstName: shipping.firstName,
-                lastName: shipping.lastName,
-                company: '',
-                address1: shipping.address1,
-                address2: shipping.address2,
-                city: shipping.city,
-                state: shipping.state,
-                postalCode: shipping.postalCode,
-                country: countryFull,
-                phone: shipping.phone,
-                isDefault: true,
+      // Save shipping address as default if needed
+      if (session?.user) {
+        try {
+          const res = await fetch('/api/user/addresses', { cache: 'no-store' })
+          if (res.ok) {
+            const addresses = await res.json().catch(() => [])
+            const shippingAddresses = Array.isArray(addresses) ? addresses.filter((a: any) => a?.type === 'shipping') : []
+            const hasShipping = shippingAddresses.length > 0
+            const hasDefaultShipping = shippingAddresses.some((a: any) => a?.isDefault)
+            if (!hasShipping || (hasShipping && !hasDefaultShipping)) {
+              const countryFull = shipping.country === 'CA' ? 'Canada' : (shipping.country === 'US' ? 'United States' : shipping.country)
+              await fetch('/api/user/addresses', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  type: 'shipping',
+                  firstName: shipping.firstName,
+                  lastName: shipping.lastName,
+                  company: '',
+                  address1: shipping.address1,
+                  address2: shipping.address2,
+                  city: shipping.city,
+                  state: shipping.state,
+                  postalCode: shipping.postalCode,
+                  country: countryFull,
+                  phone: shipping.phone,
+                  isDefault: true,
+                })
               })
-            })
+            }
           }
-        }
-      } catch {}
-
-      // Persist shipping and order summary to sessionStorage for confirmation page
-      // Re-use persisted selected shipping if present
-      let selectedShippingPayload = { name: 'Shipping', price: computedShippingCost }
-      try {
-        const saved = sessionStorage.getItem('checkout_selected_shipping')
-        if (saved) {
-          const parsed = JSON.parse(saved)
-          if (typeof parsed?.price === 'number') selectedShippingPayload = { name: parsed?.name || 'Shipping', price: Number(parsed.price) }
-        }
-      } catch {}
-      const orderSummary = {
-        itemCount,
-        subtotal: displaySubtotal,
-        bundleDiscount: displayBundleDiscount,
-        couponDiscount,
-        appliedCoupon: appliedCoupon ? {
-          code: appliedCoupon.code,
-          name: appliedCoupon.name,
-          type: appliedCoupon.type,
-          value: appliedCoupon.value,
-          discount: appliedCoupon.discount
-        } : null,
-        shipping: computedShippingCost,
-        total: displayTotal,
+        } catch {}
       }
-      const itemsForCheckout = cart.items.map((it) => ({
-        productId: it.product._id,
-        name: it.product.name,
-        slug: it.product.slug,
-        price: Number(((it as any)?.variant?.price != null ? (it as any).variant.price : it.product.price) || 0),
-        quantity: it.quantity,
-        image: Array.isArray(it.product.images) && it.product.images.length > 0 ? (typeof it.product.images[0] === 'string' ? it.product.images[0] : (it.product.images[0]?.url || '')) : '',
-        variant: it.variant ? { name: it.variant.name, value: it.variant.value, sku: it.variant.sku } : undefined,
-      }))
-      
-      // Prepare billing address (use shipping if sameAsShipping is checked)
+
+      // Prepare billing address
       const billingAddress = sameAsShipping ? {
         firstName: shipping.firstName,
         lastName: shipping.lastName,
@@ -161,40 +130,62 @@ export default function CheckoutPage() {
         country: shipping.country,
       } : billing
 
-      // Create Stripe checkout session (URLs handled by backend)
-      const checkoutResponse = await fetch('/api/checkout', {
+      // Prepare order items
+      const itemsForOrder = cart.items.map((it) => ({
+        productId: it.product._id,
+        name: it.product.name,
+        slug: it.product.slug,
+        price: Number(((it as any)?.variant?.price != null ? (it as any).variant.price : it.product.price) || 0),
+        quantity: it.quantity,
+        variant: it.variant ? { name: it.variant.name, value: it.variant.value, sku: it.variant.sku } : undefined,
+      }))
+
+      // Create order
+      const orderResponse = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items: itemsForCheckout,
-          shipping,
-          billing: billingAddress,
-          selectedShipping: selectedShippingPayload,
-          orderSummary,
-          appliedCoupon: appliedCoupon ? {
-            code: appliedCoupon.code,
-            name: appliedCoupon.name,
-            type: appliedCoupon.type,
-            value: appliedCoupon.value,
-            discount: appliedCoupon.discount
-          } : null,
+          items: itemsForOrder,
+          subtotal: displaySubtotal,
+          bundleDiscount: displayBundleDiscount,
+          couponDiscount,
+          appliedCoupon,
+          shipping: computedShippingCost,
+          total: displayTotal,
+          shippingAddress: shipping,
+          billingAddress,
+          customerEmail: shipping.email,
           referralData,
+          stripePaymentIntentId: paymentIntentId,
         })
       })
 
-      const checkoutData = await checkoutResponse.json()
+      const orderData = await orderResponse.json()
 
-      if (!checkoutResponse.ok || !checkoutData.url) {
-        throw new Error(checkoutData.error || 'Failed to create checkout session')
+      if (!orderResponse.ok || !orderData.success) {
+        throw new Error(orderData.error || 'Failed to create order')
       }
 
-      // Redirect to Stripe checkout
-      window.location.href = checkoutData.url
+      // Clear cart and redirect to confirmation
+      try {
+        localStorage.removeItem('cart')
+        sessionStorage.removeItem('checkout_shipping')
+        sessionStorage.removeItem('checkout_selected_shipping')
+        sessionStorage.removeItem('checkout_order_summary')
+        sessionStorage.removeItem('checkout_items')
+        sessionStorage.removeItem('checkout_applied_coupon')
+        sessionStorage.removeItem('checkout_referral')
+      } catch {}
+
+      router.push(`/checkout/confirmation?order=${orderData.data.id}`)
     } catch (e: any) {
-      setError(e?.message || 'Checkout failed')
-    } finally {
+      setError(e?.message || 'Failed to create order')
       setLoading(false)
     }
+  }
+
+  const handlePaymentError = (error: string) => {
+    setError(error)
   }
 
   const itemCount = cart.items.reduce((sum, it) => sum + it.quantity, 0)
@@ -726,14 +717,24 @@ export default function CheckoutPage() {
                 {error && <p className="mt-4 text-red-600 text-sm">{error}</p>}
 
                 <div className="mt-6 space-y-3">
-                  <button
-                    onClick={handleCheckout}
-                    disabled={loading || !requiredOk}
-                    className={`w-full bg-primary-600 text-white py-3 px-4 rounded-lg font-medium ${loading || !requiredOk ? 'opacity-60 cursor-not-allowed' : 'hover:bg-primary-700'}`}
-                    title={!requiredOk ? 'Please fill all required fields' : ''}
-                  >
-                    {loading ? 'Redirecting…' : 'Pay Now'}
-                  </button>
+                  {requiredOk ? (
+                    <CheckoutWithStripe amount={displayTotal}>
+                      <StripePaymentForm
+                        onSuccess={handlePaymentSuccess}
+                        onError={handlePaymentError}
+                        loading={loading}
+                        setLoading={setLoading}
+                      />
+                    </CheckoutWithStripe>
+                  ) : (
+                    <button
+                      disabled
+                      className="w-full bg-gray-300 text-gray-600 py-3 px-4 rounded-lg font-medium cursor-not-allowed"
+                      title="Please fill all required fields"
+                    >
+                      Please fill all required fields
+                    </button>
+                  )}
 
                   <Link
                     href="/cart"
