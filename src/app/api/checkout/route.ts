@@ -125,13 +125,22 @@ export async function POST(request: NextRequest) {
       payment_method_types: ['card'],
       line_items,
       customer_email: shipping?.email || undefined,
+      // Pass shipping address for tax calculation (address already collected on our checkout page)
+      shipping_details: {
+        name: `${shipping?.firstName || ''} ${shipping?.lastName || ''}`.trim(),
+        address: {
+          line1: shipping?.address1 || '',
+          line2: shipping?.address2 || '',
+          city: shipping?.city || '',
+          state: shipping?.state || '',
+          postal_code: shipping?.postalCode || '',
+          country: shipping?.country || 'US',
+        },
+      },
       // Enable automatic tax calculation (configure jurisdictions in Stripe Tax dashboard)
       automatic_tax: { enabled: true },
       // Create/attach a Stripe Customer so address persists for tax
       customer_creation: 'always',
-      shipping_address_collection: {
-        allowed_countries: ['US', 'CA']
-      },
       shipping_options: selectedShipping && typeof selectedShipping.price === 'number'
         ? [
             {
