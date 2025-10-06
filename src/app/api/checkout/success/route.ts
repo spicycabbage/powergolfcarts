@@ -3,7 +3,7 @@ import { stripe } from '@/lib/stripe'
 import { connectToDatabase } from '@/lib/mongodb'
 import Order from '@/lib/models/Order'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { authOptions } from '@/lib/auth/options'
 
 export async function POST(request: NextRequest) {
   try {
