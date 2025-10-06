@@ -139,9 +139,8 @@ export async function POST(request: NextRequest) {
                 type: 'fixed_amount' as const,
                 fixed_amount: { amount: Math.round(Number(selectedShipping.price) * 100), currency: 'usd' },
                 display_name: selectedShipping.name || 'Shipping',
-                // Ensure shipping is taxed according to the destination rules
+                // Shipping is taxable in most jurisdictions
                 tax_behavior: 'exclusive' as const,
-                tax_code: 'txcd_92030000' as const,
               }
             }
           ]
