@@ -3,6 +3,12 @@ import { stripe } from '@/lib/stripe'
 
 export async function POST(request: NextRequest) {
   try {
+    // Verify Stripe is configured
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.error('❌ STRIPE_SECRET_KEY not configured')
+      return NextResponse.json({ error: 'Payment system not configured' }, { status: 500 })
+    }
+
     const { 
       items, 
       successUrl, 
@@ -119,7 +125,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ id: session.id, url: session.url })
   } catch (err: any) {
     console.error('Checkout session error:', err)
-    return NextResponse.json({ error: 'Failed to create checkout session' }, { status: 500 })
+    console.error('Error details:', err.message, err.stack)
+    return NextResponse.json({ 
+      error: 'Failed to create checkout session',
+      details: process.env.NODE_ENV === 'development' ? err.message : undefined
+    }, { status: 500 })
   }
 }
 
