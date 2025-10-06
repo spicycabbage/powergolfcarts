@@ -179,8 +179,8 @@ export default function CheckoutPage() {
             discount: appliedCoupon.discount
           } : null,
           referralData,
-          successUrl: `${window.location.origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-          cancelUrl: `${window.location.origin}/checkout`,
+          successUrl: `https://powergolfcarts.shop/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+          cancelUrl: `https://powergolfcarts.shop/checkout`,
         })
       })
 
