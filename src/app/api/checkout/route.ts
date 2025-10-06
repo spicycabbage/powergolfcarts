@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Map cart items to Stripe line items
-    const line_items = items.map((item: any) => {
+    const line_items = items.map((item: any, index: number) => {
       // Use variant price if available, otherwise product price
       const itemPrice = item.variant?.price ?? item.price ?? 0
       const name = String(item.name || 'Item')
@@ -36,21 +36,30 @@ export async function POST(request: NextRequest) {
       // Convert image to absolute URL if it's a relative path
       let imageUrl: string | undefined = undefined
       if (item.image) {
+        console.log(`📸 Item ${index} raw image:`, item.image)
         if (item.image.startsWith('http://') || item.image.startsWith('https://')) {
           imageUrl = item.image
         } else if (item.image.startsWith('/')) {
           imageUrl = `https://powergolfcarts.shop${item.image}`
         }
+        console.log(`📸 Item ${index} converted imageUrl:`, imageUrl)
+      }
+      
+      // Don't include images array if no valid image URL
+      const productData: any = { 
+        name,
+        description: item.variant ? `${item.variant.name}: ${item.variant.value}` : undefined,
+      }
+      
+      // Only add images if we have a valid URL
+      if (imageUrl) {
+        productData.images = [imageUrl]
       }
       
       return {
         price_data: {
           currency: 'usd',
-          product_data: { 
-            name,
-            description: item.variant ? `${item.variant.name}: ${item.variant.value}` : undefined,
-            images: imageUrl ? [imageUrl] : undefined,
-          },
+          product_data: productData,
           unit_amount: unitAmount,
           // US sales tax will be calculated automatically by Stripe Tax
           tax_behavior: 'exclusive' as const,
