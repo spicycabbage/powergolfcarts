@@ -32,13 +32,24 @@ export async function POST(request: NextRequest) {
       const name = String(item.name || 'Item')
       const unitAmount = Math.round(Number(itemPrice) * 100)
       const quantity = Math.max(1, Number(item.quantity || 1))
+      
+      // Convert image to absolute URL if it's a relative path
+      let imageUrl: string | undefined = undefined
+      if (item.image) {
+        if (item.image.startsWith('http://') || item.image.startsWith('https://')) {
+          imageUrl = item.image
+        } else if (item.image.startsWith('/')) {
+          imageUrl = `https://powergolfcarts.shop${item.image}`
+        }
+      }
+      
       return {
         price_data: {
           currency: 'usd',
           product_data: { 
             name,
             description: item.variant ? `${item.variant.name}: ${item.variant.value}` : undefined,
-            images: item.image ? [item.image] : undefined,
+            images: imageUrl ? [imageUrl] : undefined,
           },
           unit_amount: unitAmount,
           // US sales tax will be calculated automatically by Stripe Tax
