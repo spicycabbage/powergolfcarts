@@ -28,6 +28,17 @@ export default function CheckoutPage() {
     postalCode: '',
     country: 'US',
   })
+  const [billing, setBilling] = useState({
+    firstName: '',
+    lastName: '',
+    address1: '',
+    address2: '',
+    city: '',
+    state: '',
+    postalCode: '',
+    country: 'US',
+  })
+  const [sameAsShipping, setSameAsShipping] = useState(true)
   const [shippingConfig, setShippingConfig] = useState<{
     methods: Array<{ name: string, price: number, freeThreshold?: number, sortOrder?: number, isActive?: boolean }>
   } | null>(null)
@@ -44,7 +55,9 @@ export default function CheckoutPage() {
   }, [])
 
   const emailOk = /^\S+@\S+\.\S+$/.test(shipping.email)
-  const requiredOk = shipping.firstName && shipping.lastName && emailOk && shipping.address1 && shipping.city && shipping.state && shipping.postalCode && shipping.country
+  const shippingOk = shipping.firstName && shipping.lastName && emailOk && shipping.address1 && shipping.city && shipping.state && shipping.postalCode && shipping.country
+  const billingOk = sameAsShipping || (billing.firstName && billing.lastName && billing.address1 && billing.city && billing.state && billing.postalCode && billing.country)
+  const requiredOk = shippingOk && billingOk
 
   // Prefill email ASAP from session or prior checkout state
   useEffect(() => {
@@ -136,6 +149,18 @@ export default function CheckoutPage() {
         variant: it.variant ? { name: it.variant.name, value: it.variant.value, sku: it.variant.sku } : undefined,
       }))
       
+      // Prepare billing address (use shipping if sameAsShipping is checked)
+      const billingAddress = sameAsShipping ? {
+        firstName: shipping.firstName,
+        lastName: shipping.lastName,
+        address1: shipping.address1,
+        address2: shipping.address2,
+        city: shipping.city,
+        state: shipping.state,
+        postalCode: shipping.postalCode,
+        country: shipping.country,
+      } : billing
+
       // Create Stripe checkout session
       const checkoutResponse = await fetch('/api/checkout', {
         method: 'POST',
@@ -143,6 +168,7 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           items: itemsForCheckout,
           shipping,
+          billing: billingAddress,
           selectedShipping: selectedShippingPayload,
           orderSummary,
           appliedCoupon: appliedCoupon ? {
@@ -473,6 +499,184 @@ export default function CheckoutPage() {
                   </div>
                 </div>
               </div>
+
+              {/* Billing Address */}
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Billing Address</h3>
+                
+                <div className="mb-4">
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={sameAsShipping}
+                      onChange={(e) => setSameAsShipping(e.target.checked)}
+                      className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                    />
+                    <span className="text-sm text-gray-700">Same as shipping address</span>
+                  </label>
+                </div>
+
+                {!sameAsShipping && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm text-gray-700 mb-1">First name</label>
+                      <input
+                        type="text"
+                        value={billing.firstName}
+                        onChange={(e) => setBilling(b => ({ ...b, firstName: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-700 mb-1">Last name</label>
+                      <input
+                        type="text"
+                        value={billing.lastName}
+                        onChange={(e) => setBilling(b => ({ ...b, lastName: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-sm text-gray-700 mb-1">Address line 1</label>
+                      <input
+                        type="text"
+                        value={billing.address1}
+                        onChange={(e) => setBilling(b => ({ ...b, address1: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-sm text-gray-700 mb-1">Address line 2 (optional)</label>
+                      <input
+                        type="text"
+                        value={billing.address2}
+                        onChange={(e) => setBilling(b => ({ ...b, address2: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-700 mb-1">City</label>
+                      <input
+                        type="text"
+                        value={billing.city}
+                        onChange={(e) => setBilling(b => ({ ...b, city: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-700 mb-1">{billing.country === 'US' ? 'State' : 'State/Province'}</label>
+                      {billing.country === 'CA' ? (
+                        <select
+                          value={billing.state}
+                          onChange={(e) => setBilling(b => ({ ...b, state: e.target.value }))}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        >
+                          <option value="">Select province</option>
+                          <option value="AB">Alberta</option>
+                          <option value="BC">British Columbia</option>
+                          <option value="MB">Manitoba</option>
+                          <option value="NB">New Brunswick</option>
+                          <option value="NL">Newfoundland and Labrador</option>
+                          <option value="NS">Nova Scotia</option>
+                          <option value="NT">Northwest Territories</option>
+                          <option value="NU">Nunavut</option>
+                          <option value="ON">Ontario</option>
+                          <option value="PE">Prince Edward Island</option>
+                          <option value="QC">Quebec</option>
+                          <option value="SK">Saskatchewan</option>
+                          <option value="YT">Yukon</option>
+                        </select>
+                      ) : billing.country === 'US' ? (
+                        <select
+                          value={billing.state}
+                          onChange={(e) => setBilling(b => ({ ...b, state: e.target.value }))}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        >
+                          <option value="">Select state</option>
+                          <option value="AL">Alabama</option>
+                          <option value="AK">Alaska</option>
+                          <option value="AZ">Arizona</option>
+                          <option value="AR">Arkansas</option>
+                          <option value="CA">California</option>
+                          <option value="CO">Colorado</option>
+                          <option value="CT">Connecticut</option>
+                          <option value="DE">Delaware</option>
+                          <option value="DC">District of Columbia</option>
+                          <option value="FL">Florida</option>
+                          <option value="GA">Georgia</option>
+                          <option value="HI">Hawaii</option>
+                          <option value="ID">Idaho</option>
+                          <option value="IL">Illinois</option>
+                          <option value="IN">Indiana</option>
+                          <option value="IA">Iowa</option>
+                          <option value="KS">Kansas</option>
+                          <option value="KY">Kentucky</option>
+                          <option value="LA">Louisiana</option>
+                          <option value="ME">Maine</option>
+                          <option value="MD">Maryland</option>
+                          <option value="MA">Massachusetts</option>
+                          <option value="MI">Michigan</option>
+                          <option value="MN">Minnesota</option>
+                          <option value="MS">Mississippi</option>
+                          <option value="MO">Missouri</option>
+                          <option value="MT">Montana</option>
+                          <option value="NE">Nebraska</option>
+                          <option value="NV">Nevada</option>
+                          <option value="NH">New Hampshire</option>
+                          <option value="NJ">New Jersey</option>
+                          <option value="NM">New Mexico</option>
+                          <option value="NY">New York</option>
+                          <option value="NC">North Carolina</option>
+                          <option value="ND">North Dakota</option>
+                          <option value="OH">Ohio</option>
+                          <option value="OK">Oklahoma</option>
+                          <option value="OR">Oregon</option>
+                          <option value="PA">Pennsylvania</option>
+                          <option value="RI">Rhode Island</option>
+                          <option value="SC">South Carolina</option>
+                          <option value="SD">South Dakota</option>
+                          <option value="TN">Tennessee</option>
+                          <option value="TX">Texas</option>
+                          <option value="UT">Utah</option>
+                          <option value="VT">Vermont</option>
+                          <option value="VA">Virginia</option>
+                          <option value="WA">Washington</option>
+                          <option value="WV">West Virginia</option>
+                          <option value="WI">Wisconsin</option>
+                          <option value="WY">Wyoming</option>
+                        </select>
+                      ) : (
+                        <input
+                          type="text"
+                          value={billing.state}
+                          onChange={(e) => setBilling(b => ({ ...b, state: e.target.value }))}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        />
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-700 mb-1">{billing.country === 'US' ? 'ZIP code' : 'Postal code'}</label>
+                      <input
+                        type="text"
+                        value={billing.postalCode}
+                        onChange={(e) => setBilling(b => ({ ...b, postalCode: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-700 mb-1">Country</label>
+                      <select
+                        value={billing.country}
+                        onChange={(e) => setBilling(b => ({ ...b, country: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      >
+                        <option value="US">United States</option>
+                        <option value="CA">Canada</option>
+                      </select>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Order Summary */}
@@ -530,7 +734,7 @@ export default function CheckoutPage() {
                     className={`w-full bg-primary-600 text-white py-3 px-4 rounded-lg font-medium ${loading || !requiredOk ? 'opacity-60 cursor-not-allowed' : 'hover:bg-primary-700'}`}
                     title={!requiredOk ? 'Please fill all required fields' : ''}
                   >
-                    {loading ? 'Redirecting…' : 'Pay with Etransfer'}
+                    {loading ? 'Redirecting…' : 'Pay Now'}
                   </button>
 
                   <Link
