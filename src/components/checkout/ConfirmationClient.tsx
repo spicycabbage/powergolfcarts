@@ -226,89 +226,24 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-3xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-10">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4 sm:mb-6">Order Confirmation</h1>
-
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 sm:mb-6">
-          {/* Mobile: label left, value right (only Order # and Total) */}
-          <div className="p-4 space-y-2 text-sm sm:hidden">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-500">Order #</span>
-              <span className="font-medium text-gray-900">{orderMeta?.id || initialOrder?.invoiceNumber || searchParams.get('order') || 'fetching...'}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-500">Total</span>
-              <span className="font-medium text-gray-900">{`$${total.toFixed(2)}`}</span>
-            </div>
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="bg-white rounded-lg shadow-sm p-8 sm:p-12 text-center">
+          <div className="mb-6">
+            <svg className="mx-auto h-16 w-16 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
           </div>
-          {/* Desktop: show Order # and Total only */}
-          <div className="hidden sm:grid grid-cols-1 sm:grid-cols-12 gap-4 p-6 text-sm">
-            <div className="sm:col-span-8">
-              <div className="text-gray-500">Order number</div>
-              <div className="font-medium text-gray-900 break-all">{orderMeta?.id || initialOrder?.invoiceNumber || searchParams.get('order') || 'fetching...'}</div>
-            </div>
-            <div className="sm:col-span-4 text-right">
-              <div className="text-gray-500">Total</div>
-              <div className="font-medium text-gray-900">{`$${total.toFixed(2)}`}</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-green-50 border-l-4 border-green-500 p-6 mb-6 rounded-lg">
-          <p className="text-gray-800 text-base">
-            Your order will be processed and shipped out shortly.
+          
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Order Confirmation</h1>
+          
+          <p className="text-lg text-gray-700 mb-8">
+            Thank you. We have received your order and it will be shipped out shortly.
           </p>
-        </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Order Summary</h3>
-
-          {(hydrated || initialOrder) && Array.isArray(items) && items.length > 0 && (
-            <div className="mb-4">
-              <ul className="divide-y divide-gray-200">
-                {items.map((it, idx) => (
-                  <li key={idx} className="py-3 grid grid-cols-6 gap-3 items-start">
-                    <div className="col-span-4 min-w-0">
-                      <div className="text-sm text-gray-900 truncate">{it.name}{it.variant ? ` — ${it.variant.name}: ${it.variant.value}` : ''}</div>
-                      <div className="text-xs text-gray-500">Qty: {it.quantity}{typeof it.price === 'number' ? ` • $${Number(it.price).toFixed(2)} each` : ''}</div>
-                    </div>
-                    <div className="col-span-2 text-right text-sm text-gray-900">${(Number(it.price||0) * Number(it.quantity||1)).toFixed(2)}</div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          <div className="space-y-3 text-sm">
-            <div className="border-t-2 border-gray-800 pt-3 flex justify-between"><span className="text-gray-600">Subtotal</span><span className="text-gray-900">${subtotal.toFixed(2)}</span></div>
-            {(summary as any)?.bundleDiscount > 0 && (
-              <div className="flex justify-between"><span className="text-green-600">Bundle Discount</span><span className="text-green-600">-${Number((summary as any).bundleDiscount).toFixed(2)}</span></div>
-            )}
-            {effectiveCoupon?.code && (
-              <div className="flex justify-between"><span className="text-green-600">Coupon Discount ({effectiveCoupon.code})</span><span className="text-green-600">-${effectiveDiscount.toFixed(2)}</span></div>
-            )}
-            {(summary as any)?.storeCreditUsed > 0 && (
-              <div className="flex justify-between"><span className="text-blue-600">Store Credit</span><span className="text-blue-600">-${Number((summary as any).storeCreditUsed).toFixed(2)}</span></div>
-            )}
-            <div className="flex justify-between"><span className="text-gray-600">Shipping</span><span className="text-gray-900">{shippingCost === 0 ? 'Free' : `$${shippingCost.toFixed(2)}`}</span></div>
-            <div className="border-t-2 border-gray-800 pt-3 flex justify-between text-base font-semibold"><span className="text-gray-900">Total</span><span className="text-gray-900">${total.toFixed(2)}</span></div>
-          </div>
-
-          {shipping && (
-            <div className="mt-6">
-              <h4 className="text-sm font-medium text-gray-900 mb-2">Shipping To</h4>
-              <div className="text-sm text-gray-700">
-                <div>{shipping.firstName} {shipping.lastName}</div>
-                <div>{shipping.address1}{shipping.address2 ? `, ${shipping.address2}` : ''}</div>
-                <div>{shipping.city}, {shipping.state} {shipping.postalCode}</div>
-                <div>{shipping.country}</div>
-                {shipping.phone ? <div>{shipping.phone}</div> : null}
-              </div>
-            </div>
-          )}
-
-          <div className="mt-6">
-            <Link href="/" className="inline-block bg-primary-600 text-white py-2 px-4 rounded-lg hover:bg-primary-700">Back to Home</Link>
+          <div className="mt-8">
+            <Link href="/" className="inline-block bg-green-600 text-white py-3 px-8 rounded-lg hover:bg-green-700 font-medium transition-colors">
+              Back to Home
+            </Link>
           </div>
         </div>
       </div>
