@@ -254,16 +254,11 @@ export default function ConfirmationClient({ order: initialOrder, payment: initi
           </div>
         </div>
 
-        {paymentLoaded && payment?.etransfer?.enabled !== false && orderMeta?.paymentMethod !== 'stripe' && (
-          <div className="rounded-lg p-0 mb-6 border-2 border-green-700 overflow-hidden">
-            <div className="bg-green-700 text-white px-4 py-3 font-semibold uppercase text-sm tracking-wide">Interac e-Transfer Instructions</div>
-            <div className="bg-green-50 px-4 py-4">
-              {payment?.etransfer?.note && (
-                <p className="text-sm text-gray-800 whitespace-pre-line">{payment.etransfer.note}</p>
-              )}
-            </div>
-          </div>
-        )}
+        <div className="bg-green-50 border-l-4 border-green-500 p-6 mb-6 rounded-lg">
+          <p className="text-gray-800 text-base">
+            Your order will be processed and shipped out shortly.
+          </p>
+        </div>
 
         <div className="bg-white rounded-lg shadow-sm p-6">
           <h3 className="text-lg font-medium text-gray-900 mb-4">Order Summary</h3>
