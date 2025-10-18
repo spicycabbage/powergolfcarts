@@ -100,13 +100,7 @@ export function PublicHeader() {
         </div>
       </div>
 
-      {isSearchOpen && (
-        <div className="border-t border-gray-700 bg-black">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <SearchBar onClose={() => setIsSearchOpen(false)} />
-          </div>
-        </div>
-      )}
+      <SearchBar isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
 
       {isMenuOpen && (
         <div className="md:hidden border-t border-gray-700 bg-black">
