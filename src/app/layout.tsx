@@ -1,22 +1,16 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import '../styles/globals.css'
-import { Providers } from '@/components/Providers'
 import JsonLd from '@/components/seo/JsonLd'
-import { ConditionalFooter } from '@/components/layout/ConditionalFooter'
-import { SessionProvider } from '@/components/SessionProvider'
-import HeaderServer from '@/components/layout/HeaderServer'
 
 const inter = Inter({ 
   subsets: ['latin'],
-  display: 'optional',
+  display: 'block',
   preload: true,
-  fallback: ['system-ui', 'arial'],
-  variable: '--font-inter',
 })
 
 export const metadata: Metadata = {
-  title: 'Power Golf Carts',
+  title: 'Power Golf Carts - Premium Electric Golf Carts & Equipment',
   description: 'Premium electric golf carts and golf equipment for effortless course navigation',
   keywords: 'electric golf carts, golf carts, golf equipment, golf accessories, golf gear, golf cart parts',
   authors: [{ name: 'Power Golf Carts' }],
@@ -60,7 +54,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
@@ -105,17 +99,7 @@ export default async function RootLayout({
             }
           ]}
         />
-        <SessionProvider>
-          <Providers>
-            <div className="min-h-screen flex flex-col">
-              <HeaderServer />
-              <main className="flex-1">
-                {children}
-              </main>
-              <ConditionalFooter />
-            </div>
-          </Providers>
-        </SessionProvider>
+        {children}
       </body>
     </html>
   )

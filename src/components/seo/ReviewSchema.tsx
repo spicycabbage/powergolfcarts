@@ -1,5 +1,3 @@
-'use client'
-
 import JsonLd from './JsonLd'
 
 interface ReviewSchemaProps {

@@ -1,5 +1,3 @@
-'use client'
-
 interface JsonLdProps {
   data: object | object[]
 }
