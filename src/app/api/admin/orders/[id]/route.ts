@@ -530,7 +530,7 @@ export async function PUT(
               <p>Your order <strong>#${invoice}</strong> has been cancelled.</p>
               <p>We have not received a payment for this order so we assume it's no longer wanted. If you still wish to keep this order, please respond to this email. Thanks.</p>
               <div style="margin-top:16px;color:#6b7280;font-size:12px;">
-                Thank you for shopping at <a href="https://www.insanitygolf.com">www.insanitygolf.com</a><br/>
+                Thank you for shopping at <a href="https://www.powergolfcarts.shop">www.powergolfcarts.shop</a><br/>
                 Premium golf equipment and accessories.
               </div>
             </div>

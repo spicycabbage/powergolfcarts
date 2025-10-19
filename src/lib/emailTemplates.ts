@@ -122,7 +122,7 @@ export function buildOrderEmail(order: any, type: 'placed' | 'complete' = 'place
         </table>
       </div>
       <div style="padding:16px 24px;border-top:1px solid #e5e7eb;color:#6b7280;font-size:12px;text-align:center">
-        Thank you for shopping at <a href="https://www.insanitygolf.com" style="color:#2563eb;text-decoration:underline">www.insanitygolf.com</a><br/>
+        Thank you for shopping at <a href="https://www.powergolfcarts.shop" style="color:#2563eb;text-decoration:underline">www.powergolfcarts.shop</a><br/>
         Premium golf equipment and accessories.
       </div>
     </div>

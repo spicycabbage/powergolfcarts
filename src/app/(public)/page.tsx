@@ -27,10 +27,10 @@ export default function HomePage() {
           {
             '@context': 'https://schema.org',
             '@type': 'Store',
-            '@id': 'https://www.insanitygolf.com/#store',
+            '@id': 'https://www.powergolfcarts.shop/#store',
             name: 'Power Golf Carts',
             description: "Premium golf equipment and accessories for golfers of all skill levels",
-            url: 'https://www.insanitygolf.com',
+            url: 'https://www.powergolfcarts.shop',
             telephone: '+1-800-GOLF',
             address: {
               '@type': 'PostalAddress',
@@ -43,7 +43,7 @@ export default function HomePage() {
           {
             '@context': 'https://schema.org',
             '@type': 'ItemList',
-            '@id': 'https://www.insanitygolf.com/#productcategories',
+            '@id': 'https://www.powergolfcarts.shop/#productcategories',
             name: 'Golf Equipment Categories',
             description: 'Browse our selection of premium golf equipment',
             numberOfItems: 5,
@@ -52,31 +52,31 @@ export default function HomePage() {
                 '@type': 'ListItem',
                 position: 1,
                 name: 'Golf Clubs',
-                url: 'https://www.insanitygolf.com/categories/golf-clubs'
+                url: 'https://www.powergolfcarts.shop/categories/golf-clubs'
               },
               {
                 '@type': 'ListItem',
                 position: 2,
                 name: 'Golf Balls',
-                url: 'https://www.insanitygolf.com/categories/golf-balls'
+                url: 'https://www.powergolfcarts.shop/categories/golf-balls'
               },
               {
                 '@type': 'ListItem',
                 position: 3,
                 name: 'Golf Bags',
-                url: 'https://www.insanitygolf.com/categories/golf-bags'
+                url: 'https://www.powergolfcarts.shop/categories/golf-bags'
               },
               {
                 '@type': 'ListItem',
                 position: 4,
                 name: 'Accessories',
-                url: 'https://www.insanitygolf.com/categories/accessories'
+                url: 'https://www.powergolfcarts.shop/categories/accessories'
               },
               {
                 '@type': 'ListItem',
                 position: 5,
                 name: 'Apparel',
-                url: 'https://www.insanitygolf.com/categories/apparel'
+                url: 'https://www.powergolfcarts.shop/categories/apparel'
               }
             ]
           }

@@ -203,7 +203,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             itemCondition: 'https://schema.org/NewCondition',
             seller: {
               '@type': 'Organization',
-              '@id': 'https://www.insanitygolf.com/#organization',
+              '@id': 'https://www.powergolfcarts.shop/#organization',
               name: 'Power Golf Carts',
               url: baseUrl
             },
