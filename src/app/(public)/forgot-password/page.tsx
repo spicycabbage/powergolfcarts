@@ -41,7 +41,7 @@ export default function ForgotPasswordPage() {
 
             <div className="mt-6 text-center">
               <Link
-                href="/auth/logon"
+                href="/auth/login"
                 className="font-medium text-green-600 hover:text-green-500 transition-colors"
               >
                 Back to Sign In

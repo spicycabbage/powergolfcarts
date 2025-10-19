@@ -1,0 +1,33 @@
+# Power Golf Carts - LLM Context
+
+Power Golf Carts is an e-commerce platform specializing in premium electric golf carts and accessories.
+
+## Product Categories
+- Electric Golf Carts (E-Carts)
+- Follow Me Golf Carts
+- Remote Control Golf Carts
+- Golf Cart Accessories
+- Batteries and Chargers
+
+## Main Brands
+- Robera (AI-powered smart carts)
+- Ego Caddy (premium electric carts)
+- Tasmania (affordable options)
+- Volt Caddy (long-range models)
+
+## Key Pages
+- Homepage: https://www.powergolfcarts.com
+- Shop: https://www.powergolfcarts.com/categories
+- Brands: https://www.powergolfcarts.com/brands
+- Blog: https://www.powergolfcarts.com/blog
+- Contact: https://www.powergolfcarts.com/contact
+
+## Policies
+- Free shipping within USA
+- 30-day return policy
+- Warranty support available
+- Customer service: support@powergolfcarts.com
+
+## Technology
+Built with Next.js 15, TypeScript, MongoDB, and deployed on Vercel.
+
