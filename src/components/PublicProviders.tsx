@@ -18,7 +18,7 @@ export function PublicProviders({ children }: { children: ReactNode }) {
     <SessionProvider>
       <QueryClientProvider client={queryClient}>
         <Suspense fallback={<div />}>
-          <HotToaster position="top-center" />
+          <HotToaster position="top-right" toastOptions={{ duration: 2500 }} />
           {children}
         </Suspense>
       </QueryClientProvider>
