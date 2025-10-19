@@ -20,20 +20,7 @@ export default function PromotionsPage() {
       </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Bundle Deals</h2>
-            <p className="text-gray-700 mb-4">
-              Save 15% when you buy 4 qualifying products from the same category!
-            </p>
-            <Link 
-              href="/bundles"
-              className="inline-block bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
-            >
-              View Bundle Deals →
-            </Link>
-          </div>
-          
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Free Shipping</h2>
             <p className="text-gray-700 mb-4">
@@ -44,6 +31,19 @@ export default function PromotionsPage() {
               className="inline-block bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
             >
               Shop Now →
+            </Link>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Check Back Soon</h2>
+            <p className="text-gray-700 mb-4">
+              More exciting promotions and seasonal deals coming your way!
+            </p>
+            <Link 
+              href="/categories/electric-carts"
+              className="inline-block bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+            >
+              Browse Electric Carts →
             </Link>
           </div>
         </div>
