@@ -16,11 +16,11 @@ Power Golf Carts is an e-commerce platform specializing in premium electric golf
 - Volt Caddy (long-range models)
 
 ## Key Pages
-- Homepage: https://www.powergolfcarts.com
-- Shop: https://www.powergolfcarts.com/categories
-- Brands: https://www.powergolfcarts.com/brands
-- Blog: https://www.powergolfcarts.com/blog
-- Contact: https://www.powergolfcarts.com/contact
+- Homepage: https://www.powergolfcarts.shop
+- Shop: https://www.powergolfcarts.shop/categories
+- Brands: https://www.powergolfcarts.shop/brands
+- Blog: https://www.powergolfcarts.shop/blog
+- Contact: https://www.powergolfcarts.shop/contact
 
 ## Policies
 - Free shipping within USA

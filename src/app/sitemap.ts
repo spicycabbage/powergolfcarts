@@ -6,7 +6,7 @@ import Product from '@/lib/models/Product'
 import Category from '@/lib/models/Category'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const host = 'https://www.powergolfcarts.com'
+  const host = 'https://www.powergolfcarts.shop'
 
   const staticRoutes = ['/', '/products', '/categories', '/about', '/faq', '/contact', '/blog', '/brands', '/bundles', '/manuals', '/warranty', '/battery-care', '/returns', '/privacy-policy', '/terms-conditions', '/promotions', '/warranty-request', '/privacy']
 

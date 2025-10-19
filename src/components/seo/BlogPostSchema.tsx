@@ -26,7 +26,7 @@ export default function BlogPostSchema({
     return html.replace(/<[^>]*>/g, '').trim()
   }
 
-  const baseUrl = 'https://www.powergolfcarts.com'
+  const baseUrl = 'https://www.powergolfcarts.shop'
 
   const schema = {
     '@context': 'https://schema.org',

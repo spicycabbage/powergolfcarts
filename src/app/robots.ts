@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/', '/admin/', '/checkout/'],
       },
     ],
-    sitemap: 'https://www.powergolfcarts.com/sitemap.xml',
+    sitemap: 'https://www.powergolfcarts.shop/sitemap.xml',
   }
 }
 

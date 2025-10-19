@@ -21,14 +21,14 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://www.powergolfcarts.com'),
+  metadataBase: new URL('https://www.powergolfcarts.shop'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://www.powergolfcarts.com',
+    url: 'https://www.powergolfcarts.shop',
     title: 'Power Golf Carts',
     description: 'Premium electric golf carts and golf equipment for effortless course navigation',
     siteName: 'Power Golf Carts',
@@ -67,10 +67,10 @@ export default function RootLayout({
             {
               '@context': 'https://schema.org',
               '@type': 'Organization',
-              '@id': 'https://www.powergolfcarts.com/#organization',
+              '@id': 'https://www.powergolfcarts.shop/#organization',
               name: 'Power Golf Carts',
-              url: 'https://www.powergolfcarts.com',
-              logo: 'https://www.powergolfcarts.com/power-golf-carts-black-2.jpg',
+              url: 'https://www.powergolfcarts.shop',
+              logo: 'https://www.powergolfcarts.shop/power-golf-carts-black-2.jpg',
               description: 'Premium electric golf carts and golf equipment',
               address: {
                 '@type': 'PostalAddress',
@@ -80,19 +80,19 @@ export default function RootLayout({
             {
               '@context': 'https://schema.org',
               '@type': 'WebSite',
-              '@id': 'https://www.powergolfcarts.com/#website',
+              '@id': 'https://www.powergolfcarts.shop/#website',
               name: 'Power Golf Carts - Premium Electric Golf Carts',
               alternateName: 'Power Golf Carts',
-              url: 'https://www.powergolfcarts.com',
+              url: 'https://www.powergolfcarts.shop',
               description: 'Premium electric golf carts and golf equipment',
               publisher: {
-                '@id': 'https://www.powergolfcarts.com/#organization'
+                '@id': 'https://www.powergolfcarts.shop/#organization'
               },
               potentialAction: {
                 '@type': 'SearchAction',
                 target: {
                   '@type': 'EntryPoint',
-                  urlTemplate: 'https://www.powergolfcarts.com/categories?search={search_term_string}'
+                  urlTemplate: 'https://www.powergolfcarts.shop/categories?search={search_term_string}'
                 },
                 'query-input': 'required name=search_term_string'
               }
