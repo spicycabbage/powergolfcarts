@@ -51,17 +51,11 @@ export function BundleClient({ products, bundle }: BundleClientProps) {
       if (quantity > 0) {
         const product = products.find(p => p._id === productId)
         if (product) {
-          const cartItem = cart.items.find(item => item.product === productId)
+          const cartItem = cart.items.find(item => String(item.product._id) === productId)
           if (cartItem) {
             updateQuantity(productId, cartItem.quantity + quantity)
           } else {
-            addItem({
-              product: productId,
-              name: product.name,
-              price: product.price,
-              quantity,
-              image: product.images[0] || '',
-            })
+            addItem(product as any, quantity)
           }
         }
       }
