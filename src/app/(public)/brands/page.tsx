@@ -7,6 +7,9 @@ import Category from '@/lib/models/Category'
 export const metadata: Metadata = {
   title: 'Our Brands | Power Golf Carts',
   description: 'Explore all products from our premium golf cart brands including Robera, Insanity Golf, Ego Caddy, Tasmania, and Volt Caddy.',
+  alternates: {
+    canonical: '/brands',
+  },
 }
 
 async function getBrandsData() {

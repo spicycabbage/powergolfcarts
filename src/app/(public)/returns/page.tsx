@@ -4,6 +4,9 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Return Policy | Power Golf Carts',
   description: 'Learn about our return policy for electric golf carts and equipment. 30-day returns with specific terms and conditions.',
+  alternates: {
+    canonical: '/returns',
+  },
 }
 
 export default function ReturnPolicyPage() {

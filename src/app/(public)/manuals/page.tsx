@@ -5,6 +5,9 @@ import { FileText, Download } from 'lucide-react'
 export const metadata: Metadata = {
   title: 'Instruction Manuals | Power Golf Carts',
   description: 'Download user manuals and quick start guides for our electric golf carts including Robera Pro, Ego Caddy M5, Tasmania G2, and Volt Caddy.',
+  alternates: {
+    canonical: '/manuals',
+  },
 }
 
 export default function ManualsPage() {

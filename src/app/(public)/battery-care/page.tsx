@@ -4,6 +4,9 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Battery Care | Power Golf Carts',
   description: 'Learn how to properly care for and maintain your lithium battery to maximize its lifespan and performance.',
+  alternates: {
+    canonical: '/battery-care',
+  },
 }
 
 export default function BatteryCarePage() {

@@ -6,7 +6,10 @@ export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Sign In',
-  description: 'Sign in to your account to access your dashboard, orders, and wishlist.'
+  description: 'Sign in to your account to access your dashboard, orders, and wishlist.',
+  alternates: {
+    canonical: '/auth/login',
+  },
 }
 
 export default function LoginPage() {
