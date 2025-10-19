@@ -14,6 +14,7 @@ import SortSelect from '@/components/SortSelect'
 import { CategoryInfoSection } from '@/components/CategoryInfoSection'
 import { serializeArrayForClient } from '@/lib/utils/serialize'
 
+export const dynamic = 'force-dynamic' // Force dynamic rendering
 export const revalidate = 60 // Cache for 60 seconds
 
 interface CatchAllCategoryPageProps {
