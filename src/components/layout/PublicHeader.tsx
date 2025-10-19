@@ -76,7 +76,6 @@ export function PublicHeader() {
             </div>
             <Link href="/brands" className="text-white hover:text-primary-400 transition-colors">Brands</Link>
             <Link href="/bundles" className="text-white hover:text-primary-400 transition-colors">Deals</Link>
-            <Link href="/learn" className="text-white hover:text-primary-400 transition-colors">Learn</Link>
           </nav>
 
           <div className="flex items-center space-x-4">
@@ -112,7 +111,6 @@ export function PublicHeader() {
             <Link href="/categories" className="block px-3 py-2 text-white hover:text-primary-400">Shop</Link>
             <Link href="/brands" className="block px-3 py-2 text-white hover:text-primary-400">Brands</Link>
             <Link href="/bundles" className="block px-3 py-2 text-white hover:text-primary-400">Deals</Link>
-            <Link href="/learn" className="block px-3 py-2 text-white hover:text-primary-400">Learn</Link>
           </div>
         </div>
       )}
