@@ -2,6 +2,8 @@ import { Metadata } from 'next'
 import { Suspense } from 'react'
 import ResetPasswordForm from '@/components/auth/ResetPasswordForm'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Reset Password | Power Golf Carts',
   description: 'Create a new password for your Power Golf Carts account.',
