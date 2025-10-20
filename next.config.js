@@ -39,8 +39,8 @@ module.exports = (phase) => {
       STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
       NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
       NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-      // Skip DB and filesystem lookups during production build to keep builds fast and clean
-      SKIP_DB_AT_BUILD: isProdBuild ? '1' : (process.env.SKIP_DB_AT_BUILD || ''),
+      // REMOVED SKIP_DB_AT_BUILD - was blocking sitemap from fetching products/categories/posts
+      // Sitemap now properly fetches all content from database at runtime
     },
     async headers() {
       return [
